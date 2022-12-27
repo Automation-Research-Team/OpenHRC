@@ -16,7 +16,8 @@ MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vecto
       iJnt[i] = iJnt[i - 1] + myIKs[i]->getNJnt();  // all_cols;
   }
 
-  combsRobot = std_utility::comb(nRobot, 2);
+  if (nRobot > 1)
+    combsRobot = std_utility::comb(nRobot, 2);
   // combsLink = std_utility::comb(nJnt, 2);
   init_w_h.resize(nRobot + 1, 1.0e5);
   w_h = init_w_h;

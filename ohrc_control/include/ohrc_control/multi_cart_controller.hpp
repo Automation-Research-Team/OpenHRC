@@ -38,8 +38,13 @@ protected:
   std::string adaptationOption_;
 
   virtual void runLoopEnd(){};
-  virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller){};
-  virtual void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller){};
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller){};
+  virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+    updateTargetPose(pose, twist, controller);
+  };
+  virtual void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+    updateTargetPose(pose, twist, controller);
+  };
   virtual void feedbackJnt(const KDL::JntArray& q_cur, const KDL::JntArray& q_des, CartController* controller){};
   virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller){};
 

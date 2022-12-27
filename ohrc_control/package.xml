@@ -53,32 +53,31 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
 
-  <build_depend>boost</build_depend>
-  <build_depend>trac_ik_lib</build_depend>
+  <depend>boost</depend>
+  <depend>trac_ik_lib</depend>
 
-  <build_depend>liborocos-kdl-dev</build_depend>
-  <build_depend>libnlopt-dev</build_depend>
-  <build_depend>libnlopt-cxx-dev</build_depend>
-
-  <build_depend>interactive_markers</build_depend>
-
-  <build_depend>osqp</build_depend>
-  <build_depend>osqp-eigen</build_depend>
+  <depend>liborocos-kdl-dev</depend>
+  <depend>libnlopt-dev</depend>
+  <depend>libnlopt-cxx-dev</depend>
 
 
-  <build_depend>ohrc_common</build_depend>
-  <build_depend>tf2_eigen</build_depend>
+  <depend>osqp</depend>
+  <depend>osqp-eigen</depend>
 
-  <build_depend>omega_haptic_device</build_depend>
-  <depend>magic_enum</depend> t
+  <depend>magic_enum</depend>
 
-  <exec_depend>boost</exec_depend>
-  <exec_depend>liborocos-kdl</exec_depend>
-  <exec_depend>trac_ik_lib</exec_depend>
-  <exec_depend>xacro</exec_depend>
-  <exec_depend>libnlopt-dev</exec_depend>
-  <exec_depend>libnlopt0</exec_depend>
-  <exec_depend>pr2_description</exec_depend>
+
+  <depend>liborocos-kdl</depend>
+  <depend>xacro</depend>
+  <depend>libnlopt0</depend>
+  <depend>pr2_description</depend>
+
+  <depend>interactive_markers</depend>
+  <depend>tf2_kdl</depend>
+  <depend>tf2_eigen</depend>
+  <depend>std_msgs</depend>
+  <depend> eigen_conversions</depend>
+<depend> ohrc_common</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

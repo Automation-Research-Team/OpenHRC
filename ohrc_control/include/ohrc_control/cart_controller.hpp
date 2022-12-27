@@ -20,10 +20,10 @@
 #include <vector>
 
 #include "magic_enum.hpp"
+#include "ohrc_common/filter_utility/butterworth.h"
 #include "ohrc_control/StateStamped.h"
 #include "ohrc_control/arm_marker.hpp"
 #include "ohrc_control/my_ik.hpp"
-#include "toroboarm_common/filter_utility/butterworth.h"
 
 // TODO: Add namespace "Controllers"?
 
@@ -56,7 +56,7 @@ protected:
   enum class ControllerType { Position, Velocity, Torque, None } controller;
   ros::NodeHandle nh;
 
-  ros::Subscriber jntStateSubscriber, userArmMarker, subForce;
+  ros::Subscriber jntStateSubscriber, userArmMarker;  //, subForce;
   ros::TransportHints th = ros::TransportHints().tcpNoDelay(true);
 
   std::vector<bool*> subFlagPtrs;
@@ -72,7 +72,7 @@ protected:
   double timeout;
 
   Affine3d T_init;
-  Affine3d Tft_eff;
+  // Affine3d Tft_eff;
 
   unsigned int nJnt;         // number of robot joint
   const unsigned int m = 6;  // number of target DoF (usually 6)
@@ -111,7 +111,7 @@ protected:
 
   void cbJntState(const sensor_msgs::JointState::ConstPtr& msg);
   void cbArmMarker(const visualization_msgs::MarkerArray::ConstPtr& msg);
-  void cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg);
+  // void cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg);
 
   void initDesWithJnt(const KDL::JntArray& q_init);
   virtual void initWithJnt(const KDL::JntArray& q_init);

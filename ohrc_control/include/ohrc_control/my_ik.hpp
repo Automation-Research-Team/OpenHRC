@@ -18,7 +18,7 @@
 #include <thread>
 
 #include "OsqpEigen/OsqpEigen.h"
-#include "toroboarm_common/utility.h"
+#include "ohrc_common/utility.h"
 
 namespace MyIK {
 

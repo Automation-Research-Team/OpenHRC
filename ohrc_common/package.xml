@@ -1,31 +1,32 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ohrc_teleoperation</name>
-  <version>0.0.0</version>
-  <description>The ohrc_teleoperation package</description>
+  <name>ohrc_common</name>
+  <version>0.1.0</version>
+  <description>The ohrccommon package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="shunki@todo.todo">shunki</maintainer>
+  <maintainer email="shunki.itadera@aist.go.jp">Shunki Itadera</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>Apache 2.0</license>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/ohrc_teleoperation</url> -->
+  <!-- <url type="website">http://wiki.ros.org/ics_walker_libraries</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
   <!-- Authors do not have to be maintainers, but could be -->
   <!-- Example: -->
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author>Shunki Itadera</author>
 
 
   <!-- The *depend tags are used to specify dependencies -->
@@ -53,8 +54,9 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
 
-  <depend>ohrc_control</depend>
-  <depend>universal-robot</depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <exec_depend>geometry_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

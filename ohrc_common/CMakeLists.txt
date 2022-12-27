@@ -1,26 +1,23 @@
-cmake_minimum_required(VERSION 3.0.2)
-project(ohrc_teleoperation)
+cmake_minimum_required(VERSION 2.8.3)
+project(ohrc_common)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++17)
+add_compile_options(-std=c++1z)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  ohrc_control
-  
-
-  interactive_markers
+  geometry_msgs
+  nav_msgs
+  tf2
+  tf2_ros
 )
 
-find_package(OsqpEigen REQUIRED)
-
-find_package(magic_enum CONFIG REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(Eigen3 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -108,9 +105,9 @@ find_package(magic_enum CONFIG REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include 
- LIBRARIES ohrc_teleoperation 
- CATKIN_DEPENDS roscpp 
+  INCLUDE_DIRS include
+  LIBRARIES ohrc_common
+  CATKIN_DEPENDS roscpp geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -121,14 +118,29 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
+ include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/ohrc_teleoperation.cpp
-# )
+ add_library(ohrc_common src/filter_utility.cpp
+                               src/coordination_utility.cpp
+                               src/gazebo_utility.cpp
+                               src/math_utility.cpp
+                               src/std_utility.cpp
+                               src/subscriber_utility.cpp
+                               src/transform_utility.cpp
+                               src/geometry_msgs_utility/Wrench.cpp
+                               src/geometry_msgs_utility/WrenchStamped.cpp
+                               src/geometry_msgs_utility/Point.cpp
+                               src/geometry_msgs_utility/Vector3.cpp
+                               src/geometry_msgs_utility/Twist.cpp
+                               src/nav_msgs_utility/Odometry.cpp
+                               src/filter_utility/butterworth.cpp
+                               src/filter_utility/bayes_normal_gamma.cpp
+                               src/filter_utility/kalman.cpp)
+ add_dependencies(ohrc_common ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -138,7 +150,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/ohrc_teleoperation_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/ics_walker_libraries_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,20 +163,9 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
-
-set(interfaces
-  marker
-)
-
-foreach(interface ${interfaces})
-  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/app/${interface}_teleoperation.cpp)
-  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-endforeach(interface)
-
+ target_link_libraries(ohrc_common
+   ${catkin_LIBRARIES}
+ )
 
 #############
 ## Install ##
@@ -175,48 +176,42 @@ endforeach(interface)
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
+# install(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-## Mark executables for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark libraries for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
+## Mark executables and/or libraries for installation
+ install(TARGETS ohrc_common
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+ )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h"
+   PATTERN ".svn" EXCLUDE
+ )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
+ install(FILES
 #   # myfile1
 #   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+ )
 
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_ohrc_teleoperation.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+catkin_add_gtest(${PROJECT_NAME}-test src/test/ohrc_common-test.cpp)
+if(TARGET ${PROJECT_NAME}-test)
+  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

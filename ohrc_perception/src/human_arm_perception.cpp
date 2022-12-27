@@ -7,9 +7,9 @@
 #include "ohrc_control/arm_marker.hpp"
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "toroboarm_common/coordination_utility.h"
-#include "toroboarm_common/math_utility.h"
-#include "toroboarm_common/transform_utility.h"
+#include "ohrc_common/coordination_utility.h"
+#include "ohrc_common/math_utility.h"
+#include "ohrc_common/transform_utility.h"
 #include "visualization_msgs/MarkerArray.h"
 
 using namespace Eigen;

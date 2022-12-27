@@ -40,12 +40,13 @@ void CartController::init(std::string robot) {
 
   // nh.param("robot_ns", robot_ns, std::string(""));
   // nh.param("urdf_param", urdf_param, std::string("/toroboarm/robot_description"));
-  ROS_INFO_STREAM(robot + " selected");
-  robot_ns = robot + "/";
+  ROS_INFO_STREAM("name space: " + robot);
+  if (robot_ns != "")
+    robot_ns = robot + "/";
   urdf_param = "/" + robot_ns + "robot_description";
 
   this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(10.0));
-  this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0));
+  // this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0));
 
   tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, timeout, eps));
 
@@ -72,7 +73,7 @@ void CartController::init(std::string robot) {
     subFlagPtrs.push_back(&flagArmMarker);
   }
 
-  subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
+  // subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
 
   jntPosCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
   jntVelCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
@@ -231,15 +232,15 @@ void CartController::cbArmMarker(const visualization_msgs::MarkerArray::ConstPtr
   }
 }
 
-void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
-  std::lock_guard<std::mutex> lock(mtx);
-  _force.header.stamp = msg->header.stamp;
-  _force.header.frame_id = robot_ns + chain_end;
-  _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff.inverse());
+// void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
+//   std::lock_guard<std::mutex> lock(mtx);
+//   _force.header.stamp = msg->header.stamp;
+//   _force.header.frame_id = robot_ns + chain_end;
+//   _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff.inverse());
 
-  // if (!flagEffPose)
-  //   flagEffPose = true;
-}
+//   // if (!flagEffPose)
+//   //   flagEffPose = true;
+// }
 
 void CartController::initDesWithJnt(const KDL::JntArray& q_cur) {
   std::lock_guard<std::mutex> lock(mtx);

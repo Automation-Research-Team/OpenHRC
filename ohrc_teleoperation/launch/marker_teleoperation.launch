@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- <arg name="priority" default="Manual" /> -->
+
+  <node name="marker_teleoperation" pkg="ohrc_teleoperation" type="marker_teleoperation"  respawn="false" output="screen">
+    <rosparam command="load" file="$(find ohrc_control)/config/config.yaml" />
+    <rosparam command="load" file="$(find ohrc_teleoperation)/config/marker_config.yaml" />
+    <!-- <param name="priority" value="$(arg priority)" /> -->
+  </node>
+</launch>

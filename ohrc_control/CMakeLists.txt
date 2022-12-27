@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(ohrc_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++17)
+add_compile_options(-std=c++1z)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -10,32 +10,31 @@ add_compile_options(-std=c++17)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   trac_ik_lib
-  interactive_markers
-  tf2_kdl
-  tf2_eigen
+
   std_msgs
   eigen_conversions
 
   tf2
   tf2_ros
+  tf2_kdl
+  tf2_eigen
 
-  toroboarm_common
-  omega_haptic_device
+  ohrc_common
 
   message_generation
   message_runtime
 )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(pkg_nlopt REQUIRED nlopt)
+# find_package(PkgConfig REQUIRED)
+# pkg_check_modules(pkg_nlopt REQUIRED nlopt)
 
-find_package(Boost REQUIRED COMPONENTS date_time)
-find_package(orocos_kdl REQUIRED)
-find_package(Eigen3 REQUIRED)
+# find_package(Boost REQUIRED COMPONENTS date_time)
+# find_package(orocos_kdl REQUIRED)
+# find_package(Eigen3 REQUIRED)
 
-find_package(OsqpEigen REQUIRED)
+find_package(OsqpEigen REQUIRED OsqpEigen)
 
-find_package(magic_enum CONFIG REQUIRED)
+find_package(magic_enum CONFIG REQUIRED magic_enum)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -129,9 +128,9 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ohrc_control
-  CATKIN_DEPENDS roscpp trac_ik_lib
-  DEPENDS Boost orocos_kdl pkg_nlopt
+  LIBRARIES ${PROJECT_NAME}   
+  CATKIN_DEPENDS roscpp trac_ik_lib interactive_markers tf2_kdl tf2_eigen std_msgs eigen_conversions ohrc_common
+  # DEPENDS Boost orocos_kdl #pkg_nlopt magic_enum OsqpEigen
 )
 
 ###########
@@ -146,15 +145,16 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${orocos_kdl_INCLUDE_DIRS}
   ${pkg_nlopt_INCLUDE_DIRS}
+  ${OsqpEigen_INCLUDE_DIRS}
+  ${magic_enum_INCLUDE_DIRS}
 )
 ## Declare a C++ library
-add_library(${PROJECT_NAME}
-  src/my_ik.cpp
-  src/multi_my_ik.cpp 
-  src/cart_controller.cpp 
-  src/multi_cart_controller.cpp 
-  src/forwarding_controller.cpp
-  src/admittance_controller.cpp
+add_library(${PROJECT_NAME}   src/my_ik.cpp
+                              src/multi_my_ik.cpp 
+                              src/cart_controller.cpp 
+                              src/multi_cart_controller.cpp 
+                              src/forwarding_controller.cpp
+                              src/admittance_controller.cpp
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${orocos_kdl_LIBRARIES} ${pkg_nlopt_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
@@ -196,11 +196,11 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
+install(FILES
 #   # myfile1
 #   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 #############
 ## Testing ##

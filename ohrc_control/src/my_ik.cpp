@@ -144,26 +144,6 @@ VectorXd MyIK::getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double
       x[i] = std::min(x[i], upper[i]);
       x[i] = std::max(x[i], lower[i]);
     }
-    // else {
-    //   // Below is to handle bad seeds outside of limits
-
-    //   if (x[i] > upper[i]) {
-    //     // Find actual angle offset
-    //     double diffangle = fmod(x[i] - upper[i], 2 * M_PI);
-    //     // Add that to upper bound and go back a full rotation
-    //     x[i] = upper[i] + diffangle - 2 * M_PI;
-    //   }
-
-    //   if (x[i] < lower[i]) {
-    //     // Find actual angle offset
-    //     double diffangle = fmod(lower[i] - x[i], 2 * M_PI);
-    //     // Subtract that from lower bound and go forward a full rotation
-    //     x[i] = lower[i] - diffangle + 2 * M_PI;
-    //   }
-
-    //   if (x[i] > upper[i])
-    //     x[i] = (upper[i] + lower[i]) / 2.0;
-    // }
   }
 
   progress = -3;
