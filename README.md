@@ -1,5 +1,5 @@
 # OpenHRC
-Open Human-Robot Collaboration/Cooperation Library
+~~Open~~ Human-Robot Collaboration/Cooperation Library
 
 
 ## Install

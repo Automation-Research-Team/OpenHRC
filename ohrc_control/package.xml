@@ -70,6 +70,7 @@
   <build_depend>tf2_eigen</build_depend>
 
   <build_depend>omega_haptic_device</build_depend>
+  <depend>magic_enum</depend> t
 
   <exec_depend>boost</exec_depend>
   <exec_depend>liborocos-kdl</exec_depend>

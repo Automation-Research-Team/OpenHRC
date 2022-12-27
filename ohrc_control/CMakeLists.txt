@@ -35,6 +35,7 @@ find_package(Eigen3 REQUIRED)
 
 find_package(OsqpEigen REQUIRED)
 
+find_package(magic_enum CONFIG REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -156,7 +157,7 @@ add_library(${PROJECT_NAME}
   src/admittance_controller.cpp
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${orocos_kdl_LIBRARIES} ${pkg_nlopt_LIBRARIES} OsqpEigen::OsqpEigen)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${orocos_kdl_LIBRARIES} ${pkg_nlopt_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 
 
 #############
