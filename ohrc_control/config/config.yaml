@@ -5,11 +5,13 @@ root_frame: "world" # IK calculation base frame (for multi-follower)
 controller: "Velocity"
 solver: "MyIK" 
 
+control_freq: 500.0
+
 
 initial_pose: [0.35, 0.0, 0.3, 3.141592, 0, 0]
 
 
-follower_list: # name space of the robot
+follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
   - ""
   # - "toroboarm_2"
   # - "toroboarm_3"

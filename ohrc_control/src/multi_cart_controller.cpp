@@ -14,6 +14,12 @@ MultiCartController::MultiCartController() {
     ros::shutdown();
   }
 
+  if (!n.getParam("control_freq", freq)) {
+    ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
+    ros::shutdown();
+  }
+  dt = 1.0 / freq;
+
   MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual");
   IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated");
   priority = this->getEnumParam("priority", PriorityType::None, "Manual");
@@ -144,7 +150,7 @@ int MultiCartController::control() {
 
   double count = 0.0;
 
-  ros::Rate r(1.0 / dt);
+  ros::Rate r(freq);
   while (ros::ok()) {
     if (IKmode == IKMode::Order) {
       for (int i = 0; i < robots.size(); i++)
