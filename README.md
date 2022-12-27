@@ -6,13 +6,14 @@
 ### clone sourse
 ```
 $ cd ~/catkin_ws/src
-$ git clone --recursive https://github.com/itadera/OpenHRC.git 
+$ git clone https://github.com/itadera/OpenHRC.git 
+$ git submodule update --init --recursive
 ```
 
 ### solve dependency
 ```
 $ cd ~/catkin_ws
-$ rosdep install --from-paths src --ignore-src -r -y
+$ rosdep install -i -y --from-paths ./ --skip-keys=osqp
 ```
 
 ### build
