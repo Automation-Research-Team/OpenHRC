@@ -73,5 +73,7 @@
     <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
   </include>
 
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/example/marker_ur5e.rviz"/>
+
   <!-- </group> -->
 </launch>

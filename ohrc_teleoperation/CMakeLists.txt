@@ -157,6 +157,7 @@ include_directories(
 
 set(interfaces
   marker
+  # omega
 )
 
 foreach(interface ${interfaces})
