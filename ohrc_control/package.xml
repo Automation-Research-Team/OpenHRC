@@ -62,7 +62,11 @@
 
   <build_depend>interactive_markers</build_depend>
 
-  <build_depend>toroboarm_common</build_depend>
+  <build_depend>osqp</build_depend>
+  <build_depend>osqp-eigen</build_depend>
+
+
+  <build_depend>ohrc_common</build_depend>
   <build_depend>tf2_eigen</build_depend>
 
   <build_depend>omega_haptic_device</build_depend>
