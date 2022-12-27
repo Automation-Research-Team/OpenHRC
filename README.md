@@ -28,7 +28,7 @@ $ catkin build -DCMAKE_BUILD_TYPE=Release
 ---
 ## Example
 
-### with UR5e
+### Teoperation with UR5e using interactive marker
 ```
 # launch gazebo simulation with UR5e
 $ roslaunch ohrc_teleoperation ur5e_bringup.launch

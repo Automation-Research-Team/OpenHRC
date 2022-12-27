@@ -17,11 +17,9 @@ ForwardingController::ForwardingController() : nh("~"), spinner(0) {
 
   robot_ns.resize(2);
   nh.param("robot_ns", robot_ns[RobotType::Follower], std::string(""));
-  // nh.param("urdf_param", urdf_param, std::string("/toroboarm/robot_description"));
   robot_ns[RobotType::Follower] = robot_ns[RobotType::Follower] + "/";
 
   nh.param("interface_robot_ns", robot_ns[RobotType::Leader], std::string(""));
-  // nh.param("urdf_param", urdf_param, std::string("/toroboarm/robot_description"));
   robot_ns[RobotType::Leader] = robot_ns[RobotType::Leader] + "/";
 
   urdf_param = "/" + robot_ns[RobotType::Follower] + "robot_description";

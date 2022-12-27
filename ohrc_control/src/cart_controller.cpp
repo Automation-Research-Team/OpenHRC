@@ -35,11 +35,8 @@ void CartController::init(std::string robot) {
     exit(-1);
   }
 
-  // nh.param("timeout", timeout, 0.005);
   timeout = 1.0 / freq;
 
-  // nh.param("robot_ns", robot_ns, std::string(""));
-  // nh.param("urdf_param", urdf_param, std::string("/toroboarm/robot_description"));
   ROS_INFO_STREAM("name space: " + robot);
   if (robot_ns != "")
     robot_ns = robot + "/";
