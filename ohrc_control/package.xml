@@ -76,8 +76,8 @@
   <depend>tf2_kdl</depend>
   <depend>tf2_eigen</depend>
   <depend>std_msgs</depend>
-  <depend> eigen_conversions</depend>
-<depend> ohrc_common</depend>
+  <depend>eigen_conversions</depend>
+  <depend>ohrc_common</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

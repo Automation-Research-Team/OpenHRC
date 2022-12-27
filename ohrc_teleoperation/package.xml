@@ -54,7 +54,7 @@
   <exec_depend>roscpp</exec_depend>
 
   <depend>ohrc_control</depend>
-  <depend>universal-robot</depend>
+  <depend>universal_robots</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
