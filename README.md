@@ -13,7 +13,7 @@ $ git submodule update --init --recursive
 ### solve dependency
 ```
 $ cd ~/catkin_ws
-$ rosdep install -i -y --from-paths ./ --skip-keys=osqp
+$ rosdep install -i -y --from-paths ./ 
 ```
 
 ### build

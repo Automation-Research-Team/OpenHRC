@@ -30,7 +30,7 @@ jobs:
         cd ${CATKIN_WS}/src/OpenHRC
         git submodule update --init --recursive
         rosdep update
-        rosdep install -i -y --from-paths ./ --skip-keys=osqp
+        rosdep install -i -y --from-paths ./ 
 
     - name: build
       run: |
