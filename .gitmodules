@@ -1,0 +1,6 @@
+[submodule "3rd_party/osqp"]
+	path = 3rd_party/osqp
+	url = https://github.com/itadera/osqp
+[submodule "3rd_party/osqp-eigen"]
+	path = 3rd_party/osqp-eigen
+	url = https://github.com/itadera/osqp-eigen
