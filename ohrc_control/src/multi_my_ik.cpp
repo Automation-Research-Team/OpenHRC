@@ -1,8 +1,8 @@
 #include "ohrc_control/multi_my_ik.hpp"
 
 namespace MyIK {
-MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<std::string>& URDF_param, const std::vector<Affine3d>& T_base_world, double _eps,
-                     SolveType _type)
+MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<std::string>& URDF_param,
+                     const std::vector<Affine3d>& T_base_world, double _eps, SolveType _type)
   : nRobot(base_link.size()), initialized(false), eps(_eps), solvetype(_type) {
   myIKs.resize(nRobot);
   for (int i = 0; i < nRobot; i++)
@@ -110,7 +110,8 @@ int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::ve
   return 1;
 }
 
-int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::vector<KDL::Frame>& des_eff_pose, const std::vector<KDL::Twist>& des_eff_vel, std::vector<KDL::JntArray>& dq_des, const double& dt) {
+int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::vector<KDL::Frame>& des_eff_pose, const std::vector<KDL::Twist>& des_eff_vel,
+                               std::vector<KDL::JntArray>& dq_des, const double& dt) {
   std::vector<MatrixXd> Js(nRobot);
   std::vector<Affine3d> Ts_d(nRobot), Ts(nRobot);
   std::vector<VectorXd> es(nRobot);
@@ -149,8 +150,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
 
   for (int i = 0; i < nRobot; i++) {
     VectorXd w = VectorXd::Ones(6);
-    w << 1.0, 1.0, 1.0, 1 / M_PI, 1 / M_PI, 1 / M_PI;
-    double w_n = 1.0e-2;  // this leads dq -> 0 witch is conflict with additonal task
+    w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
+    double w_n = 1.0e-3;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
     H[i] = Js_[i].transpose() * Js_[i];
@@ -231,7 +232,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   return 1;
 }
 
-int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std::vector<MatrixXd>& Js_, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
+int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std::vector<MatrixXd>& Js_, std::vector<double>& lower_vel_limits_,
+                                     std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
   if (nRobot < 2)
     return 0;
 
@@ -248,7 +250,8 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std:
     double d = d_vec.norm();
     // std::cout << d << std::endl;
     if (d < di) {
-      A_ca.push_back((d_vec / d).transpose() * (myIKs[comb[0]]->getT_base_world().rotation() * Js_[comb[0]].block(0, 0, 3, nState) - myIKs[comb[1]]->getT_base_world().rotation() * Js_[comb[1]].block(0, 0, 3, nState)));
+      A_ca.push_back((d_vec / d).transpose() * (myIKs[comb[0]]->getT_base_world().rotation() * Js_[comb[0]].block(0, 0, 3, nState) -
+                                                myIKs[comb[1]]->getT_base_world().rotation() * Js_[comb[1]].block(0, 0, 3, nState)));
       lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
       upper_vel_limits_.push_back(OsqpEigen::INFTY);
     }

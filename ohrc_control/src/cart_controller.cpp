@@ -1,12 +1,10 @@
 #include "ohrc_control/cart_controller.hpp"
 
 CartController::CartController(const std::string robot, const std::string root_frame, const int index) : nh("~"), spinner(0), root_frame(root_frame), index(index) {
-  // chain_start = root_frame;
   init(robot);
 }
 
 CartController::CartController(const std::string robot, const std::string root_frame) : nh("~"), spinner(0), root_frame(root_frame) {
-  // chain_start = root_frame;
   init(robot);
 }
 
@@ -14,14 +12,13 @@ CartController::CartController() : nh("~"), spinner(0) {
   std::string robot;
   nh.param("robot_ns", robot, std::string(""));
   root_frame = "world";
-  // nh.param("chain_start", chain_start, std::string(""));
+
   init(robot);
 }
 
 void CartController::init(std::string robot) {
   std::signal(SIGINT, CartController::signal_handler);
 
-  // nh.param("num_samples", num_samples, 1000);
   nh.param("chain_start", chain_start, std::string(""));
   if (root_frame == "")
     root_frame = chain_start;
@@ -102,19 +99,14 @@ void CartController::init(std::string robot) {
   }
 
   // subFlagPtrs.push_back(&flagEffPose);
+  nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
+  // std::cout << init_q_expect << std::endl;
 
   std::vector<double> initial_pose;
   nh.param("initial_pose", initial_pose, std::vector<double>{ 0.45, 0.0, 0.85, 0.0, M_PI, -M_PI_2 });
 
-  // std::cout << root_frame << std::endl;
-  // std::cout << robot_ns + chain_start << std::endl;
-
-  // T_init =
-  //     Translation3d(initial_pose[0], initial_pose[1], initial_pose[2]) *
-  //     (T_base_root.rotation() * (AngleAxisd(initial_pose[3], Vector3d::UnitX()) * AngleAxisd(initial_pose[4], Vector3d::UnitY()) * AngleAxisd(initial_pose[5],
-  //     Vector3d::UnitZ())));
-  T_init =
-      Translation3d(initial_pose[0], initial_pose[1], initial_pose[2]) * (AngleAxisd(initial_pose[3], Vector3d::UnitX()) * AngleAxisd(initial_pose[4], Vector3d::UnitY()) * AngleAxisd(initial_pose[5], Vector3d::UnitZ()));
+  T_init = Translation3d(initial_pose[0], initial_pose[1], initial_pose[2]) *
+           (AngleAxisd(initial_pose[3], Vector3d::UnitX()) * AngleAxisd(initial_pose[4], Vector3d::UnitY()) * AngleAxisd(initial_pose[5], Vector3d::UnitZ()));
 
   for (int i = 0; i < 6; i++)
     velFilter.push_back(butterworth(2, 5.0, freq));
@@ -260,7 +252,7 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur) {
 
     KDL::JntArray q_init_expect;
     q_init_expect.resize(nJnt);
-    q_init_expect.data << 0.0, 0.5, 0.0, 1.0, 0.0, 1.6, 0.0;  // TODO: included in null space operation
+    q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);  // TODO: included in null space operation
 
     int rc;
     if (solver == SolverType::Trac_IK)
@@ -268,10 +260,12 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur) {
     else if (solver == SolverType::KDL)
       rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
     else if (solver == SolverType::MyIK)
-      rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+      rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 3.0);
 
-    if (rc < 0)
+    if (rc < 0) {
+      ROS_ERROR_STREAM("Failed to find initial joint angle. Please check if the initial position is appropriate.");
       return false;
+    }
 
     s_moveInitPos.isFirst = false;
 

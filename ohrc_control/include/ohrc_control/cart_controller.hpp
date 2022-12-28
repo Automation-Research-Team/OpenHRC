@@ -51,6 +51,8 @@ class CartController {
     ros::Time t_s;
   } s_moveInitPos;
 
+  std::vector<double> _q_init_expect;
+
 protected:
   enum class SolverType { Trac_IK, KDL, MyIK, None } solver;
   enum class ControllerType { Position, Velocity, Torque, None } controller;

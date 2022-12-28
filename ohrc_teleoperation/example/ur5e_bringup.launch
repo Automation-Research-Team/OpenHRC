@@ -31,7 +31,7 @@
   -->
   <!-- <group ns="ur5e"> -->
   <!--Robot description and related parameter files -->
-  <arg name="robot_description_file" default="$(find ohrc_teleoperation)/example/load_ur5e.launch.xml" doc="Launch file which populates the 'robot_description' parameter."/>
+  <arg name="robot_description_file" default="$(find ur_gazebo)/launch/inc/load_ur5e.launch.xml" doc="Launch file which populates the 'robot_description' parameter."/>
   <arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
   <arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
   <arg name="physical_params" default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
@@ -56,6 +56,7 @@
     <arg name="kinematics_params" value="$(arg kinematics_params)"/>
     <arg name="physical_params" value="$(arg physical_params)"/>
     <arg name="visual_params" value="$(arg visual_params)"/>
+    <arg name="transmission_hw_interface" value="hardware_interface/VelocityJointInterface" />
   </include>
 
   <!-- Robot state publisher -->
@@ -73,7 +74,7 @@
     <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
   </include>
 
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/example/marker_ur5e.rviz"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/example/marker_ur5e.rviz"/>
 
   <!-- </group> -->
 </launch>

@@ -6,25 +6,25 @@ using namespace Eigen;
 
 MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world, SolveType _type)
   : initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
-  ros::NodeHandle node_handle("~");
+  ros::NodeHandle nh("~");
 
   urdf::Model robot_model;
   std::string xml_string;
 
   std::string urdf_xml, full_urdf_xml;
-  node_handle.param("urdf_xml", urdf_xml, URDF_param);
-  node_handle.searchParam(urdf_xml, full_urdf_xml);
+  nh.param("urdf_xml", urdf_xml, URDF_param);
+  nh.searchParam(urdf_xml, full_urdf_xml);
 
-  ROS_DEBUG_NAMED("trac_ik", "Reading xml file from parameter server");
-  if (!node_handle.getParam(full_urdf_xml, xml_string)) {
-    ROS_FATAL_NAMED("trac_ik", "Could not load the xml from parameter server: %s", urdf_xml.c_str());
+  ROS_DEBUG_NAMED("my_ik", "Reading xml file from parameter server");
+  if (!nh.getParam(full_urdf_xml, xml_string)) {
+    ROS_FATAL_NAMED("my_ik", "Could not load the xml from parameter server: %s", urdf_xml.c_str());
     return;
   }
 
-  node_handle.param(full_urdf_xml, xml_string, std::string());
+  nh.param(full_urdf_xml, xml_string, std::string());
   robot_model.initString(xml_string);
 
-  ROS_DEBUG_STREAM_NAMED("trac_ik", "Reading joints and links from URDF");
+  ROS_DEBUG_STREAM_NAMED("my_ik", "Reading joints and links from URDF");
 
   KDL::Tree tree;
 
@@ -251,12 +251,13 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   double time_left;
   double alpha = 0.01;
 
-  // VectorXd w(nJnt);
-  // w << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0;
-  // MatrixXd W = w.asDiagonal();
-  VectorXd w(6);
-  w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
+  VectorXd w = VectorXd::Ones(nJnt);
+  for (int i = 1; i < nJnt; i++)
+    w(i) = w(i - 1) * 3.0;
   MatrixXd W = w.asDiagonal();
+  // VectorXd w(6);
+  // w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
+  // MatrixXd W = w.asDiagonal();
 
   double w_n = 1.0e-3;
 
@@ -274,8 +275,11 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
 
     diff = boost::posix_time::microsec_clock::local_time() - start_time;
     time_left = dt - diff.total_nanoseconds() * 1.0e-9;
+    if (time_left < 0.)
+      return -1;
+
     // ROS_INFO_STREAM(e.transpose() * e);
-    if (e.dot(e) < eps || time_left < 0.)
+    if (e.dot(e) < eps)
       break;
 
     // std::cout << e.transpose() << std::endl;
@@ -285,7 +289,8 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
     // J_pinv = (J.transpose() * J).inverse() * J.transpose();
     // J_pinv = (J.transpose() * W.inverse() * J).inverse() * J.transpose() * W.inverse();  // weighted
 
-    double gamma = 0.5 * e.transpose() * W * e + w_n;                                                           // proposed by Sugihara-sensei
+    double gamma = 0.5 * e.transpose() * W * e + w_n;
+    // double gamma = 0.5 * e.transpose() * e + w_n;                                                               // proposed by Sugihara-sensei
     J_w_pinv = (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt
 
     // Eigen::JacobiSVD<MatrixXd> svd(J, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -381,7 +386,8 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
   double gamma = 0.5 * e.transpose() * W * e + w_n;  // proposed by Sugihara-sensei
 
   // J_w_pinv = (J.transpose() * W.inverse() * J + gamma * MatrixXd::Identity(6, 6)).inverse() * J.transpose() * W.inverse();  // weighted & Levenberg–Marquardt
-  J_w_pinv = (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
+  J_w_pinv =
+      (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
 
   Matrix<double, 6, 1> dp;
   tf::twistKDLToEigen(des_eff_vel, dp);
@@ -472,8 +478,9 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
   linearMatrix.setIdentity();
 
-  // TODO: update variables. this seems to be difficult with OSQP since this library is for sparse QP optimization. When updating hessian matrix and changing its sparse form, the function init the solver instanse. At
-  // that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this propblem matrix is not sparse.
+  // TODO: update variables. this seems to be difficult with OSQP since this library is for sparse QP optimization. When updating hessian matrix and changing its sparse form, the
+  // function init the solver instanse. At that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this
+  // propblem matrix is not sparse.
   OsqpEigen::Solver qpSolver;
   qpSolver.settings()->setVerbosity(false);
   qpSolver.settings()->setWarmStart(true);
@@ -515,7 +522,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
   return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
 }
 
-int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt, const MatrixXd& userManipU) {
+int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt,
+                                   const MatrixXd& userManipU) {
   KDL::Jacobian jac(nJnt);
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data;
@@ -599,8 +607,9 @@ int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame&
   SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
   linearMatrix.setIdentity();
 
-  // TODO: update variables. this seems to be difficult with OSQP since this library is for sparse QP optimization. When updating hessian matrix and changing its sparse form, the function init the solver instanse. At
-  // that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this propblem matrix is not sparse.
+  // TODO: update variables. this seems to be difficult with OSQP since this library is for sparse QP optimization. When updating hessian matrix and changing its sparse form, the
+  // function init the solver instanse. At that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this
+  // propblem matrix is not sparse.
   OsqpEigen::Solver qpSolver;
   qpSolver.settings()->setVerbosity(false);
   qpSolver.settings()->setWarmStart(true);
