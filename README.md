@@ -3,22 +3,31 @@
 
 ---
 ## Install
+
+The catkin workspace directry is assumed to be ``~/catkin_ws``.
 ### clone sourse
 ```
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/itadera/OpenHRC.git 
-$ git submodule update --init --recursive
+
 ```
 
 ### solve dependency
 ```
-$ cd ~/catkin_ws
+$ cd ~/catkin_ws/src/OpenHRC
+
+# clone submodule source
+$ git submodule update --init --recursive
+
+# install dependency packages
+$ rosdep update
 $ rosdep install -i -y --from-paths ./ 
 ```
 
 ### build
 ```
 # if you build this pkg with catkin_make
+$ cd ~/catkin_ws
 $ catkin_make -DCMAKE_BUILD_TYPE=Release
 
 # if you build this pkg with cakitn_build_tools
