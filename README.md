@@ -1,6 +1,7 @@
 # OpenHRC
 ~~Open~~ Human-Robot Collaboration/Cooperation Library
 
+[![ROS build workflow](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml)
 ---
 ## Install
 
