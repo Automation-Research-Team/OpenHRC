@@ -1,35 +1,11 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
 MultiCartController::MultiCartController() {
-  ros::NodeHandle n("~");
-
-  if (!n.getParam("follower_list", robots) || !robots.size()) {
-    ROS_FATAL_STREAM("Failed to get the follower robot list");
+  if (!getInitParam())
     ros::shutdown();
-  }
-  nRobot = robots.size();
 
-  if (!n.getParam("root_frame", root_frame)) {
-    ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
-    ros::shutdown();
-  }
-
-  if (!n.getParam("control_freq", freq)) {
-    ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
-    ros::shutdown();
-  }
   dt = 1.0 / freq;
-
-  MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual");
-  IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated");
-  priority = this->getEnumParam("priority", PriorityType::None, "Manual");
-  if (priority == PriorityType::Adaptation)
-    n.param<std::string>("adaptation_option", adaptationOption_, "Default");
-
-  if (!n.getParam("date", this->date)) {
-    this->date = std_utility::getDatetimeStr();
-    n.setParam("date", date);
-  }
+  nRobot = robots.size();
 
   cartControllers.resize(nRobot);
   for (int i = 0; i < nRobot; i++)
@@ -51,6 +27,38 @@ MultiCartController::MultiCartController() {
     autoInd.push_back(i);
 
   setPriority(priority);
+}
+
+bool MultiCartController::getInitParam() {
+  ros::NodeHandle n("~");
+
+  if (!n.getParam("follower_list", robots) || !robots.size()) {
+    ROS_FATAL_STREAM("Failed to get the follower robot list");
+    return false;
+  }
+
+  if (!n.getParam("root_frame", root_frame)) {
+    ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
+    return false;
+  }
+
+  if (!n.getParam("control_freq", freq)) {
+    ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
+    return false;
+  }
+
+  MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual", n);
+  IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated", n);
+  priority = this->getEnumParam("priority", PriorityType::None, "Manual", n);
+  if (priority == PriorityType::Adaptation)
+    n.param<std::string>("adaptation_option", adaptationOption_, "Default");
+
+  if (!n.getParam("date", this->date)) {
+    this->date = std_utility::getDatetimeStr();
+    n.setParam("date", date);
+  }
+
+  return true;
 }
 
 void MultiCartController::setPriority(PriorityType priority) {

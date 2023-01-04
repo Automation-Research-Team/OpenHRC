@@ -19,23 +19,13 @@ CartController::CartController() : nh("~"), spinner(0) {
 void CartController::init(std::string robot) {
   std::signal(SIGINT, CartController::signal_handler);
 
-  nh.param("chain_start", chain_start, std::string(""));
-  if (root_frame == "")
-    root_frame = chain_start;
-
-  nh.param("chain_end", chain_end, std::string(""));
-
-  nh.param("useManipulabilityOpt", useManipOpt, false);
-
-  if (chain_start == "" || chain_end == "") {
-    ROS_FATAL("Missing chain info in launch file");
-    exit(-1);
-  }
+  if (!getInitParam())
+    ros::shutdown();
 
   timeout = 1.0 / freq;
 
-  ROS_INFO_STREAM("name space: " + robot);
-  if (robot_ns != "")
+  ROS_INFO_STREAM("namespace: " + robot);
+  if (robot != "")
     robot_ns = robot + "/";
   urdf_param = "/" + robot_ns + "robot_description";
 
@@ -71,8 +61,32 @@ void CartController::init(std::string robot) {
 
   jntPosCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
   jntVelCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
-  desStatePublisher = nh.advertise<ohrc_control::StateStamped>("/" + robot_ns + "desired_pose", 2);
+  desStatePublisher = nh.advertise<ohrc_msgs::StateStamped>("/" + robot_ns + "desired_pose", 2);
   markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 2);
+
+  T_init = Translation3d(initPose[0], initPose[1], initPose[2]) * (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
+
+  for (int i = 0; i < 6; i++)
+    velFilter.push_back(butterworth(2, 5.0, freq));
+
+  for (int i = 0; i < nJnt; i++)
+    jntFilter.push_back(butterworth(2, 5.0, freq));
+}
+
+bool CartController::getInitParam() {
+  nh.param("chain_start", chain_start, std::string(""));
+  if (root_frame == "")
+    root_frame = chain_start;
+
+  nh.param("chain_end", chain_end, std::string(""));
+
+  nh.param("useManipulabilityOpt", useManipOpt, false);
+
+  if (chain_start == "" || chain_end == "") {
+    ROS_FATAL("Missing chain info in launch file");
+    // exit(-1);
+    return false;
+  }
 
   std::string solver_str;
   if (!nh.param("solver", solver_str, std::string("MyIK")))
@@ -83,36 +97,33 @@ void CartController::init(std::string robot) {
   solver = magic_enum::enum_cast<SolverType>(solver_str).value_or(SolverType::None);
   if (solver == SolverType::None) {
     ROS_FATAL("Solver type is not correctly choisen from {Trac_IK, KDL, MyIK}");
-    exit(-1);
+    return false;
   }
 
   std::string controller_str;
-  if (!nh.param("controller", controller_str, std::string("Position")))
-    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Position");
+  if (!nh.param("controller", controller_str, std::string("Velocity")))
+    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
   else
     ROS_INFO_STREAM("Controller: " << controller_str);
 
   controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
   if (controller == ControllerType::None) {
     ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
-    exit(-1);
+    return false;
+  }
+
+  if (!nh.getParam("control_freq", freq)) {
+    ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
+    return false;
   }
 
   // subFlagPtrs.push_back(&flagEffPose);
   nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
   // std::cout << init_q_expect << std::endl;
 
-  std::vector<double> initial_pose;
-  nh.param("initial_pose", initial_pose, std::vector<double>{ 0.45, 0.0, 0.85, 0.0, M_PI, -M_PI_2 });
+  nh.param("initial_pose", initPose, std::vector<double>{ 0.45, 0.0, 0.85, 0.0, M_PI, -M_PI_2 });
 
-  T_init = Translation3d(initial_pose[0], initial_pose[1], initial_pose[2]) *
-           (AngleAxisd(initial_pose[3], Vector3d::UnitX()) * AngleAxisd(initial_pose[4], Vector3d::UnitY()) * AngleAxisd(initial_pose[5], Vector3d::UnitZ()));
-
-  for (int i = 0; i < 6; i++)
-    velFilter.push_back(butterworth(2, 5.0, freq));
-
-  for (int i = 0; i < nJnt; i++)
-    jntFilter.push_back(butterworth(2, 5.0, freq));
+  return true;
 }
 
 CartController::~CartController() {
@@ -357,7 +368,7 @@ void CartController::filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& d
 }
 
 void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
-  ohrc_control::StateStamped state;
+  ohrc_msgs::StateStamped state;
   state.header.stamp = ros::Time::now();
   state.state.pose = tf2::toMsg(des_eff_pose);
   state.state.twist.linear.x = des_eff_vel.vel[0];

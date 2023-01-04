@@ -2,7 +2,7 @@
 #define MULTI_OMEGA_CONTROLLER_HPP
 
 #include "ohrc_control/multi_cart_controller.hpp"
-#include "omega_haptic_device/Omega.h"
+#include "ohrc_msgs/State.h"
 #include "std_msgs/Float32.h"
 #include "std_srvs/Empty.h"
 
@@ -29,9 +29,9 @@ class OmegaInterface : public virtual MultiCartController {
   std::vector<s_updateManualTargetPose> s_updateManualTargetPoses;
 
   std::mutex mtx_omega;
-  omega_haptic_device::Omega _omegaState;
+  ohrc_msgs::State _omegaState;
 
-  void cbOmegaState(const omega_haptic_device::Omega::ConstPtr& msg);
+  void cbOmegaState(const ohrc_msgs::State::ConstPtr& msg);
 
   void starting() override;
 

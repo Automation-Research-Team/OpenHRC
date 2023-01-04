@@ -7,7 +7,7 @@ std::vector<ros::Publisher> pub;
 uint16_t next_mode = 1;
 uint16_t mode = 1;
 
-void chatterCallback(const omega_haptic_device::Omega::ConstPtr& msg) {
+void chatterCallback(const ohrc_msgs::State::ConstPtr& msg) {
   if (!msg->gripper.button)
     mode = next_mode;
 
@@ -51,9 +51,9 @@ int main(int argc, char** argv) {
 
   pub.resize(follower_list.size());
   for (int i = 0; i < follower_list.size(); i++)
-    pub[i] = n.advertise<omega_haptic_device::Omega>("/omega_driver/" + follower_list[i] + "/state", 2);
+    pub[i] = n.advertise<ohrc_msgs::State>("/omega_driver/" + follower_list[i] + "/state", 2);
 
-  pub.push_back(n.advertise<omega_haptic_device::Omega>("/omega_driver/cooperation/state", 2));
+  pub.push_back(n.advertise<ohrc_msgs::State>("/omega_driver/cooperation/state", 2));
 
   ros::spin();
 

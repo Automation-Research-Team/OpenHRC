@@ -3,6 +3,13 @@
 
 [![ROS build workflow](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml)
 ---
+
+## Requirements
+This library is tested on the following envirionment:
+- Ubuntu 20.04 (ROS Noetic)
+
+And this library is not compatible with ROS2 at this moment.
+
 ## Install
 
 The catkin workspace directry is assumed to be ``~/catkin_ws``.
@@ -10,7 +17,6 @@ The catkin workspace directry is assumed to be ``~/catkin_ws``.
 ```
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/itadera/OpenHRC.git 
-
 ```
 
 ### solve dependency
@@ -31,7 +37,7 @@ $ rosdep install -i -y --from-paths ./
 $ cd ~/catkin_ws
 $ catkin_make -DCMAKE_BUILD_TYPE=Release
 
-# if you build this pkg with cakitn_build_tools
+# if you build this pkg with catkin_build_tools
 $ catkin build -DCMAKE_BUILD_TYPE=Release
 ```
 

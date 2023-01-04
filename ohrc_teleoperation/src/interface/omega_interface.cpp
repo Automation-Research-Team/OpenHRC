@@ -8,24 +8,14 @@ OmegaInterface::OmegaInterface() {
   n.param("haptic_type", haptic, std::string("None"));
   ROS_INFO_STREAM("Omega type: " << omega << ", Haptic type: " << haptic);
 
-  subOmega = nh.subscribe<omega_haptic_device::Omega>("/omega_driver/" + omega + "/state", 2, &OmegaInterface::cbOmegaState, this, th);
+  subOmega = nh.subscribe<ohrc_msgs::State>("/omega_driver/" + omega + "/state", 2, &OmegaInterface::cbOmegaState, this, th);
   pubOmegaForce = nh.advertise<geometry_msgs::Wrench>("/omega_driver/" + omega + "/cmd_force", 2);
   pubOmegaForceVis = nh.advertise<geometry_msgs::WrenchStamped>("cmd_force_vis", 2);
 
-  // subLeaderEnergy = nh.subscribe<std_msgs::Float32>("/passivity_observer/leader/energy", 2, &OmegaController::cbEnergy, this, th);
-  // pubEnergy = nh.advertise<std_msgs::Float32>("/passivity_observer/follower/energy", 2);
-
-  if (haptic == "PositionPositionFeedback")
-    hapticType = HapticType::PositionPositionFeedback;
-  else if (haptic == "PositionForce")
-    hapticType = HapticType::PositionForce;
-  else if (haptic == "PositionForceFeedback")
-    hapticType = HapticType::PositionForceFeedback;
-  else
-    hapticType = HapticType::None;
+  hapticType = magic_enum::enum_cast<HapticType>(haptic).value_or(HapticType::None);
 }
 
-void OmegaInterface::cbOmegaState(const omega_haptic_device::Omega::ConstPtr& msg) {
+void OmegaInterface::cbOmegaState(const ohrc_msgs::State::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mtx_omega);
   _omegaState = *msg;
 }
@@ -40,7 +30,7 @@ void OmegaInterface::starting() {
 }
 
 void OmegaInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
-  omega_haptic_device::Omega omegaState;
+  ohrc_msgs::State omegaState;
   {
     std::lock_guard<std::mutex> lock(mtx_omega);
     omegaState = _omegaState;
@@ -56,12 +46,6 @@ void OmegaInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& twist, 
   Affine3d T_omega = Translation3d(k_trans * R * T_omega_omega.translation()) * (R * T_omega_omega.rotation());
   VectorXd v_omega = (VectorXd(6) << k_trans * R * v_omega_omega.head(3), R * v_omega_omega.tail(3)).finished();
 
-  // Affine3d T_omega = Translation3d(k_trans * R * Vector3d(-omageState.pose.position.x, -omageState.pose.position.y, omageState.pose.position.z)) *
-  //                    (R * Quaterniond(omageState.pose.orientation.w, -omageState.pose.orientation.x, -omageState.pose.orientation.y, omageState.pose.orientation.z));
-  // VectorXd v_omega = (VectorXd(6) << k_trans * R * Vector3d(-omageState.twist.linear.x, -omageState.twist.linear.y, omageState.twist.linear.z),
-  //                     R * Vector3d(-omageState.twist.angular.x, -omageState.twist.angular.y, omageState.twist.angular.z))
-  //                        .finished();
-
   s_updateManualTargetPose* s = &this->s_updateManualTargetPoses[controller->getIndex()];
   if (s->isFirst) {
     s->T = controller->getT_init();
@@ -70,10 +54,7 @@ void OmegaInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& twist, 
     s->isFirst = false;
   }
 
-  // Affine3d T = s.T, T_start = s.T_start, T_omega_start = s.T_omega_start;
-
   VectorXd v = VectorXd::Zero(6);
-
   if (omegaState.gripper.button) {
     s->T = Translation3d(T_omega.translation() - s->T_omega_start.translation() + s->T_start.translation()) * (T_omega.rotation() * controller->getT_init().rotation() * R);  // TODO: correct???
     v = v_omega;

@@ -1,2 +1,2 @@
-omega_type: "left"
-haptic_type: "PositionPositionFeedback" #None or PositionPositionFeedback or PositionForce or PositionForceFeedback
+omega_type: "right"
+haptic_type: "None" #"PositionPositionFeedback" #None or PositionPositionFeedback or PositionForce or PositionForceFeedback

@@ -54,6 +54,7 @@
   <exec_depend>roscpp</exec_depend>
 
   <depend>ohrc_control</depend>
+  <depend>ohrc_msgs</depend>
   <depend>universal_robots</depend>
 
 

@@ -8,6 +8,8 @@
 #include "ohrc_control/multi_my_ik.hpp"
 
 class MultiCartController {
+  bool getInitParam();
+
 protected:
   ros::NodeHandle nh;
 
@@ -50,9 +52,9 @@ protected:
   virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller){};
 
   template <typename T>
-  T getEnumParam(const std::string& key, T none, const std::string default_str) {
+  T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
     std::string s;
-    if (!nh.getParam(key, s)) {
+    if (!n.getParam(key, s)) {
       ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");
       s = default_str;
     }

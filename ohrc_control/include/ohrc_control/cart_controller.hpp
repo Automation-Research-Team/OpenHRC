@@ -21,9 +21,9 @@
 
 #include "magic_enum.hpp"
 #include "ohrc_common/filter_utility/butterworth.h"
-#include "ohrc_control/StateStamped.h"
 #include "ohrc_control/arm_marker.hpp"
 #include "ohrc_control/my_ik.hpp"
+#include "ohrc_msgs/StateStamped.h"
 
 // TODO: Add namespace "Controllers"?
 
@@ -52,6 +52,9 @@ class CartController {
   } s_moveInitPos;
 
   std::vector<double> _q_init_expect;
+
+  std::vector<double> initPose;
+  bool getInitParam();
 
 protected:
   enum class SolverType { Trac_IK, KDL, MyIK, None } solver;
@@ -108,7 +111,7 @@ protected:
   std::unique_ptr<MyIK::MyIK> myik_solver_ptr;
 
   std::string root_frame;
-  std::string chain_start, chain_end, urdf_param, robot_ns;
+  std::string chain_start, chain_end, urdf_param, robot_ns = "";
   Affine3d T_base_root;
 
   void cbJntState(const sensor_msgs::JointState::ConstPtr& msg);
@@ -229,7 +232,7 @@ public:
     return this->_force;
   }
 
-  const double freq = 500.0;
+  double freq = 500.0;
 
   const double eps = 1e-5;
 
