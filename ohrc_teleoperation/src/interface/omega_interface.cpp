@@ -17,6 +17,10 @@ OmegaInterface::OmegaInterface() {
   hapticType = magic_enum::enum_cast<HapticType>(haptic).value_or(HapticType::None);
 }
 
+void OmegaInterface::modifyTargetState(ohrc_msgs::State& state) {
+  state.enabled = state.gripper.button;
+}
+
 void OmegaInterface::feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller) {
   VectorXd ft_feedback = VectorXd::Zero(6);
   double k_force = 0.0;

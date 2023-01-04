@@ -23,21 +23,21 @@ $ git clone https://github.com/itadera/OpenHRC.git
 ```
 $ cd ~/catkin_ws/src/OpenHRC
 
-# clone submodule source
+### clone submodule source
 $ git submodule update --init --recursive
 
-# install dependency packages
+### install dependency packages
 $ rosdep update
 $ rosdep install -i -y --from-paths ./ 
 ```
 
 ### build
 ```
-# if you build this pkg with catkin_make
+### if you build this pkg with catkin_make
 $ cd ~/catkin_ws
 $ catkin_make -DCMAKE_BUILD_TYPE=Release
 
-# if you build this pkg with catkin_build_tools
+### if you build this pkg with catkin_build_tools
 $ catkin build -DCMAKE_BUILD_TYPE=Release
 ```
 

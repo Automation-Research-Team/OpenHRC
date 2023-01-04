@@ -12,6 +12,8 @@ class OmegaInterface : public virtual StateTopicInterface {
 
   enum HapticType { PositionPositionFeedback, PositionForce, PositionForceFeedback, None } hapticType;
 
+  void modifyTargetState(ohrc_msgs::State& state) override;
+
 public:
   OmegaInterface();
 };

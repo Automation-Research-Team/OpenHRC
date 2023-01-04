@@ -29,6 +29,7 @@ protected:
   void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
 
   void cbState(const ohrc_msgs::State::ConstPtr& msg);
+  virtual void modifyTargetState(ohrc_msgs::State& state){};
 
 public:
   StateTopicInterface();

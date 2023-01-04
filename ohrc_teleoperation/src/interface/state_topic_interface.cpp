@@ -30,6 +30,8 @@ void StateTopicInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& tw
     state = _state;
   }
 
+  modifyTargetState(state);
+
   // double k_trans = 2.0;  // position slacing factor
   Matrix3d R = T_state_base[controller->getIndex()].rotation().transpose();
   Affine3d T_state_state;
@@ -49,7 +51,7 @@ void StateTopicInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& tw
   }
 
   VectorXd v = VectorXd::Zero(6);
-  if (state.gripper.button) {
+  if (state.enabled) {
     s->T = Translation3d(T_state.translation() - s->T_state_start.translation() + s->T_start.translation()) * (T_state.rotation() * controller->getT_init().rotation() * R);  // TODO: correct???
     v = v_state;
     controller->enableOperation();
