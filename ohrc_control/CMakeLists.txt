@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   trac_ik_lib
 
   std_msgs
+  trajectory_msgs
   eigen_conversions
 
   tf2

@@ -78,9 +78,11 @@
   <depend>std_msgs</depend>
   <depend>eigen_conversions</depend>
   <depend>ros_controllers</depend>
+  <depend>trajectory_msgs</depend>
  
   <depend>ohrc_common</depend>
   <depend>ohrc_msgs</depend>
+  
 
 
   <!-- The export tag contains other, unspecified, tags -->

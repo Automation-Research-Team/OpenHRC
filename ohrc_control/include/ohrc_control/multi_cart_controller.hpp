@@ -29,7 +29,7 @@ protected:
   // MyIK
   std::unique_ptr<MyIK::MultiMyIK> multimyik_solver_ptr;
 
-  enum ControllerType { Position, Velocity, Torque } controller;
+  enum ControllerType { Position, Velocity, Trajectory, Torque , None} controller;
 
   std::vector<int> manualInd, autoInd;
 

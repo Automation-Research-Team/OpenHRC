@@ -3,6 +3,8 @@ chain_end: "tool0" # target eff frame
 root_frame: "world" # IK calculation base frame (for multi-follower)
 
 controller: "Velocity"
+controller_topic_name: "joint_group_vel_controller"
+
 solver: "MyIK" 
 
 control_freq: 500.0

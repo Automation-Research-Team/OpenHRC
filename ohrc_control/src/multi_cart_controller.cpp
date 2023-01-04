@@ -19,7 +19,7 @@ MultiCartController::MultiCartController() {
   multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root));
 
   // TODO: condifure this priority setting
-  controller = ControllerType::Velocity;
+
   for (int i = 0; i < nRobot; i = i + 2)
     manualInd.push_back(i);
 
@@ -44,6 +44,18 @@ bool MultiCartController::getInitParam() {
 
   if (!n.getParam("control_freq", freq)) {
     ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
+    return false;
+  }
+
+  std::string controller_str;
+  if (!nh.param("controller", controller_str, std::string("Velocity")))
+    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
+  else
+    ROS_INFO_STREAM("Controller: " << controller_str);
+
+  controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
+  if (controller == ControllerType::None) {
+    ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
     return false;
   }
 
@@ -109,28 +121,31 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
   } else if (MFmode == MFMode::Cooperation) {
   }
 
-  int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
+  if (controller == ControllerType::Velocity) {
+    int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
 
-  if (rc < 0) {
-    ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
-    return;
-  }
+    if (rc < 0) {
+      ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
+      return;
+    }
 
-  // low pass filter
-  for (int i = 0; i < nRobot; i++)
-    cartControllers[i]->filterJnt(dq_des[i]);
-
-  static ros::Time prev = time;
-  if ((time - prev).toSec() > 0.05) {
+    // low pass filter
     for (int i = 0; i < nRobot; i++)
-      cartControllers[i]->publishDesEffPoseVel(des_eff_pose[i], des_eff_vel[i]);
-    prev = time;
-  }
-  for (int i = 0; i < nRobot; i++) {
-    std_msgs::Float64MultiArray cmd;
-    cmd.data = std::vector<double>(dq_des[i].data.data(), dq_des[i].data.data() + dq_des[i].data.rows() * dq_des[i].data.cols());
-    cartControllers[i]->jntVelCmdPublisher.publish(cmd);
-  }
+      cartControllers[i]->filterJnt(dq_des[i]);
+
+    static ros::Time prev = time;
+    if ((time - prev).toSec() > 0.05) {
+      for (int i = 0; i < nRobot; i++)
+        cartControllers[i]->publishDesEffPoseVel(des_eff_pose[i], des_eff_vel[i]);
+      prev = time;
+    }
+    for (int i = 0; i < nRobot; i++) {
+      std_msgs::Float64MultiArray cmd;
+      cmd.data = std::vector<double>(dq_des[i].data.data(), dq_des[i].data.data() + dq_des[i].data.rows() * dq_des[i].data.cols());
+      cartControllers[i]->jntCmdPublisher.publish(cmd);
+    }
+  } else
+    ROS_WARN_STREAM("not implemented");
 
   for (auto& ind : manualInd) {
     // KDL::JntArray q_des;

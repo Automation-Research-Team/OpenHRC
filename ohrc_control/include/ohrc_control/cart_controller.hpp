@@ -9,6 +9,7 @@
 #include <tf2_eigen/tf2_eigen.h>
 #include <tf2_kdl/tf2_kdl.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <trajectory_msgs/JointTrajectory.h>
 #include <visualization_msgs/MarkerArray.h>
 
 #include <Eigen/Geometry>
@@ -56,9 +57,11 @@ class CartController {
   std::vector<double> initPose;
   bool getInitParam();
 
+  std::string controllerTopicName;
+
 protected:
   enum class SolverType { Trac_IK, KDL, MyIK, None } solver;
-  enum class ControllerType { Position, Velocity, Torque, None } controller;
+  enum class ControllerType { Position, Velocity, Torque, Trajectory, None } controller;
   ros::NodeHandle nh;
 
   ros::Subscriber jntStateSubscriber, userArmMarker;  //, subForce;
@@ -236,7 +239,7 @@ public:
 
   const double eps = 1e-5;
 
-  ros::Publisher jntPosCmdPublisher, jntVelCmdPublisher, markerPublisher, desStatePublisher;
+  ros::Publisher jntPosCmdPublisher, jntVelCmdPublisher, markerPublisher, desStatePublisher, jntCmdPublisher;
   std::mutex mtx;
   bool flagJntState = false;
 };

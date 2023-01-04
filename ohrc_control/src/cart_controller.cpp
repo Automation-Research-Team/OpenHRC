@@ -58,9 +58,14 @@ void CartController::init(std::string robot) {
   }
 
   // subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
+  if (controller == ControllerType::Trajectory)
+    jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + controllerTopicName + "/command", 2);
+  else
+    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + controllerTopicName + "/command", 2);
 
-  jntPosCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
-  jntVelCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
+  // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
+  // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
+  // jntTrjCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_trajectory_controller/command", 2);
   desStatePublisher = nh.advertise<ohrc_msgs::StateStamped>("/" + robot_ns + "desired_pose", 2);
   markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 2);
 
@@ -110,6 +115,18 @@ bool CartController::getInitParam() {
   if (controller == ControllerType::None) {
     ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
     return false;
+  }
+
+  std::string defaltControllerTopicName;
+  if (controller == ControllerType::Position)
+    defaltControllerTopicName = "joint_position_controller";
+  else if (controller == ControllerType::Velocity)
+    defaltControllerTopicName = "joint_velocity_controller";
+  else if (controller == ControllerType::Trajectory)
+    defaltControllerTopicName = "joint_trajectory_controller";
+
+  if (!nh.param("controller_topic_name", controllerTopicName, defaltControllerTopicName)) {
+    ROS_WARN_STREAM("Controller is not configured: " << defaltControllerTopicName);
   }
 
   if (!nh.getParam("control_freq", freq)) {
@@ -305,13 +322,17 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur) {
   std_msgs::Float64MultiArray cmd;
   if (controller == ControllerType::Position) {
     cmd.data = std::vector<double>(q_des_t.data(), q_des_t.data() + q_des_t.rows() * q_des_t.cols());
-    jntPosCmdPublisher.publish(cmd);
+    jntCmdPublisher.publish(cmd);
   } else if (controller == ControllerType::Velocity) {
     VectorXd dq_des_t_fb = dq_des_t + (1 - lastLoop) * 2.0 * (q_des_t - q_cur.data);
     cmd.data = std::vector<double>(dq_des_t_fb.data(), dq_des_t_fb.data() + dq_des_t_fb.rows() * dq_des_t_fb.cols());
-    jntVelCmdPublisher.publish(cmd);
+    jntCmdPublisher.publish(cmd);
   } else if (controller == ControllerType::Torque) {
+    ROS_ERROR_STREAM_ONCE("Torque controller is still not implemented...");
     // torque controller
+  } else if (controller == ControllerType::Trajectory) {
+    trajectory_msgs::JointTrajectory cmd_trj;
+    jntCmdPublisher.publish(cmd_trj);
   }
 
   if (!lastLoop)
@@ -429,7 +450,7 @@ void CartController::stopping(const ros::Time& /*time*/) {
   std_msgs::Float64MultiArray cmd;
   cmd.data.resize(7, 0.0);
   for (int i = 0; i < nJnt; i++)
-    jntVelCmdPublisher.publish(cmd);
+    jntCmdPublisher.publish(cmd);
 }
 
 void CartController::getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
@@ -511,7 +532,7 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     }
 
     cmd.data = std::vector<double>(q_des.data.data(), q_des.data.data() + q_des.data.rows() * q_des.data.cols());
-    jntPosCmdPublisher.publish(cmd);
+    jntCmdPublisher.publish(cmd);
     // ROS_INFO_STREAM(cmd);
 
     // q_init = q_des;
@@ -530,9 +551,11 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     filterJnt(dq_des);
 
     cmd.data = std::vector<double>(dq_des.data.data(), dq_des.data.data() + dq_des.data.rows() * dq_des.data.cols());
-    jntVelCmdPublisher.publish(cmd);
+    jntCmdPublisher.publish(cmd);
   } else if (controller == ControllerType::Torque) {
     // torque controller
+  } else if (controller == ControllerType::Trajectory) {
+    // Trajectory controller
   }
 
   // r.sleep();
@@ -598,7 +621,7 @@ int CartController::control() {
       }
 
       cmd.data = std::vector<double>(q_des.data.data(), q_des.data.data() + q_des.data.rows() * q_des.data.cols());
-      jntPosCmdPublisher.publish(cmd);
+      jntCmdPublisher.publish(cmd);
       // ROS_INFO_STREAM(cmd);
 
       q_init = q_des;
@@ -617,7 +640,7 @@ int CartController::control() {
       filterJnt(dq_des);
 
       cmd.data = std::vector<double>(dq_des.data.data(), dq_des.data.data() + dq_des.data.rows() * dq_des.data.cols());
-      jntVelCmdPublisher.publish(cmd);
+      jntCmdPublisher.publish(cmd);
     } else if (controller == ControllerType::Torque) {
       // torque controller
     }
