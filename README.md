@@ -53,3 +53,35 @@ $ roslaunch ohrc_teleoperation ur5e_bringup.launch
 # launch teleoperation controller
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch
 ```
+
+---
+## Development
+### How to teleoperate a robot from another interface
+Easest way is just to develop a node publishing a topic of the target end-effector state.
+The node is assumed that
+
+1. the state topic is published as ``/state`` in type of ``ohrc_msgs/state``.
+1. the state is defined in ``world``.
+
+Then, launch the following nodes: 
+```
+# launch gazebo simulation (e.g., with UR5e)
+$ roslaunch ohrc_teleoperation ur5e_bringup.launch
+
+# run the made node publishing 
+$ rosrun <develoeped node> 
+
+# launch teleoperation controller
+$ roslaunch ohrc_teleoperation state_topic_teleoperation.launch
+```
+
+Note that,
+- The translational motion is relative, and the rotational motion is absolute.
+- The motion is enabled while ``enabled`` in ``ohrc_msgs/state`` is ``true``.
+- The reference position of the relative translation is defined when the ``enabled`` if swtiched from `false` to `ture`.
+
+If you want to add any modification, but still want to use `ohrc_msgs/state` topic, please make another interface refering to `StateTopicInterface` class. (see `omega_interface.cpp`). For example, this way can add synchronous feedback function.
+
+If you want to develop from a lower scratch, e.g., calling API of the interface(device) synchronously without pub/sub `ohrc_msgs/state` topic, please develop another interface node refering to `MultiCartController` class. (see `marker_interface.cpp`).
+
+
