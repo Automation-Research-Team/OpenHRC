@@ -157,7 +157,7 @@ include_directories(
 
 set(interfaces
   marker
-  omega
+  state_topic
 )
 
 foreach(interface ${interfaces})
@@ -166,6 +166,15 @@ foreach(interface ${interfaces})
   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 endforeach(interface)
 
+set(state_topic_interfaces
+  omega
+)
+
+foreach(interface ${state_topic_interfaces})
+  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
+  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+endforeach(interface)
 
 #############
 ## Install ##
