@@ -46,13 +46,36 @@ $ catkin build -DCMAKE_BUILD_TYPE=Release
 ## Example
 
 ### Teoperation with UR5e using interactive marker
+
+#### Velocity level contorller (Recommended)
+Note that, the defalt controleller of UR5e is `JointTrajectoryController`, we need to load `JointVelocityController` in controller list configulation.
+The modification file for gazebo simulation can be found in `./example` directory.
+If you want to use the original (default) controller settings, please see next (Trajectory level controller). 
+
+
 ```
-# launch gazebo simulation with UR5e
+# launch modified gazebo simulation with UR5e
 $ roslaunch ohrc_teleoperation ur5e_bringup.launch
 
 # launch teleoperation controller
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch
 ```
+
+If you use this with the real hardware with [`ur_robot_driver`](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), you need to check loaded controller. (Probably, you just need to stop the default trajectory controller and start velocity controller which is already loaded [here](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/7b6b62bf81f2a032e0b6c7c8e1046cae35e079c7/ur_robot_driver/config/ur5e_controllers.yaml#L129))
+
+
+#### Trajectory level controller
+
+
+
+```
+# launch original gazebo simulation with UR5e
+$ roslaunch ur_gazebo ur5e_bringup.launch
+
+# launch teleoperation controller
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch
+```
+
 
 ---
 ## Development
