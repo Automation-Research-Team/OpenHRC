@@ -223,15 +223,15 @@ VectorXd MyIK::getRandomJntVel(const double& dt) {
 }
 
 int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt) {
+  boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration diff;
+
   q_out = q_init;
 
   if (!initialized) {
     ROS_ERROR("TRAC-IK was not properly initialized with a valid chain or limits.  IK cannot proceed");
     return -1;
   }
-
-  boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff;
 
   if (q_init.data.size() != types.size()) {
     ROS_ERROR_THROTTLE(1.0, "IK seeded with wrong number of joints.  Expected %d but got %d", (int)types.size(), (int)q_init.data.size());
@@ -249,9 +249,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   Affine3d T_d, T;
   tf::transformKDLToEigen(p_in, T_d);
   double time_left;
-  double alpha = 0.01;
+  double alpha = 1.5;
 
-  VectorXd w = VectorXd::Ones(nJnt);
+  VectorXd w = VectorXd::Ones(nJnt) * 1.0e-5;
   for (int i = 1; i < nJnt; i++)
     w(i) = w(i - 1) * 3.0;
   MatrixXd W = w.asDiagonal();
@@ -259,7 +259,7 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   // w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
   // MatrixXd W = w.asDiagonal();
 
-  double w_n = 1.0e-3;
+  double w_n = 1.0e-5;
 
   static VectorXd x_rest = x;
 
@@ -274,7 +274,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
     e = getCartError(T, T_d);
 
     diff = boost::posix_time::microsec_clock::local_time() - start_time;
+    // std::cout << dt << std::endl;
     time_left = dt - diff.total_nanoseconds() * 1.0e-9;
+    // std::cout << time_left << std::endl;
     if (time_left < 0.)
       return -1;
 
@@ -386,8 +388,7 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
   double gamma = 0.5 * e.transpose() * W * e + w_n;  // proposed by Sugihara-sensei
 
   // J_w_pinv = (J.transpose() * W.inverse() * J + gamma * MatrixXd::Identity(6, 6)).inverse() * J.transpose() * W.inverse();  // weighted & Levenberg–Marquardt
-  J_w_pinv =
-      (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
+  J_w_pinv = (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
 
   Matrix<double, 6, 1> dp;
   tf::twistKDLToEigen(des_eff_vel, dp);
@@ -522,8 +523,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
   return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
 }
 
-int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt,
-                                   const MatrixXd& userManipU) {
+int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt, const MatrixXd& userManipU) {
   KDL::Jacobian jac(nJnt);
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data;

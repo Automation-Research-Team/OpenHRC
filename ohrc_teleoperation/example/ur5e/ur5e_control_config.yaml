@@ -5,14 +5,12 @@ root_frame: "world" # IK calculation base frame (for multi-follower)
 controller: "Velocity"
 controller_topic_name: "joint_group_vel_controller"
 
-solver: "MyIK" 
+solver: "MyIK"
 
 control_freq: 500.0
 
-
 initIKAngle: [0, -1., 2., -2.5, -1.5, 0]
 initial_pose: [0.35, 0.0, 0.3, 3.141592, 0, 0]
-
 
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
   - ""
@@ -25,6 +23,6 @@ follower_list: # robot namespace list. They should be unique. ("") means the rob
   # - "toroboarm_8"
   # - "toroboarm_9"
 
-priority: "Manual"  #"Automation" #  (for multi-follower)
+priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Individual" #"Parallel" #   (for multi-follower)
-IK_mode: "Concatenated" # (for multi-follower)
+IK_mode: "Order" # (for multi-follower)

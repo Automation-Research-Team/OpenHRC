@@ -1,6 +1,7 @@
 #ifndef CART_CONTROLLER_HPP
 #define CART_CONTROLLER_HPP
 
+#include <control_msgs/FollowJointTrajectoryActionGoal.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
@@ -24,9 +25,12 @@
 #include "ohrc_common/filter_utility/butterworth.h"
 #include "ohrc_control/arm_marker.hpp"
 #include "ohrc_control/my_ik.hpp"
+#include "ohrc_control/ohrc_control.hpp"
 #include "ohrc_msgs/StateStamped.h"
 
 // TODO: Add namespace "Controllers"?
+
+using namespace ohrc_control;
 
 class CartController {
   static void signal_handler(int signum);
@@ -50,6 +54,7 @@ class CartController {
     KDL::JntArray q_des;
     KDL::JntArray q_init;
     ros::Time t_s;
+    bool isSentTrj = false;
   } s_moveInitPos;
 
   std::vector<double> _q_init_expect;
@@ -60,8 +65,8 @@ class CartController {
   std::string controllerTopicName;
 
 protected:
-  enum class SolverType { Trac_IK, KDL, MyIK, None } solver;
-  enum class ControllerType { Position, Velocity, Torque, Trajectory, None } controller;
+  SolverType solver;
+  ControllerType controller;
   ros::NodeHandle nh;
 
   ros::Subscriber jntStateSubscriber, userArmMarker;  //, subForce;
@@ -84,6 +89,8 @@ protected:
 
   unsigned int nJnt;         // number of robot joint
   const unsigned int m = 6;  // number of target DoF (usually 6)
+
+  std::vector<std::string> nameJnt;
 
   KDL::Frame _des_eff_pose;
   KDL::Frame _current_eff_pose;
@@ -126,7 +133,7 @@ protected:
   virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
 
-  int moveInitPos(const KDL::JntArray& q_cur);
+  int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt);
 
   const int index = 0;
   // int moveInitPos();
@@ -235,11 +242,25 @@ public:
     return this->_force;
   }
 
+  unsigned int getNJnt() {
+    return nJnt;
+  }
+
+  std::vector<std::string> getNameJnt() {
+    return nameJnt;
+  }
+
+  void setDesired(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
+    std::lock_guard<std::mutex> lock(mtx);
+    this->_des_eff_pose = des_eff_pose;
+    this->_des_eff_vel = des_eff_vel;
+  }
+
   double freq = 500.0;
 
   const double eps = 1e-5;
 
-  ros::Publisher jntPosCmdPublisher, jntVelCmdPublisher, markerPublisher, desStatePublisher, jntCmdPublisher;
+  ros::Publisher markerPublisher, desStatePublisher, jntCmdPublisher;
   std::mutex mtx;
   bool flagJntState = false;
 };

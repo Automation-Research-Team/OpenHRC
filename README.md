@@ -45,12 +45,12 @@ $ catkin build -DCMAKE_BUILD_TYPE=Release
 ---
 ## Example
 
-### Teoperation with UR5e using interactive marker
+### Teoperation using interactive marker
 
 #### Velocity level contorller (Recommended)
 Note that, the defalt controleller of UR5e is `JointTrajectoryController`, we need to load `JointVelocityController` in controller list configulation.
 The modification file for gazebo simulation can be found in `./example` directory.
-If you want to use the original (default) controller settings, please see next (Trajectory level controller). 
+If you want to use the original (default) controller settings due to like low control frequency issue (< 100 Hz), please see next (Trajectory level controller). 
 
 
 ```
@@ -58,22 +58,38 @@ If you want to use the original (default) controller settings, please see next (
 $ roslaunch ohrc_teleoperation ur5e_bringup.launch
 
 # launch teleoperation controller
-$ roslaunch ohrc_teleoperation marker_teleoperation.launch
+$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation.launch
 ```
 
 If you use this with the real hardware with [`ur_robot_driver`](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), you need to check loaded controller. (Probably, you just need to stop the default trajectory controller and start velocity controller which is already loaded [here](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/7b6b62bf81f2a032e0b6c7c8e1046cae35e079c7/ur_robot_driver/config/ur5e_controllers.yaml#L129))
 
 
 #### Trajectory level controller
+If your robot controller can only accept low freqency command (< 100), you can send trajectory (position) command instead of velocity command.
+Theoretically this trajecotry controller is stabler than the velocity controller,
+However, in practice, you would need to spend much time to adjust many paramters for making the robot movement smooth.
 
+If you are patient, you could achieve better motion like the following paper;
+```
+Jun Nakanishi, Shunki Itadera, Tadayoshi Aoyama & Yasuhisa Hasegawa (2020) Towards the development of an intuitive teleoperation system for human support robot using a VR device, Advanced Robotics, 34:19, 1239-1253, DOI: 10.1080/01691864.2020.1813623 
+```
 
-
+If you use original ur5e (6 DoF) configulation, please run 
 ```
 # launch original gazebo simulation with UR5e
 $ roslaunch ur_gazebo ur5e_bringup.launch
 
-# launch teleoperation controller
-$ roslaunch ohrc_teleoperation marker_teleoperation.launch
+# launch teleoperation controller using topic interface of JointTrajectoryController
+$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation_trj.launch
+```
+
+If you use fetch robot (8 DoF) (which is not included in this package installation), please run
+```
+# launch original gazebo simulation with Fetch
+$ roslaunch fetch_gazebo simple_grasp.launch
+
+# launch teleoperation controller using action interface of JointTrajectoryController
+$ roslaunch ohrc_teleoperation fetch_marker_teleoperation_trj.launch
 ```
 
 

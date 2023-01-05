@@ -6,9 +6,15 @@
 
 #include "ohrc_control/cart_controller.hpp"
 #include "ohrc_control/multi_my_ik.hpp"
+#include "ohrc_control/ohrc_control.hpp"
+
+using namespace ohrc_control;
 
 class MultiCartController {
   bool getInitParam();
+  void updateDesired();
+  std::vector<KDL::Frame> desPose;
+  std::vector<KDL::Twist> desVel;
 
 protected:
   ros::NodeHandle nh;
@@ -29,7 +35,7 @@ protected:
   // MyIK
   std::unique_ptr<MyIK::MultiMyIK> multimyik_solver_ptr;
 
-  enum ControllerType { Position, Velocity, Trajectory, Torque , None} controller;
+  ControllerType controller;
 
   std::vector<int> manualInd, autoInd;
 
