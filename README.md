@@ -146,3 +146,5 @@ If you want to add any modification, but still want to use `ohrc_msgs/state` top
 If you want to develop from a lower scratch, e.g., calling API of the interface(device) synchronously without pub/sub `ohrc_msgs/state` topic, please develop another interface node refering to `MultiCartController` class. (see `marker_interface.cpp`).
 
 
+## Author
+Shunki Itadera, Ph.D (s.itadera@aist.go.jp) - Researcher at ART, ICPS, AIST
