@@ -62,6 +62,18 @@ bool MultiCartController::getInitParam() {
     return false;
   }
 
+  std::string publisher_str;
+  if (!n.param("publisher", publisher_str, std::string("Velocity")))
+    ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
+  else
+    ROS_INFO_STREAM("Publisher: " << publisher_str);
+
+  publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
+  if (publisher == PublisherType::None) {
+    ROS_FATAL("Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
+    return false;
+  }
+
   MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual", n);
   IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated", n);
   priority = this->getEnumParam("priority", PriorityType::None, "Manual", n);
@@ -126,7 +138,7 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
       cmd.data = std::vector<double>(dq_des[i].data.data(), dq_des[i].data.data() + dq_des[i].data.rows() * dq_des[i].data.cols());
       cartControllers[i]->jntCmdPublisher.publish(cmd);
     }
-  } else if (controller == ControllerType::Position || controller == ControllerType::Trajectory || controller == ControllerType::TrajectoryAction) {
+  } else if (controller == ControllerType::Position) {
     int rc = multimyik_solver_ptr->CartToJnt(q_cur, desPose, q_des, dt);
 
     if (rc < 0) {
@@ -139,7 +151,7 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
       cartControllers[i]->filterJnt(q_des[i]);
 
     for (int i = 0; i < nRobot; i++) {
-      if (controller == ControllerType::Position) {
+      if (publisher == PublisherType::Position) {
         std_msgs::Float64MultiArray cmd;
         cmd.data = std::vector<double>(q_des[i].data.data(), q_des[i].data.data() + q_des[i].data.rows() * q_des[i].data.cols());
         cartControllers[i]->jntCmdPublisher.publish(cmd);
@@ -153,9 +165,9 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
           cmd_trj.points[0].positions.push_back(q_des[i].data[j]);
         }
 
-        if (controller == ControllerType::Trajectory) {
+        if (publisher == PublisherType::Trajectory) {
           cartControllers[i]->jntCmdPublisher.publish(cmd_trj);
-        } else if (controller == ControllerType::TrajectoryAction) {
+        } else if (publisher == PublisherType::TrajectoryAction) {
           control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
           cmd_trjAction.goal.trajectory = cmd_trj;
           cartControllers[i]->jntCmdPublisher.publish(cmd_trjAction);

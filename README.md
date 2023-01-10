@@ -70,27 +70,49 @@ Theoretically this trajecotry controller is stabler than the velocity controller
 However, in practice, you would need to spend much time to adjust many paramters for making the robot movement smooth.
 
 If you are patient, you could achieve better motion like the following paper;
-```
-Jun Nakanishi, Shunki Itadera, Tadayoshi Aoyama & Yasuhisa Hasegawa (2020) Towards the development of an intuitive teleoperation system for human support robot using a VR device, Advanced Robotics, 34:19, 1239-1253, DOI: 10.1080/01691864.2020.1813623 
-```
+
+>Jun Nakanishi, Shunki Itadera, Tadayoshi Aoyama & Yasuhisa Hasegawa (2020) Towards the development of an intuitive teleoperation system for human support robot using a VR device, Advanced Robotics, 34:19, 1239-1253, DOI: 10.1080/01691864.2020.1813623 
+
 
 If you use original ur5e (6 DoF) configulation, please run 
 ```
 # launch original gazebo simulation with UR5e
 $ roslaunch ur_gazebo ur5e_bringup.launch
 
-# launch teleoperation controller using topic interface of JointTrajectoryController
-$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation_trj.launch
+# launch one of the following teleoperation controllers using topic interface of JointTrajectoryController
+# 1) angle position-based trajectory controller
+$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation_pos_trj.launch
+
+# Or 2) angle velocity-based trajectory controller
+$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation_vel_trj.launch
 ```
+The diffrence between the two controllers is the way of solving IK. First one is based on IK finding the optimal joint angle and second one is based on differential IK finding the optimal joint anguler velocity.
+
+In the current implementation, the first controller often fail to solve the IK problem within the predefined time priod. The second one seems much useful in term of calculation cost.
+However, at a low frequency, the second controller bring large error or oscillation because there is a neumerical integration to get target angle from the angler velocity. In this case, please try IK-based controller.
+
+
 
 If you use fetch robot (8 DoF) (which is not included in this package installation), please run
 ```
-# launch original gazebo simulation with Fetch
-$ roslaunch fetch_gazebo simple_grasp.launch
+## install gazebo simulation of Fetch Robot like
+$ cd ~/catkin_ws/src
+$ git clone -b gazebo11 https://github.com/ZebraDevs/fetch_gazebo.git 
+$ cd fetch_gazebo
+$ rosdep install -i -y --from-paths ./ 
+$ catkin_make -DCMAKE_BUILD_TYPE=Release
 
-# launch teleoperation controller using action interface of JointTrajectoryController
-$ roslaunch ohrc_teleoperation fetch_marker_teleoperation_trj.launch
+# launch original gazebo simulation with Fetch
+$ roslaunch fetch_gazebo simulation.launch
+
+# launch one of the following teleoperation controllers using action interface of JointTrajectoryController
+# 1) angle position-based trajectory controller
+$ roslaunch ohrc_teleoperation fetch_marker_teleoperation_pos_trj.launch
+
+# Or 2) angle velocity-based trajectory controller
+$ roslaunch ohrc_teleoperation fetch_marker_teleoperation_vel_trj.launch
 ```
+
 
 
 ---
@@ -115,7 +137,7 @@ $ roslaunch ohrc_teleoperation state_topic_teleoperation.launch
 ```
 
 Note that,
-- The translational motion is relative, and the rotational motion is absolute.
+- The translational motion is relative, and the rotational motion is absolute, which mean that the user can do "indexing" for translational motion by repeating enabling and disabling. 
 - The motion is enabled while ``enabled`` in ``ohrc_msgs/state`` is ``true``.
 - The reference position of the relative translation is defined when the ``enabled`` if swtiched from `false` to `ture`.
 

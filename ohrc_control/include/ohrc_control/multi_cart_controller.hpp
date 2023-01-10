@@ -36,6 +36,7 @@ protected:
   std::unique_ptr<MyIK::MultiMyIK> multimyik_solver_ptr;
 
   ControllerType controller;
+  PublisherType publisher;
 
   std::vector<int> manualInd, autoInd;
 

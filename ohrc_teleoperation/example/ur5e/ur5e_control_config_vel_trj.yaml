@@ -1,19 +1,17 @@
 chain_start: "base_link" # base frame of commands
-chain_end: "gripper_link" # target eff frame
-root_frame: "base_link" # IK calculation base frame (for multi-follower)
+chain_end: "tool0" # target eff frame
+root_frame: "world" # IK calculation base frame (for multi-follower)
 
-# controller: "Velocity"
-# controller_topic_name: "joint_group_vel_controller"
-
-controller: "TrajectoryAction"
-controller_topic_name: "arm_with_torso_controller"
+controller: "Velocity" # "Position" or "Velocity"
+publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+topic_namespace: "eff_joint_traj_controller"
 
 solver: "MyIK"
 
 control_freq: 30.0
 
-initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
-initial_pose: [0.2, 0.3, 1.1, 0, 0, 0]
+initIKAngle: [0, -1., 2., -2.5, -1.5, 0]
+initial_pose: [0.35, 0.0, 0.3, 3.141592, 0, 0]
 
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
   - ""

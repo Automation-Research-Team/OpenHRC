@@ -62,11 +62,12 @@ class CartController {
   std::vector<double> initPose;
   bool getInitParam();
 
-  std::string controllerTopicName;
+  std::string publisherTopicName;
 
 protected:
   SolverType solver;
   ControllerType controller;
+  PublisherType publisher;
   ros::NodeHandle nh;
 
   ros::Subscriber jntStateSubscriber, userArmMarker;  //, subForce;
@@ -139,6 +140,16 @@ protected:
   // int moveInitPos();
 
   void resetFt();
+
+  void sendPositionCmd(const VectorXd& q_des);
+  void sendVelocityCmd(const VectorXd& dq_des);
+  void sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_des, const KDL::JntArray& q_cur, const bool& lastLoop);
+  void sendTrajectoryCmd(const VectorXd& q_des, const double& T);
+  void sendTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T);
+  void sendTrajectoryActionCmd(const VectorXd& q_des, const double& T);
+  void sendTrajectoryActionCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T);
+  void getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj);
+  void getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj);
 
 public:
   CartController();

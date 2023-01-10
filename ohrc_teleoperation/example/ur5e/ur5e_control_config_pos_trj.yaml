@@ -2,11 +2,9 @@ chain_start: "base_link" # base frame of commands
 chain_end: "tool0" # target eff frame
 root_frame: "world" # IK calculation base frame (for multi-follower)
 
-# controller: "Velocity"
-# controller_topic_name: "joint_group_vel_controller"
-
-controller: "Trajectory" # or "TrajectoryAction"
-controller_topic_name: "eff_joint_traj_controller"
+controller: "Position" # "Position" or "Velocity"
+publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+topic_namespace: "eff_joint_traj_controller"
 
 solver: "MyIK"
 

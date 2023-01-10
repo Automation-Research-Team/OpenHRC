@@ -58,12 +58,12 @@ void CartController::init(std::string robot) {
   }
 
   // subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
-  if (controller == ControllerType::Trajectory)
-    jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + controllerTopicName + "/command", 2);
-  else if (controller == ControllerType::TrajectoryAction)
-    jntCmdPublisher = nh.advertise<control_msgs::FollowJointTrajectoryActionGoal>("/" + robot_ns + controllerTopicName + "/follow_joint_trajectory/goal", 2);
+  if (publisher == PublisherType::Trajectory)
+    jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", 5);
+  else if (publisher == PublisherType::TrajectoryAction)
+    jntCmdPublisher = nh.advertise<control_msgs::FollowJointTrajectoryActionGoal>("/" + robot_ns + publisherTopicName + "/follow_joint_trajectory/goal", 5);
   else
-    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + controllerTopicName + "/command", 2);
+    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + publisherTopicName + "/command", 2);
 
   // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
   // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
@@ -109,26 +109,38 @@ bool CartController::getInitParam() {
 
   std::string controller_str;
   if (!nh.param("controller", controller_str, std::string("Velocity")))
-    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
+    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
   else
     ROS_INFO_STREAM("Controller: " << controller_str);
 
   controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
   if (controller == ControllerType::None) {
-    ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
+    ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
     return false;
   }
 
-  std::string defaltControllerTopicName;
-  if (controller == ControllerType::Position)
-    defaltControllerTopicName = "joint_position_controller";
-  else if (controller == ControllerType::Velocity)
-    defaltControllerTopicName = "joint_velocity_controller";
-  else if (controller == ControllerType::Trajectory || controller == ControllerType::TrajectoryAction)
-    defaltControllerTopicName = "joint_trajectory_controller";
+  std::string publisher_str;
+  if (!nh.param("publisher", publisher_str, std::string("Velocity")))
+    ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
+  else
+    ROS_INFO_STREAM("Publisher: " << publisher_str);
 
-  if (!nh.param("controller_topic_name", controllerTopicName, defaltControllerTopicName)) {
-    ROS_WARN_STREAM("Controller is not configured: " << defaltControllerTopicName);
+  publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
+  if (publisher == PublisherType::None) {
+    ROS_FATAL("Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
+    return false;
+  }
+
+  std::string defaltPublisherTopicName;
+  if (publisher == PublisherType::Position)
+    defaltPublisherTopicName = "joint_position_controller";
+  else if (publisher == PublisherType::Velocity)
+    defaltPublisherTopicName = "joint_velocity_controller";
+  else if (publisher == PublisherType::Trajectory || publisher == PublisherType::TrajectoryAction)
+    defaltPublisherTopicName = "joint_trajectory_controller";
+
+  if (!nh.param("topic_namespace", publisherTopicName, defaltPublisherTopicName)) {
+    ROS_WARN_STREAM("Publisher is not configured: " << defaltPublisherTopicName);
   }
 
   if (!nh.getParam("control_freq", freq)) {
@@ -199,14 +211,11 @@ void CartController::getVelocity(const KDL::Frame& frame, const KDL::Frame& prev
 }
 
 void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
-  KDL::JntArray q_cur(chain.getNrOfJoints());
-  KDL::JntArray dq_cur(chain.getNrOfJoints());
-
-  // static bool s_cbJntState.isFirst = true;
-  // static bool s_cbJntState.initialized = false;
+  KDL::JntArray q_cur(nJnt);
+  KDL::JntArray dq_cur(nJnt);
 
   unsigned int j = 0;
-  std::vector<std::string> nameJnt(chain.getNrOfJoints());
+  std::vector<std::string> nameJnt(nJnt);
   for (size_t i = 0; i < chain_segs.size(); i++) {
     auto result = std::find(msg->name.begin(), msg->name.end(), chain_segs[i].getJoint().getName());
 
@@ -225,7 +234,6 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
   if (s_cbJntState.isFirst) {
     if (!s_cbJntState.initialized) {
       s_cbJntState.initialized = moveInitPos(q_cur, nameJnt);
-      // initialiuzed = moveInitPos();
       return;
     }
 
@@ -236,6 +244,7 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
   }
 
   std::lock_guard<std::mutex> lock(mtx);
+
   _q_cur = q_cur;
   _dq_cur = dq_cur;
   if (!flagJntState)
@@ -328,47 +337,97 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
   VectorXd q_des_t = s_moveInitPos.q_init.data + (s_moveInitPos.q_des.data - s_moveInitPos.q_init.data) * (6.0 * s5 - 15.0 * s4 + 10.0 * s3);
   VectorXd dq_des_t = (s_moveInitPos.q_des.data - s_moveInitPos.q_init.data) * (30.0 * s4 - 60.0 * s3 + 30.0 * s2) / T;
 
-  std_msgs::Float64MultiArray cmd;
-  if (controller == ControllerType::Position) {
-    cmd.data = std::vector<double>(q_des_t.data(), q_des_t.data() + q_des_t.rows() * q_des_t.cols());
-    jntCmdPublisher.publish(cmd);
-  } else if (controller == ControllerType::Velocity) {
-    VectorXd dq_des_t_fb = dq_des_t + (1 - lastLoop) * 3.0 * (q_des_t - q_cur.data);
-    cmd.data = std::vector<double>(dq_des_t_fb.data(), dq_des_t_fb.data() + dq_des_t_fb.rows() * dq_des_t_fb.cols());
-    jntCmdPublisher.publish(cmd);
-  } else if (controller == ControllerType::Torque) {
-    ROS_ERROR_STREAM_ONCE("Torque controller is still not implemented...");
-    // torque controller
-  } else if (controller == ControllerType::Trajectory || controller == ControllerType::TrajectoryAction) {
-    if (!s_moveInitPos.isSentTrj) {
-      trajectory_msgs::JointTrajectory cmd_trj;
-      cmd_trj.points.resize(1);
-      // cmd_trj.header.stamp = ros::Time::now();
-
-      for (int i = 0; i < nJnt; i++) {
-        cmd_trj.joint_names.push_back(nameJnt[i]);
-        // cmd_trj.joint_names.push_back(chain_segs[i].getJoint().getName());
-        cmd_trj.points[0].time_from_start = ros::Duration(T);
-        cmd_trj.points[0].positions.push_back(s_moveInitPos.q_des.data[i]);
-        cmd_trj.points[0].velocities.push_back(0.0);
-        cmd_trj.points[0].accelerations.push_back(0.0);
-      }
-
-      if (controller == ControllerType::Trajectory) {
-        jntCmdPublisher.publish(cmd_trj);
-      } else if (controller == ControllerType::TrajectoryAction) {
-        control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
-        cmd_trjAction.goal.trajectory = cmd_trj;
-        jntCmdPublisher.publish(cmd_trjAction);
-      }
-      s_moveInitPos.isSentTrj = true;
-    }
+  switch (publisher) {
+    case PublisherType::Position:
+      sendPositionCmd(q_des_t);
+      break;
+    case PublisherType::Velocity:
+      sendVelocityCmd(q_des_t, dq_des_t, q_cur, lastLoop);
+      break;
+    case PublisherType::Torque:
+      ROS_ERROR_STREAM_ONCE("Torque controller is still not implemented...");
+      break;
+    case PublisherType::Trajectory:
+      sendTrajectoryCmd(s_moveInitPos.q_des.data, T * (1.0 - s));
+      break;
+    case PublisherType::TrajectoryAction:
+      sendTrajectoryActionCmd(s_moveInitPos.q_des.data, T * (1.0 - s));
+      break;
+    default:
+      ROS_ERROR_STREAM_ONCE("This publisher is not implemented...");
+      break;
   }
 
   if (!lastLoop)
     return false;
 
   return true;
+}
+
+void CartController::sendPositionCmd(const VectorXd& q_des) {
+  std_msgs::Float64MultiArray cmd;
+  cmd.data = std::vector<double>(q_des.data(), q_des.data() + q_des.rows() * q_des.cols());
+  jntCmdPublisher.publish(cmd);
+}
+
+void CartController::sendVelocityCmd(const VectorXd& dq_des) {
+  std_msgs::Float64MultiArray cmd;
+  cmd.data = std::vector<double>(dq_des.data(), dq_des.data() + dq_des.rows() * dq_des.cols());
+  jntCmdPublisher.publish(cmd);
+}
+void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_des, const KDL::JntArray& q_cur, const bool& lastLoop) {
+  double kp = 3.0;  // feedback p gain
+  std_msgs::Float64MultiArray cmd;
+  VectorXd dq_des_ = dq_des + (1.0 - (double)lastLoop) * kp * (q_des - q_cur.data);
+  sendVelocityCmd(dq_des_);
+}
+
+void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
+  cmd_trj.points.resize(1);
+  // cmd_trj.header.stamp = ros::Time::now();
+
+  for (int i = 0; i < nJnt; i++) {
+    cmd_trj.joint_names.push_back(nameJnt[i]);
+    cmd_trj.points[0].time_from_start = ros::Duration(T);
+    cmd_trj.points[0].positions.push_back(q_des[i]);
+    cmd_trj.points[0].velocities.push_back(0.0);
+    cmd_trj.points[0].accelerations.push_back(0.0);
+  }
+}
+
+void CartController::getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
+  cmd_trj.points.resize(1);
+  // cmd_trj.header.stamp = ros::Time::now();
+
+  for (int i = 0; i < nJnt; i++) {
+    cmd_trj.joint_names.push_back(nameJnt[i]);
+    cmd_trj.points[0].time_from_start = ros::Duration(T);
+    cmd_trj.points[0].positions.push_back(q_des[i]);
+    cmd_trj.points[0].velocities.push_back(dq_des[i]);
+    cmd_trj.points[0].accelerations.push_back(0.0);
+  }
+}
+void CartController::sendTrajectoryCmd(const VectorXd& q_des, const double& T) {
+  trajectory_msgs::JointTrajectory cmd_trj;
+  getTrajectoryCmd(q_des, T, cmd_trj);
+  jntCmdPublisher.publish(cmd_trj);
+}
+
+void CartController::sendTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T) {
+  trajectory_msgs::JointTrajectory cmd_trj;
+  getTrajectoryCmd(q_des, dq_des, T, cmd_trj);
+  jntCmdPublisher.publish(cmd_trj);
+}
+
+void CartController::sendTrajectoryActionCmd(const VectorXd& q_des, const double& T) {
+  control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
+  getTrajectoryCmd(q_des, T, cmd_trjAction.goal.trajectory);
+  jntCmdPublisher.publish(cmd_trjAction);
+}
+void CartController::sendTrajectoryActionCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T) {
+  control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
+  getTrajectoryCmd(q_des, dq_des, T, cmd_trjAction.goal.trajectory);
+  jntCmdPublisher.publish(cmd_trjAction);
 }
 
 void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
@@ -520,14 +579,6 @@ void CartController::update() {
 }
 void CartController::update(const ros::Time& time, const ros::Duration& period) {
   // std::cout << robot_ns << std::endl;
-  // // static ros::Rate r(freq);
-  // static KDL::Frame des_eff_pose, current_eff_pose;
-  // static KDL::Twist des_eff_vel;
-  // static KDL::JntArray q_cur, dq_cur;
-  // static std_msgs::Float64MultiArray cmd;
-  // static Matrix3d userManipU;
-  // static int rc;
-
   double dt = period.toSec();
 
   ROS_INFO_STREAM_ONCE("Start teleoperation");
@@ -547,46 +598,51 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
   // publishMarker(q_cur);
   getIKInput(dt, q_cur, des_eff_pose, des_eff_vel);
 
-  if (controller == ControllerType::Position || controller == ControllerType::Trajectory || controller == ControllerType::TrajectoryAction) {
+  if (controller == ControllerType::Position) {
     KDL::JntArray q_des(nJnt);
-    static KDL::JntArray q_init = q_cur;
+    // static KDL::JntArray q_init = q_cur;
 
-    if (solver == SolverType::Trac_IK)
-      rc = tracik_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des);
-    else if (solver == SolverType::KDL)
-      rc = kdl_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des);
-    else if (solver == SolverType::MyIK)
-      rc = myik_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des, dt);
-
+    switch (solver) {
+      case SolverType::Trac_IK:
+        rc = tracik_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des);
+        break;
+      case SolverType::KDL:
+        rc = kdl_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des);
+        break;
+      case SolverType::MyIK:
+        rc = myik_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des, dt);
+        break;
+    }
     if (rc < 0) {
       ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
       return;
     }
 
-    if (controller == ControllerType::Position) {
-      cmd.data = std::vector<double>(q_des.data.data(), q_des.data.data() + q_des.data.rows() * q_des.data.cols());
-      jntCmdPublisher.publish(cmd);
-    } else {
-      trajectory_msgs::JointTrajectory cmd_trj;
-      cmd_trj.points.resize(1);
-      cmd_trj.points[0].time_from_start = ros::Duration(dt);
-      for (int j = 0; j < nJnt; j++) {
-        cmd_trj.joint_names.push_back(nameJnt[j]);
-        // cmd_trj.joint_names.push_back(chain_segs[i].getJoint().getName());
-        cmd_trj.points[0].positions.push_back(q_des.data[j]);
-      }
+    // low pass filter
+    filterJnt(q_des);
 
-      if (controller == ControllerType::Trajectory) {
-        jntCmdPublisher.publish(cmd_trj);
-      } else if (controller == ControllerType::TrajectoryAction) {
-        control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
-        cmd_trjAction.goal.trajectory = cmd_trj;
-        jntCmdPublisher.publish(cmd_trjAction);
-      }
+    static KDL::JntArray q_des_prev = q_des;
+
+    switch (publisher) {
+      case PublisherType::Position:
+        sendPositionCmd(q_des.data);
+        break;
+      case PublisherType::Velocity:
+        sendVelocityCmd((q_des.data - q_des_prev.data) / dt);
+        break;
+      case PublisherType::Trajectory:
+        sendTrajectoryCmd(q_des.data, dt);
+        break;
+      case PublisherType::TrajectoryAction:
+        sendTrajectoryActionCmd(q_des.data, dt);
+        break;
+      default:
+        ROS_ERROR_STREAM_ONCE("This controller is not implemented...");
+        break;
     }
-    // ROS_INFO_STREAM(cmd);
 
-    // q_init = q_des;
+    q_des_prev = q_des;
+
   } else if (controller == ControllerType::Velocity) {
     KDL::JntArray dq_des(nJnt);
 
@@ -601,15 +657,28 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     // low pass filter
     filterJnt(dq_des);
 
-    cmd.data = std::vector<double>(dq_des.data.data(), dq_des.data.data() + dq_des.data.rows() * dq_des.data.cols());
-    jntCmdPublisher.publish(cmd);
+    switch (publisher) {
+      case PublisherType::Position:
+        sendPositionCmd(q_cur.data + dq_des.data * dt);
+        break;
+      case PublisherType::Velocity:
+        sendPositionCmd(dq_des.data);
+        break;
+      case PublisherType::Trajectory:
+        sendTrajectoryCmd(q_cur.data + dq_des.data * dt, dq_des.data, dt);
+        break;
+      case PublisherType::TrajectoryAction:
+        sendTrajectoryActionCmd(q_cur.data + dq_des.data * dt, dq_des.data, dt);
+        break;
+      default:
+        ROS_ERROR_STREAM_ONCE("This controller is not implemented...");
+        break;
+    }
+
   } else if (controller == ControllerType::Torque) {
     // torque controller
   } else
     ROS_ERROR_STREAM("Not Implemented!");
-
-  // r.sleep();
-  // }
 }
 
 void CartController::filterJnt(KDL::JntArray& q) {
