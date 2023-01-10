@@ -6,6 +6,8 @@ MarkerInterface::MarkerInterface() : server("eff_marker") {
 void MarkerInterface::starting() {
   MultiCartController::starting();
   _markerPose.resize(nRobot);
+  _markerDt.resize(nRobot);
+  t_prev.resize(nRobot, ros::Time::now());
   prevPoses.resize(nRobot);
   _flagSubInteractiveMarker.resize(nRobot, false);
   for (auto& ind : manualInd)
@@ -67,10 +69,13 @@ void MarkerInterface::configMarker(const CartController* cartController) {
 void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {
   std::lock_guard<std::mutex> lock(mtx_marker);
   // ROS_INFO_STREAM(*feedback);
+
   for (int i = 0; i < nRobot; i++) {
     if (feedback->marker_name == cartControllers[i]->getRobotNs()) {
       _markerPose[i] = feedback->pose;
+      _markerDt[i] = (ros::Time::now() - t_prev[i]).toSec();
       _flagSubInteractiveMarker[i] = true;
+      t_prev[i] = ros::Time::now();
       return;
     }
   }
@@ -78,11 +83,14 @@ void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarke
 
 void MarkerInterface::updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
   geometry_msgs::Pose markerPose;
+  double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
     if (!_flagSubInteractiveMarker[controller->getIndex()])
       return;
+    // _flagSubInteractiveMarker[controller->getIndex()] = false;
     markerPose = _markerPose[controller->getIndex()];
+    // markerDt = _markerDt[controller->getIndex()];
   }
 
   tf2::fromMsg(markerPose, pose);

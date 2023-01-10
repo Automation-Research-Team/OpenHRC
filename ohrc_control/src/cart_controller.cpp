@@ -371,10 +371,9 @@ void CartController::sendPositionCmd(const VectorXd& q_des) {
 }
 
 void CartController::sendVelocityCmd(const VectorXd& dq_des) {
-  std_msgs::Float64MultiArray cmd;
-  cmd.data = std::vector<double>(dq_des.data(), dq_des.data() + dq_des.rows() * dq_des.cols());
-  jntCmdPublisher.publish(cmd);
+  sendPositionCmd(dq_des);
 }
+
 void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_des, const KDL::JntArray& q_cur, const bool& lastLoop) {
   double kp = 3.0;  // feedback p gain
   std_msgs::Float64MultiArray cmd;
@@ -662,7 +661,7 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
         sendPositionCmd(q_cur.data + dq_des.data * dt);
         break;
       case PublisherType::Velocity:
-        sendPositionCmd(dq_des.data);
+        sendVelocityCmd(dq_des.data);
         break;
       case PublisherType::Trajectory:
         sendTrajectoryCmd(q_cur.data + dq_des.data * dt, dq_des.data, dt);
