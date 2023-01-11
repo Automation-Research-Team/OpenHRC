@@ -45,7 +45,7 @@ $ catkin build -DCMAKE_BUILD_TYPE=Release
 ---
 ## Examples
 
-1. Teleoperation library: [ohrc_teleoperation](https://github.com/itadera/OpenHRC/tree/main/ohrc_teleoperation)
+1. Teleoperation library: [ohrc_teleoperation](./ohrc_teleoperation)
 
 
 
