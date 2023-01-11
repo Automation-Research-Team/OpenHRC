@@ -49,7 +49,7 @@ void CartController::init(std::string robot) {
   nJnt = chain.getNrOfJoints();
   _q_cur.resize(nJnt);
 
-  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 2, &CartController::cbJntState, this, th);
+  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 1, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
 
   if (useManipOpt) {
@@ -59,19 +59,20 @@ void CartController::init(std::string robot) {
 
   // subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
   if (publisher == PublisherType::Trajectory)
-    jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", 5);
+    jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", 1);
   else if (publisher == PublisherType::TrajectoryAction)
-    jntCmdPublisher = nh.advertise<control_msgs::FollowJointTrajectoryActionGoal>("/" + robot_ns + publisherTopicName + "/follow_joint_trajectory/goal", 5);
+    jntCmdPublisher = nh.advertise<control_msgs::FollowJointTrajectoryActionGoal>("/" + robot_ns + publisherTopicName + "/follow_joint_trajectory/goal", 1);
   else
-    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + publisherTopicName + "/command", 2);
+    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + publisherTopicName + "/command", 1);
 
   // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
   // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
   // jntTrjCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_trajectory_controller/command", 2);
-  desStatePublisher = nh.advertise<ohrc_msgs::StateStamped>("/" + robot_ns + "desired_pose", 2);
-  markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 2);
+  desStatePublisher = nh.advertise<ohrc_msgs::StateStamped>("/" + robot_ns + "desired_pose", 1);
+  markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 1);
 
-  T_init = Translation3d(initPose[0], initPose[1], initPose[2]) * (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
+  T_init = Translation3d(initPose[0], initPose[1], initPose[2]) *
+           (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
 
   for (int i = 0; i < 6; i++)
     velFilter.push_back(butterworth(2, 5.0, freq));
@@ -226,6 +227,9 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
     dq_cur.data[j] = msg->velocity[std::distance(msg->name.begin(), result)];
     nameJnt[j] = msg->name[std::distance(msg->name.begin(), result)];
     j++;
+
+    if (j == nJnt)
+      break;
   }
 
   if (j != nJnt)
@@ -382,12 +386,12 @@ void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_d
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
+  cmd_trj.header.stamp = ros::Time::now();
   cmd_trj.points.resize(1);
-  // cmd_trj.header.stamp = ros::Time::now();
+  cmd_trj.points[0].time_from_start = ros::Duration(T);
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
-    cmd_trj.points[0].time_from_start = ros::Duration(T);
     cmd_trj.points[0].positions.push_back(q_des[i]);
     cmd_trj.points[0].velocities.push_back(0.0);
     cmd_trj.points[0].accelerations.push_back(0.0);
@@ -395,12 +399,12 @@ void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, tr
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
+  cmd_trj.header.stamp = ros::Time::now();
   cmd_trj.points.resize(1);
-  // cmd_trj.header.stamp = ros::Time::now();
+  cmd_trj.points[0].time_from_start = ros::Duration(T);
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
-    cmd_trj.points[0].time_from_start = ros::Duration(T);
     cmd_trj.points[0].positions.push_back(q_des[i]);
     cmd_trj.points[0].velocities.push_back(dq_des[i]);
     cmd_trj.points[0].accelerations.push_back(0.0);
@@ -426,6 +430,7 @@ void CartController::sendTrajectoryActionCmd(const VectorXd& q_des, const double
 void CartController::sendTrajectoryActionCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T) {
   control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
   getTrajectoryCmd(q_des, dq_des, T, cmd_trjAction.goal.trajectory);
+  cmd_trjAction.header.stamp = cmd_trjAction.goal.trajectory.header.stamp;
   jntCmdPublisher.publish(cmd_trjAction);
 }
 
@@ -597,9 +602,13 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
   // publishMarker(q_cur);
   getIKInput(dt, q_cur, des_eff_pose, des_eff_vel);
 
+  static KDL::JntArray dq_des(nJnt);
+  static KDL::JntArray q_des(q_cur);  // TODO: this might should be initialized with q_init
+
   if (controller == ControllerType::Position) {
-    KDL::JntArray q_des(nJnt);
+    // KDL::JntArray q_des(nJnt);
     // static KDL::JntArray q_init = q_cur;
+    KDL::JntArray q_des_prev = q_des;
 
     switch (solver) {
       case SolverType::Trac_IK:
@@ -620,14 +629,14 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     // low pass filter
     filterJnt(q_des);
 
-    static KDL::JntArray q_des_prev = q_des;
+    dq_des.data = (q_des.data - q_des_prev.data) / dt;
 
     switch (publisher) {
       case PublisherType::Position:
         sendPositionCmd(q_des.data);
         break;
       case PublisherType::Velocity:
-        sendVelocityCmd((q_des.data - q_des_prev.data) / dt);
+        sendVelocityCmd(dq_des.data);
         break;
       case PublisherType::Trajectory:
         sendTrajectoryCmd(q_des.data, dt);
@@ -643,10 +652,18 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     q_des_prev = q_des;
 
   } else if (controller == ControllerType::Velocity) {
-    KDL::JntArray dq_des(nJnt);
+    // Eigen::Matrix<double, 6, 1> a;
+    // tf::twistKDLToEigen(des_eff_vel, a);
+    // std::cout << a.transpose() << std::endl;
+
+    // Affine3d T;
+    // tf::transformKDLToEigen(des_eff_pose, T);
+    // std::cout << T.translation().transpose() << std::endl;
+    // std::cout << T.rotation() << std::endl;
 
     rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
     // rc = myik_solver_ptr->CartToJntVel_qp_manipOpt(q_cur, des_eff_pose, des_eff_vel, dq_des, dt, userManipU);
+    // std::cout << dq_des.data.transpose() << std::endl;
 
     if (rc < 0) {
       ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
@@ -655,19 +672,24 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
     // low pass filter
     filterJnt(dq_des);
+    // std::cout << dq_des.data.transpose() << std::endl;
+    // std::cout << (q_cur.data + dq_des.data * dt).transpose() << std::endl;
+    // std::cout << "---" << std::endl;
+
+    q_des.data += dq_des.data * dt;
 
     switch (publisher) {
       case PublisherType::Position:
-        sendPositionCmd(q_cur.data + dq_des.data * dt);
+        sendPositionCmd(q_des.data);
         break;
       case PublisherType::Velocity:
         sendVelocityCmd(dq_des.data);
         break;
       case PublisherType::Trajectory:
-        sendTrajectoryCmd(q_cur.data + dq_des.data * dt, dq_des.data, dt);
+        sendTrajectoryCmd(q_des.data, dq_des.data, dt);
         break;
       case PublisherType::TrajectoryAction:
-        sendTrajectoryActionCmd(q_cur.data + dq_des.data * dt, dq_des.data, dt);
+        sendTrajectoryActionCmd(q_des.data, dq_des.data, dt);
         break;
       default:
         ROS_ERROR_STREAM_ONCE("This controller is not implemented...");

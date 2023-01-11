@@ -64,6 +64,9 @@ class CartController {
 
   std::string publisherTopicName;
 
+  // KDL::JntArray dq_des;
+  // KDL::JntArray q_des;
+
 protected:
   SolverType solver;
   ControllerType controller;

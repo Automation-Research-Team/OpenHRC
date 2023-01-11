@@ -20,6 +20,9 @@ void MarkerInterface::configMarker(const CartController* cartController) {
   int_marker.header.frame_id = cartController->getRobotNs() + cartController->getChainStart();
   int_marker.header.stamp = ros::Time(0);
   int_marker.pose = tf2::toMsg(cartController->getT_init());
+
+  // int_marker.pose.position = tf2::toMsg(Vector3d(cartController->getT_init().translation()));
+  // int_marker.pose.orientation = tf2::toMsg(Quaterniond(cartController->getT_init().rotation().transpose()));
   int_marker.scale = 0.1;
   int_marker.name = cartController->getRobotNs();
 
@@ -95,8 +98,8 @@ void MarkerInterface::updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist
 
   tf2::fromMsg(markerPose, pose);
 
-  //   if (prevPoses[controller->getIndex()].p.Norm() = 0.0)  // initilize
-  //     prevPoses[controller->getIndex()] = pose;
+  if (prevPoses[controller->getIndex()].p.data[0] == 0.0 && prevPoses[controller->getIndex()].p.data[1] == 0.0 && prevPoses[controller->getIndex()].p.data[2] == 0.0)  // initilize
+    prevPoses[controller->getIndex()] = pose;
 
   controller->getVelocity(pose, prevPoses[controller->getIndex()], dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
 

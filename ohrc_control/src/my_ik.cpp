@@ -388,7 +388,8 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
   double gamma = 0.5 * e.transpose() * W * e + w_n;  // proposed by Sugihara-sensei
 
   // J_w_pinv = (J.transpose() * W.inverse() * J + gamma * MatrixXd::Identity(6, 6)).inverse() * J.transpose() * W.inverse();  // weighted & Levenberg–Marquardt
-  J_w_pinv = (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
+  J_w_pinv =
+      (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
 
   Matrix<double, 6, 1> dp;
   tf::twistKDLToEigen(des_eff_vel, dp);
@@ -452,7 +453,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   VectorXd dV = VectorXd::Zero(nJnt);
 
-  dV(0) = -(q_cur.data(0) - 0.);
+  // dV(0) = -(q_cur.data(0) - 0.);
   // static ros::Time t0 = ros::Time::now();
   // double t = (ros::Time::now() - t0).toSec();
   // dV(0) = -(q_cur.data(0) - (0.3 * sin(2.0 * M_PI * 0.1 * t)));
@@ -460,7 +461,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   MatrixXd S = MatrixXd::Zero(1, nJnt);  // selection matrix
   S(0) = 1.0;
 
-  std::vector<double> w_h = { 1.0e5, 1.0e2 };
+  std::vector<double> w_h = { 1.0e5, 0.0 };  //{ 1.0e5, 1.0e2 };
   std::vector<MatrixXd> H(w_h.size());
   H[0] = J.transpose() * J + gamma * MatrixXd::Identity(nJnt, nJnt);
   H[1] = S.transpose() * S;
@@ -520,10 +521,12 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
   KDL::Twist des_eff_vel_ = des_eff_vel;
   VectorXd e;
   updateVelP(q_cur, des_eff_pose, des_eff_vel_, e);
+
   return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
 }
 
-int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt, const MatrixXd& userManipU) {
+int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt,
+                                   const MatrixXd& userManipU) {
   KDL::Jacobian jac(nJnt);
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data;
