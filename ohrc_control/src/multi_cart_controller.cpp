@@ -27,6 +27,9 @@ MultiCartController::MultiCartController() {
     autoInd.push_back(i);
 
   setPriority(priority);
+
+  desPose.resize(nRobot);
+  desVel.resize(nRobot);
 }
 
 bool MultiCartController::getInitParam() {
@@ -48,7 +51,7 @@ bool MultiCartController::getInitParam() {
   }
 
   std::string controller_str;
-  if (!nh.param("controller", controller_str, std::string("Velocity")))
+  if (!n.param("controller", controller_str, std::string("Velocity")))
     ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
   else
     ROS_INFO_STREAM("Controller: " << controller_str);
@@ -56,6 +59,18 @@ bool MultiCartController::getInitParam() {
   controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
   if (controller == ControllerType::None) {
     ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
+    return false;
+  }
+
+  std::string publisher_str;
+  if (!n.param("publisher", publisher_str, std::string("Velocity")))
+    ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
+  else
+    ROS_INFO_STREAM("Publisher: " << publisher_str);
+
+  publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
+  if (publisher == PublisherType::None) {
+    ROS_FATAL("Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
     return false;
   }
 
@@ -95,37 +110,22 @@ void MultiCartController::starting() {
 }
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
-  std::vector<KDL::JntArray> dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
-  std::vector<KDL::Frame> des_eff_pose(nRobot);
-  std::vector<KDL::Twist> des_eff_vel(nRobot);
-
-  for (int i = 0; i < nRobot; i++) {
+  std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
+  for (int i = 0; i < nRobot; i++)
     cartControllers[i]->getState(q_cur[i], dq_cur[i]);
-    tf::transformEigenToKDL(cartControllers[i]->getT_init(), des_eff_pose[i]);
-  }
 
-  if (MFmode == MFMode::Individual) {
-    for (auto& ind : manualInd)
-      updateManualTargetPose(des_eff_pose[ind], des_eff_vel[ind], cartControllers[ind].get());
-    for (auto& ind : autoInd)
-      updateAutoTargetPose(des_eff_pose[ind], des_eff_vel[ind], cartControllers[ind].get());
-
-  } else if (MFmode == MFMode::Parallel) {
-    for (auto& ind : manualInd)
-      updateManualTargetPose(des_eff_pose[ind], des_eff_vel[ind], cartControllers[ind].get());
-    for (auto& ind : autoInd) {
-      des_eff_pose[ind] = des_eff_pose[manualInd[0]];
-      des_eff_vel[ind] = des_eff_vel[manualInd[0]];
-      updateAutoTargetPose(des_eff_pose[ind], des_eff_vel[ind], cartControllers[ind].get());
-    }
-  } else if (MFmode == MFMode::Cooperation) {
+  static ros::Time prev = time;
+  if ((time - prev).toSec() > 0.05) {
+    for (int i = 0; i < nRobot; i++)
+      cartControllers[i]->publishDesEffPoseVel(desPose[i], desVel[i]);
+    prev = time;
   }
 
   if (controller == ControllerType::Velocity) {
-    int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
+    int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, desPose, desVel, dq_des, dt);
 
     if (rc < 0) {
-      ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
+      ROS_WARN_STREAM("Failed to solve IK within dt. Skip this control loop");
       return;
     }
 
@@ -133,17 +133,48 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     for (int i = 0; i < nRobot; i++)
       cartControllers[i]->filterJnt(dq_des[i]);
 
-    static ros::Time prev = time;
-    if ((time - prev).toSec() > 0.05) {
-      for (int i = 0; i < nRobot; i++)
-        cartControllers[i]->publishDesEffPoseVel(des_eff_pose[i], des_eff_vel[i]);
-      prev = time;
-    }
     for (int i = 0; i < nRobot; i++) {
       std_msgs::Float64MultiArray cmd;
       cmd.data = std::vector<double>(dq_des[i].data.data(), dq_des[i].data.data() + dq_des[i].data.rows() * dq_des[i].data.cols());
       cartControllers[i]->jntCmdPublisher.publish(cmd);
     }
+  } else if (controller == ControllerType::Position) {
+    int rc = multimyik_solver_ptr->CartToJnt(q_cur, desPose, q_des, dt);
+
+    if (rc < 0) {
+      ROS_WARN_STREAM("Failed to solve IK within dt. Skip this control loop");
+      return;
+    }
+
+    // low pass filter
+    for (int i = 0; i < nRobot; i++)
+      cartControllers[i]->filterJnt(q_des[i]);
+
+    for (int i = 0; i < nRobot; i++) {
+      if (publisher == PublisherType::Position) {
+        std_msgs::Float64MultiArray cmd;
+        cmd.data = std::vector<double>(q_des[i].data.data(), q_des[i].data.data() + q_des[i].data.rows() * q_des[i].data.cols());
+        cartControllers[i]->jntCmdPublisher.publish(cmd);
+      } else {
+        trajectory_msgs::JointTrajectory cmd_trj;
+        cmd_trj.points.resize(1);
+        cmd_trj.points[0].time_from_start = ros::Duration(dt);
+        for (int j = 0; j < cartControllers[i]->getNJnt(); j++) {
+          cmd_trj.joint_names.push_back(cartControllers[i]->getNameJnt()[j]);
+          // cmd_trj.joint_names.push_back(chain_segs[i].getJoint().getName());
+          cmd_trj.points[0].positions.push_back(q_des[i].data[j]);
+        }
+
+        if (publisher == PublisherType::Trajectory) {
+          cartControllers[i]->jntCmdPublisher.publish(cmd_trj);
+        } else if (publisher == PublisherType::TrajectoryAction) {
+          control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
+          cmd_trjAction.goal.trajectory = cmd_trj;
+          cartControllers[i]->jntCmdPublisher.publish(cmd_trjAction);
+        }
+      }
+    }
+
   } else
     ROS_WARN_STREAM("not implemented");
 
@@ -151,15 +182,43 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     // KDL::JntArray q_des;
     // q_des.data = q_cur[ind].data + dq_des[ind].data * dt;
     // feedbackJnt(q_cur[ind], q_des, cartControllers[ind].get());
-    q_cur[ind].data += dq_des[ind].data * dt;
+    if (controller == ControllerType::Velocity)
+      q_cur[ind].data += dq_des[ind].data * dt;
+    else
+      q_cur[ind].data = q_des[ind].data;
     KDL::Frame p;
     cartControllers[ind]->JntToCart(q_cur[ind], p);
 
     Affine3d T_cur, T_des;
     tf::transformKDLToEigen(p, T_cur);
-    tf::transformKDLToEigen(des_eff_pose[ind], T_des);
+    tf::transformKDLToEigen(desPose[ind], T_des);
     feedbackCart(T_cur, T_des, cartControllers[ind].get());
   }
+}
+
+void MultiCartController::updateDesired() {
+  for (int i = 0; i < nRobot; i++)
+    tf::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
+
+  if (MFmode == MFMode::Individual) {
+    for (auto& ind : manualInd)
+      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+    for (auto& ind : autoInd)
+      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+
+  } else if (MFmode == MFMode::Parallel) {
+    for (auto& ind : manualInd)
+      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+    for (auto& ind : autoInd) {
+      desPose[ind] = desPose[manualInd[0]];
+      desVel[ind] = desVel[manualInd[0]];
+      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+    }
+  } else if (MFmode == MFMode::Cooperation) {
+  }
+
+  for (int i = 0; i < robots.size(); i++)
+    cartControllers[i]->setDesired(desPose[i], desVel[i]);
 }
 
 int MultiCartController::control() {
@@ -175,6 +234,8 @@ int MultiCartController::control() {
 
   ros::Rate r(freq);
   while (ros::ok()) {
+    updateDesired();
+
     if (IKmode == IKMode::Order) {
       for (int i = 0; i < robots.size(); i++)
         cartControllers[i]->update();

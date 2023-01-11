@@ -38,7 +38,7 @@
   <arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
 
   <!-- Controller configuration -->
-  <arg name="controller_config_file" default="$(find ohrc_teleoperation)/example/ur5e_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
+  <arg name="controller_config_file" default="$(find ohrc_teleoperation)/example/ur5e/ur5e_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
   <arg name="controllers" default="joint_state_controller joint_group_vel_controller" doc="Controllers that are activated by default."/>
   <arg name="stopped_controllers" default="" doc="Controllers that are initally loaded, but not started."/>
 
@@ -73,8 +73,6 @@
     <arg name="paused" value="$(arg paused)"/>
     <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
   </include>
-
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/example/marker_ur5e.rviz"/>
 
   <!-- </group> -->
 </launch>

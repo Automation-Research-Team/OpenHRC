@@ -1,24 +1,21 @@
-### for IK optimization
-chain_start: "base" # base frame of commands
-chain_end: "link7" # target eff frame
+chain_start: "base_link" # base frame of commands
+chain_end: "tool0" # target eff frame
 root_frame: "world" # IK calculation base frame (for multi-follower)
-
 
 controller: "Velocity" # "Position" or "Velocity"
 publisher: "Velocity" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
-topic_namespace: "joint_velocity_controller"
+topic_namespace: "joint_group_vel_controller"
 
 solver: "MyIK"
 
 control_freq: 500.0
 
-initIKAngle: [0, 0, 0, 0, 0, 0, 0]
-initial_pose: [0.35, 0.0, 0.3, 0.0, 3.141592, 0]
-
+initIKAngle: [0, -1., 2., -2.5, -1.5, 0] # size of this should be equal to DoF
+initial_pose: [0.35, 0.0, 0.3, 3.141592, 0, 0] # [x, y, z, roll, pitch, yaw]
 
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
-  - "toroboarm_1"
-  - "toroboarm_2"
+  - ""
+  # - "toroboarm_2"
   # - "toroboarm_3"
   # - "toroboarm_4"
   # - "toroboarm_5"
@@ -27,8 +24,6 @@ follower_list: # robot namespace list. They should be unique. ("") means the rob
   # - "toroboarm_8"
   # - "toroboarm_9"
 
-
-### for MFBT framework, which is developed by S. Itadera
-priority: "Manual"  #"Automation" #  (for multi-follower)
+priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Individual" #"Parallel" #   (for multi-follower)
-IK_mode: "Concatenated" # (for multi-follower)
+IK_mode: "Order" # (for multi-follower)

@@ -6,6 +6,8 @@ MarkerInterface::MarkerInterface() : server("eff_marker") {
 void MarkerInterface::starting() {
   MultiCartController::starting();
   _markerPose.resize(nRobot);
+  _markerDt.resize(nRobot);
+  t_prev.resize(nRobot, ros::Time::now());
   prevPoses.resize(nRobot);
   _flagSubInteractiveMarker.resize(nRobot, false);
   for (auto& ind : manualInd)
@@ -18,6 +20,9 @@ void MarkerInterface::configMarker(const CartController* cartController) {
   int_marker.header.frame_id = cartController->getRobotNs() + cartController->getChainStart();
   int_marker.header.stamp = ros::Time(0);
   int_marker.pose = tf2::toMsg(cartController->getT_init());
+
+  // int_marker.pose.position = tf2::toMsg(Vector3d(cartController->getT_init().translation()));
+  // int_marker.pose.orientation = tf2::toMsg(Quaterniond(cartController->getT_init().rotation().transpose()));
   int_marker.scale = 0.1;
   int_marker.name = cartController->getRobotNs();
 
@@ -67,10 +72,13 @@ void MarkerInterface::configMarker(const CartController* cartController) {
 void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {
   std::lock_guard<std::mutex> lock(mtx_marker);
   // ROS_INFO_STREAM(*feedback);
+
   for (int i = 0; i < nRobot; i++) {
     if (feedback->marker_name == cartControllers[i]->getRobotNs()) {
       _markerPose[i] = feedback->pose;
+      _markerDt[i] = (ros::Time::now() - t_prev[i]).toSec();
       _flagSubInteractiveMarker[i] = true;
+      t_prev[i] = ros::Time::now();
       return;
     }
   }
@@ -78,17 +86,20 @@ void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarke
 
 void MarkerInterface::updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
   geometry_msgs::Pose markerPose;
+  double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
     if (!_flagSubInteractiveMarker[controller->getIndex()])
       return;
+    // _flagSubInteractiveMarker[controller->getIndex()] = false;
     markerPose = _markerPose[controller->getIndex()];
+    // markerDt = _markerDt[controller->getIndex()];
   }
 
   tf2::fromMsg(markerPose, pose);
 
-  //   if (prevPoses[controller->getIndex()].p.Norm() = 0.0)  // initilize
-  //     prevPoses[controller->getIndex()] = pose;
+  if (prevPoses[controller->getIndex()].p.data[0] == 0.0 && prevPoses[controller->getIndex()].p.data[1] == 0.0 && prevPoses[controller->getIndex()].p.data[2] == 0.0)  // initilize
+    prevPoses[controller->getIndex()] = pose;
 
   controller->getVelocity(pose, prevPoses[controller->getIndex()], dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
 

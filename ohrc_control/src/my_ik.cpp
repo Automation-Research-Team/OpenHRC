@@ -223,15 +223,15 @@ VectorXd MyIK::getRandomJntVel(const double& dt) {
 }
 
 int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt) {
+  boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration diff;
+
   q_out = q_init;
 
   if (!initialized) {
     ROS_ERROR("TRAC-IK was not properly initialized with a valid chain or limits.  IK cannot proceed");
     return -1;
   }
-
-  boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff;
 
   if (q_init.data.size() != types.size()) {
     ROS_ERROR_THROTTLE(1.0, "IK seeded with wrong number of joints.  Expected %d but got %d", (int)types.size(), (int)q_init.data.size());
@@ -249,9 +249,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   Affine3d T_d, T;
   tf::transformKDLToEigen(p_in, T_d);
   double time_left;
-  double alpha = 0.01;
+  double alpha = 1.5;
 
-  VectorXd w = VectorXd::Ones(nJnt);
+  VectorXd w = VectorXd::Ones(nJnt) * 1.0e-5;
   for (int i = 1; i < nJnt; i++)
     w(i) = w(i - 1) * 3.0;
   MatrixXd W = w.asDiagonal();
@@ -259,7 +259,7 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   // w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
   // MatrixXd W = w.asDiagonal();
 
-  double w_n = 1.0e-3;
+  double w_n = 1.0e-5;
 
   static VectorXd x_rest = x;
 
@@ -274,7 +274,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
     e = getCartError(T, T_d);
 
     diff = boost::posix_time::microsec_clock::local_time() - start_time;
+    // std::cout << dt << std::endl;
     time_left = dt - diff.total_nanoseconds() * 1.0e-9;
+    // std::cout << time_left << std::endl;
     if (time_left < 0.)
       return -1;
 
@@ -451,7 +453,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   VectorXd dV = VectorXd::Zero(nJnt);
 
-  dV(0) = -(q_cur.data(0) - 0.);
+  // dV(0) = -(q_cur.data(0) - 0.);
   // static ros::Time t0 = ros::Time::now();
   // double t = (ros::Time::now() - t0).toSec();
   // dV(0) = -(q_cur.data(0) - (0.3 * sin(2.0 * M_PI * 0.1 * t)));
@@ -459,7 +461,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   MatrixXd S = MatrixXd::Zero(1, nJnt);  // selection matrix
   S(0) = 1.0;
 
-  std::vector<double> w_h = { 1.0e5, 1.0e2 };
+  std::vector<double> w_h = { 1.0e5, 0.0 };  //{ 1.0e5, 1.0e2 };
   std::vector<MatrixXd> H(w_h.size());
   H[0] = J.transpose() * J + gamma * MatrixXd::Identity(nJnt, nJnt);
   H[1] = S.transpose() * S;
@@ -519,6 +521,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
   KDL::Twist des_eff_vel_ = des_eff_vel;
   VectorXd e;
   updateVelP(q_cur, des_eff_pose, des_eff_vel_, e);
+
   return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
 }
 

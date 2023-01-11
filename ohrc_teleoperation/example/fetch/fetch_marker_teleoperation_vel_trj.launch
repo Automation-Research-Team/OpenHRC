@@ -3,12 +3,12 @@
   <!-- <arg name="priority" default="Manual" /> -->
 
   <node name="marker_teleoperation" pkg="ohrc_teleoperation" type="marker_teleoperation"  respawn="false" output="screen">
-    <rosparam command="load" file="$(find ohrc_teleoperation)/example/ur5e_control_config.yaml" />
+    <rosparam command="load" file="$(find ohrc_teleoperation)/example/fetch/fetch_control_config_vel_trj.yaml" />
     <rosparam command="load" file="$(find ohrc_teleoperation)/config/marker_config.yaml" />
     <!-- <param name="priority" value="$(arg priority)" /> -->
   </node>
 
 
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/example/marker_ur5e.rviz"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/example/teleoperation.rviz"/>
 
 </launch>

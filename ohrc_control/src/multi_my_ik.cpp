@@ -48,6 +48,8 @@ int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::ve
   }
 
   double alpha = 0.01;
+  double w_n = 1.0e-3;
+
   VectorXd x = VectorXd::Zero(nState);
 
   boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
@@ -77,7 +79,10 @@ int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::ve
       w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
       MatrixXd W = w.asDiagonal();
 
-      double w_n = 1.0e-3;
+      // VectorXd w = VectorXd::Ones(myIKs[i]->getNJnt());
+      // for (int i = 1; i < myIKs[i]->getNJnt(); i++)
+      //   w(i) = w(i - 1) * 3.0;
+      // MatrixXd W = w.asDiagonal();
 
       double gamma = 0.5 * e_.transpose() * W * e_ + w_n;
       MatrixXd J = jac.data;                                                                                                                     // proposed by Sugihara-sensei
@@ -87,10 +92,15 @@ int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::ve
       e.segment(i * 6, 6) = e_;
       x.segment(iJnt[i], myIKs[i]->getNJnt()) = xs[i];
 
-      double time_left = dt - diff.total_nanoseconds() * 1.0e-9;
-      if (e.dot(e) < eps || time_left < 0.)
+      if (e.dot(e) < eps)
         finished += 1;
+
+      // ROS_INFO_STREAM(e.dot(e));
     }
+    double time_left = dt - diff.total_nanoseconds() * 1.0e-9;
+    if (time_left < 0.0)
+      return -1;
+
     if (finished == nRobot)
       break;
 
@@ -106,6 +116,9 @@ int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::ve
       }
     }
   }
+
+  for (int i = 0; i < nRobot; i++)
+    q_out[i].data = xs[i];
 
   return 1;
 }

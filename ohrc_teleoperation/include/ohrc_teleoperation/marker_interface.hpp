@@ -17,6 +17,8 @@ protected:
 
   std::vector<KDL::Frame> prevPoses;
   std::vector<geometry_msgs::Pose> _markerPose;
+  std::vector<double> _markerDt;
+  std::vector<ros::Time> t_prev;
 
   std::mutex mtx_marker;
 
