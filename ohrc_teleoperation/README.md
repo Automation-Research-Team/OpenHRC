@@ -84,7 +84,7 @@ $ catkin_make -DCMAKE_BUILD_TYPE=Release
 $ roslaunch seed_r7_gazebo seed_r7_empty_world.launch
 
 # launch the following teleoperation controller using topic interface of JointTrajectoryController
-$ roslaunch ohrc_teleoperation fetch_marker_teleoperation_vel_trj.launch
+$ roslaunch ohrc_teleoperation seed_marker_teleoperation_vel_trj.launch
 ```
 
 
