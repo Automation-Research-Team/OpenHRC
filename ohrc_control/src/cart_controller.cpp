@@ -68,7 +68,8 @@ void CartController::init(std::string robot) {
   // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
   // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
   // jntTrjCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_trajectory_controller/command", 2);
-  desStatePublisher = nh.advertise<ohrc_msgs::StateStamped>("/" + robot_ns + "desired_pose", 1);
+  desStatePublisher = nh.advertise<ohrc_msgs::State>("/" + robot_ns + "state/desired", 1000);
+  curStatePublisher = nh.advertise<ohrc_msgs::State>("/" + robot_ns + "state/current", 1000);
   markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 1);
 
   T_init = Translation3d(initPose[0], initPose[1], initPose[2]) *
@@ -481,28 +482,53 @@ void CartController::filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& d
   tf::twistEigenToKDL(vel, des_eff_vel);
 }
 
-void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
-  ohrc_msgs::StateStamped state;
+void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher) {
+  ohrc_msgs::State state;
   state.header.stamp = ros::Time::now();
-  state.state.pose = tf2::toMsg(des_eff_pose);
-  state.state.twist.linear.x = des_eff_vel.vel[0];
-  state.state.twist.linear.y = des_eff_vel.vel[1];
-  state.state.twist.linear.z = des_eff_vel.vel[2];
-  state.state.twist.angular.x = des_eff_vel.rot[0];
-  state.state.twist.angular.y = des_eff_vel.rot[1];
-  state.state.twist.angular.z = des_eff_vel.rot[2];
-  desStatePublisher.publish(state);
+  state.pose = tf2::toMsg(pose);
+  state.twist.linear.x = vel.vel[0];
+  state.twist.linear.y = vel.vel[1];
+  state.twist.linear.z = vel.vel[2];
+  state.twist.angular.x = vel.rot[0];
+  state.twist.angular.y = vel.rot[1];
+  state.twist.angular.z = vel.rot[2];
+  publisher->publish(state);
 
-  geometry_msgs::TransformStamped transform;
-  // if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
-  //   return;
+  // geometry_msgs::TransformStamped transform;
+  // // if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
+  // //   return;
 
-  transform = tf2::kdlToTransform(des_eff_pose);
-  transform.header.stamp = ros::Time::now();
+  // transform = tf2::kdlToTransform(des_eff_pose);
+  // transform.header.stamp = ros::Time::now();
 
-  transform.header.frame_id = robot_ns + chain_start;
-  transform.child_frame_id = robot_ns + chain_end + "_d";
-  br.sendTransform(transform);
+  // transform.header.frame_id = robot_ns + chain_start;
+  // transform.child_frame_id = robot_ns + chain_end + "_d";
+  // br.sendTransform(transform);
+}
+
+void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
+  publishState(des_eff_pose, des_eff_vel, &desStatePublisher);
+  // ohrc_msgs::StateStamped state;
+  // state.header.stamp = ros::Time::now();
+  // state.state.pose = tf2::toMsg(des_eff_pose);
+  // state.state.twist.linear.x = des_eff_vel.vel[0];
+  // state.state.twist.linear.y = des_eff_vel.vel[1];
+  // state.state.twist.linear.z = des_eff_vel.vel[2];
+  // state.state.twist.angular.x = des_eff_vel.rot[0];
+  // state.state.twist.angular.y = des_eff_vel.rot[1];
+  // state.state.twist.angular.z = des_eff_vel.rot[2];
+  // desStatePublisher.publish(state);
+
+  // geometry_msgs::TransformStamped transform;
+  // // if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
+  // //   return;
+
+  // transform = tf2::kdlToTransform(des_eff_pose);
+  // transform.header.stamp = ros::Time::now();
+
+  // transform.header.frame_id = robot_ns + chain_start;
+  // transform.child_frame_id = robot_ns + chain_end + "_d";
+  // br.sendTransform(transform);
 }
 
 void CartController::publishMarker(const KDL::JntArray q_cur) {
@@ -550,27 +576,64 @@ void CartController::stopping(const ros::Time& /*time*/) {
 
 void CartController::getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
   KDL::JntArray dq_cur;
-  {
-    std::lock_guard<std::mutex> lock(mtx);
-    q_cur = this->_q_cur;
-    dq_cur = this->_dq_cur;
-    // userManipU = this->_userManipU;
-  }
+  KDL::Frame cur_eef_pose;
+  KDL::Twist cur_eef_vel;
 
-  // userManipU << 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
-  getDesEffPoseVel(dt, q_cur, dq_cur, des_eff_pose, des_eff_vel);
+  // getState(q_cur, dq_cur);
+
+  // // userManipU << 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+  // getDesEffPoseVel(dt, q_cur, dq_cur, des_eff_pose, des_eff_vel);
   // filterDesEffPoseVel(des_eff_pose, des_eff_vel);
-  // publishDesEffPoseVel(des_eff_pose, des_eff_vel);
+
+  getState(q_cur, dq_cur, cur_eef_pose, cur_eef_vel);
+  getDesState(cur_eef_pose, cur_eef_vel, des_eff_pose, des_eff_vel);
+  publishState(des_eff_pose, des_eff_vel, &desStatePublisher);
+  publishState(cur_eef_pose, cur_eef_vel, &curStatePublisher);
   // publishMarker(q_cur);
   //
 }
 
-void CartController::getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur) {
+// void CartController::getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur) {
+//   {
+//     std::lock_guard<std::mutex> lock(mtx);
+//     q_cur = this->_q_cur;
+//     dq_cur = this->_dq_cur;
+//   }
+// }
+
+void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel) {
+  bool disable;
   {
     std::lock_guard<std::mutex> lock(mtx);
-    q_cur = this->_q_cur;
-    dq_cur = this->_dq_cur;
+    des_pose = this->_des_eff_pose;
+    des_vel = this->_des_eff_vel;
+    disable = this->_disable;
   }
+
+  Affine3d T, Td;
+  tf::transformKDLToEigen(cur_pose, T);
+  tf::transformKDLToEigen(des_pose, Td);
+
+  static ros::Time t0 = ros::Time::now();
+  if (disable)
+    t0 = ros::Time::now();
+
+  double s = (ros::Time::now() - t0).toSec() / 2.0;
+  if (s > 1.0)
+    s = 1.0;  // 0-1
+
+  Td.translation() = s * (Td.translation() - T.translation()) + T.translation();
+  Td.linear() = Quaterniond(T.rotation()).slerp(s, Quaterniond(Td.rotation())).toRotationMatrix();
+
+  tf::transformEigenToKDL(Td, des_pose);
+
+  // KDL::Twist twist;
+  Matrix<double, 6, 1> v, vd;
+  tf::twistKDLToEigen(cur_vel, v);
+  tf::twistKDLToEigen(des_vel, vd);
+
+  vd = s * (vd - v) + v;
+  tf::twistEigenToKDL(vd, des_vel);
 }
 
 /**
@@ -741,7 +804,7 @@ int CartController::control() {
 
     getDesEffPoseVel(dt, q_cur, dq_cur, des_eff_pose, des_eff_vel);
     // filterDesEffPoseVel(des_eff_pose, des_eff_vel);
-    publishDesEffPoseVel(des_eff_pose, des_eff_vel);
+    // publishDesEffPoseVel(des_eff_pose, des_eff_vel);
     publishMarker(q_cur);
 
     if (controller == ControllerType::Position) {

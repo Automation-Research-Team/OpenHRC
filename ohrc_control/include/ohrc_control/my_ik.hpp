@@ -61,8 +61,10 @@ public:
   VectorXd getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double>& artificial_lower_limits, std::vector<double>& artificial_upper_limits, const double& dt);
   VectorXd getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits, std::vector<double>& upper_vel_limits, const double& dt);
 
-  MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param = "/robot_description", double _eps = 1e-5, Affine3d T_base_world = Affine3d::Identity(), SolveType _type = Pure);
-  MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps = 1e-5, Affine3d T_base_world = Affine3d::Identity(), SolveType _type = Pure);
+  MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param = "/robot_description", double _eps = 1e-5,
+       Affine3d T_base_world = Affine3d::Identity(), SolveType _type = Pure);
+  MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps = 1e-5, Affine3d T_base_world = Affine3d::Identity(),
+       SolveType _type = Pure);
 
   int CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt = 1.0e5);
   int CartToJntVel(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt = 1.0e-5);
@@ -70,7 +72,8 @@ public:
   int CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt);
   int CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_vel, const VectorXd& e, KDL::JntArray& dq_des, const double& dt);
 
-  int CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt, const MatrixXd& userManipU);
+  int CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt,
+                               const MatrixXd& userManipU);
 
   void updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel, VectorXd& e);
 
@@ -82,6 +85,9 @@ public:
   }
 
   int JntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac) {
+    int n = q_in.data.size();
+    if (jac.columns() < n)
+      jac.resize(n);
     return jacsolver->JntToJac(q_in, jac);
   }
 
@@ -94,7 +100,7 @@ public:
 
   int JntVelToCartVel(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Twist& v_out) {
     KDL::Jacobian jac;
-    jacsolver->JntToJac(q_in, jac);
+    JntToJac(q_in, jac);
     Matrix<double, 6, 1> v;
     v = jac.data * dq_in.data;
     tf::twistEigenToKDL(v, v_out);

@@ -168,18 +168,28 @@ public:
 
   void getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void getVelocity(const KDL::Frame& frame, const KDL::Frame& prev_frame, const double& dt, KDL::Twist& twist) const;
-  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur);
+  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur) {
+    std::lock_guard<std::mutex> lock(mtx);
+    q_cur = this->_q_cur;
+    dq_cur = this->_dq_cur;
+  }
 
-  void getCartState(KDL::Frame& frame, KDL::Twist& twist) {
-    KDL::JntArray q_cur;
-    KDL::JntArray dq_cur;
+  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur, KDL::Frame& frame, KDL::Twist& twist) {
     getState(q_cur, dq_cur);
 
     JntToCart(q_cur, frame);
     JntVelToCartVel(q_cur, dq_cur, twist);
   }
 
+  void getCartState(KDL::Frame& frame, KDL::Twist& twist) {
+    KDL::JntArray q_cur;
+    KDL::JntArray dq_cur;
+    getState(q_cur, dq_cur, frame, twist);
+  }
+
   void publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel);
+  void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
+  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);
@@ -274,7 +284,7 @@ public:
 
   const double eps = 1e-5;
 
-  ros::Publisher markerPublisher, desStatePublisher, jntCmdPublisher;
+  ros::Publisher markerPublisher, desStatePublisher, curStatePublisher, jntCmdPublisher;
   std::mutex mtx;
   bool flagJntState = false;
 };
