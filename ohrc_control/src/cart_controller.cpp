@@ -65,12 +65,12 @@ void CartController::init(std::string robot) {
   else
     jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + publisherTopicName + "/command", 1);
 
-  // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_position_controller/command", 2);
-  // jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_velocity_controller/command", 2);
-  // jntTrjCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + "joint_trajectory_controller/command", 2);
   desStatePublisher = nh.advertise<ohrc_msgs::State>("/" + robot_ns + "state/desired", 1000);
   curStatePublisher = nh.advertise<ohrc_msgs::State>("/" + robot_ns + "state/current", 1000);
   markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 1);
+
+  if (robot_ns != "")
+    service = nh.advertiseService("/" + robot_ns + "reset", &CartController::resetService, this);
 
   T_init = Translation3d(initPose[0], initPose[1], initPose[2]) *
            (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
@@ -166,6 +166,18 @@ bool CartController::getInitParam() {
 CartController::~CartController() {
 }
 
+bool CartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
+  resetPose();
+  return true;
+}
+
+void CartController::resetPose() {
+  ROS_WARN_STREAM("The robot will moves to the initail pose!");
+  s_cbJntState.isFirst = true;
+  initialized = false;
+  s_moveInitPos.isFirst = true;
+}
+
 Affine3d CartController::getTransform_base(std::string target) {
   return trans.getTransform(robot_ns + chain_start, target, ros::Time(0), ros::Duration(1.0));
 }
@@ -237,8 +249,8 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
     return;
 
   if (s_cbJntState.isFirst) {
-    if (!s_cbJntState.initialized) {
-      s_cbJntState.initialized = moveInitPos(q_cur, nameJnt);
+    if (!initialized) {
+      initialized = moveInitPos(q_cur, nameJnt);
       return;
     }
 

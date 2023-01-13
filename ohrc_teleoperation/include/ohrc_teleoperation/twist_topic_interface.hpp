@@ -33,6 +33,8 @@ protected:
   void cbTwist(const geometry_msgs::Twist::ConstPtr& msg);
   // virtual void modifyTargetState(geometry?::State& state){};
 
+  void resetInterface() override;
+
 public:
   TwistTopicInterface();
 };

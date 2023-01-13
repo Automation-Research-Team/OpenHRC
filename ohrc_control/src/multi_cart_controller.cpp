@@ -18,6 +18,8 @@ MultiCartController::MultiCartController() {
 
   multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root));
 
+  service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
+
   // TODO: condifure this priority setting
 
   for (int i = 0; i < nRobot; i = i + 2)
@@ -85,6 +87,14 @@ bool MultiCartController::getInitParam() {
     n.setParam("date", date);
   }
 
+  return true;
+}
+
+bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
+  for (int i = 0; i < nRobot; i++)
+    cartControllers[i]->resetPose();
+
+  resetInterface();
   return true;
 }
 
@@ -233,7 +243,16 @@ int MultiCartController::control() {
   double count = 0.0;
 
   ros::Rate r(freq);
+
   while (ros::ok()) {
+    bool block = false;
+    for (int i = 0; i < robots.size(); i++)
+      if (!cartControllers[i]->isInitialized())
+        block = true;
+
+    if (block)
+      continue;
+
     updateDesired();
 
     if (IKmode == IKMode::Order) {

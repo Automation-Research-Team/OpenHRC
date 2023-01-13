@@ -27,6 +27,7 @@
 #include "ohrc_control/my_ik.hpp"
 #include "ohrc_control/ohrc_control.hpp"
 #include "ohrc_msgs/StateStamped.h"
+#include "std_srvs/Empty.h"
 
 // TODO: Add namespace "Controllers"?
 
@@ -63,6 +64,11 @@ class CartController {
   bool getInitParam();
 
   std::string publisherTopicName;
+
+  ros::ServiceServer service;
+  bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+
+  bool initialized = false;
 
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
@@ -274,6 +280,10 @@ public:
     return nameJnt;
   }
 
+  bool isInitialized() {
+    return initialized;
+  }
+
   void setDesired(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
     std::lock_guard<std::mutex> lock(mtx);
     this->_des_eff_pose = des_eff_pose;
@@ -287,6 +297,8 @@ public:
   ros::Publisher markerPublisher, desStatePublisher, curStatePublisher, jntCmdPublisher;
   std::mutex mtx;
   bool flagJntState = false;
+
+  void resetPose();
 };
 
 #endif  // CART_CONTROLLER_HPP

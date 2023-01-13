@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 
   chatter_pub = n.advertise<std_msgs::Int8>("trigger", 1000);
 
-  ros::ServiceClient client = n.serviceClient<std_srvs::Empty>("add_two_ints");
+  ros::ServiceClient client = n.serviceClient<std_srvs::Empty>("/reset");
   std_srvs::Empty srv;
 
   ros::Rate loop_rate(10);
@@ -56,8 +56,9 @@ int main(int argc, char **argv) {
         _trigger = 0;
         ROS_INFO_STREAM("Stop Logging!");
       } else if (s == "r") {
-        client.call(srv);
-        ROS_INFO_STREAM("Sent reset service)");
+        if (!client.call(srv))
+          ROS_WARN_STREAM("Failed to call reset service.");
+        ROS_INFO_STREAM("Sent reset service");
       } else if (s == "q") {
         ROS_INFO_STREAM("Quit");
         ros::shutdown();
