@@ -10,6 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Github Actions Azure connection fix
+      run: |
+        sudo sed -i 's/azure\.//g' /etc/apt/sources.list
+
     - name: Setup ROS
       uses: ros-tooling/setup-ros@v0.4
       with:
