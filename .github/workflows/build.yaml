@@ -12,7 +12,7 @@ jobs:
 
     - name: Github Actions Azure connection fix
       run: |
-        sudo sed -i 's/azure\.//g' /etc/apt/sources.list
+        sudo sed -i 's/azure\./jp/g' /etc/apt/sources.list
 
     - name: Setup ROS
       uses: ros-tooling/setup-ros@v0.4
