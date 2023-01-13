@@ -224,7 +224,8 @@ VectorXd MyIK::getRandomJntVel(const double& dt) {
 
 int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt) {
   boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff;
+  double diff;
+  ros::Time start_time_ros = ros::Time::now();
 
   q_out = q_init;
 
@@ -273,9 +274,10 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
     MatrixXd J = jac.data;
     e = getCartError(T, T_d);
 
-    diff = boost::posix_time::microsec_clock::local_time() - start_time;
+    // diff = (boost::posix_time::microsec_clock::local_time() - start_time).total_nanoseconds() * 1.0e-9;
+    diff = (ros::Time::now() - start_time_ros).toSec();
     // std::cout << dt << std::endl;
-    time_left = dt - diff.total_nanoseconds() * 1.0e-9;
+    time_left = dt - diff;
     // std::cout << time_left << std::endl;
     if (time_left < 0.)
       return -1;
