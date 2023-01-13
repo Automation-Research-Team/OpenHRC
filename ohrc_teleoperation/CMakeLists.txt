@@ -10,6 +10,7 @@ add_compile_options(-std=c++17)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   ohrc_control
+  ohrc_common
   
 
   interactive_markers
@@ -158,6 +159,7 @@ include_directories(
 set(interfaces
   marker
   state_topic
+  twist_topic
 )
 
 foreach(interface ${interfaces})
