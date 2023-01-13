@@ -2,6 +2,7 @@
 
 ## Example - Teleoperation using interactive marker
 
+
 ### Velocity level controller (Recommended)
 The best way would be to control a robot at a velocity level.
 
@@ -16,7 +17,7 @@ If you want to use the original (default) controller settings due to like low co
 $ roslaunch ohrc_teleoperation ur5e_bringup.launch
 
 # launch teleoperation controller
-$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation.launch
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch
 ```
 
 If you use this with the real hardware with [`ur_robot_driver`](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), you need to check the loaded controller. (Probably, you just need to stop the default trajectory controller and start the loaded velocity controller [here](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/7b6b62bf81f2a032e0b6c7c8e1046cae35e079c7/ur_robot_driver/config/ur5e_controllers.yaml#L129))
@@ -40,10 +41,10 @@ $ roslaunch ur_gazebo ur5e_bringup.launch
 
 # launch one of the following teleoperation controllers using a topic interface of JointTrajectoryController
 # 1) angle position-based trajectory controller
-$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation_pos_trj.launch
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch controller:=pos_trj
 
 # Or 2) angle velocity-based trajectory controller
-$ roslaunch ohrc_teleoperation ur5e_marker_teleoperation_vel_trj.launch
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch controller:=vel_trj
 ```
 The difference between the two controllers is the way of solving IK. The first is based on IK finding the optimal joint angle, and the second is based on differential IK finding the optimal joint angular velocity.
 
@@ -65,9 +66,9 @@ $ catkin_make -DCMAKE_BUILD_TYPE=Release
 $ roslaunch fetch_gazebo simulation.launch
 
 # launch the following teleoperation controller using the action interface of JointTrajectoryController
-$ roslaunch ohrc_teleoperation fetch_marker_teleoperation_vel_trj.launch
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=fetch controller:=vel_trj
 ```
-This example includes a position-based trajectory controller (`fetch_marker_teleoperation_pos_trj.launch`) as well.
+This example includes a position-based trajectory controller (`controller:=pos_trj`) as well.
 
 #### Seed-noid (SEED-R7)
 If you use SEED-R7 (only left arm, 7 DoF) (which is not included in this package installation), please run
@@ -84,8 +85,23 @@ $ catkin_make -DCMAKE_BUILD_TYPE=Release
 $ roslaunch seed_r7_gazebo seed_r7_empty_world.launch
 
 # launch the following teleoperation controller using topic interface of JointTrajectoryController
-$ roslaunch ohrc_teleoperation seed_marker_teleoperation_vel_trj.launch
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=seed controller:=vel_trj
 ```
+
+## Example - Teleoperation using twist topic
+```
+$ roslaunch ohrc_teleoperation twist_topic_teleoperation.launch robot:=(robot) controller:=(controller)
+```
+This subscribe `/cmd_vel` topic and increment.
+
+## Example - Teleoperation using haptic interface `Omega`
+
+```
+$ roslaunch ohrc_teleoperation omega_teleoperation.launch robot:=(robot) controller:=(controller)
+```
+
+
+
 
 
 ---
