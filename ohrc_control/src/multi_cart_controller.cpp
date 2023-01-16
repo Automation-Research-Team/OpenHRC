@@ -111,12 +111,21 @@ void MultiCartController::setPriority(PriorityType priority) {
 }
 
 void MultiCartController::starting() {
-  for (int i = 0; i < nRobot; i++) {
+  for (int i = 0; i < nRobot; i++)  // {
     cartControllers[i]->starting(ros::Time::now());
-    cartControllers[i]->enableOperation();
-  }
+  // cartControllers[i]->enableOperation();
+  // }
   ROS_INFO_STREAM("Controller started!");
-  this->t0 = ros::Time::now();
+  // this->t0 = ros::Time::now();
+}
+
+void MultiCartController::stopping() {
+  for (int i = 0; i < nRobot; i++)                   // {
+    cartControllers[i]->stopping(ros::Time::now());  // TODO: Make sure that this works correctly.
+  // cartControllers[i]->enableOperation();
+  // }
+  ROS_INFO_STREAM("Controller stopped!");
+  // this->t0 = ros::Time::now();
 }
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
@@ -225,6 +234,7 @@ void MultiCartController::updateDesired() {
       updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
     }
   } else if (MFmode == MFMode::Cooperation) {
+    ROS_ERROR_STREAM("This MFmode is not implemented");
   }
 
   for (int i = 0; i < robots.size(); i++)
@@ -245,12 +255,7 @@ int MultiCartController::control() {
   ros::Rate r(freq);
 
   while (ros::ok()) {
-    bool block = false;
-    for (int i = 0; i < robots.size(); i++)
-      if (!cartControllers[i]->isInitialized())
-        block = true;
-
-    if (block)
+    if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
       continue;
 
     updateDesired();
@@ -270,6 +275,8 @@ int MultiCartController::control() {
 
     r.sleep();
   }
+
+  this->stopping();
 
   return 1;
 }

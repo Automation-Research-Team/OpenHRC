@@ -228,6 +228,8 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
   KDL::JntArray q_cur(nJnt);
   KDL::JntArray dq_cur(nJnt);
 
+  bool AllJntFound = false;
+
   unsigned int j = 0;
   std::vector<std::string> nameJnt(nJnt);
   for (size_t i = 0; i < chain_segs.size(); i++) {
@@ -236,16 +238,20 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
     if (result == msg->name.end())
       continue;
 
-    q_cur.data[j] = msg->position[std::distance(msg->name.begin(), result)];
-    dq_cur.data[j] = msg->velocity[std::distance(msg->name.begin(), result)];
-    nameJnt[j] = msg->name[std::distance(msg->name.begin(), result)];
+    int idx = std::distance(msg->name.begin(), result);
+
+    q_cur.data[j] = msg->position[idx];
+    dq_cur.data[j] = msg->velocity[idx];
+    nameJnt[j] = msg->name[idx];
     j++;
 
-    if (j == nJnt)
+    if (j == nJnt) {
+      AllJntFound = true;
       break;
+    }
   }
 
-  if (j != nJnt)
+  if (!AllJntFound)
     return;
 
   if (s_cbJntState.isFirst) {
@@ -580,9 +586,8 @@ void CartController::starting(const ros::Time& time) {
 void CartController::stopping(const ros::Time& /*time*/) {
   if (controller == ControllerType::Velocity) {
     std_msgs::Float64MultiArray cmd;
-    cmd.data.resize(7, 0.0);
-    for (int i = 0; i < nJnt; i++)
-      jntCmdPublisher.publish(cmd);
+    cmd.data.resize(nJnt, 0.0);
+    jntCmdPublisher.publish(cmd);
   }
 }
 

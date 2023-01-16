@@ -444,6 +444,11 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data;
 
+  KDL::Frame p;
+  JntToCart(q_cur, p);
+  Vector3d p_end;
+  tf::vectorKDLToEigen(p.p, p_end);
+
   Matrix<double, 6, 1> v;
   tf::twistKDLToEigen(des_eff_vel, v);
 
@@ -477,10 +482,22 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   std::vector<double> lower_vel_limits, upper_vel_limits;
   getUpdatedJntVelLimit(q_cur, lower_vel_limits, upper_vel_limits, dt);
+
+  int nCA = 0;
+  std::vector<MatrixXd> A_ca;
+  // if (enableCollisionAvoidance)
+  nCA = addSelfCollisionAvoidance(q_cur, p_end, J, lower_vel_limits, upper_vel_limits, A_ca);
+
   Map<VectorXd> lowerBound(&lower_vel_limits[0], nJnt);
   Map<VectorXd> upperBound(&upper_vel_limits[0], nJnt);
-  SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
-  linearMatrix.setIdentity();
+  // SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
+  // linearMatrix.setIdentity();
+
+  MatrixXd A(nJnt + nCA, nJnt);
+  A.block(0, 0, nJnt, nJnt) = MatrixXd::Identity(nJnt, nJnt);
+  for (int i = 0; i < nCA; i++)
+    A.block(nJnt + i, 0, 1, nJnt) = A_ca[i];
+  SparseMatrix<double> linearMatrix = A.sparseView();
 
   // TODO: update variables. this seems to be difficult with OSQP since this library is for sparse QP optimization. When updating hessian matrix and changing its sparse form, the
   // function init the solver instanse. At that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this
@@ -684,6 +701,43 @@ visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_c
   tf2::toMsg(Vector3d(s) * 0.5, manipuMarker.scale);
 
   return manipuMarker;
+}
+
+int MyIK::addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_end, const MatrixXd J_end, std::vector<double>& lower_vel_limits_,
+                                    std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
+  std::vector<Vector3d> p(nJnt);
+  std::vector<KDL::Frame> frame(nJnt);
+  fksolver->JntToCart(q_cur, frame);
+  for (int i = 0; i < nJnt; i++) {
+    tf::vectorKDLToEigen(frame[i].p, p[i]);  // cannot get correct position
+    std::cout << p[i].transpose() << std::endl;
+  }
+
+  double di = 0.05, ds = 0.03, eta = 0.1;
+
+  Vector3d p_min;
+  for (int i = 0; i < nJnt - 1; i++) {
+    double s = (p[i + 1] - p[i]).normalized().dot(p_end - p[i]);
+    if (s < 0)
+      p_min = p[i];
+    else if (s > (p[i + 1] - p[i]).norm())
+      p_min = p[i + 1];
+    else
+      p_min = s * (p[i + 1] - p[i]).normalized();
+
+    Vector3d d_vec = p_end - p_min;
+    double d = d_vec.norm();
+
+    KDL::Jacobian J;
+    jacsolver->JntToJac(q_cur, J, i + 1);
+
+    if (d < di) {
+      A_ca.push_back((d_vec / d).transpose() * (J_end - J.data));
+      lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
+      upper_vel_limits_.push_back(OsqpEigen::INFTY);
+    }
+  }
+  return A_ca.size();
 }
 
 }  // namespace MyIK

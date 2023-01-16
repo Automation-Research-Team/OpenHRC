@@ -57,6 +57,9 @@ class MyIK {
 
   void initialize();
 
+  int addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_end, const MatrixXd J_end, std::vector<double>& lower_vel_limits_,
+                                std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
+
 public:
   VectorXd getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double>& artificial_lower_limits, std::vector<double>& artificial_upper_limits, const double& dt);
   VectorXd getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits, std::vector<double>& upper_vel_limits, const double& dt);
