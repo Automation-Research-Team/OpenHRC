@@ -143,7 +143,7 @@ protected:
   virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
 
-  int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt);
+  int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt);
 
   const int index = 0;
   // int moveInitPos();

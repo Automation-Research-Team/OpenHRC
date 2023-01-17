@@ -53,6 +53,9 @@ class MyIK {
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fksolver;
 
   Affine3d T_base_world;
+
+  std::vector<std::string> nameJnt;
+  std::vector<int> idxSegJnt;
   // OsqpEigen::Solver qpSolver;
 
   void initialize();
@@ -119,6 +122,14 @@ public:
 
   unsigned int getNJnt() {
     return nJnt;
+  }
+
+  void setNameJnt(std::vector<std::string> name) {
+    this->nameJnt = name;
+  }
+
+  void setIdxSegJnt(std::vector<int> idx) {
+    this->idxSegJnt = idx;
   }
 };
 

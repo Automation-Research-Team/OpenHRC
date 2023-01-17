@@ -228,10 +228,11 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
   KDL::JntArray q_cur(nJnt);
   KDL::JntArray dq_cur(nJnt);
 
-  bool AllJntFound = false;
+  bool allJntFound = false;
 
   unsigned int j = 0;
   std::vector<std::string> nameJnt(nJnt);
+  std::vector<int> idxSegJnt(nJnt);
   for (size_t i = 0; i < chain_segs.size(); i++) {
     auto result = std::find(msg->name.begin(), msg->name.end(), chain_segs[i].getJoint().getName());
 
@@ -243,20 +244,21 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
     q_cur.data[j] = msg->position[idx];
     dq_cur.data[j] = msg->velocity[idx];
     nameJnt[j] = msg->name[idx];
+    idxSegJnt[j] = i;
     j++;
 
     if (j == nJnt) {
-      AllJntFound = true;
+      allJntFound = true;
       break;
     }
   }
 
-  if (!AllJntFound)
+  if (!allJntFound)
     return;
 
   if (s_cbJntState.isFirst) {
     if (!initialized) {
-      initialized = moveInitPos(q_cur, nameJnt);
+      initialized = moveInitPos(q_cur, nameJnt, idxSegJnt);
       return;
     }
 
@@ -305,7 +307,7 @@ void CartController::initDesWithJnt(const KDL::JntArray& q_cur) {
   this->_des_eff_vel = KDL::Twist::Zero();
 }
 
-int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt) {
+int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt) {
   ROS_INFO_STREAM_ONCE("Moving initial posiiton");
   // static bool isFirst = true;
 
@@ -324,12 +326,21 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);  // TODO: included in null space operation
 
     int rc;
-    if (solver == SolverType::Trac_IK)
-      rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
-    else if (solver == SolverType::KDL)
-      rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
-    else if (solver == SolverType::MyIK)
-      rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 3.0);
+    switch (solver) {
+      case SolverType::Trac_IK:
+        rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+        break;
+
+      case SolverType::KDL:
+        rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+        break;
+
+      case SolverType::MyIK:
+        myik_solver_ptr->setNameJnt(nameJnt);
+        myik_solver_ptr->setIdxSegJnt(idxSegJnt);
+        rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 3.0);
+        break;
+    }
 
     if (rc < 0) {
       ROS_ERROR_STREAM("Failed to find initial joint angle. Please check if the initial position is appropriate.");

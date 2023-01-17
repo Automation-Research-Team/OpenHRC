@@ -488,8 +488,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   // if (enableCollisionAvoidance)
   nCA = addSelfCollisionAvoidance(q_cur, p_end, J, lower_vel_limits, upper_vel_limits, A_ca);
 
-  Map<VectorXd> lowerBound(&lower_vel_limits[0], nJnt);
-  Map<VectorXd> upperBound(&upper_vel_limits[0], nJnt);
+  Map<VectorXd> lowerBound(&lower_vel_limits[0], lower_vel_limits.size());
+  Map<VectorXd> upperBound(&upper_vel_limits[0], upper_vel_limits.size());
   // SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
   // linearMatrix.setIdentity();
 
@@ -508,7 +508,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   // set the initial data of the QP solver
   qpSolver.data()->setNumberOfVariables(nJnt);
-  qpSolver.data()->setNumberOfConstraints(nJnt);
+  qpSolver.data()->setNumberOfConstraints(nJnt + nCA);
 
   if (!qpSolver.data()->setHessianMatrix(hessian))
     return -1;
@@ -706,14 +706,16 @@ visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_c
 int MyIK::addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_end, const MatrixXd J_end, std::vector<double>& lower_vel_limits_,
                                     std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
   std::vector<Vector3d> p(nJnt);
-  std::vector<KDL::Frame> frame(nJnt);
-  fksolver->JntToCart(q_cur, frame);
+  // std::vector<KDL::Frame> frame(chain.getNrOfSegments());
+  // fksolver->JntToCart(q_cur, frame);
+
   for (int i = 0; i < nJnt; i++) {
-    tf::vectorKDLToEigen(frame[i].p, p[i]);  // cannot get correct position
-    std::cout << p[i].transpose() << std::endl;
+    KDL::Frame frame;
+    fksolver->JntToCart(q_cur, frame, idxSegJnt[i]);
+    tf::vectorKDLToEigen(frame.p, p[i]);
   }
 
-  double di = 0.05, ds = 0.03, eta = 0.1;
+  double di = 0.1, ds = 0.08, eta = 0.1;
 
   Vector3d p_min;
   for (int i = 0; i < nJnt - 1; i++) {
@@ -728,11 +730,11 @@ int MyIK::addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_
     Vector3d d_vec = p_end - p_min;
     double d = d_vec.norm();
 
-    KDL::Jacobian J;
-    jacsolver->JntToJac(q_cur, J, i + 1);
-
     if (d < di) {
-      A_ca.push_back((d_vec / d).transpose() * (J_end - J.data));
+      KDL::Jacobian J(nJnt);
+      jacsolver->JntToJac(q_cur, J, idxSegJnt[i]);
+
+      A_ca.push_back((d_vec / d).transpose() * (J_end.block(0, 0, 3, nJnt) - J.data.block(0, 0, 3, nJnt)));
       lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
       upper_vel_limits_.push_back(OsqpEigen::INFTY);
     }
