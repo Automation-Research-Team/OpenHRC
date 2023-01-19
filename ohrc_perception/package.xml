@@ -53,6 +53,11 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
 
+  <depend>geometry_msgs</depend>
+  <depend>std_srv</depend>
+
+  <depend>ohrc_common</depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -2,13 +2,17 @@ cmake_minimum_required(VERSION 3.0.2)
 project(ohrc_perception)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  eigen_conversions
+  geometry_msgs
+  std_srvs
+  ohrc_common
 )
 
 ## System dependencies are found with CMake's conventions
@@ -117,6 +121,17 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+
+
+set(singles
+  ft_sensor_filter
+)
+
+foreach(single ${singles})
+  add_executable(${single} src/${single}.cpp)
+  add_dependencies(${single} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${single} ${catkin_LIBRARIES})
+endforeach(single)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

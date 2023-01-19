@@ -11,34 +11,36 @@
 std::unique_ptr<geometry_msgs_utility::WrenchStamped> forceLpf;
 ros::Publisher pub;
 
-unsigned int n = 1;
+unsigned int count = 1;
 unsigned int nMax = 1000;
 Eigen::VectorXd offset = Eigen::VectorXd::Zero(6);
 
 std::mutex mtx;
+geometry_msgs::WrenchStamped raw_;
 
 void cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
-  geometry_msgs::WrenchStamped raw_dz, filtered;
+  // geometry_msgs::WrenchStamped raw_dz, filtered;
 
   std::lock_guard<std::mutex> lock(mtx);
-  if (n < nMax) {
-    filtered.header = msg->header;
-    pub.publish(filtered);
-    offset = (offset * (n - 1) + tf2::fromMsg(msg->wrench)) / n;
-    n++;
-    return;
-  }
+  raw_ = *msg;
+  // if (n < nMax) {
+  //   filtered.header = msg->header;
+  //   pub.publish(filtered);
+  //   offset = (offset * (n - 1) + tf2::fromMsg(msg->wrench)) / n;
+  //   n++;
+  //   return;
+  // }
 
-  raw_dz.header = msg->header;
-  tf2::toMsg(tf2::fromMsg(msg->wrench) - offset, raw_dz.wrench);
-  forceLpf->deadZone_LPF(raw_dz, filtered);
+  // raw_dz.header = msg->header;
+  // tf2::toMsg(tf2::fromMsg(msg->wrench) - offset, raw_dz.wrench);
+  // forceLpf->deadZone_LPF(raw_dz, filtered);
 
-  pub.publish(filtered);
+  // pub.publish(filtered);
 }
 
 bool reset_offset(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
   std::lock_guard<std::mutex> lock(mtx);
-  n = 1;
+  count = 1;
   offset = Eigen::VectorXd::Zero(6);
   ROS_INFO_STREAM("Resetting ft sensor offset...");
   return true;
@@ -51,7 +53,16 @@ int main(int argc, char** argv) {
 
   geometry_msgs_utility::Wrench::paramLPF paramLpf;
   geometry_msgs_utility::paramDeadZone paramDeadZone;
-  if (!nh.param("dynpick_driver/rate", paramLpf.sampling_freq, 1000.0))
+
+  std::string topic_name_raw;
+  if (!n.param("topic_name/raw", topic_name_raw, std::string("/force")))
+    ROS_ERROR("Failed to get ft sensor rate");
+
+  std::string topic_name_filtered;
+  if (!n.param("topic_name/filtered", topic_name_filtered, std::string("/force_filtered")))
+    ROS_ERROR("Failed to get ft sensor rate");
+
+  if (!n.param("rate", paramLpf.sampling_freq, 1000.0))
     ROS_ERROR("Failed to get ft sensor rate");
   nMax = paramLpf.sampling_freq * 1;  // 1 second
 
@@ -75,13 +86,36 @@ int main(int argc, char** argv) {
 
   forceLpf.reset(new geometry_msgs_utility::WrenchStamped(paramLpf, paramDeadZone));
 
-  ros::ServiceServer service = nh.advertiseService("ft_sensor/reset_offset", reset_offset);
+  ros::ServiceServer service = nh.advertiseService("~/reset_offset", reset_offset);
 
-  ros::Subscriber sub = nh.subscribe("ft_sensor/raw", 2, cbForce);
-  pub = nh.advertise<geometry_msgs::WrenchStamped>("ft_sensor/filtered", 2);
+  ros::Subscriber sub = nh.subscribe(topic_name_raw, 2, cbForce);
+  pub = nh.advertise<geometry_msgs::WrenchStamped>(topic_name_filtered, 2);
 
-  ros::MultiThreadedSpinner spinner(2);
-  spinner.spin();
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+
+  ros::Rate r(paramLpf.sampling_freq);
+  while (ros::ok()) {
+    geometry_msgs::WrenchStamped raw, raw_dz, filtered;
+    {
+      std::lock_guard<std::mutex> lock(mtx);
+      raw = raw_;
+    }
+    if (count < nMax) {
+      offset = (offset * (count - 1) + tf2::fromMsg(raw.wrench)) / count;
+      count++;
+      r.sleep();
+      continue;
+    }
+
+    raw_dz.header = raw.header;
+    tf2::toMsg(tf2::fromMsg(raw.wrench) - offset, raw_dz.wrench);
+    forceLpf->deadZone_LPF(raw_dz, filtered);
+
+    pub.publish(filtered);
+    r.sleep();
+  }
+
   // ros::spin();
 
   return 0;

@@ -641,7 +641,8 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
 
   // KDL::Twist twist;
   Matrix<double, 6, 1> v, vd;
-  tf::twistKDLToEigen(cur_vel, v);
+  v << 0, 0, 0, 0, 0, 0;
+  // tf::twistKDLToEigen(cur_vel, v);
   tf::twistKDLToEigen(des_vel, vd);
 
   vd = s * (vd - v) + v;
