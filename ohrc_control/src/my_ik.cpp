@@ -106,8 +106,6 @@ void MyIK::initialize() {
 
   jacsolver.reset(new KDL::ChainJntToJacSolver(chain));
   fksolver.reset(new KDL::ChainFkSolverPos_recursive(chain));
-  // nl_solver.reset(new NLOPT_IK::NLOPT_IK(chain, lb, ub, maxtime, eps, NLOPT_IK::SumSq));
-  // iksolver.reset(new KDL::ChainIkSolverPos_TL(chain, lb, ub, maxtime, eps, true, true));
 
   for (uint i = 0; i < chain.segments.size(); i++) {
     std::string type = chain.segments[i].getJoint().getTypeName();
@@ -255,10 +253,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   VectorXd w = VectorXd::Ones(nJnt) * 1.0e-5;
   for (int i = 1; i < nJnt; i++)
     w(i) = w(i - 1) * 3.0;
-  MatrixXd W = w.asDiagonal();
   // VectorXd w(6);
   // w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
-  // MatrixXd W = w.asDiagonal();
+  MatrixXd W = w.asDiagonal();
 
   double w_n = 1.0e-5;
 
@@ -721,11 +718,10 @@ int MyIK::addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<doub
     jacsolver->JntToJac(q_cur, J[i + 1], idxSegJnt[i]);
   JntToJac(q_cur, J[nJnt + 1]);
 
-  double di = 0.10, ds = 0.08, eta = 0.1;
+  double di = 0.10, ds = 0.08, eta = 0.1;  // TODO: make these parameters rosparam
 
-  Vector3d p_end;
+  Vector3d p_end, p_min;
   MatrixXd J_end;
-  Vector3d p_min;
   int count = 0;
   for (int j = nJnt + 1; j > 2; j--) {  // set target end position and jacobian
     p_end = p[j];
