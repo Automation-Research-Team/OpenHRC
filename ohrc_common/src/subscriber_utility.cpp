@@ -1,6 +1,6 @@
 #include "ohrc_common/subscriber_utility.h"
 
-bool subscriber_utility::checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name) {
+bool subscriber_utility::checkTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name) {
   std::vector<bool> VecSubFlag(VecSubFlagPtr.size());
   ROS_INFO_STREAM(name << ": Waiting for subscribing " << VecSubFlag.size() << " topics ...");
 
@@ -27,5 +27,13 @@ bool subscriber_utility::checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::m
 }
 
 bool subscriber_utility::checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx) {
-  return checkSubTopic(VecSubFlagPtr, mtx, ros::this_node::getName());
+  return checkTopic(VecSubFlagPtr, mtx, ros::this_node::getName());
+}
+
+bool subscriber_utility::checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string robot_ns) {
+  return checkTopic(VecSubFlagPtr, mtx, ros::this_node::getName() + "::" + robot_ns);
+}
+
+bool subscriber_utility::checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name, std::string robot_ns) {
+  return checkTopic(VecSubFlagPtr, mtx, name + "::" + robot_ns);
 }

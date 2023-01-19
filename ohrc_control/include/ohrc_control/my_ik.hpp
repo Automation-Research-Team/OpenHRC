@@ -26,7 +26,8 @@ enum SolveType { Pure };
 enum BasicJointType { RotJoint, TransJoint, Continuous };
 
 class MyIK {
-  bool initialized;
+  bool initialized, enableSelfCollisionAvoidance = false;
+
   KDL::Chain chain;
   KDL::JntArray lb, ub, vb;
 

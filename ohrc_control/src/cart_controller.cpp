@@ -743,18 +743,7 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     q_des_prev = q_des;
 
   } else if (controller == ControllerType::Velocity) {
-    // Eigen::Matrix<double, 6, 1> a;
-    // tf::twistKDLToEigen(des_eff_vel, a);
-    // std::cout << a.transpose() << std::endl;
-
-    // Affine3d T;
-    // tf::transformKDLToEigen(des_eff_pose, T);
-    // std::cout << T.translation().transpose() << std::endl;
-    // std::cout << T.rotation() << std::endl;
-
     rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
-    // rc = myik_solver_ptr->CartToJntVel_qp_manipOpt(q_cur, des_eff_pose, des_eff_vel, dq_des, dt, userManipU);
-    // std::cout << dq_des.data.transpose() << std::endl;
 
     if (rc < 0) {
       ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
@@ -763,9 +752,6 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
     // low pass filter
     filterJnt(dq_des);
-    // std::cout << dq_des.data.transpose() << std::endl;
-    // std::cout << (q_cur.data + dq_des.data * dt).transpose() << std::endl;
-    // std::cout << "---" << std::endl;
 
     q_des.data += dq_des.data * dt;
 

@@ -92,6 +92,9 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
     }
   }
 
+  if (!nh.param("self_collision_avoidance", enableSelfCollisionAvoidance, false)) {
+    ROS_WARN_STREAM("self_collision_avoidance is not configured. Default is False");
+  }
   initialize();
 }
 
@@ -482,8 +485,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   int nCA = 0;
   std::vector<MatrixXd> A_ca;
-  // if (enableCollisionAvoidance)
-  nCA = addSelfCollisionAvoidance(q_cur, lower_vel_limits, upper_vel_limits, A_ca);
+  if (enableSelfCollisionAvoidance)
+    nCA = addSelfCollisionAvoidance(q_cur, lower_vel_limits, upper_vel_limits, A_ca);
 
   Map<VectorXd> lowerBound(&lower_vel_limits[0], lower_vel_limits.size());
   Map<VectorXd> upperBound(&upper_vel_limits[0], upper_vel_limits.size());
