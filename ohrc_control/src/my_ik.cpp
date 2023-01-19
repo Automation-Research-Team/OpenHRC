@@ -444,10 +444,10 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data;
 
-  KDL::Frame p;
-  JntToCart(q_cur, p);
-  Vector3d p_end;
-  tf::vectorKDLToEigen(p.p, p_end);
+  // KDL::Frame p;
+  // JntToCart(q_cur, p);
+  // Vector3d p_end;
+  // tf::vectorKDLToEigen(p.p, p_end);
 
   Matrix<double, 6, 1> v;
   tf::twistKDLToEigen(des_eff_vel, v);
@@ -486,7 +486,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   int nCA = 0;
   std::vector<MatrixXd> A_ca;
   // if (enableCollisionAvoidance)
-  nCA = addSelfCollisionAvoidance(q_cur, p_end, J, lower_vel_limits, upper_vel_limits, A_ca);
+  // nCA = addSelfCollisionAvoidance(q_cur, lower_vel_limits, upper_vel_limits, A_ca);
 
   Map<VectorXd> lowerBound(&lower_vel_limits[0], lower_vel_limits.size());
   Map<VectorXd> upperBound(&upper_vel_limits[0], upper_vel_limits.size());
@@ -703,22 +703,27 @@ visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_c
   return manipuMarker;
 }
 
-int MyIK::addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_end, const MatrixXd J_end, std::vector<double>& lower_vel_limits_,
-                                    std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
+int MyIK::addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
+  Vector3d p_end;
+  MatrixXd J_end;
+
+  std::vector<KDL::Frame> frame(chain.getNrOfSegments());
+  fksolver->JntToCart(q_cur, frame);
+
+  // positon of all joint
   std::vector<Vector3d> p(nJnt);
-  // std::vector<KDL::Frame> frame(chain.getNrOfSegments());
-  // fksolver->JntToCart(q_cur, frame);
+  for (int i = 0; i < nJnt; i++)
+    tf::vectorKDLToEigen(frame[idxSegJnt[i]].p, p[i]);
 
-  for (int i = 0; i < nJnt; i++) {
-    KDL::Frame frame;
-    fksolver->JntToCart(q_cur, frame, idxSegJnt[i]);
-    tf::vectorKDLToEigen(frame.p, p[i]);
-  }
+  // get end-effector position and jacobian
+  tf::vectorKDLToEigen(frame.back().p, p_end);
+  JntToJac(q_cur, J_end);
 
-  double di = 0.1, ds = 0.08, eta = 0.1;
+  double di = 0.10, ds = 0.08, eta = 0.1;
 
   Vector3d p_min;
-  for (int i = 0; i < nJnt - 1; i++) {
+  int count = 0;
+  for (int i = 0; i < nJnt - 2; i++) {
     double s = (p[i + 1] - p[i]).normalized().dot(p_end - p[i]);
     if (s < 0)
       p_min = p[i];
@@ -730,16 +735,19 @@ int MyIK::addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_
     Vector3d d_vec = p_end - p_min;
     double d = d_vec.norm();
 
-    if (d < di) {
+    if (d < di) {  // if the relative distance is smaller than influenced distance
+      ROS_INFO_STREAM("Hit >> " << i);
       KDL::Jacobian J(nJnt);
       jacsolver->JntToJac(q_cur, J, idxSegJnt[i]);
 
       A_ca.push_back((d_vec / d).transpose() * (J_end.block(0, 0, 3, nJnt) - J.data.block(0, 0, 3, nJnt)));
       lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
       upper_vel_limits_.push_back(OsqpEigen::INFTY);
+
+      count++;
     }
   }
-  return A_ca.size();
+  return count;
 }
 
 }  // namespace MyIK

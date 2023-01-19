@@ -60,8 +60,7 @@ class MyIK {
 
   void initialize();
 
-  int addSelfCollisionAvoidance(const KDL::JntArray q_cur, const Vector3d p_end, const MatrixXd J_end, std::vector<double>& lower_vel_limits_,
-                                std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
+  int addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
 
 public:
   VectorXd getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double>& artificial_lower_limits, std::vector<double>& artificial_upper_limits, const double& dt);
@@ -95,6 +94,13 @@ public:
     if (jac.columns() < n)
       jac.resize(n);
     return jacsolver->JntToJac(q_in, jac);
+  }
+
+  int JntToJac(const KDL::JntArray& q_in, MatrixXd& J) {
+    KDL::Jacobian jac;
+    int r = JntToJac(q_in, jac);
+    J = jac.data;
+    return r;
   }
 
   // void setT_base_world(const Affine3d T_base_world) {
