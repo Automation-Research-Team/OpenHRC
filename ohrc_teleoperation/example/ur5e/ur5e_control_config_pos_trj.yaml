@@ -8,6 +8,8 @@ topic_namespace: "eff_joint_traj_controller"
 
 solver: "MyIK"
 
+self_collision_avoidance: true
+
 control_freq: 30.0
 
 initIKAngle: [0, -1., 2., -2.5, -1.5, 0] # size of this should be equal to DoF

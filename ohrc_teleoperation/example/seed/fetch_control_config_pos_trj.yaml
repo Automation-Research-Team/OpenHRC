@@ -2,7 +2,7 @@ chain_start: "body_link" # base frame of commands
 chain_end: "l_hand_link" # target eff frame
 root_frame: "body_link" # IK calculation base frame (for multi-follower)
 
-controller: "Velocity" # "Position" or "Velocity"
+controller: "Position" # "Position" or "Velocity"
 publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
 topic_namespace: "larm_controller"
 

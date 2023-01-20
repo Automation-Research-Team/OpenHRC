@@ -6,6 +6,8 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
 class MarkerInterface : public virtual MultiCartController {
+  visualization_msgs::InteractiveMarker int_marker;
+
 protected:
   interactive_markers::InteractiveMarkerServer server;
 
@@ -24,6 +26,8 @@ protected:
 
   void starting() override;
   std::vector<bool> _flagSubInteractiveMarker;
+
+  void resetInterface() override;
 
 public:
   MarkerInterface();

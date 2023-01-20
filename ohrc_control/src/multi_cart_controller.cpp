@@ -18,6 +18,8 @@ MultiCartController::MultiCartController() {
 
   multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root));
 
+  service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
+
   // TODO: condifure this priority setting
 
   for (int i = 0; i < nRobot; i = i + 2)
@@ -88,6 +90,14 @@ bool MultiCartController::getInitParam() {
   return true;
 }
 
+bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
+  for (int i = 0; i < nRobot; i++)
+    cartControllers[i]->resetPose();
+
+  resetInterface();
+  return true;
+}
+
 void MultiCartController::setPriority(PriorityType priority) {
   std::vector<int> priorityInd;
   if (priority == PriorityType::Automation)
@@ -101,12 +111,21 @@ void MultiCartController::setPriority(PriorityType priority) {
 }
 
 void MultiCartController::starting() {
-  for (int i = 0; i < nRobot; i++) {
+  for (int i = 0; i < nRobot; i++)  // {
     cartControllers[i]->starting(ros::Time::now());
-    cartControllers[i]->enableOperation();
-  }
+  // cartControllers[i]->enableOperation();
+  // }
   ROS_INFO_STREAM("Controller started!");
-  this->t0 = ros::Time::now();
+  // this->t0 = ros::Time::now();
+}
+
+void MultiCartController::stopping() {
+  for (int i = 0; i < nRobot; i++)                   // {
+    cartControllers[i]->stopping(ros::Time::now());  // TODO: Make sure that this works correctly.
+  // cartControllers[i]->enableOperation();
+  // }
+  ROS_INFO_STREAM("Controller stopped!");
+  // this->t0 = ros::Time::now();
 }
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
@@ -215,6 +234,7 @@ void MultiCartController::updateDesired() {
       updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
     }
   } else if (MFmode == MFMode::Cooperation) {
+    ROS_ERROR_STREAM("This MFmode is not implemented");
   }
 
   for (int i = 0; i < robots.size(); i++)
@@ -233,7 +253,11 @@ int MultiCartController::control() {
   double count = 0.0;
 
   ros::Rate r(freq);
+
   while (ros::ok()) {
+    if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
+      continue;
+
     updateDesired();
 
     if (IKmode == IKMode::Order) {
@@ -251,6 +275,8 @@ int MultiCartController::control() {
 
     r.sleep();
   }
+
+  this->stopping();
 
   return 1;
 }

@@ -16,6 +16,9 @@ class MultiCartController {
   std::vector<KDL::Frame> desPose;
   std::vector<KDL::Twist> desVel;
 
+  ros::ServiceServer service;
+  bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+
 protected:
   ros::NodeHandle nh;
 
@@ -29,7 +32,7 @@ protected:
   std::string root_frame;
   double freq = 500.0;
   double dt = 0.002;
-  ros::Time t0;
+  // ros::Time t0;
   std::string date;
 
   // MyIK
@@ -58,6 +61,8 @@ protected:
   virtual void feedbackJnt(const KDL::JntArray& q_cur, const KDL::JntArray& q_des, CartController* controller){};
   virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller){};
 
+  virtual void resetInterface(){};
+
   template <typename T>
   T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
     std::string s;
@@ -80,6 +85,7 @@ public:
   MultiCartController();
   int control();
   virtual void starting();
+  void stopping();
   void update(const ros::Time& time, const ros::Duration& period);
 };
 

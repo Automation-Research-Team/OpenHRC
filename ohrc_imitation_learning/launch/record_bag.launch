@@ -1,0 +1,6 @@
+<launch>
+
+<node pkg="rosbag" type="record" name="rosbag_saver" args="-a -p -o $(find ohrc_imitation_learning)/data/data" output="log"/>
+<node pkg="ohrc_imitation_learning" type="trigger" name="trigger" output="screen" required="true"/>
+
+</launch>

@@ -27,6 +27,7 @@
 #include "ohrc_control/my_ik.hpp"
 #include "ohrc_control/ohrc_control.hpp"
 #include "ohrc_msgs/StateStamped.h"
+#include "std_srvs/Empty.h"
 
 // TODO: Add namespace "Controllers"?
 
@@ -63,6 +64,11 @@ class CartController {
   bool getInitParam();
 
   std::string publisherTopicName;
+
+  ros::ServiceServer service;
+  bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+
+  bool initialized = false;
 
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
@@ -137,7 +143,7 @@ protected:
   virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
 
-  int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt);
+  int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt);
 
   const int index = 0;
   // int moveInitPos();
@@ -168,18 +174,28 @@ public:
 
   void getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void getVelocity(const KDL::Frame& frame, const KDL::Frame& prev_frame, const double& dt, KDL::Twist& twist) const;
-  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur);
+  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur) {
+    std::lock_guard<std::mutex> lock(mtx);
+    q_cur = this->_q_cur;
+    dq_cur = this->_dq_cur;
+  }
 
-  void getCartState(KDL::Frame& frame, KDL::Twist& twist) {
-    KDL::JntArray q_cur;
-    KDL::JntArray dq_cur;
+  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur, KDL::Frame& frame, KDL::Twist& twist) {
     getState(q_cur, dq_cur);
 
     JntToCart(q_cur, frame);
     JntVelToCartVel(q_cur, dq_cur, twist);
   }
 
+  void getCartState(KDL::Frame& frame, KDL::Twist& twist) {
+    KDL::JntArray q_cur;
+    KDL::JntArray dq_cur;
+    getState(q_cur, dq_cur, frame, twist);
+  }
+
   void publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel);
+  void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
+  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);
@@ -264,6 +280,10 @@ public:
     return nameJnt;
   }
 
+  bool isInitialized() {
+    return initialized;
+  }
+
   void setDesired(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
     std::lock_guard<std::mutex> lock(mtx);
     this->_des_eff_pose = des_eff_pose;
@@ -274,9 +294,11 @@ public:
 
   const double eps = 1e-5;
 
-  ros::Publisher markerPublisher, desStatePublisher, jntCmdPublisher;
+  ros::Publisher markerPublisher, desStatePublisher, curStatePublisher, jntCmdPublisher;
   std::mutex mtx;
   bool flagJntState = false;
+
+  void resetPose();
 };
 
 #endif  // CART_CONTROLLER_HPP

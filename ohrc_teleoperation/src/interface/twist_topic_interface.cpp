@@ -88,3 +88,8 @@ void TwistTopicInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& tw
   tf::twistEigenToKDL(v, twist);
   // update pos and twist
 }
+
+void TwistTopicInterface::resetInterface() {
+  ROS_WARN_STREAM("Reset marker position");
+  state = ohrc_msgs::State();
+}
