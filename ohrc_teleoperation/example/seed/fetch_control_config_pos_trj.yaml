@@ -8,6 +8,8 @@ topic_namespace: "larm_controller"
 
 solver: "MyIK"
 
+self_collision_avoidance: true
+
 control_freq: 30.0
 
 initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
