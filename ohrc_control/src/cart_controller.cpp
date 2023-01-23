@@ -626,13 +626,18 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   tf::transformKDLToEigen(cur_pose, T);
   tf::transformKDLToEigen(des_pose, Td);
 
-  static ros::Time t0 = ros::Time::now();
-  if (disable)
-    t0 = ros::Time::now();
+  ros::Time t = ros::Time::now();
+  static ros::Time t0 = t;
+  double s;
 
-  double s = (ros::Time::now() - t0).toSec() / 2.0;
-  if (s > 1.0)
-    s = 1.0;  // 0-1
+  if (disable) {
+    t0 = t;
+    s = 0.0;
+  } else {
+    s = (t - t0).toSec() / 3.0;
+    if (s > 1.0)
+      s = 1.0;  // 0-1
+  }
 
   Td.translation() = s * (Td.translation() - T.translation()) + T.translation();
   Td.linear() = Quaterniond(T.rotation()).slerp(s, Quaterniond(Td.rotation())).toRotationMatrix();

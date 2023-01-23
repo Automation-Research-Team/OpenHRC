@@ -53,6 +53,7 @@ add_message_files(
   State.msg
   StateStamped.msg
   Gripper.msg
+  Contact.msg
 )
 
 ## Generate services in the 'srv' folder

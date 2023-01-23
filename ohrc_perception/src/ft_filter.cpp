@@ -7,9 +7,10 @@
 #include <mutex>
 
 #include "ohrc_common/geometry_msgs_utility/geometry_msgs_utility.h"
+#include "ohrc_msgs/Contact.h"
 
 std::unique_ptr<geometry_msgs_utility::WrenchStamped> forceLpf;
-ros::Publisher pub;
+ros::Publisher pub, pub_cnt;
 
 unsigned int count = 1;
 unsigned int nMax = 1000;
@@ -90,6 +91,7 @@ int main(int argc, char** argv) {
 
   ros::Subscriber sub = nh.subscribe(topic_name_raw, 2, cbForce);
   pub = nh.advertise<geometry_msgs::WrenchStamped>(topic_name_filtered, 2);
+  pub_cnt = nh.advertise<ohrc_msgs::Contact>("~/contact", 2);
 
   ros::AsyncSpinner spinner(2);
   spinner.start();
@@ -113,6 +115,15 @@ int main(int argc, char** argv) {
     forceLpf->deadZone_LPF(raw_dz, filtered);
 
     pub.publish(filtered);
+
+    ohrc_msgs::Contact cnt;
+    cnt.f_norm = tf2::fromMsg(filtered.wrench).norm();
+
+    if (cnt.f_norm > 10.0)
+      cnt.contact = true;
+
+    pub_cnt.publish(cnt);
+
     r.sleep();
   }
 

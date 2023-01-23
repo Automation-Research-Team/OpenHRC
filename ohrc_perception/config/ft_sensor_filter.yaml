@@ -1,5 +1,10 @@
 
 # ft_sensor_filter:
+
+  topic_name:
+    raw: "/force"
+    filtered: "/force2"
+
   cutoff_freq: 50.0
   lpf_order: 2
   deadzone:

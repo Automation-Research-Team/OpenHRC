@@ -57,6 +57,7 @@
   <depend>std_srv</depend>
 
   <depend>ohrc_common</depend>
+  <depend>ohrc_msgs</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
