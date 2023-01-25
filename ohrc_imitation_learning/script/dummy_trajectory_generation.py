@@ -32,7 +32,7 @@ def getMinJerkTraj_QP(dt, tf, x0, xf):
     N = int(tf/dt)
     Q = np.zeros((9, 9))
     R = np.eye(3)
-    P = np.eye(9)
+    P = np.eye(9)*100.0
     x0_ = x0[["px", "vx", "ax", "py", "vy", "ay",  "pz", "vz", "az"]].values
     xf_ = xf[["px", "vx", "ax", "py", "vy", "ay",  "pz", "vz", "az"]].values
 
@@ -66,9 +66,12 @@ def use_modeling_tool(A, B, N, Q, R, P, x0, xf, umax=None, umin=None, xmin=None,
     costlist = 0.0
     constrlist = []
 
+    k = cvxpy.Variable(N, boolean=True)
+
     for t in range(N):
         costlist += 0.5 * cvxpy.quad_form(x[:, t], Q)
         costlist += 0.5 * cvxpy.quad_form(u[:, t], R)
+        costlist += k[t]**2
 
         constrlist += [x[:, t + 1] == A @ x[:, t] + B @ u[:, t]]
 
@@ -89,23 +92,21 @@ def use_modeling_tool(A, B, N, Q, R, P, x0, xf, umax=None, umin=None, xmin=None,
         constrlist += [u >= umin]  # input constraints
 
     constrlist += [x[:, 0] == x0[:, 0]]  # inital state constraints
-    constrlist += [x[:, -1] == xf[:, 0]]  # inital state constraints
+    # constrlist += [x[:, -1] == xf[:, 0]]  # final state constraints
 
-    k = cvxpy.Variable(N+1, integer=True)
-    zh = 0.3
-    for t in range(N):
-        # constrlist += [cvxpy.quad_form(x[:, t], np.diag(
-        #     np.array([1, 0, 0, 0, 1, 0, 0, 0, 0]))) - cvxpy.multiply(1.0e6, k[t]) <= 0.05]
-
-        # constrlist += [cvxpy.multiply((x[6, t] - zh), k[t]) <= 0]
-        constrlist += [cvxpy.multiply((zh - x[6, :]), k) <= 0]
-    # for t in range(N-40, N):
-    #     constrlist += [cvxpy.quad_form(x[:, t], np.diag(
-    #         np.array([1, 0, 0, 0, 1, 0, 0, 0, 0]))) <= 0.05**2]
+    zh = 0.2
+    dh = 0.05
+    M = 10.0
+    # for t in range(N):
+    # pass
+    # constrlist += [k[0] == 0]
+    # constrlist += [-(x[6, t] - zh) <= M*k[t]]
+    # constrlist += [-(cvxpy.quad_form(x[:, t], np.diag(np.array([1,
+    #                  0, 0, 0, 1, 0, 0, 0, 0]))) - dh) >= -M*(1 - k[t])]
 
     prob = cvxpy.Problem(cvxpy.Minimize(costlist), constrlist)
 
-    prob.solve(verbose=False)
+    prob.solve(verbose=True)
 
     return x.value, u.value
 
@@ -200,7 +201,7 @@ if __name__ == "__main__":
     # p = np.empty((3, 0))
     # v = np.empty((1, 0))
 
-    tf = 10.0
+    tf = 1.0
     dt = 0.1
 
     fig = plt.figure()
