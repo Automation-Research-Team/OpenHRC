@@ -26,7 +26,8 @@ enum SolveType { Pure };
 enum BasicJointType { RotJoint, TransJoint, Continuous };
 
 class MyIK {
-  bool initialized;
+  bool initialized, enableSelfCollisionAvoidance = false;
+
   KDL::Chain chain;
   KDL::JntArray lb, ub, vb;
 
@@ -53,9 +54,14 @@ class MyIK {
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fksolver;
 
   Affine3d T_base_world;
+
+  std::vector<std::string> nameJnt;
+  std::vector<int> idxSegJnt;
   // OsqpEigen::Solver qpSolver;
 
   void initialize();
+
+  int addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
 
 public:
   VectorXd getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double>& artificial_lower_limits, std::vector<double>& artificial_upper_limits, const double& dt);
@@ -91,6 +97,13 @@ public:
     return jacsolver->JntToJac(q_in, jac);
   }
 
+  int JntToJac(const KDL::JntArray& q_in, MatrixXd& J) {
+    KDL::Jacobian jac;
+    int r = JntToJac(q_in, jac);
+    J = jac.data;
+    return r;
+  }
+
   // void setT_base_world(const Affine3d T_base_world) {
   //   this->T_base_world = T_base_world;
   // }
@@ -116,6 +129,14 @@ public:
 
   unsigned int getNJnt() {
     return nJnt;
+  }
+
+  void setNameJnt(std::vector<std::string> name) {
+    this->nameJnt = name;
+  }
+
+  void setIdxSegJnt(std::vector<int> idx) {
+    this->idxSegJnt = idx;
   }
 };
 

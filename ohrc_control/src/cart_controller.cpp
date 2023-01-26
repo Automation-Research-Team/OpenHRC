@@ -228,29 +228,37 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
   KDL::JntArray q_cur(nJnt);
   KDL::JntArray dq_cur(nJnt);
 
+  bool allJntFound = false;
+
   unsigned int j = 0;
   std::vector<std::string> nameJnt(nJnt);
+  std::vector<int> idxSegJnt(nJnt);
   for (size_t i = 0; i < chain_segs.size(); i++) {
     auto result = std::find(msg->name.begin(), msg->name.end(), chain_segs[i].getJoint().getName());
 
     if (result == msg->name.end())
       continue;
 
-    q_cur.data[j] = msg->position[std::distance(msg->name.begin(), result)];
-    dq_cur.data[j] = msg->velocity[std::distance(msg->name.begin(), result)];
-    nameJnt[j] = msg->name[std::distance(msg->name.begin(), result)];
+    int idx = std::distance(msg->name.begin(), result);
+
+    q_cur.data[j] = msg->position[idx];
+    dq_cur.data[j] = msg->velocity[idx];
+    nameJnt[j] = msg->name[idx];
+    idxSegJnt[j] = i;
     j++;
 
-    if (j == nJnt)
+    if (j == nJnt) {
+      allJntFound = true;
       break;
+    }
   }
 
-  if (j != nJnt)
+  if (!allJntFound)
     return;
 
   if (s_cbJntState.isFirst) {
     if (!initialized) {
-      initialized = moveInitPos(q_cur, nameJnt);
+      initialized = moveInitPos(q_cur, nameJnt, idxSegJnt);
       return;
     }
 
@@ -299,7 +307,7 @@ void CartController::initDesWithJnt(const KDL::JntArray& q_cur) {
   this->_des_eff_vel = KDL::Twist::Zero();
 }
 
-int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt) {
+int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt) {
   ROS_INFO_STREAM_ONCE("Moving initial posiiton");
   // static bool isFirst = true;
 
@@ -318,12 +326,21 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);  // TODO: included in null space operation
 
     int rc;
-    if (solver == SolverType::Trac_IK)
-      rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
-    else if (solver == SolverType::KDL)
-      rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
-    else if (solver == SolverType::MyIK)
-      rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 3.0);
+    switch (solver) {
+      case SolverType::Trac_IK:
+        rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+        break;
+
+      case SolverType::KDL:
+        rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+        break;
+
+      case SolverType::MyIK:
+        myik_solver_ptr->setNameJnt(nameJnt);
+        myik_solver_ptr->setIdxSegJnt(idxSegJnt);
+        rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 3.0);
+        break;
+    }
 
     if (rc < 0) {
       ROS_ERROR_STREAM("Failed to find initial joint angle. Please check if the initial position is appropriate.");
@@ -580,9 +597,8 @@ void CartController::starting(const ros::Time& time) {
 void CartController::stopping(const ros::Time& /*time*/) {
   if (controller == ControllerType::Velocity) {
     std_msgs::Float64MultiArray cmd;
-    cmd.data.resize(7, 0.0);
-    for (int i = 0; i < nJnt; i++)
-      jntCmdPublisher.publish(cmd);
+    cmd.data.resize(nJnt, 0.0);
+    jntCmdPublisher.publish(cmd);
   }
 }
 
@@ -733,18 +749,7 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     q_des_prev = q_des;
 
   } else if (controller == ControllerType::Velocity) {
-    // Eigen::Matrix<double, 6, 1> a;
-    // tf::twistKDLToEigen(des_eff_vel, a);
-    // std::cout << a.transpose() << std::endl;
-
-    // Affine3d T;
-    // tf::transformKDLToEigen(des_eff_pose, T);
-    // std::cout << T.translation().transpose() << std::endl;
-    // std::cout << T.rotation() << std::endl;
-
     rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
-    // rc = myik_solver_ptr->CartToJntVel_qp_manipOpt(q_cur, des_eff_pose, des_eff_vel, dq_des, dt, userManipU);
-    // std::cout << dq_des.data.transpose() << std::endl;
 
     if (rc < 0) {
       ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
@@ -753,9 +758,6 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
     // low pass filter
     filterJnt(dq_des);
-    // std::cout << dq_des.data.transpose() << std::endl;
-    // std::cout << (q_cur.data + dq_des.data * dt).transpose() << std::endl;
-    // std::cout << "---" << std::endl;
 
     q_des.data += dq_des.data * dt;
 

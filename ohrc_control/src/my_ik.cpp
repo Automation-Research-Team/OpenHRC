@@ -92,6 +92,9 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
     }
   }
 
+  if (!nh.param("self_collision_avoidance", enableSelfCollisionAvoidance, false)) {
+    ROS_WARN_STREAM("self_collision_avoidance is not configured. Default is False");
+  }
   initialize();
 }
 
@@ -106,8 +109,6 @@ void MyIK::initialize() {
 
   jacsolver.reset(new KDL::ChainJntToJacSolver(chain));
   fksolver.reset(new KDL::ChainFkSolverPos_recursive(chain));
-  // nl_solver.reset(new NLOPT_IK::NLOPT_IK(chain, lb, ub, maxtime, eps, NLOPT_IK::SumSq));
-  // iksolver.reset(new KDL::ChainIkSolverPos_TL(chain, lb, ub, maxtime, eps, true, true));
 
   for (uint i = 0; i < chain.segments.size(); i++) {
     std::string type = chain.segments[i].getJoint().getTypeName();
@@ -255,10 +256,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   VectorXd w = VectorXd::Ones(nJnt) * 1.0e-5;
   for (int i = 1; i < nJnt; i++)
     w(i) = w(i - 1) * 3.0;
-  MatrixXd W = w.asDiagonal();
   // VectorXd w(6);
   // w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
-  // MatrixXd W = w.asDiagonal();
+  MatrixXd W = w.asDiagonal();
 
   double w_n = 1.0e-5;
 
@@ -444,6 +444,11 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data;
 
+  // KDL::Frame p;
+  // JntToCart(q_cur, p);
+  // Vector3d p_end;
+  // tf::vectorKDLToEigen(p.p, p_end);
+
   Matrix<double, 6, 1> v;
   tf::twistKDLToEigen(des_eff_vel, v);
 
@@ -477,10 +482,22 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   std::vector<double> lower_vel_limits, upper_vel_limits;
   getUpdatedJntVelLimit(q_cur, lower_vel_limits, upper_vel_limits, dt);
-  Map<VectorXd> lowerBound(&lower_vel_limits[0], nJnt);
-  Map<VectorXd> upperBound(&upper_vel_limits[0], nJnt);
-  SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
-  linearMatrix.setIdentity();
+
+  int nCA = 0;
+  std::vector<MatrixXd> A_ca;
+  if (enableSelfCollisionAvoidance)
+    nCA = addSelfCollisionAvoidance(q_cur, lower_vel_limits, upper_vel_limits, A_ca);
+
+  Map<VectorXd> lowerBound(&lower_vel_limits[0], lower_vel_limits.size());
+  Map<VectorXd> upperBound(&upper_vel_limits[0], upper_vel_limits.size());
+  // SparseMatrix<double> linearMatrix(nJnt, nJnt);  // TODO: is it better to separate velocity and joint limit?
+  // linearMatrix.setIdentity();
+
+  MatrixXd A(nJnt + nCA, nJnt);
+  A.block(0, 0, nJnt, nJnt) = MatrixXd::Identity(nJnt, nJnt);
+  for (int i = 0; i < nCA; i++)
+    A.block(nJnt + i, 0, 1, nJnt) = A_ca[i];
+  SparseMatrix<double> linearMatrix = A.sparseView();
 
   // TODO: update variables. this seems to be difficult with OSQP since this library is for sparse QP optimization. When updating hessian matrix and changing its sparse form, the
   // function init the solver instanse. At that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this
@@ -491,7 +508,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   // set the initial data of the QP solver
   qpSolver.data()->setNumberOfVariables(nJnt);
-  qpSolver.data()->setNumberOfConstraints(nJnt);
+  qpSolver.data()->setNumberOfConstraints(nJnt + nCA);
 
   if (!qpSolver.data()->setHessianMatrix(hessian))
     return -1;
@@ -684,6 +701,61 @@ visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_c
   tf2::toMsg(Vector3d(s) * 0.5, manipuMarker.scale);
 
   return manipuMarker;
+}
+
+int MyIK::addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
+  std::vector<KDL::Frame> frame(chain.getNrOfSegments());
+  fksolver->JntToCart(q_cur, frame);
+
+  // positon at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
+  std::vector<Vector3d> p(nJnt + 2);
+  tf::vectorKDLToEigen(frame[0].p, p[0]);
+  for (int i = 0; i < nJnt; i++)
+    tf::vectorKDLToEigen(frame[idxSegJnt[i]].p, p[i + 1]);
+  tf::vectorKDLToEigen(frame.back().p, p[nJnt + 1]);
+
+  // Jacobian at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
+  std::vector<KDL::Jacobian> J(nJnt + 2, KDL::Jacobian(nJnt));
+  jacsolver->JntToJac(q_cur, J[0], 0);
+  for (int i = 0; i < nJnt; i++)
+    jacsolver->JntToJac(q_cur, J[i + 1], idxSegJnt[i]);
+  JntToJac(q_cur, J[nJnt + 1]);
+
+  double di = 0.10, ds = 0.08, eta = 0.1;  // TODO: make these parameters rosparam
+
+  Vector3d p_end, p_min;
+  MatrixXd J_end;
+  int count = 0;
+  for (int j = nJnt + 1; j > 2; j--) {  // set target end position and jacobian
+    p_end = p[j];
+    J_end = J[j].data;
+    for (int i = 0; i < j - 2; i++) {  // search colliding point
+      Vector3d rp = p[i + 1] - p[i];
+      double rp_norm = rp.norm();
+      double s = (rp / rp_norm).dot(p_end - p[i]);
+
+      if (s < 0)
+        p_min = p[i];
+      else if (s > rp_norm)
+        p_min = p[i + 1];
+      else
+        p_min = s * (rp / rp_norm);
+
+      Vector3d d_vec = p_end - p_min;
+      double d = d_vec.norm();
+
+      if (d < di) {  // if the relative distance is smaller than influenced distance
+        ROS_INFO_STREAM("Collision Detected >> #" << i << " and #" << j);
+        A_ca.push_back((d_vec / d).transpose() * (J_end.block(0, 0, 3, nJnt) - J[i].data.block(0, 0, 3, nJnt)));
+        lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
+        upper_vel_limits_.push_back(OsqpEigen::INFTY);
+
+        count++;
+      }
+    }
+  }
+
+  return count;
 }
 
 }  // namespace MyIK

@@ -8,6 +8,8 @@ topic_namespace: "joint_group_vel_controller"
 
 solver: "MyIK"
 
+self_collision_avoidance: true
+
 control_freq: 500.0
 
 initIKAngle: [0, -1., 2., -2.5, -1.5, 0] # size of this should be equal to DoF
