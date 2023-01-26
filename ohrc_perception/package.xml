@@ -54,7 +54,7 @@
   <exec_depend>roscpp</exec_depend>
 
   <depend>geometry_msgs</depend>
-  <depend>std_srv</depend>
+  <depend>std_srvs</depend>
 
   <depend>ohrc_common</depend>
   <depend>ohrc_msgs</depend>
