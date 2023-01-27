@@ -16,7 +16,7 @@ $ conda install -c conda-forge cvxpy pyscipopt
 $ conda activate ohrc
 $ python script/dummy_trajectory_generation.py
 ```
-This python script generates trajectories with several constraints.
+This python script generates trajectories with several constraints in `script/trajectory`.
 
 
 ## train DMP

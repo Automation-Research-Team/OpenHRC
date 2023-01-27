@@ -43,10 +43,10 @@ $ catkin build -DCMAKE_BUILD_TYPE=Release
 
 
 ---
-## Examples
+## Tutorials
 
 1. Teleoperation library: [ohrc_teleoperation](./ohrc_teleoperation)
-
+1. Imitation Learning library [ohrc_imitation_learning](./ohrc_imitation_learning)
 
 
 

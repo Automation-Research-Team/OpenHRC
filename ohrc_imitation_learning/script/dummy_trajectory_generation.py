@@ -1,16 +1,8 @@
 import numpy as np
-
-
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as ArtistAnimation
-
 import pandas as pd
-
 import os
-
 import cvxpy
-
 from multiprocessing import Pool
 
 
@@ -195,7 +187,10 @@ def standardize(x):
     return (x - x.min()) / (x.max() - x.min())
 
 
-def sample_func(i):
+def sample_func(args):
+    i, seed = args
+    np.random.seed(seed)
+
     print("trajectory #: " + str(i))
     tf = 10.0
     dt = 0.1
@@ -232,10 +227,9 @@ def sample_func(i):
 def main():
     N = 100
 
-    initial_num_list = list(range(N))
     with Pool(processes=os.cpu_count()) as p:
         results = p.map(
-            func=sample_func, iterable=initial_num_list)
+            func=sample_func, iterable=zip(range(N), np.random.randint(0, 2 ** 32 - 1, N)))
 
     n_case = len(results[0][0])
     fig = plt.figure()
