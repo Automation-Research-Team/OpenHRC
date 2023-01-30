@@ -20,3 +20,16 @@ This python script generates trajectories with several constraints in `script/tr
 
 
 ## train DMP
+### References:
+> Dynamic Movement Primitives in Robotics: A Tutorial Survey https://arxiv.org/abs/2102.03861
+
+> pydmps https://github.com/studywolf/pydmps
+
+> dmpbbo https://github.com/stulp/dmpbbo
+
+### Implementation
+In the current implementation, this package is using 
+> Movement Primitives https://github.com/dfki-ric/movement_primitives
+
+which can be installed via pip and provides conditional DMP (ProMPs).
+For futher study, I'm planning to implement my DMP codes for fitting HRC more.

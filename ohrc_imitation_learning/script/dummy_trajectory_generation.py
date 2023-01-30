@@ -183,12 +183,8 @@ def getFinalState(n):
     return df
 
 
-def standardize(x):
-    return (x - x.min()) / (x.max() - x.min())
-
-
-def sample_func(args):
-    i, seed = args
+def thread_func(args):
+    i, seed, zh, dh = args
     np.random.seed(seed)
 
     print("trajectory #: " + str(i))
@@ -197,40 +193,25 @@ def sample_func(args):
     n = 1
     x0 = getInitState(n)
     xf = getFinalState(n)
+    tf = (np.random.rand(n) - 0.5)*4.0 + 10.0  # 8.0 ~ 12.0
 
     xt = []
+    xt.append(getMinJerkTraj(dt, tf, x0, xf))  # analitical solusion
 
-    tf = (np.random.rand(1) - 0.5)*4.0 + 10.0  # 8.0 ~ 12.0
-    xt.append(getMinJerkTraj(dt, tf, x0, xf))
-
-    A = np.zeros((3, 3))
-    A[0, 1] = 1.0
-    A[1, 2] = 1.0
-
-    B = np.zeros((3, 1))
-    B[2] = 1.0
-
-    zh = [0.1, 0.2]
-    dh = [0.03, 0.1]
     constraints = []
     for z in zh:
         for d in dh:
             constraint = dict()
             constraint["zh"] = z
             constraint["dh"] = d
+            # MIQP-based solusions
             xt.append(getMinJerkTraj_QP(dt, tf, x0, xf, constraint))
             constraints.append(constraint)
 
     return xt, constraints
 
 
-def main():
-    N = 100
-
-    with Pool(processes=os.cpu_count()) as p:
-        results = p.map(
-            func=sample_func, iterable=zip(range(N), np.random.randint(0, 2 ** 32 - 1, N)))
-
+def plot_and_save_results(results):
     n_case = len(results[0][0])
     fig = plt.figure()
     ax = [fig.add_subplot(1, n_case, i+1, projection="3d")
@@ -254,6 +235,18 @@ def main():
                 os.makedirs(directory)
             xt.to_csv(directory+"/"+str(i+1) + ".csv", index=None)
     plt.show()
+
+
+def main():
+    N = 100
+    zh = [0.1, 0.2]
+    dh = [0.03, 0.1]
+
+    with Pool(processes=os.cpu_count()) as p:
+        results = p.map(
+            func=thread_func, iterable=zip(range(N), np.random.randint(0, 2 ** 32 - 1, N), zh, dh))
+
+    plot_and_save_results(results)
 
 
 if __name__ == "__main__":

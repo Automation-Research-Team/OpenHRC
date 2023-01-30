@@ -72,10 +72,13 @@ fd = [tau**2*ddy[i] - alpha_z*(beta_z*(0.0-y[i]) - tau*dy[i])
 lam = 0.1
 P = np.eye(N)
 w = np.zeros(N)
-for i in range(N_t):
-    P = 1.0/lam * (P - (P * phi_[i]@phi_[i].T@P)/(lam + phi_[i].T@P@phi_[i]))
-    w = w+(fd[i] - phi_[i].dot(w))@P@phi_[i]
-    print(i)
-# w = w + (fd[])
+# for i in range(N_t):
+#     P = 1.0/lam * (P - (P * phi_[i]@phi_[i].T@P)/(lam + phi_[i].T@P@phi_[i]))
+#     w = w+(fd[i] - phi_[i].T@w)@P@phi_[i]
+#     print(i)
+# # w = w + (fd[])
+
+
+s =
 
 plt.show()
