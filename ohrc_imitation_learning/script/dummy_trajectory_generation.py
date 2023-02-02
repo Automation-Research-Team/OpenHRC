@@ -10,7 +10,7 @@ FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def getMinJerkTraj_QP(dt, tf, x0, xf, constraint):
-    t = np.arange(0.0, tf, dt)
+    t = np.arange(0.0, tf+dt, dt)
 
     a = np.zeros((3, 3))
     a[0, 1] = 1.0
@@ -24,7 +24,7 @@ def getMinJerkTraj_QP(dt, tf, x0, xf, constraint):
 
     A = np.eye(9)+dt*a_
     B = dt*b_
-    N = int(tf/dt)
+    N = len(t)
     Q = np.zeros((9, 9))
     R = np.eye(3)
     P = np.eye(9)*1.0e6
@@ -108,10 +108,16 @@ def use_modeling_tool(A, B, N, Q, R, P, x0, xf, constraint, umax=None, umin=None
 
 def getMinJerkTraj(dt, tf, x0, xf):
 
-    t = np.arange(0.0, tf, dt)
+    t = np.arange(0.0, tf+dt, dt)
 
-    p0 = np.squeeze(x0[["px", "py", "pz"]].values)
-    pf = np.squeeze(xf[["px", "py", "pz"]].values)
+    if isinstance(x0, dict):
+        p0 = np.squeeze(x0[["px", "py", "pz"]].values)
+        pf = np.squeeze(xf[["px", "py", "pz"]].values)
+        ndim = 3
+    else:
+        p0 = np.atleast_1d(x0)
+        pf = np.atleast_1d(xf)
+        ndim = len(p0)
 
     s = t/tf
     s2 = s * s
@@ -119,10 +125,10 @@ def getMinJerkTraj(dt, tf, x0, xf):
     s4 = s3*s
     s5 = s4*s
 
-    pt = np.empty([3, len(s)])
-    vt = np.empty([3, len(s)])
-    at = np.empty([3, len(s)])
-    for i in range(3):
+    pt = np.empty([ndim, len(s)])
+    vt = np.empty([ndim, len(s)])
+    at = np.empty([ndim, len(s)])
+    for i in range(ndim):
         pt[i] = p0[i] + (pf[i] - p0[i]) * (6.0 * s5 - 15.0*s4 + 10.0*s3)
         vt[i] = (pf[i] - p0[i]) * (30.0 * s4 - 60.0*s3 + 30.0*s2)/tf
         at[i] = (pf[i] - p0[i]) * (120.0 * s3 - 180.0*s2 + 60.0*s)/(tf*tf)
@@ -135,10 +141,13 @@ def getMinJerkTraj(dt, tf, x0, xf):
         ], axis=1
     )
 
-    df = pd.DataFrame(xt)
-    df.columns = ["t", "px", "py", "pz", "vx", "vy",
-                  "vz", "ax", "ay", "az"]
-    return df
+    if isinstance(x0, dict):
+        df = pd.DataFrame(xt)
+        df.columns = ["t", "px", "py", "pz", "vx", "vy",
+                      "vz", "ax", "ay", "az"]
+        return df
+    else:
+        return xt
 
 
 def getInitState(n):
