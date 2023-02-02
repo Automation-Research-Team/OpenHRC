@@ -29,6 +29,8 @@ MultiCartController::MultiCartController() {
   for (int i = 1; i < nRobot; i = i + 2)
     autoInd.push_back(i);
 
+  std::cout << magic_enum::enum_name(priority) << std::endl;
+  
   setPriority(priority);
 
   desPose.resize(nRobot);

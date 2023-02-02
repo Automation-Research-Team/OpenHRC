@@ -144,7 +144,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     es[i] = getCartError(Ts[i], Ts_d[i]);
 
     tf::twistKDLToEigen(des_eff_vel[i], vs[i]);
-    VectorXd kp = 4.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
+    VectorXd kp = 2.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
     // kp.tail(3) = kp.tail(3) * 0.5 / M_PI;
     vs[i] = vs[i] + kp.asDiagonal() * es[i];
   }
@@ -164,8 +164,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
 
   for (int i = 0; i < nRobot; i++) {
     VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished();
-    w *= 10.0;
-    double w_n = 1.0e-3;  // this leads dq -> 0 witch is conflict with additonal task
+    w *= 1.0;
+    double w_n = 1.0e-8;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
     H[i] = Js_[i].transpose() * Js_[i];
@@ -252,7 +252,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std:
     return 0;
 
   double ds = 0.10;
-  double di = 0.20;
+  double di = 0.15;
   double eta = 0.1;
 
   for (auto& comb : combsRobot) {
