@@ -13,10 +13,11 @@ MultiCartController::MultiCartController() {
 
   std::vector<std::string> base_link(nRobot), tip_link(nRobot), URDF_param(nRobot);  // TODO: base_links for all robot shoud be same
   std::vector<Affine3d> T_base_root(nRobot);
+  std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr(nRobot);
   for (int i = 0; i < nRobot; i++)
-    cartControllers[i]->getInfo(base_link[i], tip_link[i], URDF_param[i], T_base_root[i]);
+    cartControllers[i]->getInfo(base_link[i], tip_link[i], URDF_param[i], T_base_root[i], myik_ptr[i]);
 
-  multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root));
+  multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root, myik_ptr));
 
   service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
 
@@ -116,7 +117,7 @@ void MultiCartController::starting() {
   // cartControllers[i]->enableOperation();
   // }
   ROS_INFO_STREAM("Controller started!");
-  // this->t0 = ros::Time::now();
+  this->t0 = ros::Time::now();
 }
 
 void MultiCartController::stopping() {

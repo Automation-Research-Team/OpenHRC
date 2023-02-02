@@ -128,7 +128,7 @@ protected:
   std::vector<KDL::Segment> chain_segs;
 
   // MyIK
-  std::unique_ptr<MyIK::MyIK> myik_solver_ptr;
+  std::shared_ptr<MyIK::MyIK> myik_solver_ptr;
 
   std::string root_frame;
   std::string chain_start, chain_end, urdf_param, robot_ns = "";
@@ -211,11 +211,12 @@ public:
   bool getOperationEnable() const {
     return !_disable;
   }
-  void getInfo(std::string& chain_start, std::string& chain_end, std::string& urdf_param, Affine3d& T_base_root) {
+  void getInfo(std::string& chain_start, std::string& chain_end, std::string& urdf_param, Affine3d& T_base_root, std::shared_ptr<MyIK::MyIK>& myik) {
     chain_start = getChainStart();
     chain_end = this->chain_end;
     urdf_param = this->urdf_param;
     T_base_root = this->T_base_root;
+    myik = this->myik_solver_ptr;
   }
   std::string getChainStart() const {
     return chain_start;

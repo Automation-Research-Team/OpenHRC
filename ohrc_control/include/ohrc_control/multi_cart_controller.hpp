@@ -32,7 +32,7 @@ protected:
   std::string root_frame;
   double freq = 500.0;
   double dt = 0.002;
-  // ros::Time t0;
+  ros::Time t0;
   std::string date;
 
   // MyIK

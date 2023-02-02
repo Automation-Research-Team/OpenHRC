@@ -14,7 +14,7 @@ protected:
   void configMarker(const CartController* cartController);
   void processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback);
 
-  void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
   // void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
 
   std::vector<KDL::Frame> prevPoses;

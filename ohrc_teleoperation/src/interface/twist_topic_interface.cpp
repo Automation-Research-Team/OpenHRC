@@ -25,7 +25,7 @@ void TwistTopicInterface::starting() {
     T_state_base[i] = cartControllers[i]->getTransform_base(this->stateFrameId);
 }
 
-void TwistTopicInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
+void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
   geometry_msgs::Twist twist_msg;
   {
     std::lock_guard<std::mutex> lock(mtx_twist);
