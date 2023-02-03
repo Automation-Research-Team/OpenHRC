@@ -30,7 +30,7 @@ MultiCartController::MultiCartController() {
     autoInd.push_back(i);
 
   std::cout << magic_enum::enum_name(priority) << std::endl;
-  
+
   setPriority(priority);
 
   desPose.resize(nRobot);
@@ -133,9 +133,10 @@ void MultiCartController::stopping() {
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
   std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
+    cartControllers[i]->updateCurState();
     cartControllers[i]->getState(q_cur[i], dq_cur[i]);
-
+  }
   static ros::Time prev = time;
   if ((time - prev).toSec() > 0.05) {
     for (int i = 0; i < nRobot; i++)
@@ -219,8 +220,10 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
 }
 
 void MultiCartController::updateDesired() {
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
     tf::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
+    desVel[i] = KDL::Twist();
+  }
 
   if (MFmode == MFMode::Individual) {
     for (auto& ind : manualInd)

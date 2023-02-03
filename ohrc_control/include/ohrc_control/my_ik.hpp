@@ -9,6 +9,7 @@
 #include <Eigen/Geometry>
 #include <boost/date_time.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
+#include <kdl/chainfksolvervel_recursive.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 #include <limits>
@@ -52,6 +53,7 @@ class MyIK {
 
   std::unique_ptr<KDL::ChainJntToJacSolver> jacsolver;
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fksolver;
+  std::unique_ptr<KDL::ChainFkSolverVel_recursive> fkVelSolver;
 
   Affine3d T_base_world;
 
@@ -86,18 +88,27 @@ public:
   VectorXd getRandomJnt(const double& dt);
   VectorXd getRandomJntVel(const double& dt);
 
-  int JntToCart(const KDL::JntArray& q_in, KDL::Frame& p_out) {
+  inline int JntToCart(const KDL::JntArray& q_in, KDL::Frame& p_out) {
     return fksolver->JntToCart(q_in, p_out);
   }
 
-  int JntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac) {
+  inline int JntToCart(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Frame& p_out, KDL::Twist& v_out) {
+    KDL::JntArrayVel q_dq_in(q_in, dq_in);
+    KDL::FrameVel p_v_out;
+    int r = fkVelSolver->JntToCart(q_dq_in, p_v_out);
+    p_out = p_v_out.GetFrame();
+    v_out = p_v_out.GetTwist();
+    return r;
+  }
+
+  inline int JntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac) {
     int n = q_in.data.size();
     if (jac.columns() < n)
       jac.resize(n);
     return jacsolver->JntToJac(q_in, jac);
   }
 
-  int JntToJac(const KDL::JntArray& q_in, MatrixXd& J) {
+  inline int JntToJac(const KDL::JntArray& q_in, MatrixXd& J) {
     KDL::Jacobian jac;
     int r = JntToJac(q_in, jac);
     J = jac.data;
@@ -107,35 +118,37 @@ public:
   // void setT_base_world(const Affine3d T_base_world) {
   //   this->T_base_world = T_base_world;
   // }
-  Affine3d getT_base_world() {
+  inline Affine3d getT_base_world() {
     return this->T_base_world;
   }
 
-  int JntVelToCartVel(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Twist& v_out) {
-    KDL::Jacobian jac;
-    JntToJac(q_in, jac);
-    Matrix<double, 6, 1> v;
-    v = jac.data * dq_in.data;
-    tf::twistEigenToKDL(v, v_out);
-    return 1;
+  inline int JntVelToCartVel(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Twist& v_out) {
+    // KDL::Jacobian jac;
+    // JntToJac(q_in, jac);
+    // Matrix<double, 6, 1> v;
+    // v = jac.data * dq_in.data;
+    // tf::twistEigenToKDL(v, v_out);
+    // return 1;
+    KDL::Frame p_out;
+    return JntToCart(q_in, dq_in, p_out, v_out);
   }
 
   visualization_msgs::Marker getManipulabilityMarker(const KDL::JntArray q_cur);
 
-  bool getKDLChain(KDL::Chain& chain_) {
+  inline bool getKDLChain(KDL::Chain& chain_) {
     chain_ = chain;
     return initialized;
   }
 
-  unsigned int getNJnt() {
+  inline unsigned int getNJnt() {
     return nJnt;
   }
 
-  void setNameJnt(std::vector<std::string> name) {
+  inline void setNameJnt(std::vector<std::string> name) {
     this->nameJnt = name;
   }
 
-  void setIdxSegJnt(std::vector<int> idx) {
+  inline void setIdxSegJnt(std::vector<int> idx) {
     this->idxSegJnt = idx;
   }
 };

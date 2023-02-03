@@ -36,7 +36,12 @@ using namespace ohrc_control;
 class CartController {
   static void signal_handler(int signum);
   void init(std::string robot);
-  ros::AsyncSpinner spinner;
+  // ros::AsyncSpinner spinner;
+  ros::CallbackQueue queue;
+  boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
+  ros::NodeHandle nh_;
+
+  std::mutex mtx_q;
 
   KDL::Frame des_eff_pose, current_eff_pose;
   KDL::Twist des_eff_vel;
@@ -108,9 +113,9 @@ protected:
 
   geometry_msgs::WrenchStamped _force;
 
-  bool _disable = true;
+  bool _disable = true, _passThrough = false;
 
-  KDL::JntArray _q_cur, _dq_cur;
+  KDL::JntArray _q_cur, _dq_cur, _q_cur_t, _dq_cur_t;
 
   std::vector<butterworth> velFilter, jntFilter;
 
@@ -140,7 +145,7 @@ protected:
 
   void initDesWithJnt(const KDL::JntArray& q_init);
   virtual void initWithJnt(const KDL::JntArray& q_init);
-  virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
+  // virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
 
   int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt);
@@ -174,20 +179,27 @@ public:
 
   void getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
   void getVelocity(const KDL::Frame& frame, const KDL::Frame& prev_frame, const double& dt, KDL::Twist& twist) const;
-  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur) {
-    std::lock_guard<std::mutex> lock(mtx);
-    q_cur = this->_q_cur;
-    dq_cur = this->_dq_cur;
+
+  inline void updateCurState() {
+    std::lock_guard<std::mutex> lock(mtx_q);
+    this->_q_cur_t = this->_q_cur;
+    this->_dq_cur_t = this->_dq_cur;
   }
 
-  void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur, KDL::Frame& frame, KDL::Twist& twist) {
+  inline void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur) {
+    // std::lock_guard<std::mutex> lock(mtx_q);
+    q_cur = this->_q_cur_t;
+    dq_cur = this->_dq_cur_t;
+  }
+
+  inline void getState(KDL::JntArray& q_cur, KDL::JntArray& dq_cur, KDL::Frame& frame, KDL::Twist& twist) {
     getState(q_cur, dq_cur);
-
-    JntToCart(q_cur, frame);
-    JntVelToCartVel(q_cur, dq_cur, twist);
+    JntToCart(q_cur, dq_cur, frame, twist);
+    // JntToCart(q_cur, frame);
+    // JntVelToCartVel(q_cur, dq_cur, twist);
   }
 
-  void getCartState(KDL::Frame& frame, KDL::Twist& twist) {
+  inline void getCartState(KDL::Frame& frame, KDL::Twist& twist) {
     KDL::JntArray q_cur;
     KDL::JntArray dq_cur;
     getState(q_cur, dq_cur, frame, twist);
@@ -200,54 +212,63 @@ public:
 
   void filterJnt(KDL::JntArray& q);
 
-  void enableOperation() {
+  inline void startOperation() {
+    _disable = false;
+    _passThrough = true;
+  }
+
+  inline void enableOperation() {
     _disable = false;
   }
 
-  void disableOperation() {
+  inline void disableOperation() {
     _disable = true;
   }
 
-  bool getOperationEnable() const {
+  inline bool getOperationEnable() const {
     return !_disable;
   }
-  void getInfo(std::string& chain_start, std::string& chain_end, std::string& urdf_param, Affine3d& T_base_root, std::shared_ptr<MyIK::MyIK>& myik) {
+  inline void getInfo(std::string& chain_start, std::string& chain_end, std::string& urdf_param, Affine3d& T_base_root, std::shared_ptr<MyIK::MyIK>& myik) {
     chain_start = getChainStart();
     chain_end = this->chain_end;
     urdf_param = this->urdf_param;
     T_base_root = this->T_base_root;
     myik = this->myik_solver_ptr;
   }
-  std::string getChainStart() const {
+  inline std::string getChainStart() const {
     return chain_start;
   }
 
-  std::string getChainEnd() const {
+  inline std::string getChainEnd() const {
     return chain_end;
   }
 
-  void JntToCart(const KDL::JntArray& q_in, KDL::Frame& p_out) {
+  inline void JntToCart(const KDL::JntArray& q_in, KDL::Frame& p_out) {
     myik_solver_ptr->JntToCart(q_in, p_out);
   }
 
-  void JntVelToCartVel(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Twist& v_out) {
+  inline void JntToCart(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Frame& p_out, KDL::Twist& v_out) {
+    myik_solver_ptr->JntToCart(q_in, dq_in, p_out, v_out);
+  }
+
+  inline void JntVelToCartVel(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Twist& v_out) {
     myik_solver_ptr->JntVelToCartVel(q_in, dq_in, v_out);
   }
 
-  std::string getRobotNs() const {
+  inline std::string getRobotNs() const {
     return robot_ns;
   }
 
-  int getIndex() {
+  inline int getIndex() {
     return index;
   }
   Affine3d getTransform_base(std::string target);
 
-  Affine3d getT_init() const {
+  inline Affine3d getT_init() const {
     return T_init;
   }
 
-  Affine3d getT_cur() {
+  inline Affine3d getT_cur() {
     KDL::JntArray q_cur, dq_cur;
     getState(q_cur, dq_cur);
 
@@ -260,32 +281,32 @@ public:
     return T;
   }
 
-  Affine3d getT_root() {
+  inline Affine3d getT_root() {
     return myik_solver_ptr->getT_base_world() * getT_cur();
   }
 
-  Affine3d getT_base_world() {
+  inline Affine3d getT_base_world() {
     return myik_solver_ptr->getT_base_world();
   }
 
-  geometry_msgs::WrenchStamped getForceEef() {
+  inline geometry_msgs::WrenchStamped getForceEef() {
     std::lock_guard<std::mutex> lock(mtx);
     return this->_force;
   }
 
-  unsigned int getNJnt() {
+  inline unsigned int getNJnt() {
     return nJnt;
   }
 
-  std::vector<std::string> getNameJnt() {
+  inline std::vector<std::string> getNameJnt() {
     return nameJnt;
   }
 
-  bool isInitialized() {
+  inline bool isInitialized() {
     return initialized;
   }
 
-  void setDesired(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
+  inline void setDesired(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
     std::lock_guard<std::mutex> lock(mtx);
     this->_des_eff_pose = des_eff_pose;
     this->_des_eff_vel = des_eff_vel;
@@ -293,7 +314,7 @@ public:
 
   double freq = 500.0;
 
-  const double eps = 1e-5;
+  const double eps = 1e-6;
 
   ros::Publisher markerPublisher, desStatePublisher, curStatePublisher, jntCmdPublisher;
   std::mutex mtx;

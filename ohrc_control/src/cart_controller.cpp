@@ -1,14 +1,14 @@
 #include "ohrc_control/cart_controller.hpp"
 
-CartController::CartController(const std::string robot, const std::string root_frame, const int index) : nh("~"), spinner(0), root_frame(root_frame), index(index) {
+CartController::CartController(const std::string robot, const std::string root_frame, const int index) : nh("~"), root_frame(root_frame), index(index) {
   init(robot);
 }
 
-CartController::CartController(const std::string robot, const std::string root_frame) : nh("~"), spinner(0), root_frame(root_frame) {
+CartController::CartController(const std::string robot, const std::string root_frame) : nh("~"), root_frame(root_frame) {
   init(robot);
 }
 
-CartController::CartController() : nh("~"), spinner(0) {
+CartController::CartController() : nh("~") {
   std::string robot;
   nh.param("robot_ns", robot, std::string(""));
   root_frame = "world";
@@ -17,6 +17,10 @@ CartController::CartController() : nh("~"), spinner(0) {
 }
 
 void CartController::init(std::string robot) {
+  nh_.setCallbackQueue(&queue);
+  spinner_.reset(new ros::AsyncSpinner(1, &queue));
+  spinner.reset(new ros::AsyncSpinner(0));
+
   // std::signal(SIGINT, CartController::signal_handler);
 
   if (!getInitParam())
@@ -30,7 +34,7 @@ void CartController::init(std::string robot) {
   urdf_param = "/" + robot_ns + "robot_description";
 
   this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(10.0));
-  this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0));
+  // this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0));
 
   tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, timeout, eps));
 
@@ -49,11 +53,11 @@ void CartController::init(std::string robot) {
   nJnt = chain.getNrOfJoints();
   _q_cur.resize(nJnt);
 
-  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 1, &CartController::cbJntState, this, th);
+  jntStateSubscriber = nh_.subscribe("/" + robot_ns + "joint_states", 1, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
 
   if (useManipOpt) {
-    userArmMarker = nh.subscribe("/arm_marker", 2, &CartController::cbArmMarker, this, th);
+    userArmMarker = nh.subscribe("/arm_marker", 1, &CartController::cbArmMarker, this, th);
     subFlagPtrs.push_back(&flagArmMarker);
   }
 
@@ -76,10 +80,10 @@ void CartController::init(std::string robot) {
            (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
 
   for (int i = 0; i < 6; i++)
-    velFilter.push_back(butterworth(2, 5.0, freq));
+    velFilter.push_back(butterworth(2, 50.0, freq));
 
   for (int i = 0; i < nJnt; i++)
-    jntFilter.push_back(butterworth(2, 5.0, freq));
+    jntFilter.push_back(butterworth(2, 50.0, freq));
 }
 
 bool CartController::getInitParam() {
@@ -268,7 +272,7 @@ void CartController::cbJntState(const sensor_msgs::JointState::ConstPtr& msg) {
     return;
   }
 
-  std::lock_guard<std::mutex> lock(mtx);
+  std::lock_guard<std::mutex> lock(mtx_q);
 
   _q_cur = q_cur;
   _dq_cur = dq_cur;
@@ -338,7 +342,7 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
       case SolverType::MyIK:
         myik_solver_ptr->setNameJnt(nameJnt);
         myik_solver_ptr->setIdxSegJnt(idxSegJnt);
-        rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 3.0);
+        rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 5.0);
         break;
     }
 
@@ -352,7 +356,7 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     s_moveInitPos.t_s = ros::Time::now();
   }
 
-  const double T = 10.0;
+  const double T = 15.0;
   // static ros::Time s_moveInitPos.t_s = ros::Time::now();
 
   bool lastLoop = false;
@@ -409,7 +413,7 @@ void CartController::sendVelocityCmd(const VectorXd& dq_des) {
 }
 
 void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_des, const KDL::JntArray& q_cur, const bool& lastLoop) {
-  double kp = 3.0;  // feedback p gain
+  double kp = 4.0;  // feedback p gain
   std_msgs::Float64MultiArray cmd;
   VectorXd dq_des_ = dq_des + (1.0 - (double)lastLoop) * kp * (q_des - q_cur.data);
   sendVelocityCmd(dq_des_);
@@ -463,7 +467,7 @@ void CartController::sendTrajectoryActionCmd(const VectorXd& q_des, const Vector
   cmd_trjAction.header.stamp = cmd_trjAction.goal.trajectory.header.stamp;
   jntCmdPublisher.publish(cmd_trjAction);
 }
-
+#if 0
 void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
   bool disable;
   {
@@ -501,7 +505,7 @@ void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_c
   vd = s * (vd - v) + v;
   tf::twistEigenToKDL(vd, des_eff_vel);
 }
-
+#endif
 void CartController::filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
   Matrix<double, 6, 1> vel;
   tf::twistKDLToEigen(des_eff_vel, vel);
@@ -580,7 +584,8 @@ void CartController::starting(const ros::Time& time) {
     return;
 
   // start to subscribe topics
-  spinner.start();
+  spinner_->start();
+  spinner->start();
 
   // wait for subscribing registered topics
   subscriber_utility::checkSubTopic(subFlagPtrs, &mtx, robot_ns);
@@ -588,6 +593,7 @@ void CartController::starting(const ros::Time& time) {
   this->resetFt();
   // TODO: reset ft sensor offset
   //
+  updateCurState();
 }
 
 /**
@@ -630,12 +636,13 @@ void CartController::getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des
 // }
 
 void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel) {
-  bool disable;
+  bool disable, passThrough;
   {
     std::lock_guard<std::mutex> lock(mtx);
     des_pose = this->_des_eff_pose;
     des_vel = this->_des_eff_vel;
     disable = this->_disable;
+    passThrough = this->_passThrough;
   }
 
   Affine3d T, Td;
@@ -647,7 +654,7 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
     t0 = ros::Time::now();
 
   double s = (ros::Time::now() - t0).toSec() / 2.0;
-  if (s > 1.0)
+  if (s > 1.0 || passThrough)
     s = 1.0;  // 0-1
 
   Td.translation() = s * (Td.translation() - T.translation()) + T.translation();
@@ -673,6 +680,7 @@ void CartController::update() {
   update(ros::Time::now(), ros::Duration(1.0 / freq));
 }
 void CartController::update(const ros::Time& time, const ros::Duration& period) {
+  updateCurState();
   // std::cout << robot_ns << std::endl;
   double dt = period.toSec();
 
@@ -785,12 +793,25 @@ void CartController::filterJnt(KDL::JntArray& q) {
 }
 
 int CartController::control() {
+  starting(ros::Time::now());
+
+  while (ros::ok())
+    update(ros::Time::now(), ros::Duration(1.0 / freq));
+
+  stopping(ros::Time::now());
+
+  return 1;
+}
+
+#if 0
+int CartController::control() {
   // check Gazebo is ready
   if (!gazebo_utility::checkGazeboInit())
     return -1;
 
   // start to subscribe topics
-  spinner.start();
+  spinner_->start();
+  spinner->start();
 
   // wait for subscribing registered topics
   subscriber_utility::checkSubTopic(subFlagPtrs, &mtx);
@@ -866,3 +887,4 @@ int CartController::control() {
 
   return 1;
 }
+#endif
