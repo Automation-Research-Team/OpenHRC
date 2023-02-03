@@ -83,7 +83,7 @@ void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarke
   }
 }
 
-void MarkerInterface::updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
   controller->enableOperation();
   geometry_msgs::Pose markerPose;
   double markerDt;

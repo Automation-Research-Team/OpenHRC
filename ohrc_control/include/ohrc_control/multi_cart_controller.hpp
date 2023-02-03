@@ -32,7 +32,7 @@ protected:
   std::string root_frame;
   double freq = 500.0;
   double dt = 0.002;
-  // ros::Time t0;
+  ros::Time t0;
   std::string date;
 
   // MyIK
@@ -64,7 +64,7 @@ protected:
   virtual void resetInterface(){};
 
   template <typename T>
-  T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
+  inline T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
     std::string s;
     if (!n.getParam(key, s)) {
       ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");

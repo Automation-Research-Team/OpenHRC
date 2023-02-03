@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(ohrc_control)
+project(ohrc_automation)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++1z)
@@ -9,34 +9,15 @@ add_compile_options(-std=c++1z)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  trac_ik_lib
 
-  std_msgs
-  trajectory_msgs
-  eigen_conversions
-
-  tf2
-  tf2_ros
-  tf2_kdl
   tf2_eigen
-
+  ohrc_control
   ohrc_common
-
-  message_generation
-  message_runtime
 )
 
-# find_package(PkgConfig REQUIRED)
-# pkg_check_modules(pkg_nlopt REQUIRED nlopt)
+find_package(OsqpEigen REQUIRED)
 
-# find_package(Boost REQUIRED COMPONENTS date_time)
-# find_package(orocos_kdl REQUIRED)
-# find_package(Eigen3 REQUIRED)
-
-find_package(OsqpEigen REQUIRED OsqpEigen)
-
-find_package(magic_enum CONFIG REQUIRED magic_enum)
-
+find_package(magic_enum CONFIG REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -73,9 +54,10 @@ find_package(magic_enum CONFIG REQUIRED magic_enum)
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   State.msg
-#   StateStamped.msg
+#   Message1.msg
+#   Message2.msg
 # )
+
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
@@ -93,10 +75,8 @@ find_package(magic_enum CONFIG REQUIRED magic_enum)
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs # Or other packages containing msgs
-#   geometry_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
-
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -128,10 +108,10 @@ find_package(magic_enum CONFIG REQUIRED magic_enum)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}   
-  CATKIN_DEPENDS roscpp trac_ik_lib interactive_markers tf2_kdl tf2_eigen std_msgs eigen_conversions ohrc_common
-  # DEPENDS Boost orocos_kdl #pkg_nlopt magic_enum OsqpEigen
+#  INCLUDE_DIRS include
+#  LIBRARIES ohrc_automation
+#  CATKIN_DEPENDS roscpp
+#  DEPENDS system_lib
 )
 
 ###########
@@ -143,23 +123,49 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${orocos_kdl_INCLUDE_DIRS}
-  ${pkg_nlopt_INCLUDE_DIRS}
-  ${OsqpEigen_INCLUDE_DIRS}
-  ${magic_enum_INCLUDE_DIRS}
 )
-## Declare a C++ library
-add_library(${PROJECT_NAME}   src/my_ik.cpp
-                              src/multi_my_ik.cpp 
-                              src/cart_controller.cpp 
-                              src/multi_cart_controller.cpp 
-                              src/forwarding_controller.cpp
-                              # src/admittance_controller.cpp
-)
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${orocos_kdl_LIBRARIES} ${pkg_nlopt_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 
+
+
+## Declare a C++ library
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/ohrc_automation.cpp
+# )
+
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/ohrc_automation_node.cpp)
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
+
+set(controllers
+  impedance
+)
+
+foreach(controller ${controllers})
+  add_executable(${controller}_automation src/controller/${controller}_controller.cpp src/app/${controller}_automation.cpp)
+  add_dependencies(${controller}_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${controller}_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+endforeach(controller)
 
 #############
 ## Install ##
@@ -183,32 +189,32 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${o
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
+# install(TARGETS ${PROJECT_NAME}
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
-)
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-install(FILES
+# install(FILES
 #   # myfile1
 #   # myfile2
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# )
 
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_ohrc_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_ohrc_automation.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -109,6 +109,7 @@ void MyIK::initialize() {
 
   jacsolver.reset(new KDL::ChainJntToJacSolver(chain));
   fksolver.reset(new KDL::ChainFkSolverPos_recursive(chain));
+  fkVelSolver.reset(new KDL::ChainFkSolverVel_recursive(chain));
 
   for (uint i = 0; i < chain.segments.size(); i++) {
     std::string type = chain.segments[i].getJoint().getTypeName();
@@ -349,9 +350,12 @@ void MyIK::updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose
   tf::transformKDLToEigen(p, T);
   e = getCartError(T, T_d);
 
+  // std::cout << v.transpose() << std::endl;
   VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
-  kp.tail(3) = kp.tail(3) * 0.5 / M_PI;
+  kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
   v = v + kp.asDiagonal() * e;
+
+  // std::cout << v.transpose() << std::endl;
 
   tf::twistEigenToKDL(v, des_eff_vel);
 }

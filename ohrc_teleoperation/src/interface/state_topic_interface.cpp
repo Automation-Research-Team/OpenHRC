@@ -23,7 +23,7 @@ void StateTopicInterface::starting() {
     T_state_base[i] = cartControllers[i]->getTransform_base(this->stateFrameId);
 }
 
-void StateTopicInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
+void StateTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
   ohrc_msgs::State state;
   {
     std::lock_guard<std::mutex> lock(mtx_state);
@@ -52,7 +52,8 @@ void StateTopicInterface::updateManualTargetPose(KDL::Frame& pos, KDL::Twist& tw
 
   VectorXd v = VectorXd::Zero(6);
   if (state.enabled) {
-    s->T = Translation3d(T_state.translation() - s->T_state_start.translation() + s->T_start.translation()) * (T_state.rotation() * controller->getT_init().rotation() * R);  // TODO: correct???
+    s->T = Translation3d(T_state.translation() - s->T_state_start.translation() + s->T_start.translation()) *
+           (T_state.rotation() * controller->getT_init().rotation() * R);  // TODO: correct???
     v = v_state;
     controller->enableOperation();
   } else {

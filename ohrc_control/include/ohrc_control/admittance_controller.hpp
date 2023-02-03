@@ -25,7 +25,7 @@ class AdmittanceController : public virtual CartController {
 protected:
   virtual void initWithJnt(const KDL::JntArray& q_init) override;
 
-  void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) override;
+  // void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) override;
   void resetFt();
 
 public:
