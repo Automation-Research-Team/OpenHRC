@@ -1,0 +1,16 @@
+
+# ft_sensor_filter:
+
+  topic_name:
+    raw: "/force"
+    filtered: "/force2"
+
+  cutoff_freq: 50.0
+  lpf_order: 2
+  deadzone:
+    force:
+      lower: -0.01
+      upper: 0.01
+    torque:
+      lower: -0.1
+      upper: 0.1
