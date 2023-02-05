@@ -17,8 +17,8 @@ CartController::CartController() : nh("~") {
 }
 
 void CartController::init(std::string robot) {
-  nh_.setCallbackQueue(&queue);
-  spinner_.reset(new ros::AsyncSpinner(1, &queue));
+  // nh_.setCallbackQueue(&queue);
+  // spinner_.reset(new ros::AsyncSpinner(1, &queue));
   spinner.reset(new ros::AsyncSpinner(0));
 
   // std::signal(SIGINT, CartController::signal_handler);
@@ -53,7 +53,7 @@ void CartController::init(std::string robot) {
   nJnt = chain.getNrOfJoints();
   _q_cur.resize(nJnt);
 
-  jntStateSubscriber = nh_.subscribe("/" + robot_ns + "joint_states", 1, &CartController::cbJntState, this, th);
+  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 2, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
 
   if (useManipOpt) {
@@ -584,7 +584,7 @@ void CartController::starting(const ros::Time& time) {
     return;
 
   // start to subscribe topics
-  spinner_->start();
+  // spinner_->start();
   spinner->start();
 
   // wait for subscribing registered topics
@@ -649,7 +649,6 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   tf::transformKDLToEigen(cur_pose, T);
   tf::transformKDLToEigen(des_pose, Td);
 
-
   static ros::Time t0 = ros::Time::now();
   if (disable)
     t0 = ros::Time::now();
@@ -657,7 +656,6 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   double s = (ros::Time::now() - t0).toSec() / 2.0;
   if (s > 1.0 || passThrough)
     s = 1.0;  // 0-1
-
 
   Td.translation() = s * (Td.translation() - T.translation()) + T.translation();
   Td.linear() = Quaterniond(T.rotation()).slerp(s, Quaterniond(Td.rotation())).toRotationMatrix();
