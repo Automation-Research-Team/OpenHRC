@@ -84,39 +84,8 @@ VectorXd ImpedanceController::getControlState(const VectorXd& x, const VectorXd&
   return (MatrixXd::Identity(6, 6) + impParam.A * dt) * x + dt * impParam.B * exForce + dt * impParam.C * xd;
 }
 
-void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
-  std::vector<Affine3d> targetPoses;
-  {
-    std::lock_guard<std::mutex> lock(mtx_imp);
-    if (!this->_targetUpdated)
-      return;
-    targetPoses = _targetPoses;
-  }
-
-  static Affine3d curTargetPose;
-  if (taskState == TaskState::Initial) {
-    // _targetPoses.resize(1);
-    // _targetPoses[0] = controller->getT_init();
-    // _targetPoses[0].translation()[0] += 0.1;
-    restPose = controller->getT_init();
-
-    curTargetPose = restPose;
-
-    targetIdx = -1;
-
-    controller->startOperation();
-  }
-
-  KDL::Frame frame;
-  KDL::Twist vel;
-  controller->getCartState(frame, vel);
-  static VectorXd x = (VectorXd(6) << frame.p[0], frame.p[1], frame.p[2], 0.0, 0.0, 0.0).finished();
-  x.head(3) << frame.p[0], frame.p[1], frame.p[2];
-
-  VectorXd xd = (VectorXd(6) << curTargetPose.translation(), Vector3d::Zero()).finished();
-
-  taskState = updataTaskState(x - xd, controller);
-
+void ImpedanceController::getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx,
+                                        int& nextTargetIdx, Affine3d& curTargetPose) {
   if (taskState == TaskState::Fail)
     curTargetPose = restPose;
   else if (taskState == TaskState::Success) {
@@ -131,6 +100,40 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, 
       targetIdx = -1;
     }
   }
+}
+
+void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+  std::vector<Affine3d> targetPoses;
+  {
+    std::lock_guard<std::mutex> lock(mtx_imp);
+    if (!this->_targetUpdated)
+      return;
+    targetPoses = _targetPoses;
+  }
+
+  static Affine3d curTargetPose;
+  if (taskState == TaskState::Initial) {
+    // _targetPoses.resize(1);
+    // _targetPoses[0] = controller->getT_init();
+    // _targetPoses[0].translation()[0] += 0.1;
+
+    restPose = controller->getT_init();
+    curTargetPose = restPose;
+    targetIdx = -1;
+
+    controller->startOperation();
+  }
+
+  KDL::Frame frame;
+  KDL::Twist vel;
+  controller->getCartState(frame, vel);
+  static VectorXd x = (VectorXd(6) << frame.p[0], frame.p[1], frame.p[2], 0.0, 0.0, 0.0).finished();
+  x.head(3) << frame.p[0], frame.p[1], frame.p[2];
+
+  VectorXd xd = (VectorXd(6) << curTargetPose.translation(), Vector3d::Zero()).finished();
+
+  taskState = updataTaskState(x - xd, controller);
+  getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx, curTargetPose);
 
   // update target pose
   xd.head(3) = curTargetPose.translation();

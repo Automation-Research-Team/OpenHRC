@@ -33,6 +33,8 @@ class ImpedanceController : public virtual MultiCartController {
 
   void getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK);
   ImpParam getImpParam(const ImpCoeff& impCoeff);
+  void getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx,
+                     Affine3d& curTargetPose);
   void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
   TaskState updataTaskState(const VectorXd& delta_x, CartController* controller);
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt);
