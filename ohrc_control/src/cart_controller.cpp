@@ -33,8 +33,7 @@ void CartController::init(std::string robot) {
     robot_ns = robot + "/";
   urdf_param = "/" + robot_ns + "robot_description";
 
-  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(10.0));
-  // this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0));
+  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(3.0));
 
   tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, timeout, eps));
 
@@ -61,7 +60,13 @@ void CartController::init(std::string robot) {
     subFlagPtrs.push_back(&flagArmMarker);
   }
 
-  subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
+  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0))) {
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0));
+    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
+    subFlagPtrs.push_back(&flagForce);
+  } else
+    ROS_WARN_STREAM("force/torque sensor TF was not found.");
+
   if (publisher == PublisherType::Trajectory)
     jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", 1);
   else if (publisher == PublisherType::TrajectoryAction)
@@ -301,8 +306,8 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   _force.header.frame_id = robot_ns + chain_end;
   _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff.inverse());
 
-  // if (!flagEffPose)
-  //   flagEffPose = true;
+  if (!flagForce)
+    flagForce = true;
 }
 
 void CartController::initDesWithJnt(const KDL::JntArray& q_cur) {

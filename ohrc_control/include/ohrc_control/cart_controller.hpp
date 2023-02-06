@@ -112,6 +112,7 @@ protected:
   KDL::Twist _des_eff_vel;
 
   geometry_msgs::WrenchStamped _force;
+  bool flagForce = false;
 
   bool _disable = true, _passThrough = false;
 

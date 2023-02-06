@@ -22,7 +22,7 @@ protected:
   Affine3d Thandle_fp, Thandle_ft, Thandle_lidar, T_l_fp, T_h_fp, T_c_fp, T_color_depth;
 
 public:
-  TransformUtility();
+  TransformUtility(): tfListener(tfBuffer){};
 
   // // transform force&torque vector in force_sensor_link to one in handle_link
   // // If implement as inline function, please use transformFT()
@@ -70,7 +70,14 @@ public:
   }
 
   // get transform as Eigen::affine3d
-  Affine3d getTransform(const std::string& target, const std::string& source, const ros::Time& time, ros::Duration timeout);
+  inline Affine3d getTransform(const std::string& target, const std::string& source, const ros::Time& time, ros::Duration timeout) {
+    return tf2::transformToEigen(tfBuffer.lookupTransform(target, source, time, timeout));
+  }
+
+  // check if transform is possible
+  inline bool canTransform(const std::string& target, const std::string& source, const ros::Time& time, ros::Duration timeout) {
+    return tfBuffer.canTransform(target, source, time, timeout);
+  }
 };
 
 namespace tf2 {

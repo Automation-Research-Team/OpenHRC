@@ -3,7 +3,6 @@
 ImpedanceController::ImpedanceController() {
   ros::NodeHandle n("~");
 
-  // Vector3d m(1., 1., 1.), k(15., 15., 5.);
   ImpCoeff impCoeff;
   std::vector<bool> isGotMDK(3, false);
   isGotMDK[0] = n.getParam("imp_ceff/m", impCoeff.m_);
@@ -14,17 +13,15 @@ ImpedanceController::ImpedanceController() {
   if (nGotMDK == 2) {
     ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
-
   } else if (nGotMDK < 2) {
     ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
     ros::shutdown();
   }
   this->impParam = getImpParam(impCoeff);
 
-  std::string targetTopicName = "/gazebo/automation_targets";
+  std::string targetTopicName;
+  n.getParam("target_topic", targetTopicName);
   targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetTopicName, 1, &ImpedanceController::cbTargetPoses, this);
-
-  //   Affine3d restPoseOffset = Affine3d::Iden;
 }
 
 void ImpedanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK) {
@@ -67,39 +64,46 @@ void ImpedanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr
   this->_targetUpdated = true;
 }
 
-ImpedanceController::TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, CartController* controller) {
-  if (delta_x.head(3).norm() < 0.01 && delta_x.tail(3).norm() < 0.01)
-    return TaskState::Success;
+ImpedanceController::TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx, CartController* controller) {
+  double f = tf2::fromMsg(controller->getForceEef().wrench).head(3).norm();
+  if (targetIdx == -1) {
+    if (delta_x.head(3).norm() < 0.01 && delta_x.tail(3).norm() < 0.01)
+      return TaskState::Success;
+  } else {
+    if (delta_x.head(3).norm() < 0.03 && f > 20.0)
+      return TaskState::Success;
+  }
 
   return TaskState::OnGoing;
 }
 
-VectorXd ImpedanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt) {
-  //   // std::cout <<   param.targetType << std::endl;
-  //   // std::cout << magic_enum::enum_name(adaptationOption) << std::endl;
-  //   if (adaptationOption == AdaptationOption::random_multi && param.targetType == "Automation")
-  //     return (MatrixXd::Identity(6, 6) + param.impParam_v[param.d_thr_i].A * dt) * x +
-  //            dt * param.impParam_v[param.d_thr_i].C * param.xd;
-  //   else
+VectorXd ImpedanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam) {
   return (MatrixXd::Identity(6, 6) + impParam.A * dt) * x + dt * impParam.B * exForce + dt * impParam.C * xd;
 }
 
-void ImpedanceController::getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx,
-                                        int& nextTargetIdx, Affine3d& curTargetPose) {
-  if (taskState == TaskState::Fail)
-    curTargetPose = restPose;
-  else if (taskState == TaskState::Success) {
-    if (targetIdx == -1) {
-      nextTargetIdx++;
-      if (nextTargetIdx == targetPoses.size())
-        nextTargetIdx = 0;
-      curTargetPose = targetPoses[nextTargetIdx];
-      targetIdx = nextTargetIdx;
-    } else {
-      curTargetPose = restPose;
+Affine3d ImpedanceController::getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx,
+                                            int& nextTargetIdx) {
+  switch (taskState) {
+    case TaskState::Fail:
       targetIdx = -1;
-    }
+      break;
+
+    case TaskState::Success:
+      if (targetIdx == -1) {  // if going back to rest positon
+        nextTargetIdx++;
+        if (nextTargetIdx == targetPoses.size())
+          nextTargetIdx = 0;
+        targetIdx = nextTargetIdx;
+      } else {
+        targetIdx = -1;
+      }
+      break;
   }
+
+  if (targetIdx == -1)  // if going back to rest positon
+    return restPose;
+  else
+    return targetPoses[targetIdx];
 }
 
 void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
@@ -111,34 +115,39 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, 
     targetPoses = _targetPoses;
   }
 
-  static Affine3d curTargetPose;
+  // transform target pose coordinate from world to base
+  Affine3d T_base_world_inv = controller->getT_base_world().inverse();
+  for (int i = 0; i < targetPoses.size(); i++)
+    targetPoses[i] = T_base_world_inv * targetPoses[i];
+
+  KDL::Frame frame;
+  KDL::Twist vel;
+  controller->getCartState(frame, vel);
+
   if (taskState == TaskState::Initial) {
+    x = (VectorXd(6) << frame.p[0], frame.p[1], frame.p[2], 0.0, 0.0, 0.0).finished();
     // _targetPoses.resize(1);
     // _targetPoses[0] = controller->getT_init();
     // _targetPoses[0].translation()[0] += 0.1;
 
     restPose = controller->getT_init();
-    curTargetPose = restPose;
     targetIdx = -1;
+    xd = (VectorXd(6) << restPose.translation(), Vector3d::Zero()).finished();
 
     controller->startOperation();
   }
 
-  KDL::Frame frame;
-  KDL::Twist vel;
-  controller->getCartState(frame, vel);
-  static VectorXd x = (VectorXd(6) << frame.p[0], frame.p[1], frame.p[2], 0.0, 0.0, 0.0).finished();
+  // update only position using subscribed q.
+  // When the velocity is updated as well, the robot motion somehow become unstable.
   x.head(3) << frame.p[0], frame.p[1], frame.p[2];
 
-  VectorXd xd = (VectorXd(6) << curTargetPose.translation(), Vector3d::Zero()).finished();
-
-  taskState = updataTaskState(x - xd, controller);
-  getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx, curTargetPose);
+  taskState = updataTaskState(x - xd, targetIdx, controller);
 
   // update target pose
-  xd.head(3) = curTargetPose.translation();
+  xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
 
-  x = getControlState(x, xd, VectorXd::Zero(3), dt);
+  // get command state
+  x = getControlState(x, xd, VectorXd::Zero(3), this->dt, this->impParam);
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);

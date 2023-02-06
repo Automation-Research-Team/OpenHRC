@@ -14,6 +14,8 @@ class ImpedanceController : public virtual MultiCartController {
   bool _targetUpdated = false;
   int targetIdx = -1, nextTargetIdx = -1;
 
+  VectorXd x, xd;
+
   struct ImpParam {
     MatrixXd A = MatrixXd::Zero(6, 6), B = MatrixXd::Zero(6, 3), C = MatrixXd::Zero(6, 6);
   } impParam;
@@ -33,11 +35,10 @@ class ImpedanceController : public virtual MultiCartController {
 
   void getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK);
   ImpParam getImpParam(const ImpCoeff& impCoeff);
-  void getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx,
-                     Affine3d& curTargetPose);
+  Affine3d getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
   void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
-  TaskState updataTaskState(const VectorXd& delta_x, CartController* controller);
-  VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt);
+  TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx, CartController* controller);
+  VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
   void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 
