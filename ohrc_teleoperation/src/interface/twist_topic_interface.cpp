@@ -25,7 +25,7 @@ void TwistTopicInterface::starting() {
     T_state_base[i] = cartControllers[i]->getTransform_base(this->stateFrameId);
 }
 
-void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
+void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
   geometry_msgs::Twist twist_msg;
   {
     std::lock_guard<std::mutex> lock(mtx_twist);
@@ -89,7 +89,7 @@ void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, C
   // update pos and twist
 }
 
-void TwistTopicInterface::resetInterface() {
+void TwistTopicInterface::resetInterface(std::shared_ptr<CartController> controller) {
   ROS_WARN_STREAM("Reset marker position");
   state = ohrc_msgs::State();
 }

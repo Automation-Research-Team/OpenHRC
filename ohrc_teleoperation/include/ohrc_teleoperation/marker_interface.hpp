@@ -3,34 +3,34 @@
 
 #include <interactive_markers/interactive_marker_server.h>
 
-#include "ohrc_control/multi_cart_controller.hpp"
+#include "ohrc_control/cart_controller.hpp"
 
-class MarkerInterface : public virtual MultiCartController {
+class MarkerInterface {
+  std::shared_ptr<CartController> controller;
   visualization_msgs::InteractiveMarker int_marker;
 
 protected:
-  interactive_markers::InteractiveMarkerServer server;
+  std::unique_ptr<interactive_markers::InteractiveMarkerServer> server;
 
-  void configMarker(const CartController* cartController);
+  void configMarker();
   void processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback);
 
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
-  // void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
+  // void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) override;
 
-  std::vector<KDL::Frame> prevPoses;
-  std::vector<geometry_msgs::Pose> _markerPose;
-  std::vector<double> _markerDt;
-  std::vector<ros::Time> t_prev;
+  KDL::Frame prevPoses;
+  geometry_msgs::Pose _markerPose;
+  double _markerDt;
+  ros::Time t_prev;
 
   std::mutex mtx_marker;
 
-  void starting() override;
-  std::vector<bool> _flagSubInteractiveMarker;
-
-  void resetInterface() override;
+  void starting();
+  bool _flagSubInteractiveMarker = false;
 
 public:
-  MarkerInterface();
+  MarkerInterface(std::shared_ptr<CartController> controller);
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist);
+  void resetInterface();
 };
 
 #endif  // MARKER_INTERFACE_HPP

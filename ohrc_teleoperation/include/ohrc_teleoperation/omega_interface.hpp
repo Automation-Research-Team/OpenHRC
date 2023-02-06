@@ -6,7 +6,7 @@
 #include "std_srvs/Empty.h"
 
 class OmegaInterface : public virtual StateTopicInterface {
-  void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller) override;
+  void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller) override;
 
   ros::Publisher pubOmegaPose, pubOmegaForce, pubEnergy, pubOmegaForceVis;
 

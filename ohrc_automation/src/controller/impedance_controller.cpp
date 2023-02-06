@@ -1,6 +1,8 @@
 #include "ohrc_automation/impedance_controller.hpp"
 
-ImpedanceController::ImpedanceController() {
+ImpedanceController::ImpedanceController(std::shared_ptr<CartController> controller) {
+  this->controller = controller;
+
   ros::NodeHandle n("~");
 
   ImpCoeff impCoeff;
@@ -19,9 +21,15 @@ ImpedanceController::ImpedanceController() {
   }
   this->impParam = getImpParam(impCoeff);
 
+  std::vector<std::string> targetTopicName_;
   std::string targetTopicName;
-  n.getParam("target_topic", targetTopicName);
+  if (n.getParam("target_topic", targetTopicName_))
+    targetTopicName = targetTopicName_[controller->getIndex()];
+  else if (!n.getParam("target_topic", targetTopicName))
+    ROS_ERROR_STREAM("target pose topic name(s) are not configured");
+
   targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetTopicName, 1, &ImpedanceController::cbTargetPoses, this);
+  RespawnReqPublisher = n.advertise<std_msgs::Empty>(targetTopicName + "/success", 10);
 }
 
 void ImpedanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK) {
@@ -64,14 +72,16 @@ void ImpedanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr
   this->_targetUpdated = true;
 }
 
-ImpedanceController::TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx, CartController* controller) {
+ImpedanceController::TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx) {
   double f = tf2::fromMsg(controller->getForceEef().wrench).head(3).norm();
   if (targetIdx == -1) {
     if (delta_x.head(3).norm() < 0.01 && delta_x.tail(3).norm() < 0.01)
       return TaskState::Success;
   } else {
-    if (delta_x.head(3).norm() < 0.03 && f > 20.0)
+    if (delta_x.head(3).norm() < 0.03 && f > 20.0) {
+      RespawnReqPublisher.publish(std_msgs::Empty());
       return TaskState::Success;
+    }
   }
 
   return TaskState::OnGoing;
@@ -106,7 +116,7 @@ Affine3d ImpedanceController::getNextTarget(const ImpedanceController::TaskState
     return targetPoses[targetIdx];
 }
 
-void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   std::vector<Affine3d> targetPoses;
   {
     std::lock_guard<std::mutex> lock(mtx_imp);
@@ -141,13 +151,13 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, 
   // When the velocity is updated as well, the robot motion somehow become unstable.
   x.head(3) << frame.p[0], frame.p[1], frame.p[2];
 
-  taskState = updataTaskState(x - xd, targetIdx, controller);
+  taskState = updataTaskState(x - xd, targetIdx);
 
   // update target pose
   xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
 
   // get command state
-  x = getControlState(x, xd, VectorXd::Zero(3), this->dt, this->impParam);
+  x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);

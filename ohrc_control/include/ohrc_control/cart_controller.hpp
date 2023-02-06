@@ -313,6 +313,7 @@ public:
     this->_des_eff_vel = des_eff_vel;
   }
 
+  double dt;
   double freq = 500.0;
 
   const double eps = 1e-6;

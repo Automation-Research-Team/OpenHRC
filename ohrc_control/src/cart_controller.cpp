@@ -26,16 +26,16 @@ void CartController::init(std::string robot) {
   if (!getInitParam())
     ros::shutdown();
 
-  timeout = 1.0 / freq;
+  dt = 1.0 / freq;
 
   ROS_INFO_STREAM("namespace: " + robot);
   if (robot != "")
     robot_ns = robot + "/";
   urdf_param = "/" + robot_ns + "robot_description";
 
-  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(3.0));
+  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(10.0));
 
-  tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, timeout, eps));
+  tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, dt, eps));
 
   KDL::JntArray ll, ul;  // lower joint limits, upper joint limits
   bool valid = tracik_solver_ptr->getKDLLimits(ll, ul);
@@ -60,8 +60,8 @@ void CartController::init(std::string robot) {
     subFlagPtrs.push_back(&flagArmMarker);
   }
 
-  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0));
+  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0))) {
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(10.0));
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
     subFlagPtrs.push_back(&flagForce);
   } else
@@ -425,7 +425,7 @@ void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_d
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
-  cmd_trj.header.stamp = ros::Time::now();
+  // cmd_trj.header.stamp = ros::Time::now();
   cmd_trj.points.resize(1);
   cmd_trj.points[0].time_from_start = ros::Duration(T);
 
@@ -438,7 +438,7 @@ void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, tr
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
-  cmd_trj.header.stamp = ros::Time::now();
+  // cmd_trj.header.stamp = ros::Time::now();
   cmd_trj.points.resize(1);
   cmd_trj.points[0].time_from_start = ros::Duration(T);
 

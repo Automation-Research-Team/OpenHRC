@@ -1,12 +1,16 @@
 #ifndef IMPEDANCE_CONTROLLER_HPP
 #define IMPEDANCE_CONTROLLER_HPP
 
-#include "geometry_msgs/PoseArray.h"
-#include "ohrc_control/multi_cart_controller.hpp"
+#include <geometry_msgs/PoseArray.h>
+#include <std_msgs/Empty.h>
 
-class ImpedanceController : public virtual MultiCartController {
+#include "ohrc_control/cart_controller.hpp"
+
+class ImpedanceController {
+  std::shared_ptr<CartController> controller;
   std::mutex mtx_imp;
   ros::Subscriber targetSubscriber;
+  ros::Publisher RespawnReqPublisher;
 
   std::vector<Affine3d> _targetPoses;
   Affine3d restPose;
@@ -36,14 +40,15 @@ class ImpedanceController : public virtual MultiCartController {
   void getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK);
   ImpParam getImpParam(const ImpCoeff& impCoeff);
   Affine3d getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
-  TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx, CartController* controller);
+
+  TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
   void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 
 public:
-  ImpedanceController();
+  ImpedanceController(std::shared_ptr<CartController> controller);
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist);
 };
 
 #endif  // IMPEDANCE_CONTROLLER_HPP

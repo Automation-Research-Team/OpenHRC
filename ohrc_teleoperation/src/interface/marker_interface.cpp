@@ -1,29 +1,22 @@
 #include "ohrc_teleoperation/marker_interface.hpp"
 
-MarkerInterface::MarkerInterface() : server("eff_marker") {
+MarkerInterface::MarkerInterface(std::shared_ptr<CartController> controller) {
+  this->controller = controller;
+
+  server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eff_marker"));
+  configMarker();
+  server->applyChanges();
 }
 
-void MarkerInterface::starting() {
-  MultiCartController::starting();
-  _markerPose.resize(nRobot);
-  _markerDt.resize(nRobot);
-  t_prev.resize(nRobot, ros::Time::now());
-  prevPoses.resize(nRobot);
-  _flagSubInteractiveMarker.resize(nRobot, false);
-  for (auto& ind : manualInd)
-    configMarker(cartControllers[ind].get());
-  server.applyChanges();
-}
-
-void MarkerInterface::configMarker(const CartController* cartController) {
-  int_marker.header.frame_id = cartController->getRobotNs() + cartController->getChainStart();
+void MarkerInterface::configMarker() {
+  int_marker.header.frame_id = controller->getRobotNs() + controller->getChainStart();
   int_marker.header.stamp = ros::Time(0);
-  int_marker.pose = tf2::toMsg(cartController->getT_init());
+  int_marker.pose = tf2::toMsg(controller->getT_init());
 
   // int_marker.pose.position = tf2::toMsg(Vector3d(cartController->getT_init().translation()));
   // int_marker.pose.orientation = tf2::toMsg(Quaterniond(cartController->getT_init().rotation().transpose()));
   int_marker.scale = 0.1;
-  int_marker.name = cartController->getRobotNs();
+  int_marker.name = controller->getRobotNs();
 
   // insert a box
   visualization_msgs::Marker box_marker;
@@ -61,8 +54,8 @@ void MarkerInterface::configMarker(const CartController* cartController) {
   // add the interactive marker to our collection &
   // tell the server to call processFeedback() when feedback arrives for it
   //   server.insert(int_marker, boost::bind(&MarkerInterface::processFeedback, this, _1));
-  server.insert(int_marker);
-  server.setCallback(int_marker.name, boost::bind(&MarkerInterface::processFeedback, this, _1));
+  server->insert(int_marker);
+  server->setCallback(int_marker.name, boost::bind(&MarkerInterface::processFeedback, this, _1));
 
   // 'commit' changes and send to all clients
   // server.applyChanges();
@@ -70,54 +63,42 @@ void MarkerInterface::configMarker(const CartController* cartController) {
 
 void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {
   std::lock_guard<std::mutex> lock(mtx_marker);
-  // ROS_INFO_STREAM(*feedback);
-
-  for (int i = 0; i < nRobot; i++) {
-    if (feedback->marker_name == cartControllers[i]->getRobotNs()) {
-      _markerPose[i] = feedback->pose;
-      _markerDt[i] = (ros::Time::now() - t_prev[i]).toSec();
-      _flagSubInteractiveMarker[i] = true;
-      t_prev[i] = ros::Time::now();
-      return;
-    }
-  }
+  _markerPose = feedback->pose;
+  _markerDt = (ros::Time::now() - t_prev).toSec();
+  _flagSubInteractiveMarker = true;
+  t_prev = ros::Time::now();
 }
 
-void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   controller->enableOperation();
   geometry_msgs::Pose markerPose;
   double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
-    if (!_flagSubInteractiveMarker[controller->getIndex()]) {
+    if (!_flagSubInteractiveMarker) {
       // controller->disableOperation();
       return;
     }
     // _flagSubInteractiveMarker[controller->getIndex()] = false;
-    markerPose = _markerPose[controller->getIndex()];
+    markerPose = _markerPose;
     // markerDt = _markerDt[controller->getIndex()];
   }
 
   tf2::fromMsg(markerPose, pose);
 
-  if (prevPoses[controller->getIndex()].p.data[0] == 0.0 && prevPoses[controller->getIndex()].p.data[1] == 0.0 && prevPoses[controller->getIndex()].p.data[2] == 0.0)  // initilize
-    prevPoses[controller->getIndex()] = pose;
+  if (prevPoses.p.data[0] == 0.0 && prevPoses.p.data[1] == 0.0 && prevPoses.p.data[2] == 0.0)  // initilize
+    prevPoses = pose;
 
-  controller->getVelocity(pose, prevPoses[controller->getIndex()], dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
+  controller->getVelocity(pose, prevPoses, controller->dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
 
-  prevPoses[controller->getIndex()] = pose;
-
-  controller->enableOperation();
-  // update pos and twist
+  prevPoses = pose;
 }
 
 void MarkerInterface::resetInterface() {
   ROS_WARN_STREAM("Reset marker position");
-  server.setPose(int_marker.name, int_marker.pose);
-  server.applyChanges();
+  server->setPose(int_marker.name, int_marker.pose);
+  server->applyChanges();
 
-  for (int i = 0; i < nRobot; i++) {
-    _markerPose[i] = int_marker.pose;
-    // _flagSubInteractiveMarker[i] = false;
-  }
+  _markerPose = int_marker.pose;
+  _flagSubInteractiveMarker = false;
 }

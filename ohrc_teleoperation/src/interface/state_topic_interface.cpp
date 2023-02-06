@@ -23,7 +23,7 @@ void StateTopicInterface::starting() {
     T_state_base[i] = cartControllers[i]->getTransform_base(this->stateFrameId);
 }
 
-void StateTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, CartController* controller) {
+void StateTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
   ohrc_msgs::State state;
   {
     std::lock_guard<std::mutex> lock(mtx_state);

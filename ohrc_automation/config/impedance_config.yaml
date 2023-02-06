@@ -3,4 +3,6 @@ imp_ceff:
   # d: [1., 1., 1.]
   k: [10., 10., 5]
 
-target_topic: "/gazebo/automation_targets"
+target_topic: 
+  - "/gazebo/automation_targets"
+  - "/gazebo/recovery_targets"

@@ -94,10 +94,10 @@ bool MultiCartController::getInitParam() {
 }
 
 bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->resetPose();
-
-  resetInterface();
+    resetInterface(cartControllers[i]);
+  }
   return true;
 }
 
@@ -215,7 +215,7 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     Affine3d T_cur, T_des;
     tf::transformKDLToEigen(p, T_cur);
     tf::transformKDLToEigen(desPose[ind], T_des);
-    feedbackCart(T_cur, T_des, cartControllers[ind].get());
+    feedbackCart(T_cur, T_des, cartControllers[ind]);
   }
 }
 
@@ -227,17 +227,17 @@ void MultiCartController::updateDesired() {
 
   if (MFmode == MFMode::Individual) {
     for (auto& ind : manualInd)
-      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
     for (auto& ind : autoInd)
-      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
 
   } else if (MFmode == MFMode::Parallel) {
     for (auto& ind : manualInd)
-      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
     for (auto& ind : autoInd) {
       desPose[ind] = desPose[manualInd[0]];
       desVel[ind] = desVel[manualInd[0]];
-      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
     }
   } else if (MFmode == MFMode::Cooperation) {
     ROS_ERROR_STREAM("This MFmode is not implemented");
