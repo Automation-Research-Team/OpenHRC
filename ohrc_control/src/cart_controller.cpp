@@ -85,10 +85,10 @@ void CartController::init(std::string robot) {
            (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
 
   for (int i = 0; i < 6; i++)
-    velFilter.push_back(butterworth(2, 50.0, freq));
+    velFilter.push_back(butterworth(2, freq / 3.0, freq));
 
   for (int i = 0; i < nJnt; i++)
-    jntFilter.push_back(butterworth(2, 50.0, freq));
+    jntFilter.push_back(butterworth(2, freq / 3.0, freq));
 }
 
 bool CartController::getInitParam() {

@@ -1,6 +1,6 @@
 chain_start: "base_link" # base frame of commands
 chain_end: "tool0" # target eff frame
-root_frame: "world" # IK calculation base frame (for multi-follower)
+root_frame: "base_link" # IK calculation base frame (for multi-follower)
 
 controller: "Position" # "Position" or "Velocity"
 publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
