@@ -1,0 +1,7 @@
+
+gain:
+  horizontal: 0.1
+  rotational: 0.3
+
+topic_name: "/spacenav/joy"
+frame_id: "world"

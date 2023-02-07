@@ -6,26 +6,27 @@ void TwistTopicInterface::initInterface() {
 
   // stateFrameId = root_frame;
 
-  subTwist = n.subscribe<geometry_msgs::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
+  n.getParam("topic_name", stateTopicName);
+  n.getParam("frame_id", stateFrameId);
+
+  setSubscriber();
 
   T_state_base = controller->getTransform_base(this->stateFrameId);
   dt = controller->dt;
 }
 
+void TwistTopicInterface::setSubscriber() {
+  subTwist = n.subscribe<geometry_msgs::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
+}
+
 void TwistTopicInterface::cbTwist(const geometry_msgs::Twist::ConstPtr& msg) {
-  std::lock_guard<std::mutex> lock(mtx_twist);
+  std::lock_guard<std::mutex> lock(mtx_topic);
   _twist = *msg;
 }
 
-void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
-  geometry_msgs::Twist twist_msg;
-  {
-    std::lock_guard<std::mutex> lock(mtx_twist);
-    twist_msg = _twist;
-  }
+void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist) {
   state.enabled = true;
-
-  state.twist = twist_msg, state.twist;
+  state.twist = twist_msg;
   state.pose.position.x += state.twist.linear.x * dt;
   state.pose.position.y += state.twist.linear.y * dt;
   state.pose.position.z += state.twist.linear.z * dt;
@@ -75,12 +76,23 @@ void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
     // v = 0.9;  // TODO: stop smoothly
   }
 
+  // update pos and twist
   tf::transformEigenToKDL(T, pos);
   tf::twistEigenToKDL(v, twist);
-  // update pos and twist
+}
+
+void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
+  geometry_msgs::Twist twist_msg;
+  {
+    std::lock_guard<std::mutex> lock(mtx_topic);
+    twist_msg = _twist;
+  }
+
+  setPoseFromTwistMsg(twist_msg, pos, twist);
 }
 
 void TwistTopicInterface::resetInterface() {
-  ROS_WARN_STREAM("Reset marker position");
+  ROS_WARN_STREAM("Reset interface");
   state = ohrc_msgs::State();
+  isFirst = true;
 }

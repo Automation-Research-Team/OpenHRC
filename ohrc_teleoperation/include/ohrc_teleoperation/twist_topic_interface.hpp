@@ -17,7 +17,7 @@ protected:
   Affine3d T, T_start, T_state_start;
   bool isFirst = true;
 
-  std::mutex mtx_twist;
+  std::mutex mtx_topic;
   geometry_msgs::Twist _twist;
 
   double dt;
@@ -28,6 +28,8 @@ protected:
 
   void cbTwist(const geometry_msgs::Twist::ConstPtr& msg);
   // virtual void modifyTargetState(geometry?::State& state){};
+  virtual void setSubscriber();
+  void setPoseFromTwistMsg(const geometry_msgs::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist);
 
 public:
   using Interface::Interface;
