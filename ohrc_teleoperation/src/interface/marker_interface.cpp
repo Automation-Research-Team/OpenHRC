@@ -1,11 +1,8 @@
 #include "ohrc_teleoperation/marker_interface.hpp"
 
-MarkerInterface::MarkerInterface(std::shared_ptr<CartController> controller) {
-  this->controller = controller;
-
+void MarkerInterface::initInterface() {
   server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eff_marker"));
   configMarker();
-  server->applyChanges();
 }
 
 void MarkerInterface::configMarker() {
@@ -58,7 +55,9 @@ void MarkerInterface::configMarker() {
   server->setCallback(int_marker.name, boost::bind(&MarkerInterface::processFeedback, this, _1));
 
   // 'commit' changes and send to all clients
-  // server.applyChanges();
+  server->applyChanges();
+
+  ROS_INFO_STREAM("Set interactive marker: " << controller->getRobotNs() << "eff_marker");
 }
 
 void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {
