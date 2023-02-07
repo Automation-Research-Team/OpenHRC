@@ -88,11 +88,27 @@ $ roslaunch seed_r7_gazebo seed_r7_empty_world.launch
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=seed controller:=vel_trj
 ```
 
-## Example - Teleoperation using twist topic
+## Example - Teleoperation using geometry_msgs/twist topic
+This subscribe twist topic as a command velocity of robot end-effector.
 ```
+$ rosrun (some nodes to generate command velocity)
 $ roslaunch ohrc_teleoperation twist_topic_teleoperation.launch robot:=(robot) controller:=(controller)
 ```
-This subscribe `/cmd_vel` topic and increment.
+
+
+## Example - Teleoperation using sensor_msgs/joy topic
+This subscribe joy topic as a command velocity of robot end-effector.
+If you have 3D mouse (spacenav) http://wiki.ros.org/spacenav_node
+```
+## install 
+$ sudo apt install spacenavd
+$ sudo apt install ros-noetic-spacenav-node
+
+$ roslaunch ohrc_teleoperation joy_topic_teleoperation.launch robot:=(robot) controller:=(controller)
+```
+The second button (usually RIGHT button) is used as a trigger for reseting robot pose.
+
+
 
 ## Example - Teleoperation using haptic interface `Omega`
 
