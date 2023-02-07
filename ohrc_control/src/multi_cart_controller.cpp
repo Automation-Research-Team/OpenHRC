@@ -13,10 +13,11 @@ MultiCartController::MultiCartController() {
 
   std::vector<std::string> base_link(nRobot), tip_link(nRobot), URDF_param(nRobot);  // TODO: base_links for all robot shoud be same
   std::vector<Affine3d> T_base_root(nRobot);
+  std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr(nRobot);
   for (int i = 0; i < nRobot; i++)
-    cartControllers[i]->getInfo(base_link[i], tip_link[i], URDF_param[i], T_base_root[i]);
+    cartControllers[i]->getInfo(base_link[i], tip_link[i], URDF_param[i], T_base_root[i], myik_ptr[i]);
 
-  multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root));
+  multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root, myik_ptr));
 
   service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
 
@@ -27,6 +28,8 @@ MultiCartController::MultiCartController() {
 
   for (int i = 1; i < nRobot; i = i + 2)
     autoInd.push_back(i);
+
+  std::cout << magic_enum::enum_name(priority) << std::endl;
 
   setPriority(priority);
 
@@ -91,10 +94,10 @@ bool MultiCartController::getInitParam() {
 }
 
 bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->resetPose();
-
-  resetInterface();
+    resetInterface(cartControllers[i]);
+  }
   return true;
 }
 
@@ -116,7 +119,7 @@ void MultiCartController::starting() {
   // cartControllers[i]->enableOperation();
   // }
   ROS_INFO_STREAM("Controller started!");
-  // this->t0 = ros::Time::now();
+  this->t0 = ros::Time::now();
 }
 
 void MultiCartController::stopping() {
@@ -130,9 +133,10 @@ void MultiCartController::stopping() {
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
   std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
+    cartControllers[i]->updateCurState();
     cartControllers[i]->getState(q_cur[i], dq_cur[i]);
-
+  }
   static ros::Time prev = time;
   if ((time - prev).toSec() > 0.05) {
     for (int i = 0; i < nRobot; i++)
@@ -211,27 +215,29 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     Affine3d T_cur, T_des;
     tf::transformKDLToEigen(p, T_cur);
     tf::transformKDLToEigen(desPose[ind], T_des);
-    feedbackCart(T_cur, T_des, cartControllers[ind].get());
+    feedbackCart(T_cur, T_des, cartControllers[ind]);
   }
 }
 
 void MultiCartController::updateDesired() {
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
     tf::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
+    desVel[i] = KDL::Twist();
+  }
 
   if (MFmode == MFMode::Individual) {
     for (auto& ind : manualInd)
-      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
     for (auto& ind : autoInd)
-      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
 
   } else if (MFmode == MFMode::Parallel) {
     for (auto& ind : manualInd)
-      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
     for (auto& ind : autoInd) {
       desPose[ind] = desPose[manualInd[0]];
       desVel[ind] = desVel[manualInd[0]];
-      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind].get());
+      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
     }
   } else if (MFmode == MFMode::Cooperation) {
     ROS_ERROR_STREAM("This MFmode is not implemented");

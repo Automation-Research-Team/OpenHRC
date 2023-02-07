@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(ohrc_common)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -130,7 +130,7 @@ include_directories(
                                src/math_utility.cpp
                                src/std_utility.cpp
                                src/subscriber_utility.cpp
-                               src/transform_utility.cpp
+                              #  src/transform_utility.cpp
                                src/geometry_msgs_utility/Wrench.cpp
                                src/geometry_msgs_utility/WrenchStamped.cpp
                                src/geometry_msgs_utility/Point.cpp

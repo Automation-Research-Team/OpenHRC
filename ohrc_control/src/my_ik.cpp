@@ -109,6 +109,7 @@ void MyIK::initialize() {
 
   jacsolver.reset(new KDL::ChainJntToJacSolver(chain));
   fksolver.reset(new KDL::ChainFkSolverPos_recursive(chain));
+  fkVelSolver.reset(new KDL::ChainFkSolverVel_recursive(chain));
 
   for (uint i = 0; i < chain.segments.size(); i++) {
     std::string type = chain.segments[i].getJoint().getTypeName();
@@ -224,9 +225,7 @@ VectorXd MyIK::getRandomJntVel(const double& dt) {
 }
 
 int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt) {
-  boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
-  double diff;
-  ros::Time start_time_ros = ros::Time::now();
+  // boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
 
   q_out = q_init;
 
@@ -242,6 +241,7 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
 
   std::vector<double> artificial_lower_limits, artificial_upper_limits;
   VectorXd x = getUpdatedJntLimit(q_init, artificial_lower_limits, artificial_upper_limits, dt);
+  // std::cout << (x - q_init.data).transpose() << std::endl;
 
   KDL::Jacobian jac(nJnt);
   KDL::JntArray q(nJnt);
@@ -251,9 +251,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
   Affine3d T_d, T;
   tf::transformKDLToEigen(p_in, T_d);
   double time_left;
-  double alpha = 1.5;
+  double alpha = 1.;
 
-  VectorXd w = VectorXd::Ones(nJnt) * 1.0e-5;
+  VectorXd w = VectorXd::Ones(nJnt) * 1.0e-3;
   for (int i = 1; i < nJnt; i++)
     w(i) = w(i - 1) * 3.0;
   // VectorXd w(6);
@@ -262,7 +262,10 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
 
   double w_n = 1.0e-5;
 
-  static VectorXd x_rest = x;
+  // static VectorXd x_rest = x;
+  // std::cout << "--" << std::endl;
+  double diff;
+  ros::Time start_time_ros = ros::Time::now();
 
   while (ros::ok()) {
     q.data = x;
@@ -273,18 +276,19 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
 
     MatrixXd J = jac.data;
     e = getCartError(T, T_d);
+    // std::cout << e.transpose() << std::endl;
+
+    if (e.dot(e) < eps)
+      break;
 
     // diff = (boost::posix_time::microsec_clock::local_time() - start_time).total_nanoseconds() * 1.0e-9;
     diff = (ros::Time::now() - start_time_ros).toSec();
+    // std::cout << time_left << std::endl;
     // std::cout << dt << std::endl;
     time_left = dt - diff;
-    // std::cout << time_left << std::endl;
     if (time_left < 0.)
-      return -1;
-
-    // ROS_INFO_STREAM(e.transpose() * e);
-    if (e.dot(e) < eps)
       break;
+    // return -1;
 
     // std::cout << e.transpose() << std::endl;
 
@@ -295,13 +299,14 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
 
     double gamma = 0.5 * e.transpose() * W * e + w_n;
     // double gamma = 0.5 * e.transpose() * e + w_n;                                                               // proposed by Sugihara-sensei
-    J_w_pinv = (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt
+    J_w_pinv = (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).colPivHouseholderQr().solve(J.transpose() * W);  // weighted & Levenberg–Marquardt
 
     // Eigen::JacobiSVD<MatrixXd> svd(J, Eigen::ComputeThinU | Eigen::ComputeThinV);
     // J_w_pinv = svd.matrixV() * (svd.singularValues().array() + ArrayXd::Ones(svd.singularValues().size()) * gamma).inverse().matrix().asDiagonal() * svd.matrixU().transpose();
 
     // Update
     x = x + alpha * J_w_pinv * e;
+    // std::cout << (alpha * J_w_pinv * e)[0] << std::endl;
     // VectorXd k(nJnt);
     // k = x_rest - x;
     // MatrixXd J_null = (MatrixXd::Identity(nJnt, nJnt) - J_pinv * J);
@@ -349,9 +354,12 @@ void MyIK::updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose
   tf::transformKDLToEigen(p, T);
   e = getCartError(T, T_d);
 
+  // std::cout << v.transpose() << std::endl;
   VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
-  kp.tail(3) = kp.tail(3) * 0.5 / M_PI;
+  kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
   v = v + kp.asDiagonal() * e;
+
+  // std::cout << v.transpose() << std::endl;
 
   tf::twistEigenToKDL(v, des_eff_vel);
 }

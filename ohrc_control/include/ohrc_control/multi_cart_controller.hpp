@@ -25,14 +25,14 @@ protected:
   enum class MFMode { None, Individual, Parallel, Cooperation } MFmode;
   enum class IKMode { None, Concatenated, Order, Parallel } IKmode;
 
-  std::vector<std::unique_ptr<CartController>> cartControllers;
+  std::vector<std::shared_ptr<CartController>> cartControllers;
   std::vector<std::string> robots;
   int nRobot = 0;
 
   std::string root_frame;
   double freq = 500.0;
   double dt = 0.002;
-  // ros::Time t0;
+  ros::Time t0;
   std::string date;
 
   // MyIK
@@ -51,20 +51,20 @@ protected:
   std::string adaptationOption_;
 
   virtual void runLoopEnd(){};
-  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller){};
-  virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller){};
+  virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
     updateTargetPose(pose, twist, controller);
   };
-  virtual void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) {
+  virtual void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
     updateTargetPose(pose, twist, controller);
   };
-  virtual void feedbackJnt(const KDL::JntArray& q_cur, const KDL::JntArray& q_des, CartController* controller){};
-  virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller){};
+  virtual void feedbackJnt(const KDL::JntArray& q_cur, const KDL::JntArray& q_des, std::shared_ptr<CartController> controller){};
+  virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
 
-  virtual void resetInterface(){};
+  virtual void resetInterface(std::shared_ptr<CartController> controller){};
 
   template <typename T>
-  T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
+  inline T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
     std::string s;
     if (!n.getParam(key, s)) {
       ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");

@@ -7,3 +7,6 @@
 [submodule "3rd_party/magic_enum"]
 	path = 3rd_party/magic_enum
 	url = https://github.com/itadera/magic_enum.git
+[submodule "3rd_party/dmpbbo"]
+	path = 3rd_party/dmpbbo
+	url = https://github.com/itadera/dmpbbo.git

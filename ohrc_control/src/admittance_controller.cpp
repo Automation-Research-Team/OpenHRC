@@ -18,10 +18,12 @@ void AdmittanceController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr&
     flagEffPose = true;
 }
 
-
-bool AdmittanceController::initAdmittanceModel(std::vector<double> m, std::vector<double> d, std::vector<double> k, std::vector<double> i, std::vector<double> do_, std::vector<double> ko) {
-  ROS_INFO_STREAM("Adminntace translation: m [" << Vector3d(m.data()).transpose() << "], d [" << Vector3d(d.data()).transpose() << "], k [" << Vector3d(k.data()).transpose() << "]");
-  ROS_INFO_STREAM("Adminntace rotation: i [" << Vector3d(i.data()).transpose() << "], do [" << Vector3d(do_.data()).transpose() << "], ko [" << Vector3d(ko.data()).transpose() << "]");
+bool AdmittanceController::initAdmittanceModel(std::vector<double> m, std::vector<double> d, std::vector<double> k, std::vector<double> i, std::vector<double> do_,
+                                               std::vector<double> ko) {
+  ROS_INFO_STREAM("Adminntace translation: m [" << Vector3d(m.data()).transpose() << "], d [" << Vector3d(d.data()).transpose() << "], k [" << Vector3d(k.data()).transpose()
+                                                << "]");
+  ROS_INFO_STREAM("Adminntace rotation: i [" << Vector3d(i.data()).transpose() << "], do [" << Vector3d(do_.data()).transpose() << "], ko [" << Vector3d(ko.data()).transpose()
+                                             << "]");
 
   if ((Array3d(m.data()) < 1.0e-3).any() || (Array3d(i.data()) < 1.0e-3).any()) {
     ROS_FATAL("Mass and inertia coefficients should be more than zero!");

@@ -21,7 +21,7 @@ void OmegaInterface::modifyTargetState(ohrc_msgs::State& state) {
   state.enabled = state.gripper.button;
 }
 
-void OmegaInterface::feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, CartController* controller) {
+void OmegaInterface::feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller) {
   VectorXd ft_feedback = VectorXd::Zero(6);
   double k_force = 0.0;
   if (hapticType == HapticType::PositionPositionFeedback) {

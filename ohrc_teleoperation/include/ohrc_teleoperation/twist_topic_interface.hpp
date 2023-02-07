@@ -28,12 +28,12 @@ protected:
   std::string stateTopicName = "/cmd_vel", stateFrameId = "world";
 
   void starting() override;
-  void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, CartController* controller) override;
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) override;
 
   void cbTwist(const geometry_msgs::Twist::ConstPtr& msg);
   // virtual void modifyTargetState(geometry?::State& state){};
 
-  void resetInterface() override;
+  void resetInterface(std::shared_ptr<CartController> controller) override;
 
 public:
   TwistTopicInterface();
