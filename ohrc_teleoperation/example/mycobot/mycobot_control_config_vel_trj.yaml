@@ -1,5 +1,5 @@
 chain_start: "base_link" # base frame of commands
-chain_end: "link6" # target eff frame
+chain_end: "link6_flange" # target eff frame
 root_frame: "base_link" # IK calculation base frame (for multi-follower)
 
 controller: "Velocity" # "Position" or "Velocity"
@@ -8,12 +8,12 @@ topic_namespace: "arm_controller"
 
 solver: "MyIK"
 
-self_collision_avoidance: true
+self_collision_avoidance: false
 
 control_freq: 30.0
 
-initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
-initial_pose: [0.1, 0., 0.2, 0, 0, 0] # [x, y, z, roll, pitch, yaw]
+initIKAngle: [0, 0., 0, 0, 0, 0] # size of this should be equal to DoF
+initial_pose: [0.2, 0., 0.2, 0, 0, 0] # [x, y, z, roll, pitch, yaw]
 
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
   - ""
