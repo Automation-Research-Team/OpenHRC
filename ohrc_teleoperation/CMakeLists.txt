@@ -190,6 +190,17 @@ foreach(interface ${twist_topic_interfaces})
   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 endforeach(interface)
 
+set(w_twist_topic_interfaces
+marker
+)
+
+foreach(interface ${w_twist_topic_interfaces})
+  add_executable(${interface}_twist_topic_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_twist_topic_teleoperation.cpp)
+  add_dependencies(${interface}_twist_topic_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${interface}_twist_topic_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+endforeach(interface)
+
+
 #############
 ## Install ##
 #############

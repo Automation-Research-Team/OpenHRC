@@ -140,7 +140,7 @@ void MultiCartController::stopping() {
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
   std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
   for (int i = 0; i < nRobot; i++) {
-    cartControllers[i]->updateCurState();
+    // cartControllers[i]->updateCurState();
     cartControllers[i]->getState(q_cur[i], dq_cur[i]);
   }
   static ros::Time prev = time;
@@ -226,6 +226,9 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
 }
 
 void MultiCartController::updateDesired() {
+  for (int i = 0; i < nRobot; i++)
+    cartControllers[i]->updateCurState();
+
   for (int i = 0; i < nRobot; i++) {
     tf::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
     desVel[i] = KDL::Twist();

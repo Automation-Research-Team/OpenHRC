@@ -24,18 +24,6 @@ protected:
 public:
   TransformUtility(): tfListener(tfBuffer){};
 
-  // // transform force&torque vector in force_sensor_link to one in handle_link
-  // // If implement as inline function, please use transformFT()
-  // MatrixXd transformFT_ft2handle(VectorXd ft_sensor);
-
-  // // transform velocity vector in handle_link to one in footprint
-  // // If implement as inline function, please use transformVel()
-  // MatrixXd transformV_handle2fp(VectorXd targetV);
-
-  // // transform velocity vector in footprint to one in handle_link
-  // // If implement as inline function, please use transformVel()
-  // MatrixXd transformV_fp2handle(VectorXd targetV);
-
   // (inline) transform velocity vector
   inline static MatrixXd transformVel(VectorXd vel, const Affine3d trans) {
     Vector3d v = trans.rotation() * vel.head(3);
