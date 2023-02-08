@@ -100,8 +100,13 @@ $ roslaunch ohrc_teleoperation twist_topic_teleoperation.launch robot:=(robot) c
 This subscribe joy topic as a command velocity of robot end-effector.
 If you have 3D mouse (spacenav) http://wiki.ros.org/spacenav_node
 ```
-$ roslaunch ohrc_teleoperation joy_topic_teleoperation.launch robot:=(robot) controller:=(controller)
+### install spacenav node
+$ sudo apt install spacenavd
+$ sudo apt install ros-indigo-spacenav-node
+
+$ roslaunch ohrc_teleoperation joy_topic_teleoperation.launch spacenav:=true robot:=(robot) controller:=(controller)
 ```
+The arg `spacenav:=true` launch spacenav node with specific options.
 The second button (usually RIGHT button) is used as a trigger for reseting robot pose.
 
 
