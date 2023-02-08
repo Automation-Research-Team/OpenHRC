@@ -19,6 +19,10 @@ protected:
   void resetInterface(std::shared_ptr<CartController> controller) override {
     interfaces[controller->getIndex()]->resetInterface();
   }
+
+  Control() {
+    interfaces.resize(nRobot);
+  }
 };
 
 #endif  // CONTROL_H

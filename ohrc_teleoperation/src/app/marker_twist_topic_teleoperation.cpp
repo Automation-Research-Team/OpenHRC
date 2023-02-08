@@ -6,14 +6,13 @@
 class MultiControl : virtual public Control {
 public:
   MultiControl() {
-    interfaces.resize(nRobot);
     interfaces[0] = std::make_shared<MarkerInterface>(cartControllers[0]);
     interfaces[1] = std::make_shared<TwistTopicInterface>(cartControllers[1]);
   }
 };
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "marker_teleoperation");
+  ros::init(argc, argv, "marker_twist_topic_teleoperation");
 
   MultiControl interface;
   if (interface.control() < 0)

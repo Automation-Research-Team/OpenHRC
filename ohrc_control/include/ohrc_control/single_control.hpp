@@ -7,7 +7,6 @@ template <class T>
 class SingleControl : virtual public Control {
 public:
   SingleControl() {
-    interfaces.resize(nRobot);
     for (int i = 0; i < nRobot; i++)
       interfaces[i] = std::make_shared<T>(cartControllers[i]);
   }
