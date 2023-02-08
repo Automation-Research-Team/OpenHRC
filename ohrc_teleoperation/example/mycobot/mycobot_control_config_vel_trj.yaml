@@ -1,0 +1,31 @@
+chain_start: "base_link" # base frame of commands
+chain_end: "link6" # target eff frame
+root_frame: "base_link" # IK calculation base frame (for multi-follower)
+
+controller: "Velocity" # "Position" or "Velocity"
+publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+topic_namespace: "arm_controller"
+
+solver: "MyIK"
+
+self_collision_avoidance: true
+
+control_freq: 30.0
+
+initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
+initial_pose: [0.1, 0., 0.2, 0, 0, 0] # [x, y, z, roll, pitch, yaw]
+
+follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
+  - ""
+  # - "toroboarm_2"
+  # - "toroboarm_3"
+  # - "toroboarm_4"
+  # - "toroboarm_5"
+  # - "toroboarm_6"
+  # - "toroboarm_7"
+  # - "toroboarm_8"
+  # - "toroboarm_9"
+
+priority: "Manual" #"Automation" #  (for multi-follower)
+MF_mode: "Individual" #"Parallel" #   (for multi-follower)
+IK_mode: "Order" # (for multi-follower)
