@@ -1,7 +1,7 @@
 #include "ohrc_teleoperation/omega_interface.hpp"
 
-OmegaInterface::OmegaInterface() {
-  ros::NodeHandle n("~");
+void OmegaInterface::initInterface() {
+  StateTopicInterface::initInterface();
 
   std::string omega, haptic;
   n.param("omega_type", omega, std::string("left"));
@@ -11,8 +11,8 @@ OmegaInterface::OmegaInterface() {
   stateTopicName = "/omega_driver/" + omega + "/state";
   stateFrameId = "omega_link";
 
-  pubOmegaForce = nh.advertise<geometry_msgs::Wrench>("/omega_driver/" + omega + "/cmd_force", 2);
-  pubOmegaForceVis = nh.advertise<geometry_msgs::WrenchStamped>("cmd_force_vis", 2);
+  pubOmegaForce = n.advertise<geometry_msgs::Wrench>("/omega_driver/" + omega + "/cmd_force", 2);
+  pubOmegaForceVis = n.advertise<geometry_msgs::WrenchStamped>("cmd_force_vis", 2);
 
   hapticType = magic_enum::enum_cast<HapticType>(haptic).value_or(HapticType::None);
 }
@@ -21,7 +21,7 @@ void OmegaInterface::modifyTargetState(ohrc_msgs::State& state) {
   state.enabled = state.gripper.button;
 }
 
-void OmegaInterface::feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller) {
+void OmegaInterface::feedbackCart(const Affine3d& T_cur, const Affine3d& T_des) {
   VectorXd ft_feedback = VectorXd::Zero(6);
   double k_force = 0.0;
   if (hapticType == HapticType::PositionPositionFeedback) {
@@ -39,8 +39,8 @@ void OmegaInterface::feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, 
   wrench_omega_vis.wrench = tf2::toMsg(ft_feedback_vis, wrench_omega_vis.wrench);
   pubOmegaForceVis.publish(wrench_omega_vis);
 
-  ft_feedback.head(3) = T_state_base[controller->getIndex()].rotation() * ft_feedback.head(3);
-  ft_feedback.tail(3) = T_state_base[controller->getIndex()].rotation() * ft_feedback.tail(3);
+  ft_feedback.head(3) = T_state_base.rotation() * ft_feedback.head(3);
+  ft_feedback.tail(3) = T_state_base.rotation() * ft_feedback.tail(3);
   geometry_msgs::Wrench wrench_omega;
   wrench_omega = tf2::toMsg(ft_feedback, wrench_omega);
 

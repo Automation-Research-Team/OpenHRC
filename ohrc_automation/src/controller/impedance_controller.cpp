@@ -1,10 +1,6 @@
 #include "ohrc_automation/impedance_controller.hpp"
 
-ImpedanceController::ImpedanceController(std::shared_ptr<CartController> controller) {
-  this->controller = controller;
-
-  ros::NodeHandle n("~");
-
+void ImpedanceController::initInterface() {
   ImpCoeff impCoeff;
   std::vector<bool> isGotMDK(3, false);
   isGotMDK[0] = n.getParam("imp_ceff/m", impCoeff.m_);

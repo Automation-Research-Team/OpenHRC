@@ -160,6 +160,7 @@ set(interfaces
   marker
   state_topic
   twist_topic
+  
 )
 
 foreach(interface ${interfaces})
@@ -174,6 +175,17 @@ set(state_topic_interfaces
 
 foreach(interface ${state_topic_interfaces})
   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
+  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+endforeach(interface)
+
+
+set(twist_topic_interfaces
+joy_topic
+)
+
+foreach(interface ${twist_topic_interfaces})
+  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 endforeach(interface)

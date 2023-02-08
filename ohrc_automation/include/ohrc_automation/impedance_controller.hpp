@@ -4,10 +4,9 @@
 #include <geometry_msgs/PoseArray.h>
 #include <std_msgs/Empty.h>
 
-#include "ohrc_control/cart_controller.hpp"
+#include "ohrc_control/interface.hpp"
 
-class ImpedanceController {
-  std::shared_ptr<CartController> controller;
+class ImpedanceController : public Interface {
   std::mutex mtx_imp;
   ros::Subscriber targetSubscriber;
   ros::Publisher RespawnReqPublisher;
@@ -47,8 +46,10 @@ class ImpedanceController {
   void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 
 public:
-  ImpedanceController(std::shared_ptr<CartController> controller);
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist);
+  using Interface::Interface;
+
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  void initInterface() override;
 };
 
 #endif  // IMPEDANCE_CONTROLLER_HPP

@@ -1,38 +1,34 @@
 #ifndef STATE_TOPIC_ITNERFACE_HPP
 #define STATE_TOPIC_ITNERFACE_HPP
 
-#include "ohrc_control/multi_cart_controller.hpp"
+#include "ohrc_control/interface.hpp"
 #include "ohrc_msgs/State.h"
 
-class StateTopicInterface : public virtual MultiCartController {
+class StateTopicInterface : public Interface {
 protected:
   ros::Subscriber subState;
-  std::vector<Affine3d> T_state_base;
+  Affine3d T_state_base;
   double k_trans = 1.0;
 
   TransformUtility trans;
 
   ros::TransportHints th = ros::TransportHints().tcpNoDelay(true);
 
-  struct s_updateManualTargetPose {
-    Affine3d T, T_start, T_state_start;
-    bool isFirst = true;
-  };
-  std::vector<s_updateManualTargetPose> s_updateManualTargetPoses;
+  Affine3d T, T_start, T_state_start;
+  bool isFirst = true;
 
   std::mutex mtx_state;
   ohrc_msgs::State _state;
 
   std::string stateTopicName = "/state", stateFrameId = "world";
 
-  void starting() override;
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) override;
-
   void cbState(const ohrc_msgs::State::ConstPtr& msg);
   virtual void modifyTargetState(ohrc_msgs::State& state){};
 
 public:
-  StateTopicInterface();
+  using Interface::Interface;
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  void initInterface() override;
 };
 
 #endif  // STATE_TOPIC_ITNERFACE_HPP

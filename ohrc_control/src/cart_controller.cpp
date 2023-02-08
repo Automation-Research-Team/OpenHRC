@@ -182,6 +182,7 @@ bool CartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty
 
 void CartController::resetPose() {
   ROS_WARN_STREAM("The robot will moves to the initail pose!");
+  
   s_cbJntState.isFirst = true;
   initialized = false;
   s_moveInitPos.isFirst = true;
@@ -361,7 +362,7 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     s_moveInitPos.t_s = ros::Time::now();
   }
 
-  const double T = 15.0;
+  const double T = 10.0;
   // static ros::Time s_moveInitPos.t_s = ros::Time::now();
 
   bool lastLoop = false;

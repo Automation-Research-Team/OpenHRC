@@ -50,6 +50,9 @@
   <depend>universal_robots</depend>
   <depend>ohrc_common</depend>
 
+  <!-- <depend>spacenavd</depend> -->
+  <!-- <depend>spacenav_node</depend> -->
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
