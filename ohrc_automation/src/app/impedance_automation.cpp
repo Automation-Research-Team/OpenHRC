@@ -1,6 +1,6 @@
 
 #include "ohrc_automation/impedance_controller.hpp"
-#include "ohrc_control/control.hpp"
+#include "ohrc_control/single_control.hpp"
 
 // class ImpedanceControllerApp : virtual public Control<ImpedanceController> {
 // public:
@@ -12,7 +12,7 @@
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "impedance_automation");
-  Control<ImpedanceController> controller;
+  SingleControl<ImpedanceController> controller;
   if (controller.control() < 0)
     ROS_ERROR("End by some fails");
 }

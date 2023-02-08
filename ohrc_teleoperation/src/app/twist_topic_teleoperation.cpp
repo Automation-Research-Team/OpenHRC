@@ -1,5 +1,5 @@
 
-#include "ohrc_control/control.hpp"
+#include "ohrc_control/single_control.hpp"
 #include "ohrc_teleoperation/twist_topic_interface.hpp"
 
 // class TwistTopicInterfaceApp : virtual public Control<TwistTopicInterface> {
@@ -12,7 +12,7 @@
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "twist_topic_teleoperation");
-  Control<TwistTopicInterface> interface;
+  SingleControl<TwistTopicInterface> interface;
   if (interface.control() < 0)
     ROS_ERROR("End by some fails");
 }

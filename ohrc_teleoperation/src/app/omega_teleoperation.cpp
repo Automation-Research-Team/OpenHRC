@@ -1,4 +1,4 @@
-#include "ohrc_control/control.hpp"
+#include "ohrc_control/single_control.hpp"
 #include "ohrc_teleoperation/omega_interface.hpp"
 
 // class OmegaInterfaceApp : virtual public Control<OmegaInterface> {
@@ -11,7 +11,7 @@
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "omega_teleoperation");
-  Control<OmegaInterface> interface;
+  SingleControl<OmegaInterface> interface;
   if (interface.control() < 0)
     ROS_ERROR("End by some fails");
 }
