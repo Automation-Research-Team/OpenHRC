@@ -60,7 +60,7 @@ $ cd ~/catkin_ws/src
 $ git clone -b gazebo11 https://github.com/ZebraDevs/fetch_gazebo.git 
 $ cd fetch_gazebo
 $ rosdep install -i -y --from-paths ./ 
-$ catkin_make -DCMAKE_BUILD_TYPE=Release
+$ catkin build -DCMAKE_BUILD_TYPE=Release
 
 # launch original gazebo simulation with Fetch
 $ roslaunch fetch_gazebo simulation.launch
@@ -79,13 +79,30 @@ $ git clone https://github.com/seed-solutions/seed_smartactuator_sdk
 $ git clone https://github.com/seed-solutions/seed_r7_ros_pkg.git
 $ cd seed_r7_ros_pkg
 $ rosdep install -i -y --from-paths ./ 
-$ catkin_make -DCMAKE_BUILD_TYPE=Release
+$ catkin build -DCMAKE_BUILD_TYPE=Release
 
 # launch gazebo simulation with Seed
 $ roslaunch seed_r7_gazebo seed_r7_empty_world.launch
 
 # launch the following teleoperation controller using topic interface of JointTrajectoryController
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=seed controller:=vel_trj
+```
+
+#### myCobot 
+If you use myCobot (which is not included in this package installation), please run
+```
+## install gazebo simulation of Fetch Robot like
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/Tiryoh/mycobot_ros.git
+$ cd mycobot_ros
+$ rosdep install -i -y --from-paths ./ 
+$ catkin build -DCMAKE_BUILD_TYPE=Release
+
+# launch gazebo simulation with myCobot
+$ roslaunch mycobot_gazebo mycobot_with_emptyworld.launch
+
+# launch the following teleoperation controller using topic interface of JointTrajectoryController
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=mycobot controller:=vel_trj
 ```
 
 ## Example - Teleoperation using geometry_msgs/twist topic
