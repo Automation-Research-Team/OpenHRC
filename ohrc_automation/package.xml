@@ -46,6 +46,11 @@
 
   <depend>ohrc_control</depend>
 
+  <depend>osqp</depend>
+  <depend>osqp-eigen</depend>
+
+  <depend>magic_enum</depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
