@@ -5,6 +5,7 @@
 #include <thread>
 
 #include "ohrc_control/cart_controller.hpp"
+#include "ohrc_control/interface.hpp"
 #include "ohrc_control/multi_my_ik.hpp"
 #include "ohrc_control/ohrc_control.hpp"
 
@@ -46,12 +47,30 @@ protected:
   enum class PriorityType { Manual, Automation, Adaptation, None } priority;
   bool adaptation = false;
   void setPriority(PriorityType priority);
+  void setPriority(std::vector<int> idx);
+  void setPriority(int i);
+  void setLowPriority(int i);
 
   // enum class AdaptationOption { Default, None } adaptationOption;
   std::string adaptationOption_;
 
   virtual void runLoopEnd(){};
-  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller){};
+
+  std::vector<std::shared_ptr<Interface>> interfaces;
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+    interfaces[controller->getIndex()]->updateTargetPose(pose, twist);
+  }
+
+  void initInterface(std::shared_ptr<CartController> controller) {
+    interfaces[controller->getIndex()]->initInterface();
+  }
+
+  void resetInterface(std::shared_ptr<CartController> controller) {
+    interfaces[controller->getIndex()]->resetInterface();
+  }
+
+  virtual void preInterfaceProcess(std::vector<std::shared_ptr<Interface>> interfaces){};
+
   virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
     updateTargetPose(pose, twist, controller);
   };
@@ -60,9 +79,6 @@ protected:
   };
   // virtual void feedbackJnt(const KDL::JntArray& q_cur, const KDL::JntArray& q_des, std::shared_ptr<CartController> controller){};
   // virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
-
-  virtual void initInterface(std::shared_ptr<CartController> controller){};
-  virtual void resetInterface(std::shared_ptr<CartController> controller){};
 
   template <typename T>
   inline T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {

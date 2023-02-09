@@ -37,6 +37,8 @@ MultiCartController::MultiCartController() {
 
   desPose.resize(nRobot);
   desVel.resize(nRobot);
+
+  interfaces.resize(nRobot);
 }
 
 bool MultiCartController::getInitParam() {
@@ -101,6 +103,24 @@ bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::
     resetInterface(cartControllers[i]);
   }
   return true;
+}
+
+void MultiCartController::setPriority(int i) {
+  multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
+  multimyik_solver_ptr->setRobotWeight(i, 100.);
+}
+
+void MultiCartController::setLowPriority(int i) {
+  multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
+  for (int j = 0; j++; j < nRobot)
+    if (j != i)
+      multimyik_solver_ptr->setRobotWeight(j, 100.);
+}
+
+void MultiCartController::setPriority(std::vector<int> idx) {
+  multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
+  for (auto& i : idx)
+    multimyik_solver_ptr->setRobotWeight(i, 100.);
 }
 
 void MultiCartController::setPriority(PriorityType priority) {
@@ -234,23 +254,28 @@ void MultiCartController::updateDesired() {
     desVel[i] = KDL::Twist();
   }
 
-  if (MFmode == MFMode::Individual) {
-    for (auto& ind : manualInd)
-      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
-    for (auto& ind : autoInd)
-      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
+  preInterfaceProcess(interfaces);
 
-  } else if (MFmode == MFMode::Parallel) {
-    for (auto& ind : manualInd)
-      updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
-    for (auto& ind : autoInd) {
-      desPose[ind] = desPose[manualInd[0]];
-      desVel[ind] = desVel[manualInd[0]];
-      updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
-    }
-  } else if (MFmode == MFMode::Cooperation) {
-    ROS_ERROR_STREAM("This MFmode is not implemented");
-  }
+  for (int i = 0; i < nRobot; i++)
+    updateTargetPose(desPose[i], desVel[i], cartControllers[i]);
+
+  // if (MFmode == MFMode::Individual) {
+  //   for (auto& ind : manualInd)
+  //     updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
+  //   for (auto& ind : autoInd)
+  //     updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
+
+  // } else if (MFmode == MFMode::Parallel) {
+  //   for (auto& ind : manualInd)
+  //     updateManualTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
+  //   for (auto& ind : autoInd) {
+  //     desPose[ind] = desPose[manualInd[0]];
+  //     desVel[ind] = desVel[manualInd[0]];
+  //     updateAutoTargetPose(desPose[ind], desVel[ind], cartControllers[ind]);
+  //   }
+  // } else if (MFmode == MFMode::Cooperation) {
+  //   ROS_ERROR_STREAM("This MFmode is not implemented");
+  // }
 
   for (int i = 0; i < robots.size(); i++)
     cartControllers[i]->setDesired(desPose[i], desVel[i]);
