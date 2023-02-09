@@ -52,6 +52,8 @@ void CartController::init(std::string robot) {
   nJnt = chain.getNrOfJoints();
   _q_cur.resize(nJnt);
 
+  nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
+
   jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 2, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
 
@@ -160,7 +162,10 @@ bool CartController::getInitParam() {
   }
 
   // subFlagPtrs.push_back(&flagEffPose);
-  nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
+  // nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
+
+  // f
+  //  _q_init_expect[i] = 0.0;
   // if (_q_init_expect.size() != nJnt) {
   // ROS_ERROR_STREAM("Size of initIKAngle should be equal to number of joints");
   // return false;
@@ -182,7 +187,7 @@ bool CartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty
 
 void CartController::resetPose() {
   ROS_WARN_STREAM("The robot will moves to the initail pose!");
-  
+
   s_cbJntState.isFirst = true;
   initialized = false;
   s_moveInitPos.isFirst = true;
