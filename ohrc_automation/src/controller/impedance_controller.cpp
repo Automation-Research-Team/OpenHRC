@@ -8,6 +8,14 @@ void ImpedanceController::initInterface() {
   isGotMDK[2] = n.getParam("imp_ceff/k", impCoeff.k_);
 
   int nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
+
+  if (nGotMDK == 0) {
+    isGotMDK[0] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/m", impCoeff.m_);
+    isGotMDK[1] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/d", impCoeff.d_);
+    isGotMDK[2] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/k", impCoeff.k_);
+    nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
+  }
+
   if (nGotMDK == 2) {
     ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
