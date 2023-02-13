@@ -4,17 +4,16 @@
 #include "ohrc_teleoperation/twist_topic_interface.hpp"
 #include "sensor_msgs/Joy.h"
 
-class JoyTopicInterface : public TwistTopicInterface {
-protected:
+class JoyTopicInterface : virtual public TwistTopicInterface {
   ros::Subscriber subJoy;
-
   sensor_msgs::Joy _joy;
+
   double gain_h = 0.1, gain_r = 0.1;
 
+protected:
   std::string stateTopicName = "/spacenav/joy", stateFrameId = "world";
 
   void cbJoy(const sensor_msgs::Joy::ConstPtr& msg);
-
   void setSubscriber() override;
 
 public:

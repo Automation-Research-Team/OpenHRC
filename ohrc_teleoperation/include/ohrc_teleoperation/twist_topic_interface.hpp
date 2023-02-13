@@ -4,26 +4,21 @@
 #include "geometry_msgs/Twist.h"
 #include "ohrc_control/interface.hpp"
 
-class TwistTopicInterface : public Interface {
-private:
-  bool _flagTwist = false;
-
-protected:
+class TwistTopicInterface : virtual public Interface {
   ros::Subscriber subTwist;
-  Affine3d T_state_base;
+  geometry_msgs::Twist _twist;
+
   double k_trans = 1.0;
 
+protected:
+  bool _flagTopic = false;
   TransformUtility trans;
 
-  ros::TransportHints th = ros::TransportHints().tcpNoDelay(true);
-
-  Affine3d T, T_start, T_state_start;
+  Affine3d T;
+  Matrix3d R;
   bool isFirst = true;
 
   std::mutex mtx_topic;
-  geometry_msgs::Twist _twist;
-
-  double dt;
 
   ohrc_msgs::State state;
 

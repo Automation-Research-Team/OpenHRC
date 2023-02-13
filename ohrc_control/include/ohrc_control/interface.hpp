@@ -6,12 +6,16 @@
 class Interface {
 protected:
   ros::NodeHandle n;
+  double dt;
 
   std::shared_ptr<CartController> controller;
+
+  ros::TransportHints th = ros::TransportHints().tcpNoDelay(true);
 
 public:
   Interface(std::shared_ptr<CartController> controller) : n("~") {
     this->controller = controller;
+    dt = controller->dt;
   };
 
   virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist){};
