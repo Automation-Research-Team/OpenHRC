@@ -13,6 +13,7 @@ void JoyTopicInterface::setSubscriber() {
 void JoyTopicInterface::cbJoy(const sensor_msgs::Joy::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mtx_topic);
   _joy = *msg;
+  _flagTopic = true;
 }
 
 void JoyTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
@@ -20,9 +21,11 @@ void JoyTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
   {
     std::lock_guard<std::mutex> lock(mtx_topic);
     joy = _joy;
+    if (!_flagTopic)
+      return;
   }
 
-  if (joy.axes.size() < 6)
+  if (joy.axes.size() < 6 || joy.buttons.size() < 2)
     return;
 
   geometry_msgs::Twist twist_msg;
