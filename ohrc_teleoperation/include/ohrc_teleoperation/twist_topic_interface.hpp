@@ -5,6 +5,9 @@
 #include "ohrc_control/interface.hpp"
 
 class TwistTopicInterface : public Interface {
+private:
+  bool _flagTwist = false;
+
 protected:
   ros::Subscriber subTwist;
   Affine3d T_state_base;
