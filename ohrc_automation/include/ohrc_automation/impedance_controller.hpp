@@ -18,6 +18,7 @@ class ImpedanceController : public Interface {
   int targetIdx = -1, nextTargetIdx = -1;
 
   VectorXd x, xd;
+  int stack = 0;
 
   struct ImpParam {
     MatrixXd A = MatrixXd::Zero(6, 6), B = MatrixXd::Zero(6, 3), C = MatrixXd::Zero(6, 6);

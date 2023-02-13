@@ -77,19 +77,32 @@ void ImpedanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr
 }
 
 ImpedanceController::TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx) {
+  TaskState taskState = TaskState::OnGoing;
+
   double f = tf2::fromMsg(controller->getForceEef().wrench).head(3).norm();
   if (targetIdx == -1) {
     if (delta_x.head(3).norm() < 0.01 && delta_x.tail(3).norm() < 0.01 && !blocked)
-      return TaskState::Success;
+      taskState = TaskState::Success;
   } else {
     if (delta_x.head(3).norm() < 0.03 && f > 20.0) {
       RespawnReqPublisher.publish(std_msgs::Empty());
       nCompletedTask++;
-      return TaskState::Success;
-    }
+      taskState = TaskState::Success;
+    } else if (delta_x.head(3).norm() > 0.03 && f > 50.0)
+      stack++;
+    // taskState = TaskState::Fail;
+
+    // std::cout << delta_x.tail(3).norm() << ", " << delta_x.head(3).norm() << ", " << f << std::endl;
   }
 
-  return TaskState::OnGoing;
+  if (taskState == TaskState::OnGoing && stack > 500) {
+    stack = 0;
+    taskState = TaskState::Fail;
+    ROS_ERROR_STREAM("Failed to reaching");
+  } else if (taskState == TaskState::Success)
+    stack = 0;
+
+  return taskState;
 }
 
 VectorXd ImpedanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam) {
@@ -156,7 +169,8 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   // When the velocity is updated as well, the robot motion somehow become unstable.
   x.head(3) << frame.p[0], frame.p[1], frame.p[2];
 
-  taskState = updataTaskState(x - xd, targetIdx);
+  VectorXd x_ = (VectorXd(6) << x.head(3), vel.vel(0), vel.vel(1), vel.vel(2)).finished();
+  taskState = updataTaskState(x_ - xd, targetIdx);
 
   // update target pose
   xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
