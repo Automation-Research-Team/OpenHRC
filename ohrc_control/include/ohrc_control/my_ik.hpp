@@ -61,6 +61,8 @@ class MyIK {
   std::vector<int> idxSegJnt;
   // OsqpEigen::Solver qpSolver;
 
+  bool poseFeedbackDisabled = false;
+
   void initialize();
 
   int addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
@@ -83,7 +85,7 @@ public:
   int CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt,
                                const MatrixXd& userManipU);
 
-  void updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel, VectorXd& e);
+  void updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel, const VectorXd& e);
 
   VectorXd getRandomJnt(const double& dt);
   VectorXd getRandomJntVel(const double& dt);
@@ -151,9 +153,13 @@ public:
   inline void setIdxSegJnt(std::vector<int> idx) {
     this->idxSegJnt = idx;
   }
+
+    inline void disablePoseFeedback() {
+    this->poseFeedbackDisabled = true;
+  }
 };
 
-inline VectorXd getCartError(Affine3d T, Affine3d T_d) {
+inline VectorXd getCartError(const Affine3d& T, const Affine3d& T_d) {
   VectorXd e(6);
   e.head(3) = T_d.translation() - T.translation();
   // e.tail(3) = (Quaterniond(T_d.rotation()) * Quaterniond(T.rotation()).inverse()).vec();
@@ -162,6 +168,14 @@ inline VectorXd getCartError(Affine3d T, Affine3d T_d) {
   e.tail(3) = rotation_util::getRotationMatrixError(T_d.rotation(), T.rotation());
 
   return e;
+}
+
+inline VectorXd getCartError(const KDL::Frame& frame, const KDL::Frame& frame_d) {
+  Affine3d T_d, T;
+  tf::transformKDLToEigen(frame, T);
+  tf::transformKDLToEigen(frame_d, T_d);
+
+  return getCartError(T, T_d);
 }
 
 }  // namespace MyIK
