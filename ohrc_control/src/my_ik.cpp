@@ -342,17 +342,9 @@ int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::Jn
 //   return e;
 // }
 
-void MyIK::updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel, VectorXd& e) {
+void MyIK::updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel, const VectorXd& e) {
   Matrix<double, 6, 1> v;
   tf::twistKDLToEigen(des_eff_vel, v);
-
-  KDL::Frame p;
-  JntToCart(q_cur, p);
-
-  Affine3d T_d, T;
-  tf::transformKDLToEigen(des_eff_pose, T_d);
-  tf::transformKDLToEigen(p, T);
-  e = getCartError(T, T_d);
 
   // std::cout << v.transpose() << std::endl;
   VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
@@ -546,8 +538,13 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
 int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt) {
   KDL::Twist des_eff_vel_ = des_eff_vel;
-  VectorXd e;
-  updateVelP(q_cur, des_eff_pose, des_eff_vel_, e);
+
+  KDL::Frame p;
+  JntToCart(q_cur, p);
+  VectorXd e = getCartError(p, des_eff_pose);
+
+  if (!poseFeedbackDisabled)
+    updateVelP(q_cur, des_eff_pose, des_eff_vel_, e);
 
   return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
 }
