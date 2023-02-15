@@ -13,7 +13,14 @@ void TwistTopicInterface::initInterface() {
 
   Affine3d T_state_base = controller->getTransform_base(this->stateFrameId);
   R = T_state_base.rotation().transpose();
-  dt = controller->dt;
+
+  bool diablePoseFeedback;
+  n.param("diable_pose_feedback", diablePoseFeedback, false);
+
+  if (diablePoseFeedback) {
+    ROS_WARN_STREAM("Pose feedback is disabled");
+    controller->disablePoseFeedback();
+  }
 }
 
 void TwistTopicInterface::setSubscriber() {

@@ -65,6 +65,7 @@ class CartController {
 
   std::vector<double> _q_init_expect;
 
+  std::string initPoseFrame;
   std::vector<double> initPose;
   bool getInitParam();
 
@@ -313,6 +314,10 @@ public:
     std::lock_guard<std::mutex> lock(mtx);
     this->_des_eff_pose = des_eff_pose;
     this->_des_eff_vel = des_eff_vel;
+  }
+
+  inline void disablePoseFeedback() {
+    myik_solver_ptr->disablePoseFeedback();
   }
 
   double dt;
