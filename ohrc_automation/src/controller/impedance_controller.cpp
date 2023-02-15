@@ -76,7 +76,7 @@ void ImpedanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr
   this->_targetUpdated = true;
 }
 
-ImpedanceController::TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx) {
+TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx) {
   TaskState taskState = TaskState::OnGoing;
 
   double f = tf2::fromMsg(controller->getForceEef().wrench).head(3).norm();
@@ -95,12 +95,17 @@ ImpedanceController::TaskState ImpedanceController::updataTaskState(const Vector
     // std::cout << delta_x.tail(3).norm() << ", " << delta_x.head(3).norm() << ", " << f << std::endl;
   }
 
-  if (taskState == TaskState::OnGoing && stack > 500) {
+  static ros::Time t_start = ros::Time::now();
+  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 10.0)) {
     stack = 0;
+    RespawnReqPublisher.publish(std_msgs::Empty());
     taskState = TaskState::Fail;
     ROS_ERROR_STREAM("Failed to reaching");
   } else if (taskState == TaskState::Success)
     stack = 0;
+
+  if (taskState == TaskState::Success || taskState == TaskState::Fail)
+    t_start = ros::Time::now();
 
   return taskState;
 }
@@ -109,8 +114,7 @@ VectorXd ImpedanceController::getControlState(const VectorXd& x, const VectorXd&
   return (MatrixXd::Identity(6, 6) + impParam.A * dt) * x + dt * impParam.B * exForce + dt * impParam.C * xd;
 }
 
-Affine3d ImpedanceController::getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx,
-                                            int& nextTargetIdx) {
+Affine3d ImpedanceController::getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx) {
   switch (taskState) {
     case TaskState::Fail:
       targetIdx = -1;
@@ -182,6 +186,6 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
 
   // menber variables in Interface class
-  curTargetId = nextTargetIdx;
+  curTargetId = targetIdx;
   targetDistance = (x.head(3) - targetPoses[nextTargetIdx].translation()).norm();
 }
