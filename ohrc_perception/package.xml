@@ -5,7 +5,7 @@
   <description>The ohrc_perception package</description>
 
   <maintainer email="s.itadera@aist.go.jp">Shunki Itadera</maintainer>
-  <license>MIT</license>
+  <license>LGPL</license>
   
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
