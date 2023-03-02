@@ -15,8 +15,8 @@ jobs:
       with:
         required-ros-distributions: noetic
 
-    - name: Install catkin tool
-      run: sudo apt-get install python3-catkin-tools
+    # - name: Install catkin tool
+    #   run: sudo apt-get install python3-catkin-tools
 
     - name: Init workspace
       run: |
