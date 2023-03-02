@@ -10,3 +10,6 @@
 [submodule "3rd_party/dmpbbo"]
 	path = 3rd_party/dmpbbo
 	url = https://github.com/itadera/dmpbbo.git
+[submodule "3rd_party/stb"]
+	path = 3rd_party/stb
+	url = https://github.com/itadera/stb
