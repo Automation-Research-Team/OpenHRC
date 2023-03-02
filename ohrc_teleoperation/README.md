@@ -1,5 +1,20 @@
 # ohrc_teleoperation
 
+## Rule for launch files
+```
+roslaunch ohrc_teleoperation (interface)_teleoperation.launch robot:=(robot) controller:=(controller)
+```
+
+The currently implemented/tested options for these arguments are as follows:
+|argument | options|
+|:---|:---|
+|interface|marker, opmega, state_topic, twist_topic, joy_topic |
+|robot|ur5e, fetch, seed, mycobot|
+|controller|vel, vel_trj, pos_trj|
+
+Please refer to the following examples to see detailed description.
+
+
 ## Example - Teleoperation using interactive marker
 
 
