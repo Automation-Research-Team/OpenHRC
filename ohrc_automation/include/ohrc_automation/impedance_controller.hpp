@@ -18,6 +18,7 @@ class ImpedanceController : public Interface {
   int targetIdx = -1, nextTargetIdx = -1;
 
   VectorXd x, xd;
+  int stack = 0;
 
   struct ImpParam {
     MatrixXd A = MatrixXd::Zero(6, 6), B = MatrixXd::Zero(6, 3), C = MatrixXd::Zero(6, 6);
@@ -29,16 +30,9 @@ class ImpedanceController : public Interface {
 
   ros::Subscriber subTarget;
 
-  enum class TaskState {
-    Initial,
-    OnGoing,
-    Success,
-    Fail,
-  } taskState = TaskState::Initial;
-
   void getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK);
   ImpParam getImpParam(const ImpCoeff& impCoeff);
-  Affine3d getNextTarget(const ImpedanceController::TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
+  Affine3d getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
 
   TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);

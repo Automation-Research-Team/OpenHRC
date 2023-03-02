@@ -84,7 +84,7 @@ void CartController::init(std::string robot) {
   if (robot_ns != "")
     service = nh.advertiseService("/" + robot_ns + "reset", &CartController::resetService, this);
 
-  Affine3d T_init_base = getTransform_base(initPoseFrame);
+  Affine3d T_init_base = getTransform_base(robot_ns + initPoseFrame);
   T_init = Translation3d(initPose[0], initPose[1], initPose[2]) *
            (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
   T_init = T_init_base * T_init;
