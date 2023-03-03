@@ -54,6 +54,8 @@ add_message_files(
   StateStamped.msg
   Gripper.msg
   Contact.msg
+  BodyState.msg
+  HandState.msg
 )
 
 ## Generate services in the 'srv' folder

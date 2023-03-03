@@ -33,10 +33,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <cv_bridge/cv_bridge.h>
+#include <geometry_msgs/Pose.h>
 #include <image_transport/image_transport.h>
 #include <ros/ros.h>
 
 #include <string>
+
+#include "ohrc_msgs/BodyState.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -50,6 +53,8 @@ static XrPosef identity_pose = { .orientation = { .x = 0, .y = 0, .z = 0, .w = 1
 #define HAND_LEFT_INDEX 0
 #define HAND_RIGHT_INDEX 1
 #define HAND_COUNT 2
+
+ros::Publisher publisher;
 
 // =============================================================================
 // math code adapted from
@@ -516,6 +521,7 @@ struct StereoImageNode {
     char** argv = 0;
     ros::init(argc, argv, "openxr_image_listener");
     nh = new ros::NodeHandle();
+    publisher = nh->advertise<ohrc_msgs::BodyState>("body_state", 1);
 
     it = new image_transport::ImageTransport(*nh);
   }
@@ -933,13 +939,17 @@ int main(int argc, char** argv) {
   xrStringToPath(instance, "/user/hand/left", &hand_paths[HAND_LEFT_INDEX]);
   xrStringToPath(instance, "/user/hand/right", &hand_paths[HAND_RIGHT_INDEX]);
 
+  XrPath select_twist_path[HAND_COUNT];
+  xrStringToPath(instance, "/user/hand/left/input/twist", &select_twist_path[HAND_LEFT_INDEX]);
+  xrStringToPath(instance, "/user/hand/right/input/twist", &select_twist_path[HAND_RIGHT_INDEX]);
+
   XrPath select_click_path[HAND_COUNT];
   xrStringToPath(instance, "/user/hand/left/input/select/click", &select_click_path[HAND_LEFT_INDEX]);
   xrStringToPath(instance, "/user/hand/right/input/select/click", &select_click_path[HAND_RIGHT_INDEX]);
 
   XrPath trigger_value_path[HAND_COUNT];
-  xrStringToPath(instance, "/user/hand/left/input/trigger/value", &trigger_value_path[HAND_LEFT_INDEX]);
-  xrStringToPath(instance, "/user/hand/right/input/trigger/value", &trigger_value_path[HAND_RIGHT_INDEX]);
+  xrStringToPath(instance, "/user/hand/left/input/squeeze/value", &trigger_value_path[HAND_LEFT_INDEX]);
+  xrStringToPath(instance, "/user/hand/right/input/squeeze/value", &trigger_value_path[HAND_RIGHT_INDEX]);
 
   XrPath thumbstick_y_path[HAND_COUNT];
   xrStringToPath(instance, "/user/hand/left/input/thumbstick/y", &thumbstick_y_path[HAND_LEFT_INDEX]);
@@ -1322,7 +1332,12 @@ int main(int argc, char** argv) {
     // query each value / location with a subaction path != XR_NULL_PATH
     // resulting in individual values per hand/.
     XrActionStateFloat grab_value[HAND_COUNT];
-    XrSpaceLocation hand_locations[HAND_COUNT];
+    XrSpaceVelocity hand_velocities[HAND_COUNT]{ XR_TYPE_SPACE_VELOCITY };
+    XrSpaceLocation hand_locations[HAND_COUNT]{ XR_TYPE_SPACE_LOCATION, &hand_velocities };
+
+    static ohrc_msgs::BodyState prev_bodyMsg;
+    ohrc_msgs::BodyState bodyMsg;
+    static bool isFirst = true;
 
     for (int i = 0; i < HAND_COUNT; i++) {
       XrActionStatePose hand_pose_state = { .type = XR_TYPE_ACTION_STATE_POSE, .next = NULL };
@@ -1339,10 +1354,49 @@ int main(int argc, char** argv) {
       result = xrLocateSpace(hand_pose_spaces[i], play_space, frame_state.predictedDisplayTime, &hand_locations[i]);
       xr_check(instance, result, "failed to locate space %d!", i);
 
-      if (i == 0) {
-        printf("Pose %d : %f %f %f %f, %f %f %f\n", i, hand_locations[i].pose.orientation.x, hand_locations[i].pose.orientation.y, hand_locations[i].pose.orientation.z,
-               hand_locations[i].pose.orientation.w, hand_locations[i].pose.position.x, hand_locations[i].pose.position.y, hand_locations[i].pose.position.z);
-      }
+      geometry_msgs::Pose hand_pose;
+      hand_pose.position.x = -hand_locations[i].pose.position.z;
+      hand_pose.position.y = -hand_locations[i].pose.position.x;
+      hand_pose.position.z = hand_locations[i].pose.position.y;
+      hand_pose.orientation.x = -hand_locations[i].pose.orientation.z;
+      hand_pose.orientation.y = -hand_locations[i].pose.orientation.x;
+      hand_pose.orientation.z = hand_locations[i].pose.orientation.y;
+      hand_pose.orientation.w = hand_locations[i].pose.orientation.w;
+
+      geometry_msgs::Twist hand_twist;
+      hand_twist.linear.x = -hand_velocities[i].linearVelocity.z;
+      hand_twist.linear.y = -hand_velocities[i].linearVelocity.x;
+      hand_twist.linear.z = hand_velocities[i].linearVelocity.y;
+      hand_twist.angular.x = -hand_velocities[i].angularVelocity.z;
+      hand_twist.angular.y = -hand_velocities[i].angularVelocity.x;
+      hand_twist.angular.z = hand_velocities[i].angularVelocity.y;
+
+      if (i == HAND_LEFT_INDEX)
+        bodyMsg.left_hand.pose = hand_pose;
+      else if (i == HAND_RIGHT_INDEX)
+        bodyMsg.right_hand.pose = hand_pose;
+
+      // ////////////////
+      // XrActionStatePose hand_vel_state = { .type = XR_TYPE_ACTION_STATE_POSE, .next = NULL };
+      // {
+      //   XrActionStateGetInfo get_info = { .type = XR_TYPE_ACTION_STATE_GET_INFO, .next = NULL, .action = hand_vel_action, .subactionPath = hand_paths[i] };
+      //   result = xrGetActionStatePose(session, &get_info, &hand_pose_state);
+      //   xr_check(instance, result, "failed to get pose value!");
+      // }
+      // // printf("Hand pose %d active: %d\n", i, poseState.isActive);
+
+      // hand_locations[i].type = XR_TYPE_SPACE_LOCATION;
+      // hand_locations[i].next = NULL;
+
+      // result = xrLocateSpace(hand_pose_spaces[i], play_space, frame_state.predictedDisplayTime, &hand_locations[i]);
+      // xr_check(instance, result, "failed to locate space %d!", i);
+
+      // /////////
+
+      // if (i == 0) {
+      // printf("Pose %d : %f %f %f %f, %f %f %f\n", i, hand_locations[i].pose.orientation.x, hand_locations[i].pose.orientation.y, hand_locations[i].pose.orientation.z,
+      //  hand_locations[i].pose.orientation.w, hand_locations[i].pose.position.x, hand_locations[i].pose.position.y, hand_locations[i].pose.position.z);
+      // }
 
       grab_value[i].type = XR_TYPE_ACTION_STATE_FLOAT;
       grab_value[i].next = NULL;
@@ -1353,25 +1407,46 @@ int main(int argc, char** argv) {
         xr_check(instance, result, "failed to get grab value!");
       }
 
+      if (i == HAND_LEFT_INDEX)
+        bodyMsg.left_hand.index_trigger = grab_value[i].currentState;
+      else if (i == HAND_RIGHT_INDEX)
+        bodyMsg.right_hand.index_trigger = grab_value[i].currentState;
+
       // printf("Grab %d active %d, current %f, changed %d\n", i,
       // grabValue[i].isActive, grabValue[i].currentState,
       // grabValue[i].changedSinceLastSync);
 
-      if (grab_value[i].isActive && grab_value[i].currentState > 0.75) {
-        XrHapticVibration vibration = {
-          .type = XR_TYPE_HAPTIC_VIBRATION,
-          .next = NULL,
-          .duration = XR_MIN_HAPTIC_DURATION,
-          .frequency = XR_FREQUENCY_UNSPECIFIED,
-          .amplitude = 0.5,
-        };
+      // if (grab_value[i].isActive && grab_value[i].currentState > 0.75) {
+      //   XrHapticVibration vibration = {
+      //     .type = XR_TYPE_HAPTIC_VIBRATION,
+      //     .next = NULL,
+      //     .duration = XR_MIN_HAPTIC_DURATION,
+      //     .frequency = XR_FREQUENCY_UNSPECIFIED,
+      //     .amplitude = 0.5,
+      //   };
 
-        XrHapticActionInfo haptic_action_info = { .type = XR_TYPE_HAPTIC_ACTION_INFO, .next = NULL, .action = haptic_action, .subactionPath = hand_paths[i] };
-        result = xrApplyHapticFeedback(session, &haptic_action_info, (const XrHapticBaseHeader*)&vibration);
-        xr_check(instance, result, "failed to apply haptic feedback!");
-        // printf("Sent haptic output to hand %d\n", i);
-      }
+      //   XrHapticActionInfo haptic_action_info = { .type = XR_TYPE_HAPTIC_ACTION_INFO, .next = NULL, .action = haptic_action, .subactionPath = hand_paths[i] };
+      //   result = xrApplyHapticFeedback(session, &haptic_action_info, (const XrHapticBaseHeader*)&vibration);
+      //   xr_check(instance, result, "failed to apply haptic feedback!");
+      //   // printf("Sent haptic output to hand %d\n", i);
+      // }
     };
+
+    if (isFirst) {
+      prev_bodyMsg = bodyMsg;
+      isFirst = false;
+    } else {
+      bodyMsg.right_hand.twist.linear.x = (bodyMsg.right_hand.pose.position.x - prev_bodyMsg.right_hand.pose.position.x) * 60.0;
+      bodyMsg.right_hand.twist.linear.y = (bodyMsg.right_hand.pose.position.y - prev_bodyMsg.right_hand.pose.position.y) * 60.0;
+      bodyMsg.right_hand.twist.linear.z = (bodyMsg.right_hand.pose.position.z - prev_bodyMsg.right_hand.pose.position.z) * 60.0;
+      bodyMsg.left_hand.twist.linear.x = (bodyMsg.left_hand.pose.position.x - prev_bodyMsg.left_hand.pose.position.x) * 60.0;
+      bodyMsg.left_hand.twist.linear.y = (bodyMsg.left_hand.pose.position.y - prev_bodyMsg.left_hand.pose.position.y) * 60.0;
+      bodyMsg.left_hand.twist.linear.z = (bodyMsg.left_hand.pose.position.z - prev_bodyMsg.left_hand.pose.position.z) * 60.0;
+
+      prev_bodyMsg = bodyMsg;
+    }
+
+    publisher.publish(bodyMsg);
 
     // --- Begin frame
     XrFrameBeginInfo frame_begin_info = { .type = XR_TYPE_FRAME_BEGIN_INFO, .next = NULL };

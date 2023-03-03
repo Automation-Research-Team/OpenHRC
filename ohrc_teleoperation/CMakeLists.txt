@@ -171,6 +171,7 @@ endforeach(interface)
 
 set(state_topic_interfaces
   omega
+  xr_body
 )
 
 foreach(interface ${state_topic_interfaces})
