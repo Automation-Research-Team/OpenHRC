@@ -1,6 +1,10 @@
 geometry_msgs/Pose pose
 geometry_msgs/Twist twist
 
-geometry_msgs/Wrench wrench
+# geometry_msgs/Wrench wrench
 
-float64 index_trigger
+float32[] stick
+bool[] button
+
+float64 squeeze
+float64 trigger

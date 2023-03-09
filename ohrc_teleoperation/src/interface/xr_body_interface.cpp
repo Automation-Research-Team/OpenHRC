@@ -28,7 +28,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
   ohrc_msgs::State state;
   state.pose = body.right_hand.pose;
-  if (body.right_hand.index_trigger > 0.9)
+  if (body.right_hand.squeeze > 0.9)
     state.enabled = true;
   else
     state.enabled = false;

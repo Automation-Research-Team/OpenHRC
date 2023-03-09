@@ -158,6 +158,7 @@ add_dependencies(openxr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 target_link_libraries(openxr_test
   ${catkin_LIBRARIES}
   openxr_loader
+  Xrandr ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${catkin_LIBRARIES}
 )
 
 

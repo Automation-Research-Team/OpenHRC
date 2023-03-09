@@ -10,6 +10,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED
     std_msgs
     geometry_msgs
+    sensor_msgs
     message_generation
     message_runtime
 )
@@ -77,6 +78,7 @@ generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
   geometry_msgs
+  sensor_msgs
 )
 
 ################################################
