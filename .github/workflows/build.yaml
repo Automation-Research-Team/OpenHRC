@@ -23,10 +23,6 @@ jobs:
         source /opt/ros/noetic/setup.bash
         mkdir -p ${CATKIN_WS}/src
         ln -s ${GITHUB_WORKSPACE} ${CATKIN_WS}/src/
-        cd ${CATKIN_WS}
-        catkin build -DCMAKE_BUILD_TYPE=Release
-        source devel/setup.bash
-
 
     - name: pre build
       run: |
@@ -40,7 +36,6 @@ jobs:
       run: |
         source /opt/ros/noetic/setup.bash
         cd ${CATKIN_WS}
-        source devel/setup.bash
         rospack profile
         catkin build -DCMAKE_BUILD_TYPE=Release
 
