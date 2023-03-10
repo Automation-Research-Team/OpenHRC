@@ -22,12 +22,17 @@ $ git clone https://github.com/itadera/OpenHRC.git
 
 ### solve dependency
 ```
+
 $ cd ~/catkin_ws/src/OpenHRC
 
 ### clone submodule source
 $ git submodule update --init --recursive
 
-### install dependency packages
+### solve dependencies
+## install xcb libraries for OpenXR, which are not listed in rosdep
+$ sudo apt install libx11-xcb-dev libxcb-dri2-0-dev libxcb-glx0-dev libxcb-icccm4-dev libxcb-keysyms1-dev libxcb-randr0-dev
+
+## install other libraries using rosdep
 $ rosdep update
 $ rosdep install -i -y --from-paths ./ 
 ```
