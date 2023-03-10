@@ -36,7 +36,7 @@ jobs:
       run: |
         source /opt/ros/noetic/setup.bash
         cd ${CATKIN_WS}
-        catkin build
+        catkin build -DCMAKE_BUILD_TYPE=Release
 
     - name: test
       run: |
