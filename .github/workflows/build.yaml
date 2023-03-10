@@ -9,9 +9,11 @@ jobs:
       CATKIN_WS: /home/runner/work/catkin_ws
     steps:
     - uses: actions/checkout@v3
+      with:
+        node-version: "16"
 
     - name: Setup ROS
-      uses: ros-tooling/setup-ros@v0.4
+      uses: ros-tooling/setup-ros@v0.6
       with:
         required-ros-distributions: noetic
 
