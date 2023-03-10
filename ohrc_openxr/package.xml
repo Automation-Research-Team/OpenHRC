@@ -54,7 +54,7 @@
   <exec_depend>roscpp</exec_depend>
   <depend>stb</depend>
   <depend>ohrc_msgs</depend>
-  <depend>OpenXR</depend>
+  <depend>OpenXR-SDK</depend>
 
 
 
