@@ -52,8 +52,8 @@
   <build_depend>roscpp</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
-  <build_depend>OpenXR</build_depend>
-  <build_depend>OPENXR</build_depend>
+  <depend>OpenXR</depend>
+  <depend>OPENXR</depend> <!-- one of these depend tags might be not necessary -->
 
   <depend>stb</depend>
   <depend>ohrc_msgs</depend>
