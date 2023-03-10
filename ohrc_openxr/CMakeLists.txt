@@ -21,6 +21,8 @@ find_package(Threads REQUIRED)
 
 find_package(OpenXR REQUIRED)
 find_package(X11 REQUIRED)
+
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 
 INCLUDE(FindPkgConfig)
@@ -157,7 +159,7 @@ add_dependencies(openxr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 ## Specify libraries to link a library or executable target against
 target_link_libraries(openxr_test
   ${catkin_LIBRARIES}
-  openxr_loader
+  OpenXR::openxr_loader
   Xrandr ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${catkin_LIBRARIES}
 )
 

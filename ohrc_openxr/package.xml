@@ -53,7 +53,8 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <depend>stb</depend>
-   <depend>ohrc_msgs</depend>
+  <depend>ohrc_msgs</depend>
+  <depend>OpenXR</depend>
 
 
 
