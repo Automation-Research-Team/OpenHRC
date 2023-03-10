@@ -34,7 +34,7 @@ $ sudo apt install libx11-xcb-dev libxcb-dri2-0-dev libxcb-glx0-dev libxcb-icccm
 
 ## install other libraries using rosdep
 $ rosdep update
-$ rosdep install -i -y --from-paths ./ 
+$ rosdep install --ignore-src -y -r --from-paths ./
 ```
 
 ### build
