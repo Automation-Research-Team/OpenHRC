@@ -15,10 +15,9 @@ jobs:
       with:
         required-ros-distributions: noetic
 
-    - name: Install libs for OpenXR
+    - name: Install x11-xcb libraries for OpenXR
       run: |
         sudo apt install libx11-xcb-dev libxcb-dri2-0-dev libxcb-glx0-dev libxcb-icccm4-dev libxcb-keysyms1-dev libxcb-randr0-dev
-        sudo apt install libsdl2-dev
 
     - name: Init workspace
       run: |

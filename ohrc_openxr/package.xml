@@ -58,7 +58,7 @@
   <depend>stb</depend>
   <depend>ohrc_msgs</depend>
 
-
+  <depend>sdl2</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
