@@ -1628,16 +1628,19 @@ int main(int argc, char** argv) {
       }
     };
 
+    static ros::Time t_prev;
     if (isFirst) {
       prev_bodyMsg = bodyMsg;
       isFirst = false;
+      t_prev = ros::Time::now();
     } else {
-      bodyMsg.right_hand.twist.linear.x = (bodyMsg.right_hand.pose.position.x - prev_bodyMsg.right_hand.pose.position.x) * 60.0;
-      bodyMsg.right_hand.twist.linear.y = (bodyMsg.right_hand.pose.position.y - prev_bodyMsg.right_hand.pose.position.y) * 60.0;
-      bodyMsg.right_hand.twist.linear.z = (bodyMsg.right_hand.pose.position.z - prev_bodyMsg.right_hand.pose.position.z) * 60.0;
-      bodyMsg.left_hand.twist.linear.x = (bodyMsg.left_hand.pose.position.x - prev_bodyMsg.left_hand.pose.position.x) * 60.0;
-      bodyMsg.left_hand.twist.linear.y = (bodyMsg.left_hand.pose.position.y - prev_bodyMsg.left_hand.pose.position.y) * 60.0;
-      bodyMsg.left_hand.twist.linear.z = (bodyMsg.left_hand.pose.position.z - prev_bodyMsg.left_hand.pose.position.z) * 60.0;
+      double dt = (ros::Time::now() - t_prev).toSec();
+      bodyMsg.right_hand.twist.linear.x = (bodyMsg.right_hand.pose.position.x - prev_bodyMsg.right_hand.pose.position.x) / dt;
+      bodyMsg.right_hand.twist.linear.y = (bodyMsg.right_hand.pose.position.y - prev_bodyMsg.right_hand.pose.position.y) / dt;
+      bodyMsg.right_hand.twist.linear.z = (bodyMsg.right_hand.pose.position.z - prev_bodyMsg.right_hand.pose.position.z) / dt;
+      bodyMsg.left_hand.twist.linear.x = (bodyMsg.left_hand.pose.position.x - prev_bodyMsg.left_hand.pose.position.x) / dt;
+      bodyMsg.left_hand.twist.linear.y = (bodyMsg.left_hand.pose.position.y - prev_bodyMsg.left_hand.pose.position.y) / dt;
+      bodyMsg.left_hand.twist.linear.z = (bodyMsg.left_hand.pose.position.z - prev_bodyMsg.left_hand.pose.position.z) / dt;
 
       prev_bodyMsg = bodyMsg;
     }

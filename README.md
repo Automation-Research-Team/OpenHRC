@@ -22,7 +22,6 @@ $ git clone https://github.com/itadera/OpenHRC.git
 
 ### solve dependency
 ```
-
 $ cd ~/catkin_ws/src/OpenHRC
 
 ### clone submodule source
