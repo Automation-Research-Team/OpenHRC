@@ -1226,7 +1226,7 @@ int main(int argc, char** argv) {
   }
 
   StereoImageNode stereoNode;
-  stereoNode.init("/ambf/env/cameras/cameraL/ImageData", "/ambf/env/cameras/cameraR/ImageData");
+  stereoNode.init("/mycobot/camera/left/color/image_raw", "/mycobot/camera/right/color/image_raw");
 
   XrSessionActionSetsAttachInfo actionset_attach_info = { .type = XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO, .next = NULL, .countActionSets = 1, .actionSets = &gameplay_actionset };
   result = xrAttachSessionActionSets(session, &actionset_attach_info);
