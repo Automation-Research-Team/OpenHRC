@@ -60,12 +60,12 @@ $ cd OpenHRC
 $ git submodule update --init --recursive
 ```
 
-### build docker container
+### build docker image
 ```
 $ docker build -t openhrc:noetic . --no-cache
 ```
 
-### start docker container
+### run docker 
 ```
 $ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc:noetic
 
