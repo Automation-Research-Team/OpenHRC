@@ -5,13 +5,21 @@ Open Human-Robot Collaboration/Cooperation Library
 ---
 
 ## Requirements
-This library is tested on the following envirionment:
+This library is developed on the following envirionment:
 - Ubuntu 20.04 (ROS Noetic)
+
+Besides, this is tested on the following envirionment:
+ - Ubuntu 20.04 (native, docker)
+ - Ubuntu 22.04 (docker)
+ <!-- - Windows 11 (docker) -->
+ - Mac OS (docker)
 
 This library is not compatible with ROS2 at this moment.
 I intent to port this package to ROS2, but have no plan.
 
-## Native Install
+## Native Install (Ubuntu 20.04)
+
+If you use other OS, please see [docker install](#docker-install).
 
 The catkin workspace directry is assumed to be ``~/catkin_ws``.
 ### clone sourse
@@ -70,11 +78,11 @@ $ docker build -t openhrc:noetic . --no-cache
 ```
 $ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc:noetic
 ```
-Then, you can access GUI via 
-http://127.0.0.1:6080/
+Then, you can access desk top GUI at 
+http://localhost:6080/
 
 ## Get Start
-As a test of the above build, you can try teleoperation node with interactive marker for UR5e.
+As a test of either native or docker install, you can try teleoperation node with interactive marker for UR5e.
 
 Open a terminal and run
 ```
