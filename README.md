@@ -118,4 +118,4 @@ This start controlling the robot and you can operate the end-effector via an int
 
 ---
 ## Author
-Shunki Itadera, Ph.D (s.itadera@aist.go.jp) - Researcher at ART, ICPS, AIST
+Shunki Itadera (https://staff.aist.go.jp/s.itadera/)
