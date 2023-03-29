@@ -46,26 +46,26 @@ Note that, the default tool `catkin_make` cannot compile non-ros codes.
 This package can be tested in a docker container which should work on Linux/Windows/Mac.
 This dockerfile is based on https://github.com/Tiryoh/docker-ros-desktop-vnc
 
-## install docker
+### install docker
 If you use Linux (ubuntu), just run
 ```
 $ sudo apt install -y curl
 $ curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/install-docker.sh | /bin/bash
 ```
 
-## clone sources
+### clone sources
 ```
 $ git clone https://github.com/itadera/OpenHRC.git 
 $ cd OpenHRC
 $ git submodule update --init --recursive
 ```
 
-## build docker container
+### build docker container
 ```
 $ docker build -t openhrc:noetic . --no-cache
 ```
 
-## start docker container
+### start docker container
 ```
 $ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc:noetic
 
