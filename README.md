@@ -5,13 +5,13 @@ Open Human-Robot Collaboration/Cooperation Library
 ---
 
 ## Requirements
-This library is developed on the following envirionment:
+OpenHRC is developed on the following envirionment:
 - Ubuntu 20.04 (ROS Noetic)
 
-Besides, this is tested on the following envirionment:
+Besides, OpenHRC is tested on the following envirionment:
  - Ubuntu 20.04 (native, docker)
  - Ubuntu 22.04 (docker)
- <!-- - Windows 11 (docker) -->
+ - Windows 11 (docker on WLS2)
  - Mac OS (docker)
 
 This library is not compatible with ROS2 at this moment.
@@ -55,12 +55,23 @@ This package can be tested in a docker container which should work on Linux/Wind
 This dockerfile is based on https://github.com/Tiryoh/docker-ros-desktop-vnc
 
 ### install docker
-If you use Linux (ubuntu), just run
+If you use Linux (ubuntu) or WLS2 on Windows, please run
 ```
 $ sudo apt install -y curl
 $ curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/install-docker.sh | /bin/bash
-$ sudo chmod 666 /var/run/docker.sock
+$ sudo service docker start
 ```
+
+If you have an issue on permission denied, please try
+```
+sudo chmod 666 /var/run/docker.sock
+```
+
+This way is to use Docker Engine, not Docker Desktop which is not free for commercial use.
+Both of them are OK, but Docker Engine can perform better.
+If you use Docker Desktop, please follow the instruction on https://docs.docker.com/desktop/.
+
+
 
 ### clone sources
 ```
