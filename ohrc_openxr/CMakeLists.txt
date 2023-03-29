@@ -167,11 +167,11 @@ target_link_libraries(openxr_test
 
 
 
-add_executable(openxr-example src/main.cpp)
+add_executable(openxr-example2 src/main.cpp)
 
-target_include_directories(openxr-example PRIVATE ${OpenXR_INCLUDE_DIR})
-target_link_libraries(openxr-example PRIVATE OpenXR::openxr_loader Xrandr ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${catkin_LIBRARIES})
-target_include_directories(openxr-example PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(openxr-example2 PRIVATE ${OpenXR_INCLUDE_DIR})
+target_link_libraries(openxr-example2 PRIVATE OpenXR::openxr_loader Xrandr ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${catkin_LIBRARIES})
+target_include_directories(openxr-example2 PRIVATE ${SDL2_INCLUDE_DIRS})
 
 
 #############

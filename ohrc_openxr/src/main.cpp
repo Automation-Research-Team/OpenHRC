@@ -1649,7 +1649,7 @@ int main(int argc, char** argv) {
     }
 
     publisher.publish(bodyMsg);
-    ros::spinOnce();
+    // ros::spinOnce();
 
     // --- Begin frame
     XrFrameBeginInfo frame_begin_info = { .type = XR_TYPE_FRAME_BEGIN_INFO, .next = NULL };
@@ -1670,6 +1670,7 @@ int main(int argc, char** argv) {
 
       //            printf("View Index: %d | View Pos: %f, %f, %f \n", i, views[i].pose.position.x,
       //            views[i].pose.position.y, views[i].pose.position.z);
+      // std::cout << dx << std::endl;
       views[i].pose.position.x += dx;
       views[i].pose.position.y += dy;
 
@@ -1711,15 +1712,15 @@ int main(int argc, char** argv) {
       int h = viewconfig_views[i].recommendedImageRectHeight;
 
       // TODO: should not be necessary, but is for SteamVR 1.16.4 (but not 1.15.x)
-      glXMakeCurrent(graphics_binding_gl.xDisplay, graphics_binding_gl.glxDrawable, graphics_binding_gl.glxContext);
+      // glXMakeCurrent(graphics_binding_gl.xDisplay, graphics_binding_gl.glxDrawable, graphics_binding_gl.glxContext);
 
-      render_frame(w, h, gl_rendering.shader_program_id, gl_rendering.VAO, gl_rendering.VAO_quad, frame_state.predictedDisplayTime, i, hand_locations, projection_matrix,
-                   view_matrix, gl_rendering.framebuffers[i][acquired_index], images[i][acquired_index].image, depth.supported, depth_image);
+      // render_frame(w, h, gl_rendering.shader_program_id, gl_rendering.VAO, gl_rendering.VAO_quad, frame_state.predictedDisplayTime, i, hand_locations, projection_matrix,
+      //  view_matrix, gl_rendering.framebuffers[i][acquired_index], images[i][acquired_index].image, depth.supported, depth_image);
       // render_frame(w, h, gl_rendering.shader_program_id, gl_rendering.VAO, frame_state.predictedDisplayTime, i, hand_locations, projection_matrix, view_matrix,
       //  gl_rendering.framebuffers[i][acquired_index], images[i][acquired_index].image, depth.supported, depth_image);
 
-      // render_image(w, h, gl_rendering.shader_program_id, gl_rendering.VAO, gl_rendering.VAO_quad, frame_state.predictedDisplayTime, i, hand_locations, projection_matrix,
-      //  view_matrix, gl_rendering.framebuffers[i][acquired_index], images[i][acquired_index].image, depth.supported, depth_image);
+      render_image(w, h, gl_rendering.shader_program_id, gl_rendering.VAO, gl_rendering.VAO_quad, frame_state.predictedDisplayTime, i, hand_locations, projection_matrix,
+                   view_matrix, gl_rendering.framebuffers[i][acquired_index], images[i][acquired_index].image, depth.supported, depth_image);
 
       XrSwapchainImageReleaseInfo release_info = { .type = XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO, .next = NULL };
       result = xrReleaseSwapchainImage(swapchains[i], &release_info);
@@ -2101,23 +2102,23 @@ void render_frame(int w, int h, GLuint shader_program_id, GLuint VAO, XrTime pre
   }
 
   // blit left eye to desktop window
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  if (view_index == 0) {
-    glBlitNamedFramebuffer((GLuint)framebuffer,              // readFramebuffer
-                           (GLuint)0,                        // backbuffer     // drawFramebuffer
-                           (GLint)0,                         // srcX0
-                           (GLint)0,                         // srcY0
-                           (GLint)w,                         // srcX1
-                           (GLint)h,                         // srcY1
-                           (GLint)0,                         // dstX0
-                           (GLint)0,                         // dstY0
-                           (GLint)w / 2,                     // dstX1
-                           (GLint)h / 2,                     // dstY1
-                           (GLbitfield)GL_COLOR_BUFFER_BIT,  // mask
-                           (GLenum)GL_LINEAR);               // filter
+  // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  // if (view_index == 0) {
+  //   glBlitNamedFramebuffer((GLuint)framebuffer,              // readFramebuffer
+  //                          (GLuint)0,                        // backbuffer     // drawFramebuffer
+  //                          (GLint)0,                         // srcX0
+  //                          (GLint)0,                         // srcY0
+  //                          (GLint)w,                         // srcX1
+  //                          (GLint)h,                         // srcY1
+  //                          (GLint)0,                         // dstX0
+  //                          (GLint)0,                         // dstY0
+  //                          (GLint)w / 2,                     // dstX1
+  //                          (GLint)h / 2,                     // dstY1
+  //                          (GLbitfield)GL_COLOR_BUFFER_BIT,  // mask
+  //                          (GLenum)GL_LINEAR);               // filter
 
-    SDL_GL_SwapWindow(desktop_window);
-  }
+  //   SDL_GL_SwapWindow(desktop_window);
+  // }
 }
 void render_frame(int w, int h, GLuint shader_program_id, GLuint VAO, GLuint VAO_quad, XrTime predictedDisplayTime, int view_index, XrSpaceLocation* hand_locations,
                   XrMatrix4x4f projectionmatrix, XrMatrix4x4f viewmatrix, GLuint framebuffer, GLuint image, bool depth_supported, GLuint depthbuffer) {
@@ -2171,64 +2172,73 @@ void render_frame(int w, int h, GLuint shader_program_id, GLuint VAO, GLuint VAO
   // }
 
   // render controllers
-  for (int hand = 0; hand < 2; hand++) {
-    if (hand == 0) {
-      glUniform3f(colorLoc, 1.0, 0.5, 0.5);
-    } else {
-      glUniform3f(colorLoc, 0.5, 1.0, 0.5);
-    }
+  // for (int hand = 0; hand < 2; hand++) {
+  //   if (hand == 0) {
+  //     glUniform3f(colorLoc, 1.0, 0.5, 0.5);
+  //   } else {
+  //     glUniform3f(colorLoc, 0.5, 1.0, 0.5);
+  //   }
 
-    bool hand_location_valid =
-        //(spaceLocation[hand].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
-        (hand_locations[hand].locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0;
+  //   bool hand_location_valid =
+  //       //(spaceLocation[hand].locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) != 0 &&
+  //       (hand_locations[hand].locationFlags & XR_SPACE_LOCATION_ORIENTATION_VALID_BIT) != 0;
 
-    // draw a block at the controller pose
-    if (!hand_location_valid)
-      continue;
+  //   // draw a block at the controller pose
+  //   if (!hand_location_valid)
+  //     continue;
 
-    XrVector3f scale = { .x = .05f, .y = .05f, .z = .2f };
-    render_block(&hand_locations[hand].pose.position, &hand_locations[hand].pose.orientation, &scale, modelLoc);
-  }
+  //   XrVector3f scale = { .x = .05f, .y = .05f, .z = .2f };
+  //   render_block(&hand_locations[hand].pose.position, &hand_locations[hand].pose.orientation, &scale, modelLoc);
+  // }
 
-  // render quad
+  // // render quad
   glBindVertexArray(VAO_quad);
-  // render scene with 4 colorful cubes
+  // // render scene with 4 colorful cubes
   {
     double display_time_seconds = ((double)predictedDisplayTime) / (1000. * 1000. * 1000.);
     render_quad(vec3(0, 0, 0), 0., modelLoc);
   }
 
   // blit left eye to desktop window
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  if (view_index == 0) {
-    _glBlitNamedFramebuffer((GLuint)framebuffer,              // readFramebuffer
-                            (GLuint)0,                        // backbuffer     // drawFramebuffer
-                            (GLint)0,                         // srcX0
-                            (GLint)0,                         // srcY0
-                            (GLint)w,                         // srcX1
-                            (GLint)h,                         // srcY1
-                            (GLint)0,                         // dstX0
-                            (GLint)0,                         // dstY0
-                            (GLint)w / 2,                     // dstX1
-                            (GLint)h / 2,                     // dstY1
-                            (GLbitfield)GL_COLOR_BUFFER_BIT,  // mask
-                            (GLenum)GL_LINEAR);               // filter
+  // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  // if (view_index == 0) {
+  //   _glBlitNamedFramebuffer((GLuint)framebuffer,              // readFramebuffer
+  //                           (GLuint)0,                        // backbuffer     // drawFramebuffer
+  //                           (GLint)0,                         // srcX0
+  //                           (GLint)0,                         // srcY0
+  //                           (GLint)w,                         // srcX1
+  //                           (GLint)h,                         // srcY1
+  //                           (GLint)0,                         // dstX0
+  //                           (GLint)0,                         // dstY0
+  //                           (GLint)w / 2,                     // dstX1
+  //                           (GLint)h / 2,                     // dstY1
+  //                           (GLbitfield)GL_COLOR_BUFFER_BIT,  // mask
+  //                           (GLenum)GL_LINEAR);               // filter
 
-    SDL_GL_SwapWindow(desktop_window);
-  }
-  ros::Duration(1. / 30.).sleep();
+  //   SDL_GL_SwapWindow(desktop_window);
+  // }
+  // // ros::Duration(1. / 30.).sleep();
 }
 
 void render_image(int w, int h, GLuint shader_program_id, GLuint VAO, GLuint VAO_quad, XrTime predictedDisplayTime, int view_index, XrSpaceLocation* hand_locations,
                   XrMatrix4x4f projectionmatrix, XrMatrix4x4f viewmatrix, GLuint framebuffer, GLuint image, bool depth_supported, GLuint depthbuffer) {
   ros::spinOnce();
-  std::cerr << "VIEW IDX: " << view_index << " | TEX ID: " << image << std::endl;
+  // glUseProgram(shader_program_id);
+  // int modelLoc = glGetUniformLocation(shader_program_id, "model");
+  // int colorLoc = glGetUniformLocation(shader_program_id, "uniformColor");
+  // int viewLoc = glGetUniformLocation(shader_program_id, "view");
+  // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, (float*)viewmatrix.m);
+  // int projLoc = glGetUniformLocation(shader_program_id, "proj");
+  // glUniformMatrix4fv(projLoc, 1, GL_FALSE, (float*)projectionmatrix.m);
+
+  // render_quad(vec3(0, 0, 0), 0., modelLoc);
+  // std::cerr << "VIEW IDX: " << view_index << " | TEX ID: " << image << std::endl;
   if (view_index == 0) {
     if (leftTex.new_msg) {
       glBindTexture(GL_TEXTURE_2D, image);
       // set the texture wrapping/filtering options (on the currently bound texture object)
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, leftTex.image_msg->width, leftTex.image_msg->height, GL_RGB, GL_UNSIGNED_BYTE, leftTex.image_msg->data.data());
-
+      // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, leftTex.image_msg->width, leftTex.image_msg->height, 0, GL_RGB, GL_UNSIGNED_BYTE, leftTex.image_msg->data.data());
       leftTex.new_msg = false;
     }
   } else if (view_index == 1) {
@@ -2236,7 +2246,7 @@ void render_image(int w, int h, GLuint shader_program_id, GLuint VAO, GLuint VAO
       glBindTexture(GL_TEXTURE_2D, image);
       // set the texture wrapping/filtering options (on the currently bound texture object)
       glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rightTex.image_msg->width, rightTex.image_msg->height, GL_RGB, GL_UNSIGNED_BYTE, rightTex.image_msg->data.data());
-
+      // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, rightTex.image_msg->width, rightTex.image_msg->height, 0, GL_RGB, GL_UNSIGNED_BYTE, rightTex.image_msg->data.data());
       rightTex.new_msg = false;
     }
   } else {
