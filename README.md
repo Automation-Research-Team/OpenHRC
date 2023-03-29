@@ -51,6 +51,7 @@ If you use Linux (ubuntu), just run
 ```
 $ sudo apt install -y curl
 $ curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/install-docker.sh | /bin/bash
+$ sudo chmod 666 /var/run/docker.sock
 ```
 
 ### clone sources
@@ -68,10 +69,24 @@ $ docker build -t openhrc:noetic . --no-cache
 ### start docker container
 ```
 $ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc:noetic
-
 ```
 Then, you can access GUI via 
 http://127.0.0.1:6080/
+
+## Get Start
+As a test of the above build, you can try teleoperation node with interactive marker for UR5e.
+
+Open a terminal and run
+```
+$ roslaunch ohrc_teleoperation ur5e_bringup.launch
+```
+This launch UR5e simulation on Gazebo.
+
+Open another terminal and run 
+```
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch
+```
+This start controlling the robot and you can operate the end-effector via an interactive marker.
 
 
 ---
