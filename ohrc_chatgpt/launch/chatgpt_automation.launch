@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot" default="ur5e" />
+  <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
+
+  <node name="chatgpt_automation" pkg="ohrc_chatgpt" type="chatgpt_automation"  respawn="false" output="screen">
+    <rosparam command="load" file="$(find ohrc_teleoperation)/example/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
+    <!-- <rosparam command="load" file="$(find ohrc_automation)/config/impedance_config.yaml" /> -->
+    <!-- <param name="priority" value="$(arg priority)" /> -->
+  </node>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/config/teleoperation.rviz"/>
+
+</launch>
