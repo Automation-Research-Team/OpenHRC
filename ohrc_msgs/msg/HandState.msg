@@ -1,6 +1,5 @@
 geometry_msgs/Pose pose
 geometry_msgs/Twist twist
-ohrc_msgs/State state
 
 # geometry_msgs/Wrench wrench
 

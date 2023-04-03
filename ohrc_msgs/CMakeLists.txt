@@ -10,7 +10,6 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED
     std_msgs
     geometry_msgs
-    sensor_msgs
     message_generation
     message_runtime
 )
@@ -55,8 +54,6 @@ add_message_files(
   StateStamped.msg
   Gripper.msg
   Contact.msg
-  BodyState.msg
-  HandState.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -78,7 +75,6 @@ generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
   geometry_msgs
-  sensor_msgs
 )
 
 ################################################
