@@ -5,6 +5,7 @@ geometry_msgs/Twist twist
 
 float32[] stick
 bool[] button
+bool[] touch
 
 float64 squeeze
 float64 trigger
