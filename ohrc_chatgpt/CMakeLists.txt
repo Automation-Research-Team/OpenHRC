@@ -155,7 +155,9 @@ ${catkin_INCLUDE_DIRS}
 # )
 
 set(controllers
-  chatgpt
+  chatgpt_circle
+  chatgpt_rectangle
+  chatgpt_star
 )
 
 foreach(controller ${controllers})
