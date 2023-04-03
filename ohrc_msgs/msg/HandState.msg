@@ -8,3 +8,5 @@ bool[] button
 
 float64 squeeze
 float64 trigger
+
+float64 grip
