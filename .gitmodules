@@ -10,3 +10,6 @@
 [submodule "3rd_party/dmpbbo"]
 	path = 3rd_party/dmpbbo
 	url = https://github.com/itadera/dmpbbo.git
+[submodule "3rd_party/ros-tcp-endpoint"]
+	path = 3rd_party/ros-tcp-endpoint
+	url = https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git

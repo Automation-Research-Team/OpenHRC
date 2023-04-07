@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
+        - /InteractiveMarkers1
       Splitter Ratio: 0.5
     Tree Height: 555
   - Class: rviz/Selection
@@ -61,42 +63,83 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        base_link_inertia:
+          Value: true
+        camera_accel_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_camera_center:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        flange:
+        camera_fake_odom:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        forearm_link:
+        camera_gyro_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_l_camera_color_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_l_camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_odom_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_r_camera_color_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_r_camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        link1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_link:
+        link2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        tool0:
+        link3:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        tool0_controller:
+          Value: true
+        link4:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        upper_arm_link:
+          Value: true
+        link5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link6:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link6_flange:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -105,24 +148,9 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        wrist_1_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_2_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_3_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
-      Robot Description: robot_description
-      TF Prefix: ""
+      Robot Description: mycobot/robot_description
+      TF Prefix: mycobot
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -133,13 +161,13 @@ Visualization Manager:
       Show Axes: false
       Show Descriptions: true
       Show Visual Aids: false
-      Update Topic: /eff_marker/update
+      Update Topic: /mycobot/eff_marker/update
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: mycobot/base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -163,7 +191,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.086756229400635
+      Distance: 1.8979061841964722
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -179,9 +207,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.785398006439209
+      Pitch: 0.6103981733322144
       Target Frame: <Fixed Frame>
-      Yaw: 0.785398006439209
+      Yaw: 0.5203982591629028
     Saved: ~
 Window Geometry:
   Displays:
@@ -200,4 +228,4 @@ Window Geometry:
     collapsed: false
   Width: 1200
   X: 1184
-  Y: 184
+  Y: 147
