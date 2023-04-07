@@ -316,6 +316,10 @@ public:
     this->_des_eff_vel = des_eff_vel;
   }
 
+  inline void enablePoseFeedback() {
+    myik_solver_ptr->enablePoseFeedback();
+  }
+
   inline void disablePoseFeedback() {
     myik_solver_ptr->disablePoseFeedback();
   }

@@ -10,7 +10,7 @@ solver: "MyIK"
 
 self_collision_avoidance: false
 
-control_freq: 30.0
+control_freq: 50.0
 
 initIKAngle: [0, 0., 0, 0, 0, 0] # size of this should be equal to DoF
 initial_pose: [0.2, 0., 0.2, 0, 0, 0] # [x, y, z, roll, pitch, yaw]

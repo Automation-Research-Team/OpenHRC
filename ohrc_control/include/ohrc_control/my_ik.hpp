@@ -154,7 +154,10 @@ public:
     this->idxSegJnt = idx;
   }
 
-    inline void disablePoseFeedback() {
+  inline void enablePoseFeedback() {
+    this->poseFeedbackDisabled = false;
+  }
+  inline void disablePoseFeedback() {
     this->poseFeedbackDisabled = true;
   }
 };
