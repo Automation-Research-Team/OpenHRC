@@ -5,7 +5,7 @@
   <arg name="spacenav" default="false" />
 
   <node name="joy_topic_teleoperation" pkg="ohrc_teleoperation" type="joy_topic_teleoperation"  respawn="false" output="screen">
-    <rosparam command="load" file="$(find ohrc_teleoperation)/example/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
+    <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
     <rosparam command="load" file="$(find ohrc_teleoperation)/config/joy_topic_config.yaml" />
   </node>
 

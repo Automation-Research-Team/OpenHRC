@@ -1,0 +1,37 @@
+name: ROS build workflow
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      WS: /home/runner/work
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: install docker engine
+      run: |
+        sudo apt install -y curl
+        curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/install-docker.sh | /bin/bash
+        sudo service docker start
+
+    - name: init ws
+      run: |
+        mkdir ${WS}/src
+        ln -s ${GITHUB_WORKSPACE} ${CATKIN_WS}/src/
+
+    - name: pre build
+      run: |
+        git submodule update --init --recursive
+
+    - name: build
+      run: |
+        docker build -t openhrc:noetic . --no-cache
+
+    # - name: test
+    #   run: |
+    #     source /opt/ros/noetic/setup.bash
+    #     cd ${CATKIN_WS}
+    #     catkin test
+        
