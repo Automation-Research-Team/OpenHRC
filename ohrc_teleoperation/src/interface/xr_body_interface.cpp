@@ -42,24 +42,27 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
   switch (bodyPart) {
     case BodyPart::RIGHT_HAND:
-      if (body.right_hand.grip > 0.9) {
-        state.pose = body.right_hand.pose;
+      state.pose = body.right_hand.pose;
+      if (body.right_hand.grip > 0.9)
         state.enabled = true;
-      } else
+      else
         state.enabled = false;
       break;
+
     case BodyPart::LEFT_HAND:
-      if (body.left_hand.grip > 0.9) {
-        state.pose = body.left_hand.pose;
+      state.pose = body.left_hand.pose;
+      if (body.left_hand.grip > 0.9)
         state.enabled = true;
-      } else
+      else
         state.enabled = false;
       break;
+
     case BodyPart::HEAD:
-      if (body.right_hand.grip > 0.9 || body.left_hand.grip > 0.9) {
-        state.pose = body.head.pose;
+      state.pose = body.head.pose;
+      if (body.right_hand.grip > 0.9 || body.left_hand.grip > 0.9)
+
         state.enabled = true;
-      } else
+      else
         state.enabled = false;
       break;
     case BodyPart::EITHER_HANDS:
