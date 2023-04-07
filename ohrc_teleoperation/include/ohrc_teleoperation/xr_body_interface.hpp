@@ -7,7 +7,11 @@
 class XrBodyInterface : public StateTopicInterface {
   ros::Subscriber subBody;
 
+  ohrc_msgs::State state;
+
   ohrc_msgs::BodyState _body;
+  enum class BodyPart { RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS, NONE } bodyPart;
+  enum class Hand { RIGHT, LEFT } hand;
 
   void cbBody(const ohrc_msgs::BodyState::ConstPtr& msg);
   void setSubscriber() override;

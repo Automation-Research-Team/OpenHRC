@@ -20,7 +20,7 @@ void StateTopicInterface::cbState(const ohrc_msgs::State::ConstPtr& msg) {
 
 void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Frame& pos, KDL::Twist& twist) {
   // double k_trans = 2.0;  // position slacing factor
-  Matrix3d R = T_state_base.rotation().transpose();
+  Matrix3d R = T_state_base.rotation();
   Affine3d T_state_state;
   tf2::fromMsg(state.pose, T_state_state);
   Matrix<double, 6, 1> v_state_state;
@@ -28,6 +28,9 @@ void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Fra
 
   Affine3d T_state = Translation3d(k_trans * R * T_state_state.translation()) * (R * T_state_state.rotation());
   VectorXd v_state = (VectorXd(6) << k_trans * R * v_state_state.head(3), R * v_state_state.tail(3)).finished();
+
+  if (isFirst && !state.enabled)
+    return;
 
   if (isFirst) {
     T = controller->getT_init();
@@ -39,7 +42,7 @@ void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Fra
   VectorXd v = VectorXd::Zero(6);
   if (state.enabled) {
     T = Translation3d(T_state.translation() - T_state_start.translation() + T_start.translation()) *
-        (T_state.rotation() * controller->getT_init().rotation() * R);  // TODO: correct???
+        (T_state.rotation() * controller->getT_init().rotation() * R.transpose());  // TODO: correct???
     v = v_state;
     controller->enableOperation();
   } else {
