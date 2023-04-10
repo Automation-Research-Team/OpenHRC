@@ -43,6 +43,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   switch (bodyPart) {
     case BodyPart::RIGHT_HAND:
       state.pose = body.right_hand.pose;
+      state.twist = body.right_hand.twist;
       if (body.right_hand.grip > 0.9)
         state.enabled = true;
       else
@@ -51,6 +52,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
     case BodyPart::LEFT_HAND:
       state.pose = body.left_hand.pose;
+      state.twist = body.left_hand.twist;
       if (body.left_hand.grip > 0.9)
         state.enabled = true;
       else
@@ -59,6 +61,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
     case BodyPart::HEAD:
       state.pose = body.head.pose;
+      state.twist = body.head.twist;
       if (body.right_hand.grip > 0.9 || body.left_hand.grip > 0.9)
 
         state.enabled = true;
@@ -76,10 +79,13 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
         state.enabled = false;
       }
 
-      if (hand == Hand::RIGHT)
+      if (hand == Hand::RIGHT) {
         state.pose = body.right_hand.pose;
-      else
+        state.twist = body.right_hand.twist;
+      } else {
         state.pose = body.left_hand.pose;
+        state.twist = body.left_hand.twist;
+      }
 
       break;
     default:
