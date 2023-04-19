@@ -5,3 +5,5 @@ gain:
 
 topic_name: "/spacenav/joy"
 frame_id: "world"
+
+diable_pose_feedback: true
