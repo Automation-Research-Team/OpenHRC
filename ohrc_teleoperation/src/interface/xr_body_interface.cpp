@@ -31,6 +31,13 @@ void XrBodyInterface::cbBody(const ohrc_msgs::BodyState::ConstPtr& msg) {
   _flagTopic = true;
 }
 
+bool XrBodyInterface::getEnableFlag(const ohrc_msgs::HandState& handState, const ohrc_msgs::HandState& anotherHandState) {
+  if (handState.grip > 0.9)
+    return true;
+  else
+    return false;
+}
+
 void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   ohrc_msgs::BodyState body;
   {
@@ -40,43 +47,37 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
       return;
   }
 
+  ohrc_msgs::State state = this->state;
+  state.enabled = false;
   switch (bodyPart) {
     case BodyPart::RIGHT_HAND:
       state.pose = body.right_hand.pose;
       state.twist = body.right_hand.twist;
-      if (body.right_hand.grip > 0.9)
+      if (getEnableFlag(body.right_hand, body.left_hand))
         state.enabled = true;
-      else
-        state.enabled = false;
       break;
 
     case BodyPart::LEFT_HAND:
       state.pose = body.left_hand.pose;
       state.twist = body.left_hand.twist;
-      if (body.left_hand.grip > 0.9)
+      if (getEnableFlag(body.left_hand, body.right_hand))
         state.enabled = true;
-      else
-        state.enabled = false;
       break;
 
     case BodyPart::HEAD:
       state.pose = body.head.pose;
       state.twist = body.head.twist;
-      if (body.right_hand.grip > 0.9 || body.left_hand.grip > 0.9)
-
+      if (getEnableFlag(body.right_hand, body.left_hand) || getEnableFlag(body.left_hand, body.right_hand))
         state.enabled = true;
-      else
-        state.enabled = false;
       break;
+
     case BodyPart::EITHER_HANDS:
-      if (body.right_hand.grip > 0.9) {
+      if (getEnableFlag(body.right_hand, body.left_hand)) {
         hand = Hand::RIGHT;
         state.enabled = true;
-      } else if (body.left_hand.grip > 0.9) {
+      } else if (getEnableFlag(body.left_hand, body.right_hand)) {
         hand = Hand::LEFT;
         state.enabled = true;
-      } else {
-        state.enabled = false;
       }
 
       if (hand == Hand::RIGHT) {
@@ -86,13 +87,13 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
         state.pose = body.left_hand.pose;
         state.twist = body.left_hand.twist;
       }
-
       break;
+
     default:
-      state.enabled = false;
       break;
   }
 
   // ROS_INFO_STREAM(state);
   getTargetState(state, pose, twist);
+  this->state = state;  // TODO: check if this is necessary
 }

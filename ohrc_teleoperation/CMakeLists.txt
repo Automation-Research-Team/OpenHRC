@@ -183,6 +183,16 @@ foreach(interface ${state_topic_interfaces})
   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 endforeach(interface)
 
+set(body_interfaces
+  k4abt_body
+)
+
+foreach(interface ${body_interfaces})
+  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/interface/xr_body_interface.cpp src/app/${interface}_teleoperation.cpp)
+  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+endforeach(interface)
+
 set(twist_topic_interfaces
   joy_topic
 )

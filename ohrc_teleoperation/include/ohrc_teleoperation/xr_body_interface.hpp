@@ -4,7 +4,7 @@
 #include "ohrc_msgs/BodyState.h"
 #include "ohrc_teleoperation/state_topic_interface.hpp"
 
-class XrBodyInterface : public StateTopicInterface {
+class XrBodyInterface : virtual public StateTopicInterface {
   ros::Subscriber subBody;
 
   ohrc_msgs::State state;
@@ -15,6 +15,9 @@ class XrBodyInterface : public StateTopicInterface {
 
   void cbBody(const ohrc_msgs::BodyState::ConstPtr& msg);
   void setSubscriber() override;
+
+protected:
+  virtual bool getEnableFlag(const ohrc_msgs::HandState& handState, const ohrc_msgs::HandState& anotherHandState);
 
 public:
   using StateTopicInterface::StateTopicInterface;
