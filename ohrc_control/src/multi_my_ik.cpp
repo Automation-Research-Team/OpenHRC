@@ -259,6 +259,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std:
     // std::cout << comb[0] << "," << comb[1] << std::endl;
     // Ts[]
     Vector3d d_vec = (myIKs[comb[0]]->getT_base_world() * Ts[comb[0]]).translation() - (myIKs[comb[1]]->getT_base_world() * Ts[comb[1]]).translation();
+
     // std::cout << (myIKs[comb[0]]->getT_base_world() * Ts[comb[0]]).translation().transpose() << std::endl;
     // std::cout << (myIKs[comb[1]]->getT_base_world() * Ts[comb[1]]).translation().transpose() << std::endl;
     double d = d_vec.norm();
@@ -279,4 +280,75 @@ void MultiMyIK::resetRobotWeight() {
 void MultiMyIK::setRobotWeight(int robotIndex, double rate) {
   w_h[robotIndex] = rate * init_w_h[robotIndex];
 }
+
+// get closest distance and point between two line segments
+void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs) {
+  Vector3d a = a1 - a0;
+  Vector3d b = b1 - b0;
+  double a_norm = a.norm();
+  double b_norm = b.norm();
+
+  Vector3d na = a / a_norm;
+  Vector3d nb = b / b_norm;
+
+  Vector3d cross_na_nb = na.cross(nb);
+  double denom = cross_na_nb.norm() * cross_na_nb.norm();
+
+  if (denom < 1.0e-6) {  // parallel case
+    double d0 = na.dot(b0 - a0);
+    double d1 = nb.dot(b1 - a0);
+
+    if (d0 < 0.0 && d1 < 0.0) {
+      if (abs(d0) < abs(d1)) {
+        as = 0.0;
+        bs = 0.0;
+      } else {
+        as = 0.0;
+        bs = 1.0;
+      }
+
+    } else if (d0 > a_norm && d1 > a_norm) {
+      if (abs(d0) < abs(d1)) {
+        as = 1.0;
+        bs = 0.0;
+      } else {
+        as = 1.0;
+        bs = 1.0;
+      }
+    } else {
+      // overlap case
+      as = 0.0;
+      bs = 0.0;
+    }
+  } else {
+    // lines criss cross case
+    Vector3d t = b0 - a0;
+
+    double ad = t.cross(nb).dot(cross_na_nb) / denom;
+    double bd = t.cross(na).dot(cross_na_nb) / denom;
+
+    if (ad < 0.0) {
+      as = 0.0;
+      bs = nb.dot(t) / b_norm;
+    } else if (ad > a_norm) {
+      as = 1.0;
+      bs = nb.dot(t + a) / b_norm;
+    }
+
+    if (bd < 0.0) {
+      bs = 0.0;
+      as = na.dot(t) / a_norm;
+    } else if (bd > b_norm) {
+      bs = 1.0;
+      as = na.dot(t + b) / a_norm;
+    }
+
+    if (ad >= 0.0 && ad <= a_norm && bd >= 0.0 && bd <= b_norm) {
+      as = ad / a_norm;
+      bs = bd / b_norm;
+    }
+  }
+  return;
+}
+
 };  // namespace MyIK
