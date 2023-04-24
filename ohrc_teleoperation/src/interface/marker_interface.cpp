@@ -69,8 +69,8 @@ void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarke
 }
 
 void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
-  controller->enableOperation();
   geometry_msgs::Pose markerPose;
+  // controller->enableOperation();
   double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
@@ -81,6 +81,7 @@ void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
     // _flagSubInteractiveMarker[controller->getIndex()] = false;
     markerPose = _markerPose;
     // markerDt = _markerDt[controller->getIndex()];
+    controller->enableOperation();
   }
 
   tf2::fromMsg(markerPose, pose);
@@ -88,7 +89,7 @@ void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   if (prevPoses.p.data[0] == 0.0 && prevPoses.p.data[1] == 0.0 && prevPoses.p.data[2] == 0.0)  // initilize
     prevPoses = pose;
 
-  controller->getVelocity(pose, prevPoses, dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
+  // controller->getVelocity(pose, prevPoses, dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
 
   prevPoses = pose;
 }

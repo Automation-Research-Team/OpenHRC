@@ -1,8 +1,6 @@
 #include "ohrc_teleoperation/omega_interface.hpp"
 
 void OmegaInterface::initInterface() {
-  StateTopicInterface::initInterface();
-
   std::string omega, haptic;
   n.param("omega_type", omega, std::string("left"));
   n.param("haptic_type", haptic, std::string("None"));
@@ -15,6 +13,8 @@ void OmegaInterface::initInterface() {
   pubOmegaForceVis = n.advertise<geometry_msgs::WrenchStamped>("cmd_force_vis", 2);
 
   hapticType = magic_enum::enum_cast<HapticType>(haptic).value_or(HapticType::None);
+
+  StateTopicInterface::initInterface();
 }
 
 void OmegaInterface::modifyTargetState(ohrc_msgs::State& state) {

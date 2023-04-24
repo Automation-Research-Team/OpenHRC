@@ -90,10 +90,12 @@ void CartController::init(std::string robot) {
   T_init = T_init_base * T_init;
 
   for (int i = 0; i < 6; i++)
-    velFilter.push_back(butterworth(2, freq / 3.0, freq));
+    velFilter.push_back(butterworth(2, 5.0, freq));
+    // velFilter.push_back(butterworth(2, freq / 3.0, freq));
 
   for (int i = 0; i < nJnt; i++)
-    jntFilter.push_back(butterworth(2, freq / 3.0, freq));
+    jntFilter.push_back(butterworth(2, 5.0, freq));
+    // jntFilter.push_back(butterworth(2, freq / 3.0, freq));
 }
 
 bool CartController::getInitParam() {
@@ -435,14 +437,14 @@ void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_d
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
-  // cmd_trj.header.stamp = ros::Time::now();
+  cmd_trj.header.stamp = ros::Time::now();
   cmd_trj.points.resize(1);
   cmd_trj.points[0].time_from_start = ros::Duration(T);
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
     cmd_trj.points[0].positions.push_back(q_des[i]);
-    cmd_trj.points[0].velocities.push_back(0.0);
+    // cmd_trj.points[0].velocities.push_back(0.0);
     cmd_trj.points[0].accelerations.push_back(0.0);
   }
 }
@@ -665,8 +667,11 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   tf::transformKDLToEigen(des_pose, Td);
 
   static ros::Time t0 = ros::Time::now();
-  if (disable)
+  if (disable) {
     t0 = ros::Time::now();
+    disablePoseFeedback();
+  } else
+    enablePoseFeedback();
 
   double s = (ros::Time::now() - t0).toSec() / 2.0;
   if (s > 1.0 || passThrough)
