@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_eigen
   ohrc_control
   ohrc_common
+
+  
 )
 
 find_package(OsqpEigen REQUIRED)
@@ -130,6 +132,8 @@ include_directories(
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/controller/impedance_controller.cpp
+  # src/controller/dmp_controller.cpp
+
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
