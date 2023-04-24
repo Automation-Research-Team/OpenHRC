@@ -3,9 +3,10 @@
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
 
+  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 0 0 0 world xr_frame" />
   <node name="xr_body_teleoperation" pkg="ohrc_teleoperation" type="xr_body_teleoperation"  respawn="false" output="screen">
     <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
-    <!-- <rosparam command="load" file="$(find ohrc_teleoperation)/config/omega_config.yaml" /> -->
+    <rosparam command="load" file="$(find ohrc_teleoperation)/config/xr_body_config.yaml" />
   </node>
 
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/config/teleoperation.rviz"/>
