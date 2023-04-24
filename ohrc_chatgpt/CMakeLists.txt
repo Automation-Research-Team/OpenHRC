@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(ohrc_automation)
+project(ohrc_chatgpt)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++1z)
@@ -7,23 +7,20 @@ add_compile_options(-std=c++1z)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-
-  tf2_eigen
-  ohrc_control
-  ohrc_common
-
-  
+find_package(catkin REQUIRED
+    roscpp
+    ohrc_automation
+    ohrc_control
+    std_msgs
 )
 
-find_package(OsqpEigen REQUIRED)
-
-find_package(magic_enum CONFIG REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
 
+find_package(OsqpEigen REQUIRED)
+
+find_package(magic_enum CONFIG REQUIRED)
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -110,9 +107,9 @@ find_package(magic_enum CONFIG REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES ohrc_automation
- CATKIN_DEPENDS roscpp
+#  INCLUDE_DIRS include
+#  LIBRARIES ctr_controller
+#  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
 
@@ -123,20 +120,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
+include
+${catkin_INCLUDE_DIRS}
 )
-
-
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME}
-  src/controller/impedance_controller.cpp
-  # src/controller/dmp_controller.cpp
-
-)
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/ctr_controller.cpp
+# )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -146,7 +137,7 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen m
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/ohrc_automation_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/ctr_controller_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -164,14 +155,17 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen m
 # )
 
 set(controllers
-  impedance
+  chatgpt_circle
+  chatgpt_rectangle
+  chatgpt_star
 )
 
 foreach(controller ${controllers})
-  add_executable(${controller}_automation src/controller/${controller}_controller.cpp src/app/${controller}_automation.cpp)
+  add_executable(${controller}_automation src/${controller}_automation.cpp)
   add_dependencies(${controller}_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
   target_link_libraries(${controller}_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 endforeach(controller)
+
 
 #############
 ## Install ##
@@ -195,32 +189,32 @@ endforeach(controller)
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
+# install(TARGETS ${PROJECT_NAME}
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h" 
-  PATTERN ".svn" EXCLUDE
-)
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-install(FILES
+# install(FILES
 #   # myfile1
 #   # myfile2
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# )
 
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_ohrc_automation.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_ctr_controller.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
