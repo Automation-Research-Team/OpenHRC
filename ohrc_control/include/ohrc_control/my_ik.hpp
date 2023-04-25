@@ -94,6 +94,10 @@ public:
     return fksolver->JntToCart(q_in, p_out);
   }
 
+  inline int JntToCart(const KDL::JntArray& q_in, std::vector<KDL::Frame>& p_out) {
+    return fksolver->JntToCart(q_in, p_out);
+  }
+
   inline int JntToCart(const KDL::JntArray& q_in, const KDL::JntArray& dq_in, KDL::Frame& p_out, KDL::Twist& v_out) {
     KDL::JntArrayVel q_dq_in(q_in, dq_in);
     KDL::FrameVel p_v_out;
@@ -108,6 +112,13 @@ public:
     if (jac.columns() < n)
       jac.resize(n);
     return jacsolver->JntToJac(q_in, jac);
+  }
+
+  inline int JntToJac(const KDL::JntArray& q_in, KDL::Jacobian& jac, int segmentNR) {
+    int n = q_in.data.size();
+    if (jac.columns() < n)
+      jac.resize(n);
+    return jacsolver->JntToJac(q_in, jac, segmentNR);
   }
 
   inline int JntToJac(const KDL::JntArray& q_in, MatrixXd& J) {
@@ -152,6 +163,10 @@ public:
 
   inline void setIdxSegJnt(std::vector<int> idx) {
     this->idxSegJnt = idx;
+  }
+
+  inline std::vector<int> getIdxSegJnt() {
+    return this->idxSegJnt;
   }
 
   inline void enablePoseFeedback() {

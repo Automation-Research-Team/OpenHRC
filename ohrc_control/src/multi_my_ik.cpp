@@ -194,7 +194,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   int nCA = 0;
   std::vector<MatrixXd> A_ca;
   if (enableCollisionAvoidance)
-    nCA = addCollisionAvoidance(Ts, Js_, lower_vel_limits_, upper_vel_limits_, A_ca);
+    nCA = addCollisionAvoidance(q_cur, lower_vel_limits_, upper_vel_limits_, A_ca);
+  // nCA = addCollisionAvoidance(Ts, Js_, lower_vel_limits_, upper_vel_limits_, A_ca);
 
   Map<VectorXd> lowerBound(&lower_vel_limits_[0], lower_vel_limits_.size());
   Map<VectorXd> upperBound(&upper_vel_limits_[0], upper_vel_limits_.size());
@@ -274,11 +275,84 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std:
   return A_ca.size();
 }
 
-void MultiMyIK::resetRobotWeight() {
-  w_h = init_w_h;
-}
-void MultiMyIK::setRobotWeight(int robotIndex, double rate) {
-  w_h[robotIndex] = rate * init_w_h[robotIndex];
+int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_,
+                                     std::vector<MatrixXd>& A_ca) {
+  if (nRobot < 2)
+    return 0;
+
+  std::vector<std::vector<Vector3d>> p_all(nRobot);
+  std::vector<std::vector<KDL::Jacobian>> J_all(nRobot);
+
+  for (int i = 0; i < nRobot; i++) {
+    KDL::Chain chain;
+    myIKs[i]->getKDLChain(chain);
+    std::vector<KDL::Frame> frame(chain.getNrOfSegments());
+    myIKs[i]->JntToCart(q_cur[i], frame);
+
+    int nJnt = myIKs[i]->getNJnt();
+    std::vector<int> idxSegJnt = myIKs[i]->getIdxSegJnt();
+    // positon at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
+    std::vector<Vector3d> p(nJnt + 2);
+    tf::vectorKDLToEigen(frame[0].p, p[0]);
+    for (int j = 0; j < nJnt; j++)
+      tf::vectorKDLToEigen(frame[idxSegJnt[j]].p, p[j + 1]);
+    tf::vectorKDLToEigen(frame.back().p, p[nJnt + 1]);
+    p_all[i] = p;
+
+    // Jacobian at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
+    std::vector<KDL::Jacobian> J(nJnt + 2, KDL::Jacobian(nJnt));
+    myIKs[i]->JntToJac(q_cur[i], J[0], 0);
+    for (int j = 0; j < nJnt; j++)
+      myIKs[i]->JntToJac(q_cur[i], J[j + 1], idxSegJnt[j]);
+    myIKs[i]->JntToJac(q_cur[i], J[nJnt + 1]);
+    J_all[i] = J;
+  }
+
+  for (int i = 0; i < nRobot; i++)
+    for (int j = 0; j < p_all[i].size(); j++)
+      p_all[i][j] = (myIKs[i]->getT_base_world() * (Vector4d() << p_all[i][j], 1.0).finished()).head(3);
+
+  for (auto& comb : combsRobot) {
+    std::vector<Vector3d> p0 = p_all[comb[0]];
+    std::vector<Vector3d> p1 = p_all[comb[1]];
+
+    double ds = 0.10;
+    double di = 0.15;
+    double eta = 0.1;
+
+    for (int i = 0; i < p0.size() - 1; i++) {
+      for (int j = 0; j < p1.size() - 1; j++) {
+        double as, bs;
+        getClosestPointLineSegments(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
+        double d = getDistance(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
+
+        // if (i == p0.size() - 2 && j == p0.size() - 3)
+        // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
+        // ROS_INFO_STREAM("p0:" << p0[i + 1].transpose() << " p1:" << p1[j + 1].transpose());
+        if (d < di) {
+          // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
+          MatrixXd Js_0 = MatrixXd::Zero(J_all[comb[0]][i + 1].rows(), nState);
+          Js_0.block(0, iJnt[comb[0]], J_all[comb[0]][i + 1].data.rows(), J_all[comb[0]][i + 1].data.cols()) = J_all[comb[0]][i + 1].data;
+
+          MatrixXd Js_1 = MatrixXd::Zero(J_all[comb[1]][j + 1].rows(), nState);
+          Js_1.block(0, iJnt[comb[1]], J_all[comb[1]][j + 1].data.rows(), J_all[comb[1]][j + 1].data.cols()) = J_all[comb[1]][j + 1].data;
+
+          // ROS_INFO_STREAM(J_all[comb[0]][i + 1].data);
+          // ROS_INFO_STREAM("0: " << Js_0);
+          // ROS_INFO_STREAM(Js_0.block(0, iJnt[comb[0]] + i - 1, 6, 1));
+          Js_0.block(0, iJnt[comb[0]] + i - 1, 6, 1) *= as;
+          Js_1.block(0, iJnt[comb[1]] + j - 1, 6, 1) *= bs;
+
+          Vector3d d_vec = p0[i] + as * (p0[i + 1] - p0[i]) - (p1[j] + bs * (p1[j + 1] - p1[j]));
+          A_ca.push_back((d_vec / d).transpose() *
+                         (myIKs[comb[0]]->getT_base_world().rotation() * Js_0.block(0, 0, 3, nState) - myIKs[comb[1]]->getT_base_world().rotation() * Js_1.block(0, 0, 3, nState)));
+          lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
+          upper_vel_limits_.push_back(OsqpEigen::INFTY);
+        }
+      }
+    }
+  }
+  return A_ca.size();
 }
 
 // get closest distance and point between two line segments
@@ -292,7 +366,7 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
   Vector3d nb = b / b_norm;
 
   Vector3d cross_na_nb = na.cross(nb);
-  double denom = cross_na_nb.norm() * cross_na_nb.norm();
+  double denom = cross_na_nb.squaredNorm();
 
   if (denom < 1.0e-6) {  // parallel case
     double d0 = na.dot(b0 - a0);
@@ -302,53 +376,82 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
       if (abs(d0) < abs(d1)) {
         as = 0.0;
         bs = 0.0;
-      } else {
-        as = 0.0;
-        bs = 1.0;
+        return;
+      } else if (d0 > a_norm && d1 > a_norm) {
+        if (abs(d0) < abs(d1)) {
+          as = 1.0;
+          bs = 0.0;
+          return;
+        } else {
+          as = 1.0;
+          bs = 1.0;
+          return;
+        }
       }
-
-    } else if (d0 > a_norm && d1 > a_norm) {
-      if (abs(d0) < abs(d1)) {
-        as = 1.0;
-        bs = 0.0;
-      } else {
-        as = 1.0;
-        bs = 1.0;
-      }
-    } else {
-      // overlap case
-      as = 0.0;
-      bs = 0.0;
     }
+    // overlap case
+    as = 0.0;
+    bs = 0.0;
+    return;
+
   } else {
     // lines criss cross case
     Vector3d t = b0 - a0;
+    double ad = (Matrix3d() << t, nb, cross_na_nb).finished().determinant() / denom;
+    double bd = (Matrix3d() << t, na, cross_na_nb).finished().determinant() / denom;
 
-    double ad = t.cross(nb).dot(cross_na_nb) / denom;
-    double bd = t.cross(na).dot(cross_na_nb) / denom;
+    as = ad / a_norm;
+    bs = bd / b_norm;
 
-    if (ad < 0.0) {
-      as = 0.0;
-      bs = nb.dot(t) / b_norm;
-    } else if (ad > a_norm) {
-      as = 1.0;
-      bs = nb.dot(t + a) / b_norm;
+    if (as < 0.0 || as > 1.0) {
+      if (as < 0.0) {
+        as = 0.0;
+      } else if (as > 1.0) {
+        as = 1.0;
+      }
+
+      Vector3d pA = a0 + as * a;
+      double dot = nb.dot(pA - b0);
+      if (dot < 0)
+        bs = 0.0;
+      else if (dot > b_norm)
+        bs = 1.0;
+      else
+        bs = dot / b_norm;
     }
 
-    if (bd < 0.0) {
-      bs = 0.0;
-      as = na.dot(t) / a_norm;
-    } else if (bd > b_norm) {
-      bs = 1.0;
-      as = na.dot(t + b) / a_norm;
-    }
+    if (bs < 0.0 || bs > 1.0) {
+      if (bs < 0.0) {
+        bs = 0.0;
+      } else if (bs > 1.0) {
+        bs = 1.0;
+      }
 
-    if (ad >= 0.0 && ad <= a_norm && bd >= 0.0 && bd <= b_norm) {
-      as = ad / a_norm;
-      bs = bd / b_norm;
+      Vector3d pB = b0 + bs * b;
+      double dot = na.dot(pB - a0);
+      if (dot < 0)
+        as = 0.0;
+      else if (dot > a_norm)
+        as = 1.0;
+      else
+        as = dot / a_norm;
     }
   }
   return;
 }
 
+// get distance
+double MultiMyIK::getDistance(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs) {
+  Vector3d a = a1 - a0;
+  Vector3d b = b1 - b0;
+  Vector3d d = a0 + as * a - (b0 + bs * b);
+  return d.norm();
+}
+
+void MultiMyIK::resetRobotWeight() {
+  w_h = init_w_h;
+}
+void MultiMyIK::setRobotWeight(int robotIndex, double rate) {
+  w_h[robotIndex] = rate * init_w_h[robotIndex];
+}
 };  // namespace MyIK
