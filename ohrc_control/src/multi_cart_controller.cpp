@@ -295,6 +295,8 @@ int MultiCartController::control() {
   ros::Rate r(freq);
 
   while (ros::ok()) {
+    // begin = std::chrono::high_resolution_clock::now();
+
     if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
       continue;
 
@@ -312,6 +314,9 @@ int MultiCartController::control() {
       std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
     } else if (IKmode == IKMode::Concatenated)
       this->update(ros::Time::now(), ros::Duration(dt));
+
+    // std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - begin);
+    // ROS_INFO_STREAM("IK time: " << t.count() * 1.0e-3 << "[ms]");
 
     r.sleep();
   }

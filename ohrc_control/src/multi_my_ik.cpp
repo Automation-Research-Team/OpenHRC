@@ -291,6 +291,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
 
     int nJnt = myIKs[i]->getNJnt();
     std::vector<int> idxSegJnt = myIKs[i]->getIdxSegJnt();
+
     // positon at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
     std::vector<Vector3d> p(nJnt + 2);
     tf::vectorKDLToEigen(frame[0].p, p[0]);
@@ -312,13 +313,14 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
     for (int j = 0; j < p_all[i].size(); j++)
       p_all[i][j] = (myIKs[i]->getT_base_world() * (Vector4d() << p_all[i][j], 1.0).finished()).head(3);
 
-  for (auto& comb : combsRobot) {
-    std::vector<Vector3d> p0 = p_all[comb[0]];
-    std::vector<Vector3d> p1 = p_all[comb[1]];
+  double ds = 0.10;
+  double di = 0.15;
+  double eta = 0.1;
 
-    double ds = 0.10;
-    double di = 0.15;
-    double eta = 0.1;
+  int nCollision = 0;
+  for (auto& comb : combsRobot) {
+    int c0 = comb[0], c1 = comb[1];
+    std::vector<Vector3d> p0 = p_all[c0], p1 = p_all[c1];
 
     for (int i = 0; i < p0.size() - 1; i++) {
       for (int j = 0; j < p1.size() - 1; j++) {
@@ -326,32 +328,34 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
         getClosestPointLineSegments(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
         double d = getDistance(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
 
-        // if (i == p0.size() - 2 && j == p0.size() - 3)
         // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
-        // ROS_INFO_STREAM("p0:" << p0[i + 1].transpose() << " p1:" << p1[j + 1].transpose());
-        if (d < di) {
-          // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
-          MatrixXd Js_0 = MatrixXd::Zero(J_all[comb[0]][i + 1].rows(), nState);
-          Js_0.block(0, iJnt[comb[0]], J_all[comb[0]][i + 1].data.rows(), J_all[comb[0]][i + 1].data.cols()) = J_all[comb[0]][i + 1].data;
 
-          MatrixXd Js_1 = MatrixXd::Zero(J_all[comb[1]][j + 1].rows(), nState);
-          Js_1.block(0, iJnt[comb[1]], J_all[comb[1]][j + 1].data.rows(), J_all[comb[1]][j + 1].data.cols()) = J_all[comb[1]][j + 1].data;
+        if (d < di) {  // if the relative shortest distance is smaller than the infulenced distance
 
-          // ROS_INFO_STREAM(J_all[comb[0]][i + 1].data);
-          // ROS_INFO_STREAM("0: " << Js_0);
-          // ROS_INFO_STREAM(Js_0.block(0, iJnt[comb[0]] + i - 1, 6, 1));
-          Js_0.block(0, iJnt[comb[0]] + i - 1, 6, 1) *= as;
-          Js_1.block(0, iJnt[comb[1]] + j - 1, 6, 1) *= bs;
+          // get extended Jacobian
+          MatrixXd Js_0 = MatrixXd::Zero(J_all[c0][i + 1].rows(), nState);
+          Js_0.block(0, iJnt[c0], J_all[c0][i + 1].data.rows(), J_all[c0][i + 1].data.cols()) = J_all[c0][i + 1].data;
 
+          MatrixXd Js_1 = MatrixXd::Zero(J_all[c1][j + 1].rows(), nState);
+          Js_1.block(0, iJnt[c1], J_all[c1][j + 1].data.rows(), J_all[c1][j + 1].data.cols()) = J_all[c1][j + 1].data;
+
+          // scale a col of Jacobian related to the closest point
+          Js_0.block(0, iJnt[c0] + i - 1, 6, 1) *= as;
+          Js_1.block(0, iJnt[c1] + j - 1, 6, 1) *= bs;
+
+          // push back inequality constraint for collision avoidance
           Vector3d d_vec = p0[i] + as * (p0[i + 1] - p0[i]) - (p1[j] + bs * (p1[j + 1] - p1[j]));
           A_ca.push_back((d_vec / d).transpose() *
-                         (myIKs[comb[0]]->getT_base_world().rotation() * Js_0.block(0, 0, 3, nState) - myIKs[comb[1]]->getT_base_world().rotation() * Js_1.block(0, 0, 3, nState)));
+                         (myIKs[c0]->getT_base_world().rotation() * Js_0.block(0, 0, 3, nState) - myIKs[c1]->getT_base_world().rotation() * Js_1.block(0, 0, 3, nState)));
           lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
           upper_vel_limits_.push_back(OsqpEigen::INFTY);
+
+          nCollision++;
         }
       }
     }
   }
+  // ROS_INFO_STREAM("nCollision: " << nCollision);
   return A_ca.size();
 }
 
@@ -397,11 +401,8 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
   } else {
     // lines criss cross case
     Vector3d t = b0 - a0;
-    double ad = (Matrix3d() << t, nb, cross_na_nb).finished().determinant() / denom;
-    double bd = (Matrix3d() << t, na, cross_na_nb).finished().determinant() / denom;
-
-    as = ad / a_norm;
-    bs = bd / b_norm;
+    as = ((Matrix3d() << t, nb, cross_na_nb).finished().determinant() / denom) / a_norm;
+    bs = ((Matrix3d() << t, na, cross_na_nb).finished().determinant() / denom) / b_norm;
 
     if (as < 0.0 || as > 1.0) {
       if (as < 0.0) {
