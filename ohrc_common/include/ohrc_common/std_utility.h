@@ -3,9 +3,10 @@
 
 #include <algorithm>
 #include <initializer_list>
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
-
 namespace std_utility {
 
 inline std::vector<std::vector<long long>> comb(long long n, long long r) {
@@ -54,10 +55,37 @@ _GLIBCXX14_CONSTEXPR inline _Tp max_abs(std::initializer_list<_Tp> __l) {
   return std::max(__l, [](_Tp v1, _Tp v2) { return std::abs(v1) < std::abs(v2); });
 }
 
-bool exist_in(const std::vector<std::string>& c, const std::string& v, int& index);
-bool exist_in(const std::vector<std::string>& c, const std::string& v);
+inline bool exist_in(const std::vector<std::string>& c, const std::string& v, int& index) {
+  auto itr = std::find(c.begin(), c.end(), v);
+  bool found = itr != c.end();
 
-std::string getDatetimeStr();
+  if (found)
+    index = std::distance(c.begin(), itr);
+  else
+    index = -1;
+
+  return found;
+}
+
+inline bool exist_in(const std::vector<std::string>& c, const std::string& v) {
+  int index;
+  return exist_in(c, v, index);
+}
+
+inline std::string getDatetimeStr() {
+  time_t t = time(nullptr);
+  const tm* localTime = localtime(&t);
+  std::stringstream s;
+  s << localTime->tm_year + 1900;
+  s << std::setw(2) << std::setfill('0') << localTime->tm_mon + 1;
+  s << std::setw(2) << std::setfill('0') << localTime->tm_mday << "_";
+  s << std::setw(2) << std::setfill('0') << localTime->tm_hour;
+  s << std::setw(2) << std::setfill('0') << localTime->tm_min;
+  // s << std::setw(2) << std::setfill('0') << localTime->tm_sec;
+
+  return s.str();
+}
+
 };  // namespace std_utility
 
 #endif  // STD_UTILITY_H

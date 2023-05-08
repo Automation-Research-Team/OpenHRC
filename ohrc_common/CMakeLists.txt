@@ -124,14 +124,7 @@ include_directories(
 )
 
 ## Declare a C++ library
- add_library(ohrc_common src/filter_utility.cpp
-                               src/coordination_utility.cpp
-                               src/gazebo_utility.cpp
-                               src/math_utility.cpp
-                               src/std_utility.cpp
-                               src/subscriber_utility.cpp
-                              #  src/transform_utility.cpp
-                               src/geometry_msgs_utility/Wrench.cpp
+ add_library(ohrc_common       src/geometry_msgs_utility/Wrench.cpp
                                src/geometry_msgs_utility/WrenchStamped.cpp
                                src/geometry_msgs_utility/Point.cpp
                                src/geometry_msgs_utility/Vector3.cpp
