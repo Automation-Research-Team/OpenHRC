@@ -132,6 +132,7 @@ add_library(${PROJECT_NAME}
   src/interface/state_topic_interface.cpp
   src/interface/twist_topic_interface.cpp
   src/interface/xr_body_interface.cpp
+  src/interface/omega_interface.cpp
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)

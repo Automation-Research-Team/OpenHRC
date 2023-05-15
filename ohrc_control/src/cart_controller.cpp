@@ -316,7 +316,7 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   std::lock_guard<std::mutex> lock(mtx);
   _force.header.stamp = msg->header.stamp;
   _force.header.frame_id = robot_ns + chain_end;
-  _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff.inverse());
+  _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff);
 
   if (!flagForce)
     flagForce = true;
