@@ -215,6 +215,7 @@ public:
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);
+  void updateFilterCutoff(const double velFreq, const double jntFreq);
 
   inline void startOperation() {
     _disable = false;
@@ -322,6 +323,10 @@ public:
 
   inline void disablePoseFeedback() {
     myik_solver_ptr->disablePoseFeedback();
+  }
+
+  inline Affine3d getTft_eff(){
+    return Tft_eff;
   }
 
   double dt;

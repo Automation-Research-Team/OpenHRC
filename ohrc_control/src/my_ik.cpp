@@ -45,7 +45,7 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
   ub.resize(nJnt);
   vb.resize(nJnt);
 
-  double mergin = 3.0 / 180.0 * M_PI;
+  double mergin = 5.0 / 180.0 * M_PI;
 
   uint joint_num = 0;
   for (unsigned int i = 0; i < chain_segs.size(); ++i) {

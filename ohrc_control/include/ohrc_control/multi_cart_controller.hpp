@@ -69,6 +69,10 @@ protected:
     interfaces[controller->getIndex()]->resetInterface();
   }
 
+  void feedback(KDL::Frame& pose, KDL::Twist& twist,std::shared_ptr<CartController> controller) {
+    interfaces[controller->getIndex()]->feedback(pose, twist);
+  }
+
   virtual void preInterfaceProcess(std::vector<std::shared_ptr<Interface>> interfaces){};
 
   virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {

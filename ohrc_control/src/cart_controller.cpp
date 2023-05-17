@@ -90,11 +90,21 @@ void CartController::init(std::string robot) {
   T_init = T_init_base * T_init;
 
   for (int i = 0; i < 6; i++)
-    velFilter.push_back(butterworth(2, 50.0, freq));
+    // velFilter.push_back(butterworth(2, 10.0, freq));
+  velFilter.push_back(butterworth(2, freq / 3.0, freq));
+
+  for (int i = 0; i < nJnt; i++)
+    // jntFilter.push_back(butterworth(2, 20.0, freq));
+  jntFilter.push_back(butterworth(2, freq / 3.0, freq));
+}
+
+void CartController::updateFilterCutoff(const double velFreq, const double jntFreq){
+  for (int i = 0; i < 6; i++)
+    velFilter[i] = butterworth(2, velFreq, freq);
   // velFilter.push_back(butterworth(2, freq / 3.0, freq));
 
   for (int i = 0; i < nJnt; i++)
-    jntFilter.push_back(butterworth(2, 50.0, freq));
+    jntFilter[i] = butterworth(2, jntFreq, freq);
   // jntFilter.push_back(butterworth(2, freq / 3.0, freq));
 }
 

@@ -9,16 +9,18 @@ void XrBodyInterface::initInterface() {
   // bodyPart = BodyPart::EITHER_HANDS;
 
   std::string bodyPart_str;
-  if (!n.param("body_part", bodyPart_str, std::string("Velocity")))
-    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
+  if (!n.param(controller->getRobotNs() + "body_part", bodyPart_str, std::string("RIGHT_HAND")))
+    ROS_WARN_STREAM("Used body part is not choisen {RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS}: Default RIGHT_HAND");
   else
-    ROS_INFO_STREAM("Controller: " << bodyPart_str);
+    ROS_INFO_STREAM("body_part: " << bodyPart_str);
 
   bodyPart = magic_enum::enum_cast<BodyPart>(bodyPart_str).value_or(BodyPart::NONE);
   if (bodyPart == BodyPart::NONE) {
-    ROS_FATAL("BodyPart is not correctly choisen from {Position, Velocity, Torque}");
+    ROS_FATAL("BodyPart is not correctly choisen from {RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS}");
     return;
   }
+
+  controller->updateFilterCutoff(10.0, 10.0);
 }
 
 void XrBodyInterface::setSubscriber() {

@@ -243,6 +243,9 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
   //   tf::transformKDLToEigen(desPose[ind], T_des);
   //   // cartControllers[ind]->feedbackCart(T_cur, T_des);
   // }
+
+  for (int i = 0; i < nRobot; i++)
+    feedback(desPose[i], desVel[i],cartControllers[i]);
 }
 
 void MultiCartController::updateDesired() {
