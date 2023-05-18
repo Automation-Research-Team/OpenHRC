@@ -16,7 +16,7 @@ void OmegaInterface::initInterface() {
 
   StateTopicInterface::initInterface();
 
-  controller->updateFilterCutoff(30.0, 30.0);
+  controller->updateFilterCutoff(20.0, 20.0);
 }
 
 void OmegaInterface::modifyTargetState(ohrc_msgs::State& state) {

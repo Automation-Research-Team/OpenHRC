@@ -95,7 +95,7 @@ void CartController::init(std::string robot) {
 
   for (int i = 0; i < nJnt; i++)
     // jntFilter.push_back(butterworth(2, 20.0, freq));
-  jntFilter.push_back(butterworth(2, freq / 3.0, freq));
+  jntFilter.push_back(butterworth(2, freq / 5.0, freq));
 }
 
 void CartController::updateFilterCutoff(const double velFreq, const double jntFreq){
@@ -683,7 +683,7 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   } else
     enablePoseFeedback();
 
-  double s = (ros::Time::now() - t0).toSec() / 2.0;
+  double s = (ros::Time::now() - t0).toSec() / 3.0;
   if (s > 1.0 || passThrough)
     s = 1.0;  // 0-1
 

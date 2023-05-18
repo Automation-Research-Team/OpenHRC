@@ -21,6 +21,8 @@ void XrBodyInterface::initInterface() {
   }
 
   controller->updateFilterCutoff(10.0, 10.0);
+
+  pubFeedback = n.advertise<std_msgs::Float32>("/feedback/"+bodyPart_str, 2);
 }
 
 void XrBodyInterface::setSubscriber() {
@@ -98,4 +100,16 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   // ROS_INFO_STREAM(state);
   getTargetState(state, pose, twist);
   this->state = state;  // TODO: check if this is necessary
+}
+
+
+void XrBodyInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) {
+  std_msgs::Float32 amp;
+
+  amp.data = std::max(std::min((tf2::fromMsg(controller->getForceEef().wrench).head(3).norm()-3.0)/10.0, 1.0),0.0);
+
+  if (controller->getOperationEnable())
+    pubFeedback.publish(amp);
+  else
+    pubFeedback.publish(std_msgs::Float32());
 }
