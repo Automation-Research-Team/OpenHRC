@@ -6,13 +6,15 @@
 #include "std_srvs/Empty.h"
 
 class OmegaInterface : public StateTopicInterface {
-  void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des);
-
+  // void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des);
+  void feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) override;
   ros::Publisher pubOmegaPose, pubOmegaForce, pubEnergy, pubOmegaForceVis;
 
   enum HapticType { PositionPositionFeedback, PositionForce, PositionForceFeedback, None } hapticType;
 
   void modifyTargetState(ohrc_msgs::State& state) override;
+
+  VectorXd ft_omega;
 
 public:
   using StateTopicInterface::StateTopicInterface;

@@ -81,10 +81,10 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
 
   double f = tf2::fromMsg(controller->getForceEef().wrench).head(3).norm();
   if (targetIdx == -1) {
-    if (delta_x.head(3).norm() < 0.01 && delta_x.tail(3).norm() < 0.01 && !blocked)
+    if (delta_x.head(3).norm() < 0.02 && delta_x.tail(3).norm() < 0.01 && !blocked)
       taskState = TaskState::Success;
   } else {
-    if (delta_x.head(3).norm() < 0.03 && f > 20.0) {
+    if (delta_x.head(3).norm() < 0.03){// && f > 20.0) {
       RespawnReqPublisher.publish(std_msgs::Empty());
       nCompletedTask++;
       taskState = TaskState::Success;
@@ -140,10 +140,12 @@ Affine3d ImpedanceController::getNextTarget(const TaskState& taskState, const st
 
 void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   std::vector<Affine3d> targetPoses;
+  bool flagStay = false;
   {
     std::lock_guard<std::mutex> lock(mtx_imp);
     if (!this->_targetUpdated)
-      return;
+      flagStay = true;
+      // return;
     targetPoses = _targetPoses;
   }
 
@@ -167,6 +169,7 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
     xd = (VectorXd(6) << restPose.translation(), Vector3d::Zero()).finished();
 
     controller->startOperation();
+    taskState = TaskState::OnGoing;
   }
 
   // update only position using subscribed q.
@@ -174,18 +177,23 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   x.head(3) << frame.p[0], frame.p[1], frame.p[2];
 
   VectorXd x_ = (VectorXd(6) << x.head(3), vel.vel(0), vel.vel(1), vel.vel(2)).finished();
-  taskState = updataTaskState(x_ - xd, targetIdx);
 
-  // update target pose
-  xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
+  if (!flagStay){
+    taskState = updataTaskState(x_ - xd, targetIdx);
+  
+    // update target pose
+    xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
+  }
 
   // get command state
-  x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
+  // x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
+  x = getControlState(x, xd,  tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
 
   // menber variables in Interface class
   curTargetId = targetIdx;
-  targetDistance = (x.head(3) - targetPoses[nextTargetIdx].translation()).norm();
+  if (!flagStay)
+    targetDistance = (x.head(3) - targetPoses[nextTargetIdx].translation()).norm();
 }

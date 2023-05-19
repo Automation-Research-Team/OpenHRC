@@ -1,9 +1,11 @@
 #include "ohrc_teleoperation/joy_topic_interface.hpp"
 
 void JoyTopicInterface::initInterface() {
-  TwistTopicInterface::initInterface();
+
   n.getParam("gain/horizontal", gain_h);
   n.getParam("gain/rotational", gain_r);
+
+  TwistTopicInterface::initInterface();
 }
 
 void JoyTopicInterface::setSubscriber() {

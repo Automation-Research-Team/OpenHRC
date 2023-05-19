@@ -4,8 +4,13 @@
 #include "ohrc_msgs/BodyState.h"
 #include "ohrc_teleoperation/state_topic_interface.hpp"
 
-class XrBodyInterface : public StateTopicInterface {
+#include <std_msgs/Float32.h>
+
+class XrBodyInterface : virtual public StateTopicInterface {
   ros::Subscriber subBody;
+  ros::Publisher pubFeedback;
+
+  void feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) override;
 
   ohrc_msgs::State state;
 
@@ -15,6 +20,9 @@ class XrBodyInterface : public StateTopicInterface {
 
   void cbBody(const ohrc_msgs::BodyState::ConstPtr& msg);
   void setSubscriber() override;
+
+protected:
+  virtual bool getEnableFlag(const ohrc_msgs::HandState& handState, const ohrc_msgs::HandState& anotherHandState);
 
 public:
   using StateTopicInterface::StateTopicInterface;

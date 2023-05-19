@@ -1,7 +1,7 @@
 imp_ceff:
-  m: [1.5, 1., 1.]
+  m: [15., 15., 5.]
   # d: [1., 1., 1.]
-  k: [10., 10., 5]
+  k: [50., 50., 10]
 
 target_topic: 
   - "/gazebo/automation_targets"

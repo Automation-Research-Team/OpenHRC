@@ -57,7 +57,9 @@ class DmpController : public Interface {
   //   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
   //   void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
-  //   Dmp* dmp;
+  Dmp* dmp;
+
+  bool firstLoop = true;
 
 public:
   using Interface::Interface;

@@ -313,9 +313,9 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
     for (int j = 0; j < p_all[i].size(); j++)
       p_all[i][j] = (myIKs[i]->getT_base_world() * (Vector4d() << p_all[i][j], 1.0).finished()).head(3);
 
-  double ds = 0.10;
-  double di = 0.15;
-  double eta = 0.1;
+  double ds = 0.12;
+  double di = 0.20;
+  double eta = 0.2;
 
   int nCollision = 0;
   for (auto& comb : combsRobot) {

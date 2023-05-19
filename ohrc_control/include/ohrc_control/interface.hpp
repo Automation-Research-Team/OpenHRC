@@ -26,6 +26,7 @@ public:
   virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist){};
   virtual void initInterface(){};
   virtual void resetInterface(){};
+  virtual void feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist){};
 
   int curTargetId = 0, nCompletedTask = 0;
   bool blocked = false;

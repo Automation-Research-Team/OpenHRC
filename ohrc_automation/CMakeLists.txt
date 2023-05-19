@@ -17,9 +17,13 @@ find_package(catkin REQUIRED COMPONENTS
   
 )
 
+find_package(dmpbbo REQUIRED)
+
 find_package(OsqpEigen REQUIRED)
 
 find_package(magic_enum CONFIG REQUIRED)
+
+find_package(Boost REQUIRED COMPONENTS filesystem)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -132,11 +136,11 @@ include_directories(
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/controller/impedance_controller.cpp
-  # src/controller/dmp_controller.cpp
+  src/controller/dmp_controller.cpp
 
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -165,12 +169,13 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen m
 
 set(controllers
   impedance
+  dmp
 )
 
 foreach(controller ${controllers})
   add_executable(${controller}_automation src/controller/${controller}_controller.cpp src/app/${controller}_automation.cpp)
   add_dependencies(${controller}_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${controller}_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+  target_link_libraries(${controller}_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators ${Boost_FILESYSTEM_LIBRARY})
 endforeach(controller)
 
 #############

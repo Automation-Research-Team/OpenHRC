@@ -1,0 +1,15 @@
+
+<launch>
+
+    <include file="$(find azure_kinect_ros_driver)/launch/driver.launch">
+        <arg name="body_tracking_enabled" value="true" />
+        <arg name="overwrite_robot_description" value="false" />
+    </include>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="k4a_frame_broadcaster" args="0 0 0 3.141592 0 0 xr_frame camera_base" />
+  <node name="k4abt_body_state_publisher" pkg="ohrc_perception" type="k4abt_body_state_publisher" output="screen" >
+  </node>
+
+
+
+</launch>

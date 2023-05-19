@@ -90,11 +90,21 @@ void CartController::init(std::string robot) {
   T_init = T_init_base * T_init;
 
   for (int i = 0; i < 6; i++)
-    velFilter.push_back(butterworth(2, 50.0, freq));
+    // velFilter.push_back(butterworth(2, 10.0, freq));
+  velFilter.push_back(butterworth(2, freq / 3.0, freq));
+
+  for (int i = 0; i < nJnt; i++)
+    // jntFilter.push_back(butterworth(2, 20.0, freq));
+  jntFilter.push_back(butterworth(2, freq / 5.0, freq));
+}
+
+void CartController::updateFilterCutoff(const double velFreq, const double jntFreq){
+  for (int i = 0; i < 6; i++)
+    velFilter[i] = butterworth(2, velFreq, freq);
   // velFilter.push_back(butterworth(2, freq / 3.0, freq));
 
   for (int i = 0; i < nJnt; i++)
-    jntFilter.push_back(butterworth(2, 50.0, freq));
+    jntFilter[i] = butterworth(2, jntFreq, freq);
   // jntFilter.push_back(butterworth(2, freq / 3.0, freq));
 }
 
@@ -316,7 +326,7 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   std::lock_guard<std::mutex> lock(mtx);
   _force.header.stamp = msg->header.stamp;
   _force.header.frame_id = robot_ns + chain_end;
-  _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff.inverse());
+  _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff);
 
   if (!flagForce)
     flagForce = true;
@@ -673,7 +683,7 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   } else
     enablePoseFeedback();
 
-  double s = (ros::Time::now() - t0).toSec() / 2.0;
+  double s = (ros::Time::now() - t0).toSec() / 3.0;
   if (s > 1.0 || passThrough)
     s = 1.0;  // 0-1
 

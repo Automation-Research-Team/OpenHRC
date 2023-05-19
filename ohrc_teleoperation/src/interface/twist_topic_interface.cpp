@@ -14,6 +14,7 @@ void TwistTopicInterface::initInterface() {
   Affine3d T_state_base = controller->getTransform_base(this->stateFrameId);
   R = T_state_base.rotation().transpose();
 
+
   bool diablePoseFeedback;
   n.param("diable_pose_feedback", diablePoseFeedback, false);
 
@@ -41,6 +42,7 @@ void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::Twist& twist_
     controller->startOperation();
   }
 
+  ohrc_msgs::State state = this->state;
   state.enabled = true;
   state.twist = twist_msg;
   state.pose.position.x += state.twist.linear.x * dt;
@@ -67,6 +69,8 @@ void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::Twist& twist_
   // update pos and twist
   tf::transformEigenToKDL(T, pos);
   tf::twistEigenToKDL(v, twist);
+
+  this->state = state;
 }
 
 void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
