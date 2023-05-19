@@ -127,7 +127,7 @@ include_directories(
 
 set(singles
   ft_filter
-  k4abt_body_state_publisher
+  # k4abt_body_state_publisher
 )
 
 foreach(single ${singles})
