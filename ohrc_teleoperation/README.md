@@ -1,34 +1,33 @@
 # ohrc_teleoperation
 
-This package provides various teleoperation interfaces for OpenHRC, which are based on Interface class in `ohrc_control/interface.h`.
+The `ohrc_teleoperation` package provides diverse teleoperation interfaces for OpenHRC. These are built on the Interface class in `ohrc_control/interface.h`.
 
 ## Rule for launch files
+
+To launch files, use the following command:
 ```
 roslaunch ohrc_teleoperation (interface)_teleoperation.launch robot:=(robot) controller:=(controller)
 ```
 
-The currently implemented/tested options for these arguments are as follows:
+The table below lists the currently tested and implemented options for the parameters:
 |argument | options|
 |:---|:---|
 |interface|marker, omega, state_topic, twist_topic, joy_topic |
 |robot|ur5e, fetch, seed, mycobot, toroboarm, crane_x7|
 |controller|vel, vel_trj, pos_trj|
 
-Please refer to the following examples to see a detailed description of each option.
-
+Please refer to the examples provided to understand each option in detail.
 
 ## Example - Teleoperation using interactive marker
 
 
 ### Velocity level controller (Recommended)
-The best way would be to control a robot at a velocity level.
+To effectively control a robot, a velocity-level controller is recommended.
 
 #### UR5e
-Since the default controller of UR5e is `JointTrajectoryController`, we need to load `JointVelocityController` in the controller list configuration.
-The modification file for the gazebo simulation can be found in `./example` directory.
-If you want to use the original (default) controller settings due to like low control frequency issue (< 100 Hz), please see next (Trajectory level controller). 
+The UR5e default controller is `JointTrajectoryController`. If you need to load `JointVelocityController` in the controller list configuration, refer to the modification file for the gazebo simulation located in the `./example` directory. If you require the original (default) controller settings due to issues like low control frequency (< 100 Hz), please refer to the Trajectory level controller section.
 
-
+Use the following commands to launch the modified gazebo simulation with UR5e and the teleoperation controller:
 ```
 # launch modified gazebo simulation with UR5e
 $ roslaunch ohrc_teleoperation ur5e_bringup.launch
@@ -37,18 +36,15 @@ $ roslaunch ohrc_teleoperation ur5e_bringup.launch
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch
 ```
 
-If you use this with the real hardware with [`ur_robot_driver`](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), you need to check the loaded controller. (Probably, you just need to stop the default trajectory controller and start the loaded velocity controller [here](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/7b6b62bf81f2a032e0b6c7c8e1046cae35e079c7/ur_robot_driver/config/ur5e_controllers.yaml#L129))
+If using real hardware with [`ur_robot_driver`](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), ensure that the loaded controller is checked. You may need to stop the default trajectory controller and start the loaded velocity controller [here](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/7b6b62bf81f2a032e0b6c7c8e1046cae35e079c7/ur_robot_driver/config/ur5e_controllers.yaml#L129).
 
 
 ### Trajectory level controller
-If your robot controller can only accept low-frequency command (< 100), you can send a trajectory (position) command instead of a velocity command.
-Theoretically, this trajectory controller is stabler than the velocity controller,
-However, in practice, you would need to spend much time adjusting many parameters to make the robot movement smoother.
+If your robot controller can only accept low-frequency commands (< 100), you may send a trajectory (position) command instead of a velocity command. While the trajectory controller is theoretically more stable than the velocity controller, it can take considerable time to adjust the parameters for smoother robot movement.
 
-If you are patient, you can achieve better motion like the following paper;
+If you're patient, you can achieve superior motion, as demonstrated in the following paper:
 
 >Jun Nakanishi, Shunki Itadera, Tadayoshi Aoyama & Yasuhisa Hasegawa (2020) Towards the development of an intuitive teleoperation system for human support robot using a VR device, Advanced Robotics, 34:19, 1239-1253, DOI: 10.1080/01691864.2020.1813623 
-
 
 #### UR5e
 If you use the original ur5e (6 DoF) configuration, please run 
@@ -63,10 +59,9 @@ $ roslaunch ohrc_teleoperation marker_teleoperation.launch controller:=pos_trj
 # Or 2) angle velocity-based trajectory controller
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch controller:=vel_trj
 ```
-The difference between the two controllers is the way of solving IK. The first is based on IK finding the optimal joint angle, and the second is based on differential IK finding the optimal joint angular velocity.
+The two controllers differ in the method of solving IK. The first is based on IK finding the optimal joint angle, and the second uses differential IK to find the optimal joint angular velocity.
 
-In the current implementation, the first controller often fails to solve the IK problem within the predefined time period. The second one seems much useful in term of calculation cost.
-However, in a case of a low-frequency system, the second controller brings a large error or oscillation because there is a numerical integration to get the target angle from the angler velocity. In this case, please try the IK-based controller.
+The first controller may often fail to solve the IK problem within the predefined time period in our current implementation. The second seems more efficient in terms of computational cost. However, in a low-frequency system, the second controller may cause large errors or oscillations due to numerical integration used to obtain the target angle from angular velocity. In such cases, please try using the IK-based controller.
 
 
 #### Fetch
@@ -123,7 +118,7 @@ $ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=mycobot contro
 ```
 
 ## Example - Teleoperation using geometry_msgs/twist topic
-This subscribe twist topic as a command velocity of robot end-effector.
+This subscribes twist topic as a commanded velocity of a robot end-effector.
 ```
 $ rosrun (some nodes to generate command velocity)
 $ roslaunch ohrc_teleoperation twist_topic_teleoperation.launch robot:=(robot) controller:=(controller)
@@ -131,7 +126,7 @@ $ roslaunch ohrc_teleoperation twist_topic_teleoperation.launch robot:=(robot) c
 
 
 ## Example - Teleoperation using sensor_msgs/joy topic
-This subscribe joy topic as a command velocity of robot end-effector.
+This subscribes joy topic as a velocity command of a robot end-effector.
 If you have 3D mouse (spacenav) http://wiki.ros.org/spacenav_node
 ```
 ### install spacenav node
@@ -141,7 +136,7 @@ $ sudo apt install ros-indigo-spacenav-node
 $ roslaunch ohrc_teleoperation joy_topic_teleoperation.launch spacenav:=true robot:=(robot) controller:=(controller)
 ```
 The arg `spacenav:=true` launch spacenav node with specific options.
-The second button (usually RIGHT button) is used as a trigger for reseting robot pose.
+The second button (usually RIGHT button) is used as a trigger for resetting robot's pose.
 
 
 
@@ -158,10 +153,10 @@ $ roslaunch ohrc_teleoperation omega_teleoperation.launch robot:=(robot) control
 ---
 ## Development
 ### How to teleoperate a robot from another interface
-The easest way is just to develop a node publishing a topic of the target end-effector state.
+The easiest way is just to develop a node publishing a topic of the target end-effector state.
 The node is assumed that
 
-1. the state topic is published as ``/state`` in type of ``ohrc_msgs/state``.
+1. the state topic is published as ``/state`` in a type of ``ohrc_msgs/state``.
 1. the state is defined in ``world``.
 
 Then, launch the following nodes: 
