@@ -8,11 +8,11 @@ roslaunch ohrc_teleoperation (interface)_teleoperation.launch robot:=(robot) con
 The currently implemented/tested options for these arguments are as follows:
 |argument | options|
 |:---|:---|
-|interface|marker, opmega, state_topic, twist_topic, joy_topic |
-|robot|ur5e, fetch, seed, mycobot|
+|interface|marker, omega, state_topic, twist_topic, joy_topic |
+|robot|ur5e, fetch, seed, mycobot, toroboarm, crane_x7|
 |controller|vel, vel_trj, pos_trj|
 
-Please refer to the following examples to see detailed description.
+Please refer to the following examples to see a detailed description of each option.
 
 
 ## Example - Teleoperation using interactive marker
