@@ -36,7 +36,10 @@ $ cd ~/catkin_ws/src/OpenHRC
 ### Clone submodule sources
 $ git submodule update --init --recursive
 
-### Install dependency packages
+## install xcb libraries for OpenXR, which are not listed in rosdep
+$ sudo apt install libx11-xcb-dev libxcb-dri2-0-dev libxcb-glx0-dev libxcb-icccm4-dev libxcb-keysyms1-dev libxcb-randr0-dev
+
+## install other libraries using rosdep
 $ rosdep update
 $ rosdep install -i -y --from-paths ./ 
 ```
