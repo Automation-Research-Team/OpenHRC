@@ -13,3 +13,6 @@
 [submodule "3rd_party/ros-tcp-endpoint"]
 	path = 3rd_party/ros-tcp-endpoint
 	url = https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
+[submodule "3rd_party/OpenXR-SDK"]
+	path = 3rd_party/OpenXR-SDK
+	url = https://github.com/itadera/OpenXR-SDK.git
