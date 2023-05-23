@@ -1,5 +1,7 @@
 # ohrc_teleoperation
 
+This package provides various teleoperation interfaces for OpenHRC, which are based on Interface class in `ohrc_control/interface.h`.
+
 ## Rule for launch files
 ```
 roslaunch ohrc_teleoperation (interface)_teleoperation.launch robot:=(robot) controller:=(controller)
