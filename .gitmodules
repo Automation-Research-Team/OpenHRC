@@ -16,3 +16,6 @@
 [submodule "3rd_party/OpenXR-SDK"]
 	path = 3rd_party/OpenXR-SDK
 	url = https://github.com/itadera/OpenXR-SDK.git
+[submodule "3rd_party/stb"]
+	path = 3rd_party/stb
+	url = https://github.com/itadera/stb.git
