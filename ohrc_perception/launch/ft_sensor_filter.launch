@@ -4,8 +4,8 @@
   <arg name="ft_topic" default="ft_sensor/raw" />
 
 
-  <node name="ft_sensor_filter" pkg="toroboarm_teleoperation" type="ft_sensor_filter" output="screen" >
-    <rosparam command="load" file="$(find toroboarm_teleoperation)/config/ft_sensor_filter.yaml"/>
+  <node name="ft_filter" pkg="ohrc_perception" type="ft_filter" output="screen" >
+    <rosparam command="load" file="$(find ohrc_perception)/config/ft_sensor_filter.yaml"/>
   </node>
 
 

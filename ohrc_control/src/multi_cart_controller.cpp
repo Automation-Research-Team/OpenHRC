@@ -245,7 +245,7 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
   // }
 
   for (int i = 0; i < nRobot; i++)
-    feedback(desPose[i], desVel[i],cartControllers[i]);
+    feedback(desPose[i], desVel[i], cartControllers[i]);
 }
 
 void MultiCartController::updateDesired() {

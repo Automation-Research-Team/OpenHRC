@@ -84,7 +84,7 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
     if (delta_x.head(3).norm() < 0.02 && delta_x.tail(3).norm() < 0.01 && !blocked)
       taskState = TaskState::Success;
   } else {
-    if (delta_x.head(3).norm() < 0.03){// && f > 20.0) {
+    if (delta_x.head(3).norm() < 0.01) {  // && f > 20.0) {
       RespawnReqPublisher.publish(std_msgs::Empty());
       nCompletedTask++;
       taskState = TaskState::Success;
@@ -145,7 +145,7 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
     std::lock_guard<std::mutex> lock(mtx_imp);
     if (!this->_targetUpdated)
       flagStay = true;
-      // return;
+    // return;
     targetPoses = _targetPoses;
   }
 
@@ -178,19 +178,22 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
 
   VectorXd x_ = (VectorXd(6) << x.head(3), vel.vel(0), vel.vel(1), vel.vel(2)).finished();
 
-  if (!flagStay){
+  if (!flagStay) {
     taskState = updataTaskState(x_ - xd, targetIdx);
-  
+
     // update target pose
     xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
   }
 
   // get command state
-  // x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
-  x = getControlState(x, xd,  tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
+  x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
+  // x = getControlState(x, xd, tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
+
+  if (controller->getIndex() == 0)
+    std::cout << "  x: " << x.transpose() << ",\n xd: " << xd.transpose() << std::endl;
 
   // menber variables in Interface class
   curTargetId = targetIdx;

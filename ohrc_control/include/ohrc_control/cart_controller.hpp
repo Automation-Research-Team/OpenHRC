@@ -49,6 +49,7 @@ class CartController {
   std_msgs::Float64MultiArray cmd;
   Matrix3d userManipU;
   int rc;
+  ros::ServiceClient client;
 
   struct s_cbJntState {
     bool isFirst = true;
@@ -325,7 +326,7 @@ public:
     myik_solver_ptr->disablePoseFeedback();
   }
 
-  inline Affine3d getTft_eff(){
+  inline Affine3d getTft_eff() {
     return Tft_eff;
   }
 

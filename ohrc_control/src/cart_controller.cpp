@@ -69,6 +69,7 @@ void CartController::init(std::string robot) {
     subFlagPtrs.push_back(&flagForce);
   } else
     ROS_WARN_STREAM("force/torque sensor TF was not found.");
+  client = nh.serviceClient<std_srvs::Empty>("/" + robot_ns + "ft_filter/reset_offset");
 
   if (publisher == PublisherType::Trajectory)
     jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", 1);
@@ -91,14 +92,14 @@ void CartController::init(std::string robot) {
 
   for (int i = 0; i < 6; i++)
     // velFilter.push_back(butterworth(2, 10.0, freq));
-  velFilter.push_back(butterworth(2, freq / 3.0, freq));
+    velFilter.push_back(butterworth(2, freq / 3.0, freq));
 
   for (int i = 0; i < nJnt; i++)
     // jntFilter.push_back(butterworth(2, 20.0, freq));
-  jntFilter.push_back(butterworth(2, freq / 5.0, freq));
+    jntFilter.push_back(butterworth(2, freq / 5.0, freq));
 }
 
-void CartController::updateFilterCutoff(const double velFreq, const double jntFreq){
+void CartController::updateFilterCutoff(const double velFreq, const double jntFreq) {
   for (int i = 0; i < 6; i++)
     velFilter[i] = butterworth(2, velFreq, freq);
   // velFilter.push_back(butterworth(2, freq / 3.0, freq));
@@ -231,9 +232,11 @@ void CartController::signal_handler(int signum) {
   }
 }
 void CartController::resetFt() {
-  ros::ServiceClient client = nh.serviceClient<std_srvs::Empty>(robot_ns + "ft_sensor/reset_offset");
+  ROS_INFO_STREAM("Resetting FT sensor offset, wait 5 seconds");
+
   std_srvs::Empty srv;
   client.call(srv);
+  ros::Duration(3.0).sleep();
 }
 
 void CartController::initWithJnt(const KDL::JntArray& q_init) {

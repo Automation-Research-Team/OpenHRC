@@ -144,8 +144,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     es[i] = getCartError(Ts[i], Ts_d[i]);
 
     tf::twistKDLToEigen(des_eff_vel[i], vs[i]);
-    VectorXd kp = 2.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
-    // kp.tail(3) = kp.tail(3) * 0.5 / M_PI;
+    VectorXd kp = 10.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
+    kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
     vs[i] = vs[i] + kp.asDiagonal() * es[i];
   }
 
