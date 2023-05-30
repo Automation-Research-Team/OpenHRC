@@ -28,7 +28,7 @@ trajs = [[pd.read_csv(DATA_DIR+"/case_" +
                       str(k)+"/"+str(i+1) + ".csv") for i in range(100)] for k in range(n_case)]
 
 
-mode = 3
+mode = 1
 
 n_demos = 100
 T = [np.array(trajs[mode][i]["t"].values) for i in range(100)]
@@ -45,7 +45,7 @@ ddy = trajs[mode][0]["ax"]
 
 
 # T, Y = generate_1d_trajectory_distribution(n_demos, n_steps)
-y_conditional_cov = np.array([0.000025])
+y_conditional_cov = np.array([0.0000025])
 promp = ProMP(n_dims=3, n_weights_per_dim=10)
 promp.imitate(T, Y)
 Y_mean = promp.mean_trajectory(T[0])
@@ -55,11 +55,11 @@ plt.figure(figsize=(10, 5))
 
 ax1 = plt.subplot(121)
 ax1.set_title("Training set and ProMP")
-ax1.fill_between(T, (Y_mean - Y_conf).ravel(),
-                 (Y_mean + Y_conf).ravel(), color="r", alpha=0.3)
+# ax1.fill_between(T, (Y_mean - Y_conf).ravel(),
+#  (Y_mean + Y_conf).ravel(), color="r", alpha=0.3)
 ax1.plot(T[0], Y_mean, c="r", lw=2, label="ProMP")
 for i in range(n_demos):
-    ax1.plot(T[i], Y[i].T, c="k", alpha=0.1)
+    ax1.plot(T[i], Y[i], c="k", alpha=0.1)
 ax1.set_xlim((-0.05, 1.05))
 # ax1.set_ylim((-3.5, 3.5))
 ax1.legend(loc="best")
@@ -75,8 +75,8 @@ for color, y_cond in zip("rgbcmyk", np.linspace(-0.3, 0.3, 7)):
 
     ax2.scatter([0], [y_cond], marker="*", s=100,
                 c=color, label="$y_0 = %.2f$" % y_cond)
-    ax2.fill_between(T[0], (Y_cmean - Y_cconf).ravel(),
-                     (Y_cmean + Y_cconf).ravel(), color=color, alpha=0.3)
+    # ax2.fill_between(T[0], (Y_cmean - Y_cconf).ravel(),
+    #  (Y_cmean + Y_cconf).ravel(), color=color, alpha=0.3)
     ax2.plot(T[0], Y_cmean, c=color, lw=2)
     ax2.set_xlim((-0.05, 1.05))
     # ax2.set_ylim((-0.5, 3.5))

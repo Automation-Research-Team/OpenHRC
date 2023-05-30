@@ -9,7 +9,6 @@
 class ImpedanceController : public Interface {
   std::mutex mtx_imp;
   ros::Subscriber targetSubscriber;
-  ros::Publisher RespawnReqPublisher;
 
   std::vector<Affine3d> _targetPoses;
   Affine3d restPose;
@@ -18,7 +17,6 @@ class ImpedanceController : public Interface {
   int targetIdx = -1, nextTargetIdx = -1;
 
   VectorXd x, xd;
-  int stack = 0;
 
   struct ImpParam {
     MatrixXd A = MatrixXd::Zero(6, 6), B = MatrixXd::Zero(6, 3), C = MatrixXd::Zero(6, 6);
@@ -34,10 +32,14 @@ class ImpedanceController : public Interface {
   ImpParam getImpParam(const ImpCoeff& impCoeff);
   Affine3d getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
 
-  TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
+  virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
   void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
+
+protected:
+  ros::Publisher RespawnReqPublisher;
+  int stack = 0;
 
 public:
   using Interface::Interface;

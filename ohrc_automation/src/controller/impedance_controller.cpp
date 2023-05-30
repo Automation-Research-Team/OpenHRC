@@ -16,13 +16,18 @@ void ImpedanceController::initInterface() {
     nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
   }
 
-  if (nGotMDK == 2) {
+  if (nGotMDK == 3) {
+    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
+    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
+    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
+  } else if (nGotMDK == 2) {
     ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
   } else if (nGotMDK < 2) {
     ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
     ros::shutdown();
   }
+
   this->impParam = getImpParam(impCoeff);
 
   std::vector<std::string> targetTopicName_;
@@ -186,14 +191,14 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   }
 
   // get command state
-  x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
-  // x = getControlState(x, xd, tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
+  // x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
+  x = getControlState(x, xd, tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
 
-  if (controller->getIndex() == 0)
-    std::cout << "  x: " << x.transpose() << ",\n xd: " << xd.transpose() << std::endl;
+  // if (controller->getIndex() == 0)
+  // std::cout << "  x: " << x.transpose() << ",\n xd: " << xd.transpose() << std::endl;
 
   // menber variables in Interface class
   curTargetId = targetIdx;

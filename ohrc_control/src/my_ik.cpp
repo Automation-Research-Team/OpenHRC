@@ -455,7 +455,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   VectorXd w = VectorXd::Ones(6);
   w << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI;
 
-  double w_n = 1.0e-5;  // this leads dq -> 0 witch is conflict with additonal task
+  double w_n = 1.0e-8;  // this leads dq -> 0 witch is conflict with additonal task
   double gamma = 0.5 * e.transpose() * w.asDiagonal() * e + w_n;
 
   VectorXd dV = VectorXd::Zero(nJnt);
@@ -505,6 +505,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   OsqpEigen::Solver qpSolver;
   qpSolver.settings()->setVerbosity(false);
   qpSolver.settings()->setWarmStart(true);
+  // qpSolver.settings()->setAbsoluteTolerance(1.0e-6);
+  // qpSolver.settings()->setRelativeTolerance(1.0e-6);
 
   // set the initial data of the QP solver
   qpSolver.data()->setNumberOfVariables(nJnt);

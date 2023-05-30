@@ -11,7 +11,7 @@ solver: "MyIK"
 control_freq: 500.0
 
 initIKAngle: [0, 0, 0, 0, 0, 0, 0]
-initial_pose: [0.25, 0.0, 0.3, 0.0, 3.141592, 0]
+initial_pose: [0.4, 0.0, 0.3, 0.0, 3.141592, 0]
 
 
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace

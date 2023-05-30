@@ -232,11 +232,10 @@ void CartController::signal_handler(int signum) {
   }
 }
 void CartController::resetFt() {
-  ROS_INFO_STREAM("Resetting FT sensor offset, wait 5 seconds");
+  ROS_INFO_STREAM("Resetting FT sensor offset...");
 
   std_srvs::Empty srv;
   client.call(srv);
-  ros::Duration(3.0).sleep();
 }
 
 void CartController::initWithJnt(const KDL::JntArray& q_init) {
@@ -828,6 +827,7 @@ void CartController::filterJnt(KDL::JntArray& q) {
 
 int CartController::control() {
   starting(ros::Time::now());
+  ros::Duration(3.0).sleep();
 
   while (ros::ok())
     update(ros::Time::now(), ros::Duration(1.0 / freq));
