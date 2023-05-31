@@ -17,6 +17,9 @@ from movement_primitives.dmp import DMP
 from movement_primitives.data import generate_1d_trajectory_distribution
 import matplotlib.pyplot as plt
 import numpy as np
+
+from moveit_msgs.msg import CartesianTrajectory, CartesianTrajectoryPoint
+
 print(__doc__)
 
 
@@ -72,46 +75,63 @@ promp.imitate(T, Y, verbose=True)
 
 rospy.init_node('talker')  # ノードの生成
 pub = rospy.Publisher('chatter', State, queue_size=1)
-rate = rospy.Rate(10)
+pub_trj = rospy.Publisher('trj', CartesianTrajectory, queue_size=100)
+rate = rospy.Rate(1)
 # for color, y_cond in zip("rgbcmyk", np.linspace(-0.3, 0.3, 7)):
-t = 0.0
-
-y_cond = [0.1, 0.2, 0.3]
+y_cond = [0.05, 0.05, 0.3]
 while not rospy.is_shutdown():
     cpromp = promp.condition_position(
-        np.array(y_cond), y_cov=y_conditional_cov, t=min(1., t/10.0), t_max=1.0)
-    Y_cmean = cpromp.mean_trajectory(np.arange(0, 10, 1.))
-    print(Y_cmean.shape)
-    print(Y_cmean[:, 0])
-    print(Y_cmean[:, 1])
-    print(Y_cmean[:, 2])
-    print("--  -")
-    dY_cmean = cpromp.mean_velocities(np.arange(0, 10, 1.))
+        np.array(y_cond), y_cov=y_conditional_cov, t=0, t_max=10.0)
 
-    state = State()
-    state.pose.position.x = Y_cmean[1, 0]
-    state.pose.position.y = Y_cmean[1, 1]
-    state.pose.position.z = Y_cmean[1, 2]
-    state.twist.linear.x = dY_cmean[1, 0]
-    state.twist.linear.y = dY_cmean[1, 1]
-    state.twist.linear.z = dY_cmean[1, 2]
+    t = np.arange(0, 10, 0.1)
+    Y_cmean = cpromp.mean_trajectory(t)
+    # print(Y_cmean.shape)
+    # print(Y_cmean[:, 0])
+    # print(Y_cmean[:, 1])
+    # print(Y_cmean[:, 2])
+    # print("--  -")
+    dY_cmean = cpromp.mean_velocities(t)
 
-    y_cond = Y_cmean[1, :]
+    # state = State()
+    # state.pose.position.x = Y_cmean[1, 0]
+    # state.pose.position.y = Y_cmean[1, 1]
+    # state.pose.position.z = Y_cmean[1, 2]
+    # state.twist.linear.x = dY_cmean[1, 0]
+    # state.twist.linear.y = dY_cmean[1, 1]
+    # state.twist.linear.z = dY_cmean[1, 2]
 
-    pub.publish(state)
-    t += 1.0/10.0
+    # y_cond = Y_cmean[1, :]
+
+    # pub.publish(state)
+
+    trj = CartesianTrajectory()
+    trj.header.frame_id = "world"
+    trj.header.stamp = rospy.Time.now()
+    for i in range(len(t)):
+        point = CartesianTrajectoryPoint()
+        point.point.pose.position.x = Y_cmean[i, 0] - y_cond[0]
+        point.point.pose.position.y = Y_cmean[i, 1] - y_cond[1]
+        point.point.pose.position.z = Y_cmean[i, 2] - y_cond[2]
+        point.point.velocity.linear.x = dY_cmean[i, 0]
+        point.point.velocity.linear.y = dY_cmean[i, 1]
+        point.point.velocity.linear.z = dY_cmean[i, 2]
+        point.time_from_start = rospy.Duration.from_sec(t[i])
+        trj.points.append(point)
+
+    pub_trj.publish(trj)
+    # t += 1.0/10.0
     rate.sleep()
-    # Y_cmean = cpromp.mean_trajectory(T[0])
-    # Y_cconf = 1.96 * np.sqrt(cpromp.var_trajectory(T[0]))
+# Y_cmean = cpromp.mean_trajectory(T[0])
+# Y_cconf = 1.96 * np.sqrt(cpromp.var_trajectory(T[0]))
 
-    # ax2.scatter([0], [y_cond], marker="*", s=100,
-    #             c=color, label="$y_0 = %.2f$" % y_cond)
-    # ax2.fill_between(T[0], (Y_cmean - Y_cconf).ravel(),
-    #                  (Y_cmean + Y_cconf).ravel(), color=color, alpha=0.3)
-    # ax2.plot(T[0], Y_cmean, c=color, lw=2)
-    # ax2.set_xlim((-0.05, 1.05))
-    # # ax2.set_ylim((-0.5, 3.5))
-    # ax2.legend(loc="best")
+# ax2.scatter([0], [y_cond], marker="*", s=100,
+#             c=color, label="$y_0 = %.2f$" % y_cond)
+# ax2.fill_between(T[0], (Y_cmean - Y_cconf).ravel(),
+#                  (Y_cmean + Y_cconf).ravel(), color=color, alpha=0.3)
+# ax2.plot(T[0], Y_cmean, c=color, lw=2)
+# ax2.set_xlim((-0.05, 1.05))
+# # ax2.set_ylim((-0.5, 3.5))
+# ax2.legend(loc="best")
 
 # plt.tight_layout()
 # plt.show()
