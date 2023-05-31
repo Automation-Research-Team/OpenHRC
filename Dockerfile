@@ -14,6 +14,7 @@ RUN mkdir -p ${ROS_WORKSPACE} && \
 USER ubuntu
 RUN . /opt/ros/noetic/setup.sh && \
     cd ${ROS_WORKSPACE}/src/OpenHRC && \
+    git submodule update --init --recursive && \
     rosdep update && \
     rosdep install -i -y --from-paths ./  && \
     cd ${ROS_WORKSPACE}  && \

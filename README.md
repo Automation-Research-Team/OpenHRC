@@ -1,9 +1,11 @@
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/itadera/OpenHRC)
+[![ROS build workflow](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml)
+![GitHub](https://img.shields.io/github/license/itadera/OpenHRC)
 # OpenHRC
 Open Human-Robot Collaboration/Cooperation Library
 
-[![ROS build workflow](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml)
-
----
+Aiming to enhance research on human-robot interaction, we develop this open ROS package for offering easy implementation of HRC software such as interaction and teleoperation.
+OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.
 
 ## Requirements
 OpenHRC has been developed and tested in the following environments:
@@ -16,14 +18,14 @@ OpenHRC has been developed and tested in the following environments:
 
 Currently, this library is not compatible with ROS2. Although there are intentions to port this package to ROS2, there is no specific plan in place.
 
----
+
 ## Native Installation (Ubuntu 20.04)
 
-For other operating systems, please see the [Docker installation](#docker-install) section.
+For other operating systems, please move on to the [Docker Installation](#Docker-Installation) section.
 
-The catkin workspace directory is assumed to be `~/catkin_ws`.
+In the following instruction, the catkin workspace directory is assumed to be `~/catkin_ws`.
 
-### Clone the Source
+### Clone the Source Code
 ```
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/itadera/OpenHRC.git 
@@ -42,15 +44,17 @@ $ rosdep install -i -y --from-paths ./
 ```
 
 ### Build
-Compile with catkin-tools, which should be installed as a dependency:
+Compile with `catkin-tools`, which should be installed as a dependency above:
 
 ```
 $ catkin build -DCMAKE_BUILD_TYPE=Release
 ```
 Note: The default tool `catkin_make` cannot compile non-ROS code.
 
----
+
 ## Docker Installation
+If you want to install OpenHRC natively on Ubuntu 20.04, please see the [Native Installation](#Native-Installation-(Ubuntu-20.04)) section and skip this section.
+
 This package can be tested in a Docker container, which should work on Linux, Windows, and macOS. The Dockerfile is based on https://github.com/Tiryoh/docker-ros-desktop-vnc.
 
 ### Install Docker
@@ -61,22 +65,21 @@ $ curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/inst
 $ sudo service docker start
 ```
 
-If you encounter a permission denied issue, please try:
+If you encounter an issue with `permission denied`, please try:
 ```
 sudo chmod 666 /var/run/docker.sock
 ```
 
-This method uses Docker Engine, not Docker Desktop, which is not free for commercial use. Both options are acceptable, but Docker Engine may offer better performance. If you prefer Docker Desktop, please follow the instructions at https://docs.docker.com/desktop/.
+This install instruction uses Docker Engine, not Docker Desktop, which is not free for commercial use. Both options are acceptable, but Docker Engine may offer better performance. If you prefer Docker Desktop, please follow the instructions at https://docs.docker.com/desktop/.
 
 ### Clone Sources
 ```
 $ git clone https://github.com/itadera/OpenHRC.git 
-$ cd OpenHRC
-$ git submodule update --init --recursive
 ```
 
 ### Build Docker Image
 ```
+$ cd OpenHRC
 $ docker build -t openhrc:noetic . --no-cache
 ```
 
@@ -84,12 +87,12 @@ $ docker build -t openhrc:noetic . --no-cache
 ```
 $ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc:noetic
 ```
-You can now access the desktop GUI at: 
+You can now access the desktop GUI at 
 http://localhost:6080/
 
----
+
 ## Getting Started
-To test either the native or Docker installation, you can try the teleoperation node with interactive markers for UR5e.
+To test either the native or Docker installation, you can first try the teleoperation node with interactive markers for UR5e.
 
 Open a terminal and run:
 ```
@@ -101,24 +104,22 @@ Open another terminal and run:
 ```
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch
 ```
-This command starts the robot control, allowing you to operate the end-effector using an interactive marker.
+This command starts the robot controller, allowing you to operate the end-effector using an interactive marker on Rviz.
 
----
+
 ## Tutorials
 
 1. Teleoperation library: [ohrc_teleoperation](./ohrc_teleoperation)
 2. Imitation Learning library: [ohrc_imitation_learning](./ohrc_imitation_learning)
 
 
----
+
 ## Citation
 
-If you use this package in your academical research, we would appreciate it if you could cite the following paper.
-
-
+If you use this package in your academic research, we would appreciate it if you could cite the following paper.
 >(comming soon)
 
 
----
+
 ## Author
-Shunki Itadera (https://staff.aist.go.jp/s.itadera/)
+Shunki Itadera (https://staff.aist.go.jp/s.itadera/) - Researcher at ART, ICPS, AIST
