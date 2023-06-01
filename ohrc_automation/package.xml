@@ -50,7 +50,7 @@
   <depend>osqp-eigen</depend>
 
   <depend>magic_enum</depend>
-  <depend>DMP_BBO</depend>
+  <depend>dmp_bbo</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
