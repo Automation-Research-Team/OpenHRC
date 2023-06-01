@@ -16,13 +16,18 @@ void ImpedanceController::initInterface() {
     nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
   }
 
-  if (nGotMDK == 2) {
+  if (nGotMDK == 3) {
+    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
+    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
+    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
+  } else if (nGotMDK == 2) {
     ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
   } else if (nGotMDK < 2) {
     ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
     ros::shutdown();
   }
+
   this->impParam = getImpParam(impCoeff);
 
   std::vector<std::string> targetTopicName_;
@@ -84,7 +89,7 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
     if (delta_x.head(3).norm() < 0.02 && delta_x.tail(3).norm() < 0.01 && !blocked)
       taskState = TaskState::Success;
   } else {
-    if (delta_x.head(3).norm() < 0.03){// && f > 20.0) {
+    if (delta_x.head(3).norm() < 0.01) {  // && f > 20.0) {
       RespawnReqPublisher.publish(std_msgs::Empty());
       nCompletedTask++;
       taskState = TaskState::Success;
@@ -145,7 +150,7 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
     std::lock_guard<std::mutex> lock(mtx_imp);
     if (!this->_targetUpdated)
       flagStay = true;
-      // return;
+    // return;
     targetPoses = _targetPoses;
   }
 
@@ -178,19 +183,22 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
 
   VectorXd x_ = (VectorXd(6) << x.head(3), vel.vel(0), vel.vel(1), vel.vel(2)).finished();
 
-  if (!flagStay){
+  if (!flagStay) {
     taskState = updataTaskState(x_ - xd, targetIdx);
-  
+
     // update target pose
     xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
   }
 
   // get command state
   // x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
-  x = getControlState(x, xd,  tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
+  x = getControlState(x, xd, tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
+
+  // if (controller->getIndex() == 0)
+  // std::cout << "  x: " << x.transpose() << ",\n xd: " << xd.transpose() << std::endl;
 
   // menber variables in Interface class
   curTargetId = targetIdx;

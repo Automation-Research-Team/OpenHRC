@@ -144,8 +144,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     es[i] = getCartError(Ts[i], Ts_d[i]);
 
     tf::twistKDLToEigen(des_eff_vel[i], vs[i]);
-    VectorXd kp = 2.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
-    // kp.tail(3) = kp.tail(3) * 0.5 / M_PI;
+    VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
+    kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
     vs[i] = vs[i] + kp.asDiagonal() * es[i];
   }
 
@@ -313,7 +313,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
     for (int j = 0; j < p_all[i].size(); j++)
       p_all[i][j] = (myIKs[i]->getT_base_world() * (Vector4d() << p_all[i][j], 1.0).finished()).head(3);
 
-  double ds = 0.12;
+  double ds = 0.10;
   double di = 0.20;
   double eta = 0.2;
 

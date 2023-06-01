@@ -170,6 +170,7 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen m
 set(controllers
   impedance
   dmp
+  cart_trajectory
 )
 
 foreach(controller ${controllers})

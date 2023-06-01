@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
   if (!n.param("rate", paramLpf.sampling_freq, 1000.0))
     ROS_ERROR("Failed to get ft sensor rate");
-  nMax = paramLpf.sampling_freq * 1;  // 1 second
+  nMax = paramLpf.sampling_freq * 3.0;  // 1 second
 
   if (!n.param("cutoff_freq", paramLpf.cutoff_freq, 200.0))
     ROS_ERROR("Failed to get cutoff_freq setting");
@@ -87,11 +87,11 @@ int main(int argc, char** argv) {
 
   forceLpf.reset(new geometry_msgs_utility::WrenchStamped(paramLpf, paramDeadZone));
 
-  ros::ServiceServer service = nh.advertiseService("~/reset_offset", reset_offset);
+  ros::ServiceServer service = n.advertiseService("reset_offset", reset_offset);
 
   ros::Subscriber sub = nh.subscribe(topic_name_raw, 2, cbForce);
   pub = nh.advertise<geometry_msgs::WrenchStamped>(topic_name_filtered, 2);
-  pub_cnt = nh.advertise<ohrc_msgs::Contact>("~/contact", 2);
+  pub_cnt = nh.advertise<ohrc_msgs::Contact>("contact", 2);
 
   ros::AsyncSpinner spinner(2);
   spinner.start();

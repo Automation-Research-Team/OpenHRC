@@ -112,15 +112,20 @@ void MultiCartController::setPriority(int i) {
 
 void MultiCartController::setLowPriority(int i) {
   multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
-  for (int j = 0; j++; j < nRobot)
-    if (j != i)
-      multimyik_solver_ptr->setRobotWeight(j, 100.);
+  // for (int j = 0; j++; j < nRobot)
+  //   if (j != i)
+  //     multimyik_solver_ptr->setRobotWeight(j, 100.);
+  multimyik_solver_ptr->setRobotWeight(i, 0.1);
 }
 
 void MultiCartController::setPriority(std::vector<int> idx) {
   multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
-  for (auto& i : idx)
-    multimyik_solver_ptr->setRobotWeight(i, 100.);
+
+  double gain = pow(10.0, idx.size() - 1);
+  for (auto& i : idx) {
+    multimyik_solver_ptr->setRobotWeight(i, 100. * gain);
+    gain *= 0.1;
+  }
 }
 
 void MultiCartController::setPriority(PriorityType priority) {
@@ -135,9 +140,17 @@ void MultiCartController::setPriority(PriorityType priority) {
     multimyik_solver_ptr->setRobotWeight(ind, 100.);
 }
 
+void MultiCartController::setHightLowPriority(int high, int low) {
+  multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
+  multimyik_solver_ptr->setRobotWeight(high, 100.);
+  multimyik_solver_ptr->setRobotWeight(low, 0.1);
+}
+
 void MultiCartController::starting() {
   for (int i = 0; i < nRobot; i++)  // {
     cartControllers[i]->starting(ros::Time::now());
+
+  ros::Duration(3.0).sleep();
 
   for (int i = 0; i < nRobot; i++)
     initInterface(cartControllers[i]);
@@ -245,7 +258,7 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
   // }
 
   for (int i = 0; i < nRobot; i++)
-    feedback(desPose[i], desVel[i],cartControllers[i]);
+    feedback(desPose[i], desVel[i], cartControllers[i]);
 }
 
 void MultiCartController::updateDesired() {

@@ -10,7 +10,7 @@ FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def getMinJerkTraj_QP(dt, tf, x0, xf, constraint):
-    t = np.arange(0.0, tf+dt, dt)
+    t = np.arange(0.0, tf, dt)
 
     a = np.zeros((3, 3))
     a[0, 1] = 1.0
@@ -24,7 +24,7 @@ def getMinJerkTraj_QP(dt, tf, x0, xf, constraint):
 
     A = np.eye(9)+dt*a_
     B = dt*b_
-    N = len(t)
+    N = int(tf/dt)
     Q = np.zeros((9, 9))
     R = np.eye(3)
     P = np.eye(9)*1.0e6
@@ -108,16 +108,10 @@ def use_modeling_tool(A, B, N, Q, R, P, x0, xf, constraint, umax=None, umin=None
 
 def getMinJerkTraj(dt, tf, x0, xf):
 
-    t = np.arange(0.0, tf+dt, dt)
+    t = np.arange(0.0, tf, dt)
 
-    if isinstance(x0, dict):
-        p0 = np.squeeze(x0[["px", "py", "pz"]].values)
-        pf = np.squeeze(xf[["px", "py", "pz"]].values)
-        ndim = 3
-    else:
-        p0 = np.atleast_1d(x0)
-        pf = np.atleast_1d(xf)
-        ndim = len(p0)
+    p0 = np.squeeze(x0[["px", "py", "pz"]].values)
+    pf = np.squeeze(xf[["px", "py", "pz"]].values)
 
     s = t/tf
     s2 = s * s
@@ -125,10 +119,10 @@ def getMinJerkTraj(dt, tf, x0, xf):
     s4 = s3*s
     s5 = s4*s
 
-    pt = np.empty([ndim, len(s)])
-    vt = np.empty([ndim, len(s)])
-    at = np.empty([ndim, len(s)])
-    for i in range(ndim):
+    pt = np.empty([3, len(s)])
+    vt = np.empty([3, len(s)])
+    at = np.empty([3, len(s)])
+    for i in range(3):
         pt[i] = p0[i] + (pf[i] - p0[i]) * (6.0 * s5 - 15.0*s4 + 10.0*s3)
         vt[i] = (pf[i] - p0[i]) * (30.0 * s4 - 60.0*s3 + 30.0*s2)/tf
         at[i] = (pf[i] - p0[i]) * (120.0 * s3 - 180.0*s2 + 60.0*s)/(tf*tf)
@@ -141,13 +135,10 @@ def getMinJerkTraj(dt, tf, x0, xf):
         ], axis=1
     )
 
-    if isinstance(x0, dict):
-        df = pd.DataFrame(xt)
-        df.columns = ["t", "px", "py", "pz", "vx", "vy",
-                      "vz", "ax", "ay", "az"]
-        return df
-    else:
-        return xt
+    df = pd.DataFrame(xt)
+    df.columns = ["t", "px", "py", "pz", "vx", "vy",
+                  "vz", "ax", "ay", "az"]
+    return df
 
 
 def getInitState(n):
@@ -192,8 +183,12 @@ def getFinalState(n):
     return df
 
 
-def thread_func(args):
-    i, seed, zh, dh = args
+def standardize(x):
+    return (x - x.min()) / (x.max() - x.min())
+
+
+def sample_func(args):
+    i, seed = args
     np.random.seed(seed)
 
     print("trajectory #: " + str(i))
@@ -202,25 +197,40 @@ def thread_func(args):
     n = 1
     x0 = getInitState(n)
     xf = getFinalState(n)
-    tf = (np.random.rand(n) - 0.5)*4.0 + 10.0  # 8.0 ~ 12.0
 
     xt = []
-    xt.append(getMinJerkTraj(dt, tf, x0, xf))  # analitical solusion
 
+    tf = (np.random.rand(1) - 0.5)*4.0 + 10.0  # 8.0 ~ 12.0
+    xt.append(getMinJerkTraj(dt, tf, x0, xf))
+
+    A = np.zeros((3, 3))
+    A[0, 1] = 1.0
+    A[1, 2] = 1.0
+
+    B = np.zeros((3, 1))
+    B[2] = 1.0
+
+    zh = [0.1, 0.2]
+    dh = [0.03, 0.1]
     constraints = []
     for z in zh:
         for d in dh:
             constraint = dict()
             constraint["zh"] = z
             constraint["dh"] = d
-            # MIQP-based solusions
             xt.append(getMinJerkTraj_QP(dt, tf, x0, xf, constraint))
             constraints.append(constraint)
 
     return xt, constraints
 
 
-def plot_and_save_results(results):
+def main():
+    N = 100
+
+    with Pool(processes=os.cpu_count()) as p:
+        results = p.map(
+            func=sample_func, iterable=zip(range(N), np.random.randint(0, 2 ** 32 - 1, N)))
+
     n_case = len(results[0][0])
     fig = plt.figure()
     ax = [fig.add_subplot(1, n_case, i+1, projection="3d")
@@ -244,18 +254,6 @@ def plot_and_save_results(results):
                 os.makedirs(directory)
             xt.to_csv(directory+"/"+str(i+1) + ".csv", index=None)
     plt.show()
-
-
-def main():
-    N = 100
-    zh = [0.1, 0.2]
-    dh = [0.03, 0.1]
-
-    with Pool(processes=os.cpu_count()) as p:
-        results = p.map(
-            func=thread_func, iterable=zip(range(N), np.random.randint(0, 2 ** 32 - 1, N), zh, dh))
-
-    plot_and_save_results(results)
 
 
 if __name__ == "__main__":

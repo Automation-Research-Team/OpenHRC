@@ -50,6 +50,7 @@ protected:
   void setPriority(std::vector<int> idx);
   void setPriority(int i);
   void setLowPriority(int i);
+  void setHightLowPriority(int high, int low);
 
   // enum class AdaptationOption { Default, None } adaptationOption;
   std::string adaptationOption_;
@@ -69,7 +70,7 @@ protected:
     interfaces[controller->getIndex()]->resetInterface();
   }
 
-  void feedback(KDL::Frame& pose, KDL::Twist& twist,std::shared_ptr<CartController> controller) {
+  void feedback(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->feedback(pose, twist);
   }
 

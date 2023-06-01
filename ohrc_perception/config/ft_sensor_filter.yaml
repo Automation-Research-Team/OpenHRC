@@ -1,9 +1,10 @@
 
 # ft_sensor_filter:
 
+  rate: 500.0
   topic_name:
-    raw: "/force"
-    filtered: "/force2"
+    raw: "ft_sensor/raw"
+    filtered: "ft_sensor/filtered"
 
   cutoff_freq: 50.0
   lpf_order: 2
