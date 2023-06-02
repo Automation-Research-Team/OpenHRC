@@ -31,7 +31,6 @@ class ImpedanceController : public virtual Interface {
   ImpParam getImpParam(const ImpCoeff& impCoeff);
   Affine3d getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
 
-  virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
   void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
@@ -43,6 +42,8 @@ protected:
 
   virtual void setSubscriber();
   virtual bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd);
+
+  virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
 
 public:
   using Interface::Interface;

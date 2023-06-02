@@ -28,15 +28,20 @@ bool CartTrajectoryImpedanceController::updateImpedanceTarget(const VectorXd& x,
   target.linear() = this->restPose.rotation();
 
   xd << target.translation(), trj.points[i].point.velocity.linear.x, trj.points[i].point.velocity.linear.y, trj.points[i].point.velocity.linear.z;
+  xd.tail(3) *= forward;
 
   bool a = (forward - 1) / (-2);  // 0 or 1
   if ((ros::Time::now() - t_start).toNSec() > (trj.points[nTrj - 1].time_from_start.toNSec() * (double)a + std::pow((-1.0), a) * trj.points[i].time_from_start.toNSec()))
     i = i + 1 * forward;
 
   if (i > trj.points.size() - 1 || i < 0) {
-    forward *= -1;
-    i = i + 1 * forward;
-    start = true;
+    i = i - forward;
+    TaskState taskState = this->updataTaskState(x - xd, forward);
+
+    if (taskState == TaskState::Success || taskState == TaskState::Fail) {
+      forward *= -1;
+      start = true;
+    }
   }
 
   return true;
