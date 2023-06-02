@@ -1,22 +1,9 @@
-"""
-=================
-Conditional ProMP
-=================
-
-Probabilistic Movement Primitives (ProMPs) define distributions over
-trajectories that can be conditioned on viapoints. In this example, we
-plot the resulting posterior distribution after conditioning on varying
-start positions.
-"""
-from ohrc_msgs.msg import State
 import rospy
 import sys
 import os
 import pandas as pd
 from movement_primitives.promp import ProMP
-from movement_primitives.dmp import DMP
-from movement_primitives.data import generate_1d_trajectory_distribution
-import matplotlib.pyplot as plt
+
 import numpy as np
 
 from moveit_msgs.msg import CartesianTrajectory, CartesianTrajectoryPoint

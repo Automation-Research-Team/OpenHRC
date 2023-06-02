@@ -37,47 +37,60 @@ bool CartTrajectoryImpedanceController::getTrajectories(const geometry_msgs::Pos
 }
 
 bool CartTrajectoryImpedanceController::updateImpedanceTarget(const VectorXd& x, VectorXd& xd) {
-  moveit_msgs::CartesianTrajectory trj;
+  static moveit_msgs::CartesianTrajectory trj;
+  static bool updateTrjs = true;
   {
     std::lock_guard<std::mutex> lock(mtx_cart);
 
-    if (!_flagTrjs)
+    if (!_flagTrjs || _trjs.size() == 0)
       return false;
-    trj = _trjs[0];
+
+    if (updateTrjs) {
+      nTrjs = _trjs.size();
+      trj = _trjs[targetIdx];
+    }
+    updateTrjs = false;
   }
-
-  static bool start = true;
-  static ros::Time t_start;
-
   int nTrj = trj.points.size();
-  if (start) {
-    t_start = ros::Time::now();
-    start = false;
-  }
 
-  static int i = 0;
+  static ros::Time t_start = ros::Time::now();
+  static int t_i = 0;
   static int forward = 1;
 
-  Affine3d target;
-  tf2::fromMsg(trj.points[i].point.pose, target);
-  target.translation() = this->restPose.translation() + target.translation();
-  target.linear() = this->restPose.rotation();
+  // substitute the target pose at the current time step t_i
+  Vector3d pose, vel;
+  tf2::fromMsg(trj.points[t_i].point.pose.position, pose);
+  tf2::fromMsg(trj.points[t_i].point.velocity.linear, vel);
+  xd << pose + this->restPose.translation(), vel * forward;
 
-  xd << target.translation(), trj.points[i].point.velocity.linear.x, trj.points[i].point.velocity.linear.y, trj.points[i].point.velocity.linear.z;
-  xd.tail(3) *= forward;
-
+  // increment t_i in [0, nTrj - 1]
   bool a = (forward - 1) / (-2);  // 0 or 1
-  if ((ros::Time::now() - t_start).toNSec() > (trj.points[nTrj - 1].time_from_start.toNSec() * (double)a + std::pow((-1.0), a) * trj.points[i].time_from_start.toNSec()))
-    i = i + 1 * forward;
+  double t_ns = (trj.points[nTrj - 1].time_from_start.toNSec() * (double)a + std::pow((-1.0), a) * trj.points[t_i].time_from_start.toNSec());
+  if ((ros::Time::now() - t_start).toNSec() > t_ns)
+    t_i = std::max(std::min(t_i + forward, (int)(trj.points.size() - 1)), 0);
 
-  if (i > trj.points.size() - 1 || i < 0) {
-    i = i - forward;
-    TaskState taskState = this->updataTaskState(x - xd, forward);
+  // check if the target pose is reached
+  Vector3d x_target_end;
+  if (forward == 1)
+    tf2::fromMsg(trj.points[nTrj - 1].point.pose.position, x_target_end);  // might be better to use restPose
+  else
+    tf2::fromMsg(trj.points[0].point.pose.position, x_target_end);         // might be better to use targetPose
+  VectorXd x_target = (VectorXd(6) << this->restPose.translation() + x_target_end, VectorXd::Zero(3)).finished();
+  TaskState taskState = this->updataTaskState(x - x_target, forward);
 
-    if (taskState == TaskState::Success || taskState == TaskState::Fail) {
-      forward *= -1;
-      start = true;
-    }
+  // if reaching was succeeded or failed, update the target pose (forward = 1) or go back to the initial pose (forward = -1)
+  if (taskState == TaskState::Success || taskState == TaskState::Fail) {
+    forward *= -1;
+    t_start = ros::Time::now();
+  }
+
+  // if reaching was succeeded, move on to the next target pose
+  if (taskState == TaskState::Success && forward == 1) {
+    updateTrjs = true;
+    targetIdx++;
+
+    if (targetIdx > nTrjs - 1)
+      targetIdx = 0;
   }
 
   return true;

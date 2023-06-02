@@ -1,6 +1,8 @@
 #ifndef CART_TRAJECTORY_IMPEDANCE_CONTROLLER_HPP
 #define CART_TRAJECTORY_IMPEDANCE_CONTROLLER_HPP
 
+#include <algorithm>
+
 #include "ohrc_automation/cart_trajectory_controller.hpp"
 #include "ohrc_automation/impedance_controller.hpp"
 #include "ohrc_msgs/GetTrajectories.h"
@@ -9,6 +11,8 @@ class CartTrajectoryImpedanceController : public CartTrajectoryController, publi
   ros::ServiceClient client;
   std::vector<moveit_msgs::CartesianTrajectory> _trjs;
   bool _flagTrjs = false;
+  int targetIdx = 0;
+  int nTrjs = 0;
 
   bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd) override;
 

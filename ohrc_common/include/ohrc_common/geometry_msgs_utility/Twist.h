@@ -9,6 +9,22 @@ using namespace Eigen;
 
 #include <tf2_eigen/tf2_eigen.h>
 
+namespace tf2 {
+
+inline Eigen::VectorXd fromMsg(const geometry_msgs::Twist twist, Eigen::VectorXd &vector) {
+  vector.resize(6);
+  vector(0) = twist.linear.x;
+  vector(1) = twist.linear.y;
+  vector(2) = twist.linear.z;
+  vector(3) = twist.angular.x;
+  vector(4) = twist.angular.y;
+  vector(5) = twist.angular.z;
+
+  return vector;
+}
+
+}  // namespace tf2
+
 namespace geometry_msgs_utility {
 
 geometry_msgs::Twist checkNanInf(geometry_msgs::Twist cmd);

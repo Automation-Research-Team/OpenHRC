@@ -106,7 +106,7 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
   }
 
   static ros::Time t_start = ros::Time::now();
-  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 10.0)) {
+  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 15.0)) {
     stack = 0;
     RespawnReqPublisher.publish(std_msgs::Empty());
     taskState = TaskState::Fail;
