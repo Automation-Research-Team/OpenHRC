@@ -11,6 +11,7 @@ find_package(catkin REQUIRED
     std_msgs
     geometry_msgs
     sensor_msgs
+    moveit_msgs
     message_generation
     message_runtime
 )
@@ -60,11 +61,11 @@ add_message_files(
 )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
+add_service_files(
+  FILES
+  GetTrajectories.srv
 #   Service2.srv
-# )
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -79,6 +80,7 @@ generate_messages(
   std_msgs  # Or other packages containing msgs
   geometry_msgs
   sensor_msgs
+  moveit_msgs
 )
 
 ################################################

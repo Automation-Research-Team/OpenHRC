@@ -33,8 +33,6 @@ class ImpedanceController : public virtual Interface {
 
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
-  void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
-
 protected:
   ros::Publisher RespawnReqPublisher;
   int stack = 0;
@@ -44,6 +42,8 @@ protected:
   virtual bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd);
 
   virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
+
+  virtual void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 
 public:
   using Interface::Interface;

@@ -1,0 +1,3 @@
+geometry_msgs/PoseArray targetPoses
+---------------
+moveit_msgs/CartesianTrajectory[] trjs
