@@ -6,12 +6,11 @@
 
 #include "ohrc_control/interface.hpp"
 
-class ImpedanceController : public Interface {
+class ImpedanceController : public virtual Interface {
   std::mutex mtx_imp;
   ros::Subscriber targetSubscriber;
 
   std::vector<Affine3d> _targetPoses;
-  Affine3d restPose;
 
   bool _targetUpdated = false;
   int targetIdx = -1, nextTargetIdx = -1;
@@ -40,12 +39,18 @@ class ImpedanceController : public Interface {
 protected:
   ros::Publisher RespawnReqPublisher;
   int stack = 0;
+  Affine3d restPose;
+
+  virtual void setSubscriber();
+  virtual bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd);
 
 public:
   using Interface::Interface;
+  // ImpedanceController(std::shared_ptr<CartController> controller) : Interface(controller) {
+  // }
 
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
-  void initInterface() override;
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  virtual void initInterface() override;
 };
 
 #endif  // IMPEDANCE_CONTROLLER_HPP

@@ -1,14 +1,17 @@
 #include "ohrc_automation/cart_trajectory_controller.hpp"
 
 void CartTrajectoryController::initInterface() {
-  std::cout << "initInterface" << std::endl;
-  trjSubscriber = n.subscribe<moveit_msgs::CartesianTrajectory>("/trj", 1000, &CartTrajectoryController::cbCartTrajectory, this, ros::TransportHints().tcpNoDelay());
+  this->setSubscriber();
+}
+
+void CartTrajectoryController::setSubscriber() {
+  trjSubscriber = n.subscribe<moveit_msgs::CartesianTrajectory>("/trj", 1000, &CartTrajectoryController::cbCartTrajectory, this, th);
 }
 
 void CartTrajectoryController::cbCartTrajectory(const moveit_msgs::CartesianTrajectory::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mtx_cart);
   _trj = *msg;
-  std::cout << "subscribed" << std::endl;
+  // std::cout << "subscribed" << std::endl;
 }
 
 void CartTrajectoryController::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
