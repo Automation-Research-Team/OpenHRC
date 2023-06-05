@@ -1,0 +1,8 @@
+imp_ceff:
+  m: [5., 5., 5.]
+  # d: [1., 1., 1.]
+  k: [100., 100., 100]
+
+target_topic: 
+  - "/gazebo/automation_targets"
+  - "/gazebo/recovery_targets"

@@ -21,7 +21,7 @@ public:
   Interface(std::shared_ptr<CartController> controller) : n("~") {
     this->controller = controller;
     dt = controller->dt;
-  };
+  }
 
   virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist){};
   virtual void initInterface(){};

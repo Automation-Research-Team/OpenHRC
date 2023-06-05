@@ -179,6 +179,18 @@ foreach(controller ${controllers})
   target_link_libraries(${controller}_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators ${Boost_FILESYSTEM_LIBRARY})
 endforeach(controller)
 
+
+set(impedance_controllers
+  cart_trajectory
+)
+
+foreach(controller ${impedance_controllers})
+  add_executable(${controller}_impedance_automation src/controller/${controller}_impedance_controller.cpp src/controller/${controller}_controller.cpp src/controller/impedance_controller.cpp src/app/${controller}_impedance_automation.cpp)
+  add_dependencies(${controller}_impedance_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${controller}_impedance_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators ${Boost_FILESYSTEM_LIBRARY})
+endforeach(controller)
+
+
 #############
 ## Install ##
 #############

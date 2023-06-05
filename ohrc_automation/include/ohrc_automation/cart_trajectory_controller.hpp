@@ -6,7 +6,8 @@
 
 #include "ohrc_control/interface.hpp"
 
-class CartTrajectoryController : public Interface {
+class CartTrajectoryController : public virtual Interface {
+protected:
   std::mutex mtx_cart;
   ros::Subscriber trjSubscriber;
 
@@ -14,12 +15,15 @@ class CartTrajectoryController : public Interface {
 
   void cbCartTrajectory(const moveit_msgs::CartesianTrajectory::ConstPtr& msg);
 
-protected:
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  virtual void setSubscriber();
 
 public:
   using Interface::Interface;
-  void initInterface() override;
+  // CartTrajectoryController(std::shared_ptr<CartController> controller) : Interface(controller) {
+  // }
+  virtual void initInterface() override;
+
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
 };
 
 #endif  // CART_TRAJECTORY_CONTROLLER_HPP

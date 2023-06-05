@@ -77,10 +77,12 @@ pub = rospy.Publisher('chatter', State, queue_size=1)
 pub_trj = rospy.Publisher('trj', CartesianTrajectory, queue_size=1)
 rate = rospy.Rate(1)
 # for color, y_cond in zip("rgbcmyk", np.linspace(-0.3, 0.3, 7)):
-y_cond = [-0.1, 0.1, 0.2]
+y_cond = [-0.1, 0., 0.3]
+
+t_max = 12.0
 while not rospy.is_shutdown():
     cpromp = promp.condition_position(
-        np.array(y_cond), y_cov=y_conditional_cov, t=0.0, t_max=12.0)
+        np.array(y_cond), y_cov=y_conditional_cov, t=0.0, t_max=t_max)
 
     time = np.arange(0.0, 12.0, 0.01)
     Y_cmean = cpromp.mean_trajectory(time)
@@ -94,10 +96,10 @@ while not rospy.is_shutdown():
         point.point.pose.position.x = Y_cmean[i, 0] - y_cond[0]
         point.point.pose.position.y = Y_cmean[i, 1] - y_cond[1]
         point.point.pose.position.z = Y_cmean[i, 2] - y_cond[2]
-        point.point.velocity.linear.x = dY_cmean[i, 0]
-        point.point.velocity.linear.y = dY_cmean[i, 1]
-        point.point.velocity.linear.z = dY_cmean[i, 2]
-        point.time_from_start = rospy.Duration.from_sec(time[i]*12.0)
+        point.point.velocity.linear.x = dY_cmean[i, 0]/t_max
+        point.point.velocity.linear.y = dY_cmean[i, 1]/t_max
+        point.point.velocity.linear.z = dY_cmean[i, 2]/t_max
+        point.time_from_start = rospy.Duration.from_sec(time[i]*t_max)
         trj.points.append(point)
 
     pub_trj.publish(trj)

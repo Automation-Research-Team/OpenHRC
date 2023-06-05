@@ -6,12 +6,11 @@
 
 #include "ohrc_control/interface.hpp"
 
-class ImpedanceController : public Interface {
+class ImpedanceController : public virtual Interface {
   std::mutex mtx_imp;
   ros::Subscriber targetSubscriber;
 
   std::vector<Affine3d> _targetPoses;
-  Affine3d restPose;
 
   bool _targetUpdated = false;
   int targetIdx = -1, nextTargetIdx = -1;
@@ -32,20 +31,27 @@ class ImpedanceController : public Interface {
   ImpParam getImpParam(const ImpCoeff& impCoeff);
   Affine3d getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
 
-  virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
-
-  void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 
 protected:
   ros::Publisher RespawnReqPublisher;
   int stack = 0;
+  Affine3d restPose;
+
+  virtual void setSubscriber();
+  virtual bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd);
+
+  virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
+
+  virtual void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 
 public:
   using Interface::Interface;
+  // ImpedanceController(std::shared_ptr<CartController> controller) : Interface(controller) {
+  // }
 
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
-  void initInterface() override;
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  virtual void initInterface() override;
 };
 
 #endif  // IMPEDANCE_CONTROLLER_HPP

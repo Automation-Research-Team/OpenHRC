@@ -37,8 +37,13 @@ void ImpedanceController::initInterface() {
   else if (!n.getParam("target_topic", targetName))
     ROS_ERROR_STREAM("target pose topic name(s) are not configured");
 
-  targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetName, 1, &ImpedanceController::cbTargetPoses, this);
   RespawnReqPublisher = n.advertise<std_msgs::Empty>(targetName + "/success", 10);
+
+  this->setSubscriber();
+}
+
+void ImpedanceController::setSubscriber() {
+  targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetName, 1, &ImpedanceController::cbTargetPoses, this, th);
 }
 
 void ImpedanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK) {
@@ -101,7 +106,7 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
   }
 
   static ros::Time t_start = ros::Time::now();
-  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 10.0)) {
+  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 15.0)) {
     stack = 0;
     RespawnReqPublisher.publish(std_msgs::Empty());
     taskState = TaskState::Fail;
@@ -143,14 +148,13 @@ Affine3d ImpedanceController::getNextTarget(const TaskState& taskState, const st
     return targetPoses[targetIdx];
 }
 
-void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
+bool ImpedanceController::updateImpedanceTarget(const VectorXd& x, VectorXd& xd) {
   std::vector<Affine3d> targetPoses;
-  bool flagStay = false;
+  // subsribe target poses
   {
     std::lock_guard<std::mutex> lock(mtx_imp);
     if (!this->_targetUpdated)
-      flagStay = true;
-    // return;
+      return false;
     targetPoses = _targetPoses;
   }
 
@@ -159,49 +163,47 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   for (int i = 0; i < targetPoses.size(); i++)
     targetPoses[i] = T_base_world_inv * targetPoses[i];
 
+  // update task state
+  taskState = updataTaskState(x - xd, targetIdx);
+
+  // update target pose
+  xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
+
+  curTargetId = targetIdx;
+
+  return true;
+}
+
+void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   KDL::Frame frame;
   KDL::Twist vel;
   controller->getCartState(frame, vel);
 
   if (taskState == TaskState::Initial) {
-    x = (VectorXd(6) << frame.p[0], frame.p[1], frame.p[2], 0.0, 0.0, 0.0).finished();
-    // _targetPoses.resize(1);
-    // _targetPoses[0] = controller->getT_init();
-    // _targetPoses[0].translation()[0] += 0.1;
+    this->restPose = controller->getT_init();
 
-    restPose = controller->getT_init();
-    targetIdx = -1;
+    x = (VectorXd(6) << frame.p[0], frame.p[1], frame.p[2], 0.0, 0.0, 0.0).finished();
     xd = (VectorXd(6) << restPose.translation(), Vector3d::Zero()).finished();
 
-    controller->startOperation();
     taskState = TaskState::OnGoing;
+    controller->startOperation();
   }
 
   // update only position using subscribed q.
   // When the velocity is updated as well, the robot motion somehow become unstable.
   x.head(3) << frame.p[0], frame.p[1], frame.p[2];
 
-  VectorXd x_ = (VectorXd(6) << x.head(3), vel.vel(0), vel.vel(1), vel.vel(2)).finished();
-
-  if (!flagStay) {
-    taskState = updataTaskState(x_ - xd, targetIdx);
-
-    // update target pose
-    xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
-  }
+  // update target pose
+  if (!this->updateImpedanceTarget(x, xd))
+    xd.tail(3) = Vector3d::Zero();
 
   // get command state
-  // x = getControlState(x, xd, VectorXd::Zero(3), controller->dt, this->impParam);
   x = getControlState(x, xd, tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
+  // std::cout << " x: " << x.transpose() << std::endl;
+  // std::cout << "xd: " << xd.transpose() << std::endl;
 
   tf::vectorEigenToKDL(x.head(3), pose.p);
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
 
-  // if (controller->getIndex() == 0)
-  // std::cout << "  x: " << x.transpose() << ",\n xd: " << xd.transpose() << std::endl;
-
-  // menber variables in Interface class
-  curTargetId = targetIdx;
-  if (!flagStay)
-    targetDistance = (x.head(3) - targetPoses[nextTargetIdx].translation()).norm();
+  this->targetDistance = (x - xd).head(3).norm();  // TODO: generalize this
 }
