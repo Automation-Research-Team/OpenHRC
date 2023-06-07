@@ -28,7 +28,7 @@ public:
   virtual void resetInterface(){};
   virtual void feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist){};
 
-  int curTargetId = 0, nCompletedTask = 0;
+  int targetIdx = -1, nCompletedTask = 0;
   bool blocked = false;
 
   std::string getTargetName() {

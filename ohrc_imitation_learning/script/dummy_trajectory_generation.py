@@ -192,7 +192,6 @@ def sample_func(args):
     np.random.seed(seed)
 
     print("trajectory #: " + str(i))
-    tf = 10.0
     dt = 0.1
     n = 1
     x0 = getInitState(n)
@@ -200,7 +199,7 @@ def sample_func(args):
 
     xt = []
 
-    tf = (np.random.rand(1) - 0.5)*4.0 + 10.0  # 8.0 ~ 12.0
+    tf = (np.random.rand(1) - 0.5)*2.0 + 8.0  # 7.0 ~ 9.0
     xt.append(getMinJerkTraj(dt, tf, x0, xf))
 
     A = np.zeros((3, 3))

@@ -52,7 +52,7 @@ def main(mode=3):
     promp.imitate(T, Y)
 
     y_conditional_cov = np.array([0.0000025, 0.0000025, 0.0000025])
-    t_max = 12.0
+    t_max = 8.0
 
     def generate_trjs(req):
         targetPoses = req.targetPoses

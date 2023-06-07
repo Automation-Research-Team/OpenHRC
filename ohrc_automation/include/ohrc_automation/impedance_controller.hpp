@@ -13,7 +13,8 @@ class ImpedanceController : public virtual Interface {
   std::vector<Affine3d> _targetPoses;
 
   bool _targetUpdated = false;
-  int targetIdx = -1, nextTargetIdx = -1;
+  // int targetIdx = -1, 
+  int nextTargetIdx = -1;
 
   VectorXd x, xd;
 

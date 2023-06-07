@@ -134,10 +134,9 @@ include_directories(
 
 
 ## Declare a C++ library
+file(GLOB controller_list LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DIR}" "src/controller/*")
 add_library(${PROJECT_NAME}
-  src/controller/impedance_controller.cpp
-  src/controller/dmp_controller.cpp
-
+  ${controller_list}
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators )
