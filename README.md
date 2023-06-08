@@ -123,3 +123,7 @@ If you use this package in your academic research, we would appreciate it if you
 
 ## Author
 Shunki Itadera (https://staff.aist.go.jp/s.itadera/) - Researcher at ART, ICPS, AIST
+
+We welcome any feedback and contributions. Please feel free to contact us if you have any questions or comments.
+
+Besides, we are looking for research collaborators and students who are interested in Human-Robot Interaction using OpenHRC. If you are interested, please send me an email.
