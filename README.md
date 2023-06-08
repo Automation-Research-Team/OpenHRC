@@ -96,7 +96,7 @@ To test either the native or Docker installation, you can first try the teleoper
 
 Open a terminal and run:
 ```
-$ roslaunch ohrc_teleoperation ur5e_bringup.launch
+$ roslaunch ohrc_hw_config ur5e_bringup.launch
 ```
 This command launches the UR5e simulation on Gazebo.
 
