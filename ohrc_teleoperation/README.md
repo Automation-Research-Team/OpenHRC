@@ -30,7 +30,7 @@ The UR5e default controller is `JointTrajectoryController`. If you need to load 
 Use the following commands to launch the modified gazebo simulation with UR5e and the teleoperation controller:
 ```
 # launch modified gazebo simulation with UR5e
-$ roslaunch ohrc_teleoperation ur5e_bringup.launch
+$ roslaunch ohrc_hw_config ur5e_bringup.launch
 
 # launch teleoperation controller
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch
