@@ -199,7 +199,7 @@ def sample_func(args):
 
     xt = []
 
-    tf = (np.random.rand(1) - 0.5)*2.0 + 8.0  # 7.0 ~ 9.0
+    tf = (np.random.rand(1) - 0.5)*2.0 + 5.0  # 4.0 ~ 6.0
     xt.append(getMinJerkTraj(dt, tf, x0, xf))
 
     A = np.zeros((3, 3))
