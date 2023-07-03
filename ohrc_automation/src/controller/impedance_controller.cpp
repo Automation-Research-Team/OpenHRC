@@ -106,7 +106,7 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
   }
 
   static ros::Time t_start = ros::Time::now();
-  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 15.0)) {
+  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 30.0)) {
     stack = 0;
     RespawnReqPublisher.publish(std_msgs::Empty());
     taskState = TaskState::Fail;
@@ -169,7 +169,7 @@ bool ImpedanceController::updateImpedanceTarget(const VectorXd& x, VectorXd& xd)
   // update target pose
   xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
 
-  curTargetId = targetIdx;
+  // curTargetId = targetIdx;
 
   return true;
 }

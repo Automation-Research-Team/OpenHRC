@@ -96,7 +96,7 @@ To test either the native or Docker installation, you can first try the teleoper
 
 Open a terminal and run:
 ```
-$ roslaunch ohrc_teleoperation ur5e_bringup.launch
+$ roslaunch ohrc_hw_config ur5e_bringup.launch
 ```
 This command launches the UR5e simulation on Gazebo.
 
@@ -123,3 +123,7 @@ If you use this package in your academic research, we would appreciate it if you
 
 ## Author
 Shunki Itadera (https://staff.aist.go.jp/s.itadera/) - Researcher at ART, ICPS, AIST
+
+We welcome any feedback and contributions. Please feel free to contact us if you have any questions or comments.
+
+Besides, we are looking for research collaborators and students who are interested in Human-Robot Interaction using OpenHRC. If you are interested, please send me an email.
