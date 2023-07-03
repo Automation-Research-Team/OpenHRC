@@ -28,6 +28,7 @@ protected:
 
   std::vector<std::shared_ptr<CartController>> cartControllers;
   std::vector<std::string> robots;
+  std::vector<std::string> hw_configs;
   int nRobot = 0;
 
   std::string root_frame;

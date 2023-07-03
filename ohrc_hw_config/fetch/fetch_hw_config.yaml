@@ -1,0 +1,9 @@
+fetch:
+  chain_start: "base_link" # base frame of commands
+  chain_end: "gripper_link" # target eff frame
+
+  publisher: "TrajectoryAction" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+  topic_namespace: "arm_with_torso_controller"
+
+  initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
+  initial_pose: [0.2, 0.3, 1.1, 0, 0, 0] # [x, y, z, roll, pitch, yaw]

@@ -1,0 +1,9 @@
+mycobot:
+  chain_start: "base_link" # base frame of commands
+  chain_end: "link6_flange" # target eff frame
+
+  publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+  topic_namespace: "arm_controller"
+
+  initIKAngle: [0, 0., 0, 0, 0, 0, 0] # size of this should be equal to DoF
+  initial_pose: [0.2, 0., 0.3, 0, 0, 0] # [x, y, z, roll, pitch, yaw]

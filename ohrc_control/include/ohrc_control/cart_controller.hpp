@@ -36,6 +36,8 @@ using namespace ohrc_control;
 class CartController {
   static void signal_handler(int signum);
   void init(std::string robot);
+  void init(std::string robot, std::string hw_config);
+
   // ros::AsyncSpinner spinner;
   ros::CallbackQueue queue;
   boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
@@ -139,7 +141,7 @@ protected:
   std::shared_ptr<MyIK::MyIK> myik_solver_ptr;
 
   std::string root_frame;
-  std::string chain_start, chain_end, urdf_param, robot_ns = "";
+  std::string chain_start, chain_end, urdf_param, robot_ns = "", hw_config_ns = "";
   Affine3d T_base_root;
 
   void cbJntState(const sensor_msgs::JointState::ConstPtr& msg);
@@ -174,6 +176,7 @@ public:
   CartController();
   CartController(const std::string robot, const std::string root_frame);
   CartController(const std::string robot, const std::string root_frame, const int index);
+  CartController(const std::string robot, const std::string hw_config, const std::string root_frame, const int index);
   ~CartController();
   int control();
 
@@ -340,6 +343,9 @@ public:
   bool flagJntState = false;
 
   void resetPose();
+
+  void sendPosCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt);
+  void sendVelCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt);
 };
 
 #endif  // CART_CONTROLLER_HPP
