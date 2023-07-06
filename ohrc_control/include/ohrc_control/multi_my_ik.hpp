@@ -18,6 +18,10 @@ class MultiMyIK {
   bool enableCollisionAvoidance = true;
   std::vector<double> w_h, init_w_h;
 
+  std::vector<KDL::JntArray> q_rest;
+
+  int nAddObj = 0;
+
 public:
   bool initialized;
   double eps;
@@ -35,8 +39,10 @@ public:
             const std::vector<Affine3d>& T_base_world, const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps = 1e-5, SolveType _type = Pure);
   void resetRobotWeight();
   void setRobotWeight(int robotIndex, double rate);
+
+  void setqRest(const std::vector<KDL::JntArray>& q_rest);
 };
 
-};  // namespace MyIK
+};      // namespace MyIK
 
 #endif  // MULTI_MY_IK_HPP

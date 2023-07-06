@@ -20,8 +20,14 @@ MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vecto
   if (nRobot > 1)
     combsRobot = std_utility::comb(nRobot, 2);
   // combsLink = std_utility::comb(nJnt, 2);
-  init_w_h.resize(nRobot + 1, 1.0e5);
+
+  nAddObj = 2;
+  init_w_h.resize(nRobot + nAddObj, 1.0e5);
   w_h = init_w_h;
+}
+
+void MultiMyIK::setqRest(const std::vector<KDL::JntArray>& q_rest) {
+  this->q_rest = q_rest;
 }
 
 int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<KDL::Frame>& p_in, std::vector<KDL::JntArray>& q_out, const double& dt) {
@@ -130,6 +136,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   std::vector<Affine3d> Ts_d(nRobot), Ts(nRobot);
   std::vector<VectorXd> es(nRobot);
   std::vector<Matrix<double, 6, 1>> vs(nRobot);
+  std::vector<VectorXd> q_init(nRobot);
 
   for (int i = 0; i < nRobot; i++) {
     KDL::Jacobian jac(myIKs[i]->getNJnt());
@@ -155,16 +162,22 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     Js_[i].block(0, iJnt[i], Js[i].rows(), Js[i].cols()) = Js[i];
   }
 
-  // w_h[0] = 1.0e3;
-  w_h[nRobot] = 1.0e6;
-  std::vector<MatrixXd> H(w_h.size());
-  std::vector<VectorXd> g(w_h.size());
-  H[w_h.size() - 1] = MatrixXd::Identity(nState, nState);
-  g[w_h.size() - 1] = VectorXd::Zero(nState);
+  std::vector<MatrixXd> H(nRobot + nAddObj);
+  std::vector<VectorXd> g(nRobot + nAddObj);
+
+  // additonal objective term in QP (1) for singularity avoidance
+  w_h[nRobot] = 1.0;
+  H[nRobot] = MatrixXd::Identity(nState, nState);
+  g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
+
+  // additonal objective term in QP (2) for null space configuration
+  w_h[nRobot + 1] = 1.0e2;
+  H[nRobot + 1] = MatrixXd::Identity(nState, nState);
+  g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 
   for (int i = 0; i < nRobot; i++) {
     VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished();
-    w *= 1.0;
+    w *= 2.0;
     double w_n = 1.0e-8;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
@@ -322,6 +335,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
     int c0 = comb[0], c1 = comb[1];
     std::vector<Vector3d> p0 = p_all[c0], p1 = p_all[c1];
 
+    // std::cout << p0.size() << " " << p1.size() << std::endl;
     for (int i = 0; i < p0.size() - 1; i++) {
       for (int j = 0; j < p1.size() - 1; j++) {
         double as, bs;
@@ -331,6 +345,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
         // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
 
         if (d < di) {  // if the relative shortest distance is smaller than the infulenced distance
+          // std::cout << "collision detected between " << i << " and " << j << std::endl;
 
           // get extended Jacobian
           MatrixXd Js_0 = MatrixXd::Zero(J_all[c0][i + 1].rows(), nState);

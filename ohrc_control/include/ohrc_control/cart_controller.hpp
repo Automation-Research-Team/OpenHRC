@@ -61,7 +61,7 @@ class CartController {
   struct s_moveInitPos {
     bool isFirst = true;
     KDL::JntArray q_des;
-    KDL::JntArray q_init;
+    KDL::JntArray q_initial;
     ros::Time t_s;
     bool isSentTrj = false;
   } s_moveInitPos;
@@ -79,6 +79,7 @@ class CartController {
 
   bool initialized = false;
 
+  KDL::JntArray q_rest;
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
 
@@ -331,6 +332,10 @@ public:
 
   inline Affine3d getTft_eff() {
     return Tft_eff;
+  }
+
+  inline KDL::JntArray getqRest() {
+    return q_rest;
   }
 
   double dt;

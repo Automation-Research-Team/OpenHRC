@@ -52,9 +52,10 @@ bool MultiCartController::getInitParam() {
   }
 
   for (auto itr = my_list.begin(); itr != my_list.end(); ++itr) {
+    // std::cout << itr->first << ":" << itr->second << std::endl;
     if (my_list[itr->first].getType() == XmlRpc::XmlRpcValue::TypeArray) {
       for (int i = 0; i < my_list[itr->first].size(); ++i) {
-        std::cout << itr->first << ":" << my_list[itr->first][i] << std::endl;
+        // std::cout << itr->first << ":" << my_list[itr->first][i] << std::endl;
         hw_configs.push_back(itr->first);
         robots.push_back(my_list[itr->first][i]);
       }
@@ -69,10 +70,8 @@ bool MultiCartController::getInitParam() {
   //   return false;
   // }
 
-  // for (auto it = robots_map.begin(); it != robots_map.end(); it++) {
-  //   robots.push_back(it->first);
-  //   hw_configs.push_back(it->second);
-  // }
+  for (int i = 0; i < robots.size(); i++)
+    ROS_INFO_STREAM("Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
 
   if (!n.getParam("root_frame", root_frame)) {
     ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
@@ -179,6 +178,11 @@ void MultiCartController::starting() {
 
   for (int i = 0; i < nRobot; i++)
     initInterface(cartControllers[i]);
+
+  std::vector<KDL::JntArray> q_rest(nRobot);
+  for (int i = 0; i < nRobot; i++)
+    q_rest[i] = cartControllers[i]->getqRest();
+  multimyik_solver_ptr->setqRest(q_rest);
 
   // cartControllers[i]->enableOperation();
   // }

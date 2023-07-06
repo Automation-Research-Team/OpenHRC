@@ -363,14 +363,14 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
 
   if (s_moveInitPos.isFirst) {
     this->nameJnt = nameJnt;
-    s_moveInitPos.q_init = q_cur;
+    s_moveInitPos.q_initial = q_cur;
     KDL::Frame init_eff_pose;
 
     tf::transformEigenToKDL(T_init, init_eff_pose);
 
     KDL::JntArray q_init_expect;
     q_init_expect.resize(nJnt);
-    q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);  // TODO: included in null space operation
+    q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);
 
     int rc;
     switch (solver) {
@@ -397,6 +397,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     s_moveInitPos.isFirst = false;
 
     s_moveInitPos.t_s = ros::Time::now();
+
+    this->q_rest = s_moveInitPos.q_des;
   }
 
   const double T = 10.0;
@@ -415,8 +417,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
   s5 = s4 * s;
 
   // min jerk trajectory
-  VectorXd q_des_t = s_moveInitPos.q_init.data + (s_moveInitPos.q_des.data - s_moveInitPos.q_init.data) * (6.0 * s5 - 15.0 * s4 + 10.0 * s3);
-  VectorXd dq_des_t = (s_moveInitPos.q_des.data - s_moveInitPos.q_init.data) * (30.0 * s4 - 60.0 * s3 + 30.0 * s2) / T;
+  VectorXd q_des_t = s_moveInitPos.q_initial.data + (s_moveInitPos.q_des.data - s_moveInitPos.q_initial.data) * (6.0 * s5 - 15.0 * s4 + 10.0 * s3);
+  VectorXd dq_des_t = (s_moveInitPos.q_des.data - s_moveInitPos.q_initial.data) * (30.0 * s4 - 60.0 * s3 + 30.0 * s2) / T;
 
   switch (publisher) {
     case PublisherType::Position:
