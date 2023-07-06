@@ -131,7 +131,7 @@ bool CartController::getInitParam() {
 
   nh.param("useManipulabilityOpt", useManipOpt, false);
 
-  std::cout << "/" + hw_config_ns + "chain_start: " << chain_start << std::endl;
+  // std::cout << "/" + hw_config_ns + "chain_start: " << chain_start << std::endl;
   if (chain_start == "" || chain_end == "") {
     ROS_FATAL("Missing chain info in launch file");
     // exit(-1);

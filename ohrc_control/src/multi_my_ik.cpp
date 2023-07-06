@@ -22,7 +22,7 @@ MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vecto
   // combsLink = std_utility::comb(nJnt, 2);
 
   nAddObj = 2;
-  init_w_h.resize(nRobot + nAddObj, 1.0e5);
+  init_w_h.resize(nRobot + nAddObj, 1.0e6);
   w_h = init_w_h;
 }
 
@@ -224,6 +224,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   OsqpEigen::Solver qpSolver;
   qpSolver.settings()->setVerbosity(false);
   qpSolver.settings()->setWarmStart(true);
+  // qpSolver.settings()
+  //     ->set
 
   // set the initial data of the QP solver
   qpSolver.data()->setNumberOfVariables(nState);
