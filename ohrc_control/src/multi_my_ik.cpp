@@ -246,7 +246,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     return -1;
 
   // set the initial guess
-  qpSolver.setPrimalVariable(std_utility::concatenateVectors(q_cur));  // TODO: verify if this is useful for fast optimization
+  // if(primalVariable.size() == nState)
+    // qpSolver.setPrimalVariable(primalVariable);  // TODO: verify if this is useful for fast optimization
 
   // solve the QP problem
   OsqpEigen::ErrorExitFlag a = qpSolver.solveProblem();
@@ -262,6 +263,10 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     dq_des[i].resize(myIKs[i]->getNJnt());
     dq_des[i].data = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
   }
+
+
+  // qpSolver.getPrimalVariable(primalVariable);
+
 
   return 1;
 }
