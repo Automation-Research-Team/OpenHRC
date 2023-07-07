@@ -12,8 +12,12 @@ class MultiMyIK {
                             std::vector<MatrixXd>& A_ca);
   int addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
 
+  int calcCollisionAvoidance(int c0, int c1, const std::vector<std::vector<Vector3d>>& p_all, const std::vector<std::vector<KDL::Jacobian>>& J_all, double ds, double di,
+                             double eta, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
+
   void getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs);
   double getDistance(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs);
+  Vector3d getVec(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs);
 
   bool enableCollisionAvoidance = true;
   std::vector<double> w_h, init_w_h;
@@ -24,13 +28,13 @@ class MultiMyIK {
   Eigen::Matrix<double, Eigen::Dynamic, 1> primalVariable;
 
 public:
-  bool initialized;
+  bool initialized = false;
   double eps;
   SolveType solvetype;
 
   int nState = 0;
   std::vector<int> iJnt;
-  std::vector<std::shared_ptr<MyIK>> myIKs;
+  const std::vector<std::shared_ptr<MyIK>> myIKs;
   int CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::vector<KDL::Frame>& des_eff_pose, const std::vector<KDL::Twist>& des_eff_vel,
                       std::vector<KDL::JntArray>& dq_des, const double& dt);
   int CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<KDL::Frame>& p_in, std::vector<KDL::JntArray>& q_out, const double& dt);
