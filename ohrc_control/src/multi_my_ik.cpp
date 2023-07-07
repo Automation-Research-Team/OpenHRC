@@ -9,12 +9,10 @@ MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vecto
   // myIKs[i].reset(new MyIK(base_link[i], tip_link[i], URDF_param[i], _eps, T_base_world[i], _type));
   myIKs = myik_ptr;
 
-  iJnt.resize(nRobot, 0);
+  iJnt.resize(nRobot + 1, 0);
   for (int i = 0; i < nRobot; i++) {
     nState += myIKs[i]->getNJnt();
-
-    if (i > 0)
-      iJnt[i] = iJnt[i - 1] + myIKs[i]->getNJnt();  // all_cols;
+    iJnt[i + 1] = iJnt[i] + myIKs[i]->getNJnt();  // all_cols;
   }
 
   if (nRobot > 1)
@@ -22,7 +20,7 @@ MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vecto
   // combsLink = std_utility::comb(nJnt, 2);
 
   nAddObj = 2;
-  init_w_h.resize(nRobot + nAddObj, 1.0e6);
+  init_w_h.resize(nRobot + nAddObj, 1.0e4);
   w_h = init_w_h;
 }
 
@@ -156,7 +154,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     vs[i] = vs[i] + kp.asDiagonal() * es[i];
   }
 
-  std::vector<MatrixXd> Js_(nRobot);
+  std::vector<MatrixXd> Js_(nRobot);  // augumented Jacobian matrices
   for (int i = 0; i < nRobot; i++) {
     Js_[i] = MatrixXd::Zero(Js[i].rows(), nState);
     Js_[i].block(0, iJnt[i], Js[i].rows(), Js[i].cols()) = Js[i];
@@ -171,14 +169,13 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
   // additonal objective term in QP (2) for null space configuration
-  w_h[nRobot + 1] = 1.0e2;
+  w_h[nRobot + 1] = 1.0e1;
   H[nRobot + 1] = MatrixXd::Identity(nState, nState);
   g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 
   for (int i = 0; i < nRobot; i++) {
-    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished();
-    w *= 2.0;
-    double w_n = 1.0e-8;  // this leads dq -> 0 witch is conflict with additonal task
+    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished() * 2.0;
+    double w_n = 1.0e-6;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
     H[i] = Js_[i].transpose() * Js_[i];
@@ -247,7 +244,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
 
   // set the initial guess
   // if(primalVariable.size() == nState)
-    // qpSolver.setPrimalVariable(primalVariable);  // TODO: verify if this is useful for fast optimization
+  // qpSolver.setPrimalVariable(primalVariable);  // TODO: verify if this is useful for fast optimization
 
   // solve the QP problem
   OsqpEigen::ErrorExitFlag a = qpSolver.solveProblem();
@@ -264,9 +261,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     dq_des[i].data = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
   }
 
-
   // qpSolver.getPrimalVariable(primalVariable);
-
 
   return 1;
 }

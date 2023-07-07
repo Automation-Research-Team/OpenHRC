@@ -21,8 +21,7 @@ class MultiMyIK {
   std::vector<KDL::JntArray> q_rest;
 
   int nAddObj = 0;
-  // Eigen::Matrix<double, Eigen::Dynamic, 1> primalVariable;
-
+  Eigen::Matrix<double, Eigen::Dynamic, 1> primalVariable;
 
 public:
   bool initialized;

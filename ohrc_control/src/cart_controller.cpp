@@ -76,8 +76,8 @@ void CartController::init(std::string robot, std::string hw_config) {
   }
 
   ROS_INFO_STREAM("Looking for force/torque sensor TF.");
-  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0));
+  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0))) {
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0));
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
     subFlagPtrs.push_back(&flagForce);
   } else
