@@ -222,10 +222,11 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   // function init the solver instanse. At that time, bounds is removed and failed to pass the bounds check. Other QP solver for dense problem would be a solusion. Actually, this
   // propblem matrix is not sparse.
   OsqpEigen::Solver qpSolver;
-  qpSolver.settings()->setVerbosity(false);
+  qpSolver.settings()->setVerbosity(true);
   qpSolver.settings()->setWarmStart(true);
-  // qpSolver.settings()
-  //     ->set
+
+  // qpSolver.settings()->setAbsoluteTolerance(1.0e-6);
+  // qpSolver.settings()->setRelativeTolerance(1.0e-6);
 
   // set the initial data of the QP solver
   qpSolver.data()->setNumberOfVariables(nState);
@@ -243,6 +244,9 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   // instantiate the solver
   if (!qpSolver.initSolver())
     return -1;
+
+  // set the initial guess
+  qpSolver.setPrimalVariable(std_utility::concatenateVectors(q_cur));  // TODO: verify if this is useful for fast optimization
 
   // solve the QP problem
   OsqpEigen::ErrorExitFlag a = qpSolver.solveProblem();
