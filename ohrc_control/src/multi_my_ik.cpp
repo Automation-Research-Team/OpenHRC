@@ -260,6 +260,10 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   // get the controller input
   VectorXd dq_des_ = qpSolver.getSolution();
 
+  // check if the solution does not include nan
+  if (dq_des_.hasNaN())
+    return -1;
+
   for (int i = 0; i < nRobot; i++) {
     dq_des[i].resize(myIKs[i]->getNJnt());
     dq_des[i].data = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
@@ -315,7 +319,8 @@ int MultiMyIK::calcCollisionAvoidance(int c0, int c1, const std::vector<std::vec
 
     for (int j = j_start; j < p1.size() - 1; j++) {
       double as, bs;
-      getClosestPointLineSegments(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
+      if (!getClosestPointLineSegments(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs))
+        continue;
       Vector3d d_vec = getVec(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
       double d = d_vec.norm();
 
@@ -391,7 +396,7 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
 
   // self collision avoidance
   for (int i = 0; i < nRobot; i++) {
-    nCollision += calcCollisionAvoidance(i, i, p_all, J_all, ds, di, eta, lower_vel_limits_, upper_vel_limits_, A_ca);
+    nCollision += calcCollisionAvoidance(i, i, p_all, J_all, 0.15, 0.2, eta, lower_vel_limits_, upper_vel_limits_, A_ca);
   }
 
   // collision avoidance against other robots
@@ -406,11 +411,16 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
 }
 
 // get closest distance and point between two line segments
-void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs) {
+bool MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs) {
   Vector3d a = a1 - a0;
   Vector3d b = b1 - b0;
   double a_norm = a.norm();
   double b_norm = b.norm();
+
+  if (a_norm < std::abs(1.0e-6) || b_norm < std::abs(1.0e-6) || (a1 - b0).norm() < std::abs(1.0e-6))  // zero length case
+    return false;
+
+  // std::cout << a_norm << " " << b_norm << std::endl;
 
   Vector3d na = a / a_norm;
   Vector3d nb = b / b_norm;
@@ -423,26 +433,26 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
     double d1 = nb.dot(b1 - a0);
 
     if (d0 < 0.0 && d1 < 0.0) {
-      if (abs(d0) < abs(d1)) {
+      if (std::abs(d0) < std::abs(d1)) {
         as = 0.0;
         bs = 0.0;
-        return;
+        return true;
       } else if (d0 > a_norm && d1 > a_norm) {
-        if (abs(d0) < abs(d1)) {
+        if (std::abs(d0) < std::abs(d1)) {
           as = 1.0;
           bs = 0.0;
-          return;
+          return true;
         } else {
           as = 1.0;
           bs = 1.0;
-          return;
+          return true;
         }
       }
     }
     // overlap case
     as = 0.0;
     bs = 0.0;
-    return;
+    return true;
 
   } else {
     // lines criss cross case
@@ -484,7 +494,7 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
         as = dot / a_norm;
     }
   }
-  return;
+  return true;
 }
 
 // get distance
