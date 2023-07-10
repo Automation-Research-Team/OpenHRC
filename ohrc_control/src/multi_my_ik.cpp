@@ -395,9 +395,8 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
   int nCollision = 0;
 
   // self collision avoidance
-  for (int i = 0; i < nRobot; i++) {
-    nCollision += calcCollisionAvoidance(i, i, p_all, J_all, 0.15, 0.2, eta, lower_vel_limits_, upper_vel_limits_, A_ca);
-  }
+  // for (int i = 0; i < nRobot; i++)
+  // nCollision += calcCollisionAvoidance(i, i, p_all, J_all, 0.1, 0.15, eta, lower_vel_limits_, upper_vel_limits_, A_ca);
 
   // collision avoidance against other robots
   if (nRobot > 1) {
