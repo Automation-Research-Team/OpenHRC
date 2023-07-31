@@ -45,6 +45,8 @@ protected:
 
   std::vector<int> manualInd, autoInd;
 
+  std::vector<ros::Time> prev_time;
+
   enum class PriorityType { Manual, Automation, Adaptation, None } priority;
   bool adaptation = false;
   void setPriority(PriorityType priority);

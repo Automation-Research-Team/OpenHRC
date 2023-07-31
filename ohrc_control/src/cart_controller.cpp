@@ -191,6 +191,12 @@ bool CartController::getInitParam() {
     return false;
   }
 
+  double freq_bound;
+  if (nh.getParam("/" + hw_config_ns + "freq_bound", freq_bound)) {
+    ROS_WARN_STREAM("freq is bounded by " << freq_bound);
+    freq = freq_bound;
+  }
+
   // subFlagPtrs.push_back(&flagEffPose);
   // nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
 
@@ -435,6 +441,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
       break;
     case PublisherType::TrajectoryAction:
       sendTrajectoryActionCmd(s_moveInitPos.q_des.data, T * (1.0 - s));
+      ros::Duration(T).sleep();
+      lastLoop = true;
       break;
     default:
       ROS_ERROR_STREAM_ONCE("This publisher is not implemented...");
@@ -472,7 +480,7 @@ void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, tr
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
     cmd_trj.points[0].positions.push_back(q_des[i]);
-    // cmd_trj.points[0].velocities.push_back(0.0);
+    cmd_trj.points[0].velocities.push_back(0.0);
     cmd_trj.points[0].accelerations.push_back(0.0);
   }
 }
@@ -729,6 +737,11 @@ void CartController::update() {
   update(ros::Time::now(), ros::Duration(1.0 / freq));
 }
 void CartController::update(const ros::Time& time, const ros::Duration& period) {
+  if ((time - prev_time) < period)
+    return;
+
+  prev_time = time;
+
   updateCurState();
   // std::cout << robot_ns << std::endl;
   double dt = period.toSec();

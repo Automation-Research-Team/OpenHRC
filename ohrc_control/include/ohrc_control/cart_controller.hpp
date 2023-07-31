@@ -83,6 +83,8 @@ class CartController {
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
 
+  ros::Time prev_time = ros::Time::now();
+
 protected:
   SolverType solver;
   ControllerType controller;

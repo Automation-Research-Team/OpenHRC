@@ -9,6 +9,8 @@ MultiCartController::MultiCartController() {
   dt = 1.0 / freq;
   nRobot = robots.size();
 
+  prev_time.resize(nRobot, ros::Time::now());
+
   cartControllers.resize(nRobot);
   for (int i = 0; i < nRobot; i++)
     // cartControllers[i].reset(new CartController(robots[i], root_frame, i));
@@ -200,7 +202,7 @@ void MultiCartController::stopping() {
 }
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
-  std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
+  static std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
   for (int i = 0; i < nRobot; i++) {
     // cartControllers[i]->updateCurState();
     cartControllers[i]->getState(q_cur[i], dq_cur[i]);
@@ -221,16 +223,23 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     }
 
     // low pass filter
-    for (int i = 0; i < nRobot; i++)
+    for (int i = 0; i < nRobot; i++) {
       cartControllers[i]->filterJnt(dq_des[i]);
+      if (q_des[i].data.rows() != dq_des[i].data.rows())
+        q_des[i].data = cartControllers[i]->getqRest().data;
+      q_des[i].data += dq_des[i].data * dt;
+    }
 
     for (int i = 0; i < nRobot; i++) {
-      // std_msgs::Float64MultiArray cmd;
-      // cmd.data = std::vector<double>(dq_des[i].data.data(), dq_des[i].data.data() + dq_des[i].data.rows() * dq_des[i].data.cols());
-      // cartControllers[i]->jntCmdPublisher.publish(cmd);
+      if ((time - prev_time[i]) < ros::Duration(1.0 / cartControllers[i]->freq))
+        continue;
 
-      cartControllers[i]->sendVelCmd(q_des[i], dq_des[i], dt);
+      prev_time[i] = time;
+      // std::cout << q_des[i].data.transpose() << std::endl;
+      // std::cout << dq_des[i].data.transpose() << std::endl;
+      cartControllers[i]->sendVelCmd(q_des[i], dq_des[i], 1.0 / cartControllers[i]->freq);
     }
+
   } else if (controller == ControllerType::Position) {
     int rc = multimyik_solver_ptr->CartToJnt(q_cur, desPose, q_des, dt);
 

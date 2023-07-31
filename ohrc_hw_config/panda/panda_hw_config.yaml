@@ -1,0 +1,13 @@
+panda:
+  chain_start: "panda_link0" # base frame of commands
+  chain_end: "panda_link7" # target eff frame
+
+  publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+  topic_namespace: "effort_joint_trajectory_controller"
+
+  initIKAngle: [0, -0.785398163, 0, -2.35619449, 0, 1.57079632679, 0.785398163397] # size of this should be equal to DoF
+
+  # initial_pose_frame: test # default frame is same as chain_start
+  initial_pose: [0.35, 0.0, 0.3, 3.141592, 0, 0] # [x, y, z, roll, pitch, yaw]
+
+  freq_bound: 30.0

@@ -6,4 +6,6 @@ fetch:
   topic_namespace: "arm_with_torso_controller"
 
   initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
-  initial_pose: [0.2, 0.3, 1.1, 0, 0, 0] # [x, y, z, roll, pitch, yaw]
+  initial_pose: [0.6, 0.0, 1., 0, 0, 0] # [x, y, z, roll, pitch, yaw]
+  
+  freq_bound: 30.0
