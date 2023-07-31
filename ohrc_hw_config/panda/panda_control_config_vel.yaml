@@ -1,21 +1,20 @@
-
-root_frame: "body_link" # IK calculation base frame (for multi-follower)
+root_frame: "world" # IK calculation base frame (for multi-follower)
 
 controller: "Velocity" # "Position" or "Velocity"
 
 
 solver: "MyIK"
 
-self_collision_avoidance: true
+self_collision_avoidance: false
 
-control_freq: 30.0
+control_freq: 500.0
 
 
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
-  seed:
-    - ""
+  panda: # robot config name
+    - "" # robot namespace
 
 
 priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Individual" #"Parallel" #   (for multi-follower)
-IK_mode: "Order" # (for multi-follower)
+IK_mode: "Order" # "Concatenated" #(for multi-follower)

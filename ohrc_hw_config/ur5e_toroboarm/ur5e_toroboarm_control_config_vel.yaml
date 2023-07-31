@@ -20,8 +20,10 @@ control_freq: 500.0
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
   ur5e: # robot config name
     - "" # robot namespace
+  toroboarm:
+    - "toroboarm_1"
 
 
 priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Individual" #"Parallel" #   (for multi-follower)
-IK_mode: "Order" # (for multi-follower)
+IK_mode: "Concatenated" #"Order" # (for multi-follower)

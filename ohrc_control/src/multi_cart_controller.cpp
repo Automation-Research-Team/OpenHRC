@@ -9,9 +9,12 @@ MultiCartController::MultiCartController() {
   dt = 1.0 / freq;
   nRobot = robots.size();
 
+  prev_time.resize(nRobot, ros::Time::now());
+
   cartControllers.resize(nRobot);
   for (int i = 0; i < nRobot; i++)
-    cartControllers[i].reset(new CartController(robots[i], root_frame, i));
+    // cartControllers[i].reset(new CartController(robots[i], root_frame, i));
+    cartControllers[i].reset(new CartController(robots[i], hw_configs[i], root_frame, i));
 
   std::vector<std::string> base_link(nRobot), tip_link(nRobot), URDF_param(nRobot);  // TODO: base_links for all robot shoud be same
   std::vector<Affine3d> T_base_root(nRobot);
@@ -44,10 +47,33 @@ MultiCartController::MultiCartController() {
 bool MultiCartController::getInitParam() {
   ros::NodeHandle n("~");
 
-  if (!n.getParam("follower_list", robots) || !robots.size()) {
-    ROS_FATAL_STREAM("Failed to get the follower robot list");
+  XmlRpc::XmlRpcValue my_list;
+  if (!n.getParam("follower_list", my_list)) {
+    ROS_FATAL_STREAM("Failed to get the hardware config list");
     return false;
   }
+
+  for (auto itr = my_list.begin(); itr != my_list.end(); ++itr) {
+    // std::cout << itr->first << ":" << itr->second << std::endl;
+    if (my_list[itr->first].getType() == XmlRpc::XmlRpcValue::TypeArray) {
+      for (int i = 0; i < my_list[itr->first].size(); ++i) {
+        // std::cout << itr->first << ":" << my_list[itr->first][i] << std::endl;
+        hw_configs.push_back(itr->first);
+        robots.push_back(my_list[itr->first][i]);
+      }
+    }
+  }
+
+  // std::cout << my_list.size() << std::endl;
+
+  // std::map<std::string, std::string> robots_map;
+  // if (!n.getParam("follower_list", robots_map) || robots_map.empty()) {
+  //   ROS_FATAL_STREAM("Failed to get the follower robot list");
+  //   return false;
+  // }
+
+  for (int i = 0; i < robots.size(); i++)
+    ROS_INFO_STREAM("Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
 
   if (!n.getParam("root_frame", root_frame)) {
     ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
@@ -71,17 +97,17 @@ bool MultiCartController::getInitParam() {
     return false;
   }
 
-  std::string publisher_str;
-  if (!n.param("publisher", publisher_str, std::string("Velocity")))
-    ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
-  else
-    ROS_INFO_STREAM("Publisher: " << publisher_str);
+  // std::string publisher_str;
+  // if (!n.param("publisher", publisher_str, std::string("Velocity")))
+  //   ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
+  // else
+  //   ROS_INFO_STREAM("Publisher: " << publisher_str);
 
-  publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
-  if (publisher == PublisherType::None) {
-    ROS_FATAL("Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
-    return false;
-  }
+  // publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
+  // if (publisher == PublisherType::None) {
+  //   ROS_FATAL("Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
+  //   return false;
+  // }
 
   MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual", n);
   IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated", n);
@@ -155,6 +181,11 @@ void MultiCartController::starting() {
   for (int i = 0; i < nRobot; i++)
     initInterface(cartControllers[i]);
 
+  std::vector<KDL::JntArray> q_rest(nRobot);
+  for (int i = 0; i < nRobot; i++)
+    q_rest[i] = cartControllers[i]->getqRest();
+  multimyik_solver_ptr->setqRest(q_rest);
+
   // cartControllers[i]->enableOperation();
   // }
   ROS_INFO_STREAM("Controller started!");
@@ -171,7 +202,7 @@ void MultiCartController::stopping() {
 }
 
 void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
-  std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
+  static std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
   for (int i = 0; i < nRobot; i++) {
     // cartControllers[i]->updateCurState();
     cartControllers[i]->getState(q_cur[i], dq_cur[i]);
@@ -192,14 +223,23 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     }
 
     // low pass filter
-    for (int i = 0; i < nRobot; i++)
+    for (int i = 0; i < nRobot; i++) {
       cartControllers[i]->filterJnt(dq_des[i]);
+      if (q_des[i].data.rows() != dq_des[i].data.rows())
+        q_des[i].data = cartControllers[i]->getqRest().data;
+      q_des[i].data += dq_des[i].data * dt;
+    }
 
     for (int i = 0; i < nRobot; i++) {
-      std_msgs::Float64MultiArray cmd;
-      cmd.data = std::vector<double>(dq_des[i].data.data(), dq_des[i].data.data() + dq_des[i].data.rows() * dq_des[i].data.cols());
-      cartControllers[i]->jntCmdPublisher.publish(cmd);
+      if ((time - prev_time[i]) < ros::Duration(1.0 / cartControllers[i]->freq))
+        continue;
+
+      prev_time[i] = time;
+      // std::cout << q_des[i].data.transpose() << std::endl;
+      // std::cout << dq_des[i].data.transpose() << std::endl;
+      cartControllers[i]->sendVelCmd(q_des[i], dq_des[i], 1.0 / cartControllers[i]->freq);
     }
+
   } else if (controller == ControllerType::Position) {
     int rc = multimyik_solver_ptr->CartToJnt(q_cur, desPose, q_des, dt);
 
@@ -213,28 +253,30 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
       cartControllers[i]->filterJnt(q_des[i]);
 
     for (int i = 0; i < nRobot; i++) {
-      if (publisher == PublisherType::Position) {
-        std_msgs::Float64MultiArray cmd;
-        cmd.data = std::vector<double>(q_des[i].data.data(), q_des[i].data.data() + q_des[i].data.rows() * q_des[i].data.cols());
-        cartControllers[i]->jntCmdPublisher.publish(cmd);
-      } else {
-        trajectory_msgs::JointTrajectory cmd_trj;
-        cmd_trj.points.resize(1);
-        cmd_trj.points[0].time_from_start = ros::Duration(dt);
-        for (int j = 0; j < cartControllers[i]->getNJnt(); j++) {
-          cmd_trj.joint_names.push_back(cartControllers[i]->getNameJnt()[j]);
-          // cmd_trj.joint_names.push_back(chain_segs[i].getJoint().getName());
-          cmd_trj.points[0].positions.push_back(q_des[i].data[j]);
-        }
+      cartControllers[i]->sendPosCmd(q_des[i], dq_des[i], dt);  // TODO: update dq
 
-        if (publisher == PublisherType::Trajectory) {
-          cartControllers[i]->jntCmdPublisher.publish(cmd_trj);
-        } else if (publisher == PublisherType::TrajectoryAction) {
-          control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
-          cmd_trjAction.goal.trajectory = cmd_trj;
-          cartControllers[i]->jntCmdPublisher.publish(cmd_trjAction);
-        }
-      }
+      // if (publisher == PublisherType::Position) {
+      //   std_msgs::Float64MultiArray cmd;
+      //   cmd.data = std::vector<double>(q_des[i].data.data(), q_des[i].data.data() + q_des[i].data.rows() * q_des[i].data.cols());
+      //   cartControllers[i]->jntCmdPublisher.publish(cmd);
+      // } else {
+      //   trajectory_msgs::JointTrajectory cmd_trj;
+      //   cmd_trj.points.resize(1);
+      //   cmd_trj.points[0].time_from_start = ros::Duration(dt);
+      //   for (int j = 0; j < cartControllers[i]->getNJnt(); j++) {
+      //     cmd_trj.joint_names.push_back(cartControllers[i]->getNameJnt()[j]);
+      //     // cmd_trj.joint_names.push_back(chain_segs[i].getJoint().getName());
+      //     cmd_trj.points[0].positions.push_back(q_des[i].data[j]);
+      //   }
+
+      //   if (publisher == PublisherType::Trajectory) {
+      //     cartControllers[i]->jntCmdPublisher.publish(cmd_trj);
+      //   } else if (publisher == PublisherType::TrajectoryAction) {
+      //     control_msgs::FollowJointTrajectoryActionGoal cmd_trjAction;
+      //     cmd_trjAction.goal.trajectory = cmd_trj;
+      //     cartControllers[i]->jntCmdPublisher.publish(cmd_trjAction);
+      //   }
+      // }
     }
 
   } else

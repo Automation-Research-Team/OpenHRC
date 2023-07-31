@@ -1,8 +1,7 @@
 
-root_frame: "base_link" # IK calculation base frame (for multi-follower)
+root_frame: "body_link" # IK calculation base frame (for multi-follower)
 
 controller: "Position" # "Position" or "Velocity"
-
 
 solver: "MyIK"
 
@@ -10,11 +9,10 @@ self_collision_avoidance: true
 
 control_freq: 30.0
 
-
-
 follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
-  crane_x7:
+  seed:
     - ""
+
 
 priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Individual" #"Parallel" #   (for multi-follower)

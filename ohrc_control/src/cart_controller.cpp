@@ -1,5 +1,10 @@
 #include "ohrc_control/cart_controller.hpp"
 
+CartController::CartController(const std::string robot, const std::string hw_config, const std::string root_frame, const int index)
+  : nh("~"), root_frame(root_frame), index(index) {
+  init(robot, hw_config);
+}
+
 CartController::CartController(const std::string robot, const std::string root_frame, const int index) : nh("~"), root_frame(root_frame), index(index) {
   init(robot);
 }
@@ -17,21 +22,29 @@ CartController::CartController() : nh("~") {
 }
 
 void CartController::init(std::string robot) {
+  this->init(robot, robot);
+}
+
+void CartController::init(std::string robot, std::string hw_config) {
   // nh_.setCallbackQueue(&queue);
   // spinner_.reset(new ros::AsyncSpinner(1, &queue));
   spinner.reset(new ros::AsyncSpinner(0));
 
   // std::signal(SIGINT, CartController::signal_handler);
 
+  ROS_INFO_STREAM("namespace: " + robot);
+  ROS_INFO_STREAM("hw_config: " + hw_config);
+  if (robot != "")
+    robot_ns = robot + "/";
+  urdf_param = "/" + robot_ns + "robot_description";
+
+  if (hw_config != "")
+    hw_config_ns = hw_config + "/";
+
   if (!getInitParam())
     ros::shutdown();
 
   dt = 1.0 / freq;
-
-  ROS_INFO_STREAM("namespace: " + robot);
-  if (robot != "")
-    robot_ns = robot + "/";
-  urdf_param = "/" + robot_ns + "robot_description";
 
   this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(10.0));
 
@@ -52,7 +65,7 @@ void CartController::init(std::string robot) {
   nJnt = chain.getNrOfJoints();
   _q_cur.resize(nJnt);
 
-  nh.param("initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
+  nh.param("/" + hw_config_ns + "initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
 
   jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 2, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
@@ -63,8 +76,8 @@ void CartController::init(std::string robot) {
   }
 
   ROS_INFO_STREAM("Looking for force/torque sensor TF.");
-  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(3.0));
+  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0))) {
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0));
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
     subFlagPtrs.push_back(&flagForce);
   } else
@@ -110,14 +123,15 @@ void CartController::updateFilterCutoff(const double velFreq, const double jntFr
 }
 
 bool CartController::getInitParam() {
-  nh.param("chain_start", chain_start, std::string(""));
+  nh.param("/" + hw_config_ns + "chain_start", chain_start, std::string(""));
   if (root_frame == "")
     root_frame = chain_start;
 
-  nh.param("chain_end", chain_end, std::string(""));
+  nh.param("/" + hw_config_ns + "chain_end", chain_end, std::string(""));
 
   nh.param("useManipulabilityOpt", useManipOpt, false);
 
+  // std::cout << "/" + hw_config_ns + "chain_start: " << chain_start << std::endl;
   if (chain_start == "" || chain_end == "") {
     ROS_FATAL("Missing chain info in launch file");
     // exit(-1);
@@ -149,7 +163,7 @@ bool CartController::getInitParam() {
   }
 
   std::string publisher_str;
-  if (!nh.param("publisher", publisher_str, std::string("Velocity")))
+  if (!nh.param("/" + hw_config_ns + "publisher", publisher_str, std::string("Velocity")))
     ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
   else
     ROS_INFO_STREAM("Publisher: " << publisher_str);
@@ -168,13 +182,19 @@ bool CartController::getInitParam() {
   else if (publisher == PublisherType::Trajectory || publisher == PublisherType::TrajectoryAction)
     defaltPublisherTopicName = "joint_trajectory_controller";
 
-  if (!nh.param("topic_namespace", publisherTopicName, defaltPublisherTopicName)) {
+  if (!nh.param("/" + hw_config_ns + "topic_namespace", publisherTopicName, defaltPublisherTopicName)) {
     ROS_WARN_STREAM("Publisher is not configured: " << defaltPublisherTopicName);
   }
 
   if (!nh.getParam("control_freq", freq)) {
     ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
     return false;
+  }
+
+  double freq_bound;
+  if (nh.getParam("/" + hw_config_ns + "freq_bound", freq_bound)) {
+    ROS_WARN_STREAM("freq is bounded by " << freq_bound);
+    freq = freq_bound;
   }
 
   // subFlagPtrs.push_back(&flagEffPose);
@@ -188,8 +208,8 @@ bool CartController::getInitParam() {
   // }
   // std::cout << init_q_expect << std::endl;
 
-  nh.param("initial_pose_frame", initPoseFrame, chain_start);
-  nh.param("initial_pose", initPose, std::vector<double>{ 0.45, 0.0, 0.85, 0.0, M_PI, -M_PI_2 });
+  nh.param("/" + hw_config_ns + "initial_pose_frame", initPoseFrame, chain_start);
+  nh.param("/" + hw_config_ns + "initial_pose", initPose, std::vector<double>{ 0.45, 0.0, 0.85, 0.0, M_PI, -M_PI_2 });
 
   return true;
 }
@@ -349,14 +369,14 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
 
   if (s_moveInitPos.isFirst) {
     this->nameJnt = nameJnt;
-    s_moveInitPos.q_init = q_cur;
+    s_moveInitPos.q_initial = q_cur;
     KDL::Frame init_eff_pose;
 
     tf::transformEigenToKDL(T_init, init_eff_pose);
 
     KDL::JntArray q_init_expect;
     q_init_expect.resize(nJnt);
-    q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);  // TODO: included in null space operation
+    q_init_expect.data = VectorXd::Map(&_q_init_expect[0], nJnt);
 
     int rc;
     switch (solver) {
@@ -383,6 +403,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     s_moveInitPos.isFirst = false;
 
     s_moveInitPos.t_s = ros::Time::now();
+
+    this->q_rest = s_moveInitPos.q_des;
   }
 
   const double T = 10.0;
@@ -401,8 +423,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
   s5 = s4 * s;
 
   // min jerk trajectory
-  VectorXd q_des_t = s_moveInitPos.q_init.data + (s_moveInitPos.q_des.data - s_moveInitPos.q_init.data) * (6.0 * s5 - 15.0 * s4 + 10.0 * s3);
-  VectorXd dq_des_t = (s_moveInitPos.q_des.data - s_moveInitPos.q_init.data) * (30.0 * s4 - 60.0 * s3 + 30.0 * s2) / T;
+  VectorXd q_des_t = s_moveInitPos.q_initial.data + (s_moveInitPos.q_des.data - s_moveInitPos.q_initial.data) * (6.0 * s5 - 15.0 * s4 + 10.0 * s3);
+  VectorXd dq_des_t = (s_moveInitPos.q_des.data - s_moveInitPos.q_initial.data) * (30.0 * s4 - 60.0 * s3 + 30.0 * s2) / T;
 
   switch (publisher) {
     case PublisherType::Position:
@@ -419,6 +441,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
       break;
     case PublisherType::TrajectoryAction:
       sendTrajectoryActionCmd(s_moveInitPos.q_des.data, T * (1.0 - s));
+      ros::Duration(T).sleep();
+      lastLoop = true;
       break;
     default:
       ROS_ERROR_STREAM_ONCE("This publisher is not implemented...");
@@ -456,7 +480,7 @@ void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, tr
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
     cmd_trj.points[0].positions.push_back(q_des[i]);
-    // cmd_trj.points[0].velocities.push_back(0.0);
+    cmd_trj.points[0].velocities.push_back(0.0);
     cmd_trj.points[0].accelerations.push_back(0.0);
   }
 }
@@ -713,6 +737,11 @@ void CartController::update() {
   update(ros::Time::now(), ros::Duration(1.0 / freq));
 }
 void CartController::update(const ros::Time& time, const ros::Duration& period) {
+  if ((time - prev_time) < period)
+    return;
+
+  prev_time = time;
+
   updateCurState();
   // std::cout << robot_ns << std::endl;
   double dt = period.toSec();
@@ -763,23 +792,7 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
     dq_des.data = (q_des.data - q_des_prev.data) / dt;
 
-    switch (publisher) {
-      case PublisherType::Position:
-        sendPositionCmd(q_des.data);
-        break;
-      case PublisherType::Velocity:
-        sendVelocityCmd(dq_des.data);
-        break;
-      case PublisherType::Trajectory:
-        sendTrajectoryCmd(q_des.data, dt);
-        break;
-      case PublisherType::TrajectoryAction:
-        sendTrajectoryActionCmd(q_des.data, dt);
-        break;
-      default:
-        ROS_ERROR_STREAM_ONCE("This controller is not implemented...");
-        break;
-    }
+    sendPosCmd(q_des, dq_des, dt);
 
     q_des_prev = q_des;
 
@@ -796,28 +809,52 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
     q_des.data += dq_des.data * dt;
 
-    switch (publisher) {
-      case PublisherType::Position:
-        sendPositionCmd(q_des.data);
-        break;
-      case PublisherType::Velocity:
-        sendVelocityCmd(dq_des.data);
-        break;
-      case PublisherType::Trajectory:
-        sendTrajectoryCmd(q_des.data, dq_des.data, dt);
-        break;
-      case PublisherType::TrajectoryAction:
-        sendTrajectoryActionCmd(q_des.data, dq_des.data, dt);
-        break;
-      default:
-        ROS_ERROR_STREAM_ONCE("This controller is not implemented...");
-        break;
-    }
+    sendVelCmd(q_des, dq_des, dt);
 
   } else if (controller == ControllerType::Torque) {
     // torque controller
   } else
     ROS_ERROR_STREAM("Not Implemented!");
+}
+
+void CartController::sendPosCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt) {
+  switch (publisher) {
+    case PublisherType::Position:
+      sendPositionCmd(q_des.data);
+      break;
+    case PublisherType::Velocity:
+      sendVelocityCmd(dq_des.data);
+      break;
+    case PublisherType::Trajectory:
+      sendTrajectoryCmd(q_des.data, dt);
+      break;
+    case PublisherType::TrajectoryAction:
+      sendTrajectoryActionCmd(q_des.data, dt);
+      break;
+    default:
+      ROS_ERROR_STREAM_ONCE("This controller is not implemented...");
+      break;
+  }
+}
+
+void CartController::sendVelCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt) {
+  switch (publisher) {
+    case PublisherType::Position:
+      sendPositionCmd(q_des.data);
+      break;
+    case PublisherType::Velocity:
+      sendVelocityCmd(dq_des.data);
+      break;
+    case PublisherType::Trajectory:
+      sendTrajectoryCmd(q_des.data, dq_des.data, dt);
+      break;
+    case PublisherType::TrajectoryAction:
+      sendTrajectoryActionCmd(q_des.data, dq_des.data, dt);
+      break;
+    default:
+      ROS_ERROR_STREAM_ONCE("This controller is not implemented...");
+      break;
+  }
 }
 
 void CartController::filterJnt(KDL::JntArray& q) {

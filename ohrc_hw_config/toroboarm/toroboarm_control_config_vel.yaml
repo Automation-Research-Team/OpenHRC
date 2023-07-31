@@ -1,30 +1,24 @@
-chain_start: "base" # base frame of commands
-chain_end: "link7" # target eff frame
+# chain_start: "base" # base frame of commands
+# chain_end: "link7" # target eff frame
 root_frame: "world" # IK calculation base frame (for multi-follower)
 
 controller: "Velocity" # "Position" or "Velocity"
-publisher: "Velocity" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
-topic_namespace: "joint_velocity_controller"
+# publisher: "Velocity" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+# topic_namespace: "joint_velocity_controller"
 
 solver: "MyIK"
 
 control_freq: 500.0
 
-initIKAngle: [0, 0, 0, 0, 0, 0, 0]
-initial_pose: [0.4, 0.0, 0.3, 0.0, 3.141592, 0]
 
+# initIKAngle: [0, 0, 0, 0, 0, 0, 0]
+# initial_pose: [0.4, 0.0, 0.3, 0.0, 3.141592, 0]
 
-follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
-  - "toroboarm_1"
-  # - "toroboarm_2"
-  # - "toroboarm_3"
-  # - "toroboarm_4"
-  # - "toroboarm_5"
-  # - "toroboarm_6"
-  # - "toroboarm_7"
-  # - "toroboarm_8"
-  # - "toroboarm_9"
+follower_list: # robot namespace list. They should be unique. if you ("") means the robot has no namespace
+  toroboarm: # robot config name
+    - "toroboarm_1" # robot namespace
+    # - "toroboarm_2"
 
 priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Parallel" # "Individual" #  (for multi-follower)
-IK_mode: "Order" # (for multi-follower)
+IK_mode:  "Concatenated" #"Order" # (for multi-follower)

@@ -86,6 +86,27 @@ inline std::string getDatetimeStr() {
   return s.str();
 }
 
-};  // namespace std_utility
+inline Eigen::VectorXd concatenateVectors(std::vector<Eigen::VectorXd> vecs) {
+  int s = 0, index = 0;
+  for (auto vec : vecs) {
+    s += vec.size();
+  }
+  Eigen::VectorXd vec(s);
+  for (auto v : vecs) {
+    vec.segment(index, v.size()) = v;
+    index += v.size();
+  }
+  return vec;
+}
+
+inline Eigen::VectorXd concatenateVectors(std::vector<KDL::JntArray> vecs) {
+  std::vector<Eigen::VectorXd> v(vecs.size());
+  for (int i = 0; i < vecs.size(); i++) {
+    v[i] = vecs[i].data;
+  }
+  return concatenateVectors(v);
+}
+
+};      // namespace std_utility
 
 #endif  // STD_UTILITY_H

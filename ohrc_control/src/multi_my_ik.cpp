@@ -3,34 +3,37 @@
 namespace MyIK {
 MultiMyIK::MultiMyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<std::string>& URDF_param,
                      const std::vector<Affine3d>& T_base_world, const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps, SolveType _type)
-  : nRobot(base_link.size()), initialized(false), eps(_eps), solvetype(_type) {
-  myIKs.resize(nRobot);
-  // for (int i = 0; i < nRobot; i++)
-  // myIKs[i].reset(new MyIK(base_link[i], tip_link[i], URDF_param[i], _eps, T_base_world[i], _type));
-  myIKs = myik_ptr;
-
-  iJnt.resize(nRobot, 0);
+  : nRobot(base_link.size()), eps(_eps), solvetype(_type), myIKs(myik_ptr) {
+  // get number of elements of the state vector and indeces corresponding to start of joint vector of each robot
+  iJnt.resize(nRobot + 1, 0);
   for (int i = 0; i < nRobot; i++) {
     nState += myIKs[i]->getNJnt();
-
-    if (i > 0)
-      iJnt[i] = iJnt[i - 1] + myIKs[i]->getNJnt();  // all_cols;
+    iJnt[i + 1] = iJnt[i] + myIKs[i]->getNJnt();
   }
 
+  // get combinations of robots
   if (nRobot > 1)
     combsRobot = std_utility::comb(nRobot, 2);
-  // combsLink = std_utility::comb(nJnt, 2);
-  init_w_h.resize(nRobot + 1, 1.0e5);
+
+  // initialize Ik weights
+  nAddObj = 2;
+  init_w_h.resize(nRobot + nAddObj, 1.0e4);
   w_h = init_w_h;
+
+  initialized = true;
+}
+
+void MultiMyIK::setqRest(const std::vector<KDL::JntArray>& q_rest) {
+  this->q_rest = q_rest;
 }
 
 int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<KDL::Frame>& p_in, std::vector<KDL::JntArray>& q_out, const double& dt) {
   q_out = q_init;
 
-  // if (!initialized) {
-  //   ROS_ERROR("TRAC-IK was not properly initialized with a valid chain or limits.  IK cannot proceed");
-  //   return -1;
-  // }
+  if (!initialized) {
+    ROS_ERROR("IK was not properly initialized with a valid chain or limits. IK cannot proceed");
+    return -1;
+  }
 
   // if (q_init.data.size() != types.size()) {
   //   ROS_ERROR_THROTTLE(1.0, "IK seeded with wrong number of joints.  Expected %d but got %d", (int)types.size(), (int)q_init.data.size());
@@ -126,10 +129,17 @@ int MultiMyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::ve
 
 int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::vector<KDL::Frame>& des_eff_pose, const std::vector<KDL::Twist>& des_eff_vel,
                                std::vector<KDL::JntArray>& dq_des, const double& dt) {
+  if (!initialized) {
+    ROS_ERROR("IK was not properly initialized with a valid chain or limits. IK cannot proceed");
+    return -1;
+  }
+
   std::vector<MatrixXd> Js(nRobot);
-  std::vector<Affine3d> Ts_d(nRobot), Ts(nRobot);
   std::vector<VectorXd> es(nRobot);
   std::vector<Matrix<double, 6, 1>> vs(nRobot);
+
+  VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
+  kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
 
   for (int i = 0; i < nRobot; i++) {
     KDL::Jacobian jac(myIKs[i]->getNJnt());
@@ -139,33 +149,37 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
     KDL::Frame p;
     myIKs[i]->JntToCart(q_cur[i], p);
 
-    tf::transformKDLToEigen(des_eff_pose[i], Ts_d[i]);
-    tf::transformKDLToEigen(p, Ts[i]);
-    es[i] = getCartError(Ts[i], Ts_d[i]);
+    Affine3d Ts_d, Ts;
+    tf::transformKDLToEigen(des_eff_pose[i], Ts_d);
+    tf::transformKDLToEigen(p, Ts);
+    es[i] = getCartError(Ts, Ts_d);
 
     tf::twistKDLToEigen(des_eff_vel[i], vs[i]);
-    VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
-    kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
     vs[i] = vs[i] + kp.asDiagonal() * es[i];
   }
 
-  std::vector<MatrixXd> Js_(nRobot);
+  std::vector<MatrixXd> Js_(nRobot);  // augumented Jacobian matrices
   for (int i = 0; i < nRobot; i++) {
     Js_[i] = MatrixXd::Zero(Js[i].rows(), nState);
     Js_[i].block(0, iJnt[i], Js[i].rows(), Js[i].cols()) = Js[i];
   }
 
-  // w_h[0] = 1.0e3;
-  w_h[nRobot] = 1.0e6;
-  std::vector<MatrixXd> H(w_h.size());
-  std::vector<VectorXd> g(w_h.size());
-  H[w_h.size() - 1] = MatrixXd::Identity(nState, nState);
-  g[w_h.size() - 1] = VectorXd::Zero(nState);
+  std::vector<MatrixXd> H(nRobot + nAddObj);
+  std::vector<VectorXd> g(nRobot + nAddObj);
+
+  // additonal objective term in QP (1) for singularity avoidance
+  w_h[nRobot] = 1.0;
+  H[nRobot] = MatrixXd::Identity(nState, nState);
+  g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
+
+  // additonal objective term in QP (2) for null space configuration
+  w_h[nRobot + 1] = 1.0e1;
+  H[nRobot + 1] = MatrixXd::Identity(nState, nState);
+  g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 
   for (int i = 0; i < nRobot; i++) {
-    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished();
-    w *= 1.0;
-    double w_n = 1.0e-8;  // this leads dq -> 0 witch is conflict with additonal task
+    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished() * 1.0e2;
+    double w_n = 0.0;  // 1.0e-6;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
     H[i] = Js_[i].transpose() * Js_[i];
@@ -212,6 +226,9 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   qpSolver.settings()->setVerbosity(false);
   qpSolver.settings()->setWarmStart(true);
 
+  // qpSolver.settings()->setAbsoluteTolerance(1.0e-6);
+  // qpSolver.settings()->setRelativeTolerance(1.0e-6);
+
   // set the initial data of the QP solver
   qpSolver.data()->setNumberOfVariables(nState);
   qpSolver.data()->setNumberOfConstraints(nState + nCA);
@@ -229,6 +246,10 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   if (!qpSolver.initSolver())
     return -1;
 
+  // set the initial guess
+  // if(primalVariable.size() == nState)
+  // qpSolver.setPrimalVariable(primalVariable);  // TODO: verify if this is useful for fast optimization
+
   // solve the QP problem
   OsqpEigen::ErrorExitFlag a = qpSolver.solveProblem();
   if (a != OsqpEigen::ErrorExitFlag::NoError) {
@@ -239,10 +260,16 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   // get the controller input
   VectorXd dq_des_ = qpSolver.getSolution();
 
+  // check if the solution does not include nan
+  if (dq_des_.hasNaN())
+    return -1;
+
   for (int i = 0; i < nRobot; i++) {
     dq_des[i].resize(myIKs[i]->getNJnt());
     dq_des[i].data = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
   }
+
+  // qpSolver.getPrimalVariable(primalVariable);
 
   return 1;
 }
@@ -275,11 +302,59 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std:
   return A_ca.size();
 }
 
+int MultiMyIK::calcCollisionAvoidance(int c0, int c1, const std::vector<std::vector<Vector3d>>& p_all, const std::vector<std::vector<KDL::Jacobian>>& J_all, double ds, double di,
+                                      double eta, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca) {
+  int nCollision = 0;
+  std::vector<Vector3d> p0 = p_all[c0], p1 = p_all[c1];
+  std::vector<KDL::Jacobian> J0 = J_all[c0], J1 = J_all[c1];
+  int iJnt0 = iJnt[c0], iJnt1 = iJnt[c1];
+  Matrix3d R0 = myIKs[c0]->getT_base_world().rotation(), R1 = myIKs[c1]->getT_base_world().rotation();
+
+  // std::cout << p0.size() << " " << p1.size() << std::endl;
+
+  for (int i = 0; i < p0.size() - 1; i++) {
+    int j_start = 0;
+    if (c0 == c1)  // in case of self collision check
+      j_start = i + 2;
+
+    for (int j = j_start; j < p1.size() - 1; j++) {
+      double as, bs;
+      if (!getClosestPointLineSegments(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs))
+        continue;
+      Vector3d d_vec = getVec(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
+      double d = d_vec.norm();
+
+      // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
+
+      if (d < di) {  // if the relative shortest distance is smaller than the infulenced distance
+        // std::cout << "collision detected between " << i << " and " << j << std::endl;
+
+        // get extended Jacobian
+        MatrixXd Js_0 = MatrixXd::Zero(J0[i + 1].rows(), nState);
+        Js_0.block(0, iJnt0, J0[i + 1].data.rows(), J0[i + 1].data.cols()) = J0[i + 1].data;
+
+        MatrixXd Js_1 = MatrixXd::Zero(J1[j + 1].rows(), nState);
+        Js_1.block(0, iJnt1, J1[j + 1].data.rows(), J1[j + 1].data.cols()) = J1[j + 1].data;
+
+        // scale a col of Jacobian related to the closest point
+        Js_0.block(0, iJnt0 + i - 1, 6, 1) *= as;
+        Js_1.block(0, iJnt1 + j - 1, 6, 1) *= bs;
+
+        // push back inequality constraint for collision avoidance
+        A_ca.push_back((d_vec / d).transpose() * (R0 * Js_0.block(0, 0, 3, nState) - R1 * Js_1.block(0, 0, 3, nState)));
+        lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
+        upper_vel_limits_.push_back(OsqpEigen::INFTY);
+
+        nCollision++;
+      }
+    }
+  }
+
+  return nCollision;
+}
+
 int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_,
                                      std::vector<MatrixXd>& A_ca) {
-  if (nRobot < 2)
-    return 0;
-
   std::vector<std::vector<Vector3d>> p_all(nRobot);
   std::vector<std::vector<KDL::Jacobian>> J_all(nRobot);
 
@@ -318,53 +393,33 @@ int MultiMyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, st
   double eta = 0.2;
 
   int nCollision = 0;
-  for (auto& comb : combsRobot) {
-    int c0 = comb[0], c1 = comb[1];
-    std::vector<Vector3d> p0 = p_all[c0], p1 = p_all[c1];
 
-    for (int i = 0; i < p0.size() - 1; i++) {
-      for (int j = 0; j < p1.size() - 1; j++) {
-        double as, bs;
-        getClosestPointLineSegments(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
-        double d = getDistance(p0[i], p0[i + 1], p1[j], p1[j + 1], as, bs);
+  // self collision avoidance
+  // for (int i = 0; i < nRobot; i++)
+  // nCollision += calcCollisionAvoidance(i, i, p_all, J_all, 0.1, 0.15, eta, lower_vel_limits_, upper_vel_limits_, A_ca);
 
-        // ROS_INFO_STREAM("d: " << d << " i:" << i << " j:" << j << " as: " << as << " bs: " << bs);
-
-        if (d < di) {  // if the relative shortest distance is smaller than the infulenced distance
-
-          // get extended Jacobian
-          MatrixXd Js_0 = MatrixXd::Zero(J_all[c0][i + 1].rows(), nState);
-          Js_0.block(0, iJnt[c0], J_all[c0][i + 1].data.rows(), J_all[c0][i + 1].data.cols()) = J_all[c0][i + 1].data;
-
-          MatrixXd Js_1 = MatrixXd::Zero(J_all[c1][j + 1].rows(), nState);
-          Js_1.block(0, iJnt[c1], J_all[c1][j + 1].data.rows(), J_all[c1][j + 1].data.cols()) = J_all[c1][j + 1].data;
-
-          // scale a col of Jacobian related to the closest point
-          Js_0.block(0, iJnt[c0] + i - 1, 6, 1) *= as;
-          Js_1.block(0, iJnt[c1] + j - 1, 6, 1) *= bs;
-
-          // push back inequality constraint for collision avoidance
-          Vector3d d_vec = p0[i] + as * (p0[i + 1] - p0[i]) - (p1[j] + bs * (p1[j + 1] - p1[j]));
-          A_ca.push_back((d_vec / d).transpose() *
-                         (myIKs[c0]->getT_base_world().rotation() * Js_0.block(0, 0, 3, nState) - myIKs[c1]->getT_base_world().rotation() * Js_1.block(0, 0, 3, nState)));
-          lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
-          upper_vel_limits_.push_back(OsqpEigen::INFTY);
-
-          nCollision++;
-        }
-      }
-    }
+  // collision avoidance against other robots
+  if (nRobot > 1) {
+    for (auto& comb : combsRobot)
+      nCollision += calcCollisionAvoidance(comb[0], comb[1], p_all, J_all, ds, di, eta, lower_vel_limits_, upper_vel_limits_, A_ca);
   }
+
   // ROS_INFO_STREAM("nCollision: " << nCollision);
+
   return A_ca.size();
 }
 
 // get closest distance and point between two line segments
-void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs) {
+bool MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs) {
   Vector3d a = a1 - a0;
   Vector3d b = b1 - b0;
   double a_norm = a.norm();
   double b_norm = b.norm();
+
+  if (a_norm < std::abs(1.0e-6) || b_norm < std::abs(1.0e-6) || (a1 - b0).norm() < std::abs(1.0e-6))  // zero length case
+    return false;
+
+  // std::cout << a_norm << " " << b_norm << std::endl;
 
   Vector3d na = a / a_norm;
   Vector3d nb = b / b_norm;
@@ -377,26 +432,26 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
     double d1 = nb.dot(b1 - a0);
 
     if (d0 < 0.0 && d1 < 0.0) {
-      if (abs(d0) < abs(d1)) {
+      if (std::abs(d0) < std::abs(d1)) {
         as = 0.0;
         bs = 0.0;
-        return;
+        return true;
       } else if (d0 > a_norm && d1 > a_norm) {
-        if (abs(d0) < abs(d1)) {
+        if (std::abs(d0) < std::abs(d1)) {
           as = 1.0;
           bs = 0.0;
-          return;
+          return true;
         } else {
           as = 1.0;
           bs = 1.0;
-          return;
+          return true;
         }
       }
     }
     // overlap case
     as = 0.0;
     bs = 0.0;
-    return;
+    return true;
 
   } else {
     // lines criss cross case
@@ -438,15 +493,21 @@ void MultiMyIK::getClosestPointLineSegments(const Vector3d& a0, const Vector3d& 
         as = dot / a_norm;
     }
   }
-  return;
+  return true;
 }
 
 // get distance
 double MultiMyIK::getDistance(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs) {
   Vector3d a = a1 - a0;
   Vector3d b = b1 - b0;
-  Vector3d d = a0 + as * a - (b0 + bs * b);
-  return d.norm();
+  Vector3d d_vec = a0 + as * a - (b0 + bs * b);
+  return d_vec.norm();
+}
+
+Vector3d MultiMyIK::getVec(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs) {
+  Vector3d a = a1 - a0;
+  Vector3d b = b1 - b0;
+  return a0 + as * a - (b0 + bs * b);
 }
 
 void MultiMyIK::resetRobotWeight() {

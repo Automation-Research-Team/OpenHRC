@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find ohrc_hw_config)/launch/ur5e/ur5e_bringup.launch" />
+
+
+  <arg name="model" default="toroboarm"/>
+  <include file="$(find toroboarm_bringup)/launch/bringup_sim.launch">
+    <arg name="use_rviz" value="false"/>
+    <arg name="model" value="$(arg model)"/>
+    <arg name="robot_ns" value="toroboarm_1"/>
+    <arg name="init_x" value="0.9"/>
+    <arg name="init_y" value="0.25"/>
+    <arg name="init_yaw" value="3.141592"/>
+  </include>
+
+
+  <!-- </group> -->
+</launch>

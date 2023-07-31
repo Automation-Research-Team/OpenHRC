@@ -49,7 +49,7 @@ void OmegaInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& tar
       break;
 
     case HapticType::PositionForceFeedback:// force feedback type (a.k.a. position-force feedback control)
-      k_force = 0.2;
+      k_force = 0.1;
       ft_feedback += k_force*(tf2::fromMsg(controller->getForceEef().wrench).head(3) - T_cur.rotation().transpose()* T_state_base.rotation()* ft_omega.head(3));  
       break;
 

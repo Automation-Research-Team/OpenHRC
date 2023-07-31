@@ -1,0 +1,14 @@
+toroboarm:
+  chain_start: "link0" # base frame of commands
+  chain_end: "eef_link" #"link7" # target eff frame
+
+
+  publisher: "Velocity" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+  topic_namespace: "joint_velocity_controller"
+
+
+  initIKAngle: [0, 0, 0, 0, 0, 0, 0]
+
+  # initial_pose_frame: test # default frame is same as chain_start
+  # initial_pose: [0.4, 0.0, 0.3, 0.0, 3.141592, 0]
+  initial_pose: [0.45, 0.0, 0.4, 0.0, 0, 0]

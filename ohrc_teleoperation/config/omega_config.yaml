@@ -1,3 +1,3 @@
 omega_type: "right"
-haptic_type: "None" #"PositionPositionFeedback" #None or PositionPositionFeedback or PositionForce or PositionForceFeedback
-trans_ratio: 2.0
+haptic_type: "PositionForceFeedback" #None or PositionPositionFeedback or PositionForce or PositionForceFeedback
+trans_ratio: 1.0
