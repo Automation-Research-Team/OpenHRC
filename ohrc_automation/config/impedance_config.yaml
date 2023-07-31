@@ -4,5 +4,6 @@ imp_ceff:
   k: [40., 40., 5]
 
 target_topic: 
-  - "/gazebo/automation_targets"
-  - "/gazebo/recovery_targets"
+  - "target"
+  # - "/gazebo/automation_targets"
+  # - "/gazebo/recovery_targets"

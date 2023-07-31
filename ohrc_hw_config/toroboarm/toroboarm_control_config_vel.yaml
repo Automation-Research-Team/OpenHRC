@@ -17,7 +17,7 @@ control_freq: 500.0
 follower_list: # robot namespace list. They should be unique. if you ("") means the robot has no namespace
   toroboarm: # robot config name
     - "toroboarm_1" # robot namespace
-    - "toroboarm_2"
+    # - "toroboarm_2"
 
 priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Parallel" # "Individual" #  (for multi-follower)
