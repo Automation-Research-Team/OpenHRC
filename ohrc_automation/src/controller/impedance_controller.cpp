@@ -38,6 +38,7 @@ void ImpedanceController::initInterface() {
     ROS_ERROR_STREAM("target pose topic name(s) are not configured");
 
   RespawnReqPublisher = n.advertise<std_msgs::Empty>(targetName + "/success", 10);
+  targetDistPublisher = n.advertise<std_msgs::Float32>(targetName + "/distance", 10);
 
   this->setSubscriber();
 }
@@ -206,4 +207,8 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   tf::vectorEigenToKDL(x.tail(3), twist.vel);
 
   this->targetDistance = (x - xd).head(3).norm();  // TODO: generalize this
+
+  std_msgs::Float32 msg;
+  msg.data = targetDistance;
+  targetDistPublisher.publish(msg);
 }
