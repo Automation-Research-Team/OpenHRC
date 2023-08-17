@@ -231,8 +231,8 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     }
 
     for (int i = 0; i < nRobot; i++) {
-      if ((time - prev_time[i]) < ros::Duration(1.0 / cartControllers[i]->freq))
-        continue;
+      // if ((time - prev_time[i]) < ros::Duration(1.0 / cartControllers[i]->freq))
+        // continue;
 
       prev_time[i] = time;
       // std::cout << q_des[i].data.transpose() << std::endl;
