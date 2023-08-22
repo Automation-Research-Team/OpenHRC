@@ -217,6 +217,7 @@ public:
   }
 
   void publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel);
+  void publishCurEffPoseVel(const KDL::Frame& cur_eff_pose, const KDL::Twist& cur_eff_vel);
   void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
   void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
   void publishMarker(const KDL::JntArray q_cur);

@@ -3,6 +3,7 @@
 
 #include <geometry_msgs/PoseArray.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/Float32.h>
 
 #include "ohrc_control/interface.hpp"
 
@@ -13,7 +14,7 @@ class ImpedanceController : public virtual Interface {
   std::vector<Affine3d> _targetPoses;
 
   bool _targetUpdated = false;
-  // int targetIdx = -1, 
+  // int targetIdx = -1,
   int nextTargetIdx = -1;
 
   VectorXd x, xd;
@@ -35,7 +36,7 @@ class ImpedanceController : public virtual Interface {
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
 protected:
-  ros::Publisher RespawnReqPublisher;
+  ros::Publisher RespawnReqPublisher, targetDistPublisher;
   int stack = 0;
   Affine3d restPose;
 

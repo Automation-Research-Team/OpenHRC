@@ -168,12 +168,12 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   std::vector<VectorXd> g(nRobot + nAddObj);
 
   // additonal objective term in QP (1) for singularity avoidance
-  w_h[nRobot] = 1.0;
+  w_h[nRobot] = 1.0e-1;
   H[nRobot] = MatrixXd::Identity(nState, nState);
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
   // additonal objective term in QP (2) for null space configuration
-  w_h[nRobot + 1] = 1.0e1;
+  w_h[nRobot + 1] = 1.0e-1;
   H[nRobot + 1] = MatrixXd::Identity(nState, nState);
   g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 

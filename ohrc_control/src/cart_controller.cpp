@@ -89,7 +89,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   else if (publisher == PublisherType::TrajectoryAction)
     jntCmdPublisher = nh.advertise<control_msgs::FollowJointTrajectoryActionGoal>("/" + robot_ns + publisherTopicName + "/follow_joint_trajectory/goal", 1);
   else
-    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + publisherTopicName + "/command", 1);
+    jntCmdPublisher = nh.advertise<std_msgs::Float64MultiArray>("/" + robot_ns + publisherTopicName + "/command", 2);
 
   desStatePublisher = nh.advertise<ohrc_msgs::State>("/" + robot_ns + "state/desired", 1000);
   curStatePublisher = nh.advertise<ohrc_msgs::State>("/" + robot_ns + "state/current", 1000);
@@ -594,27 +594,10 @@ void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel,
 
 void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
   publishState(des_eff_pose, des_eff_vel, &desStatePublisher);
-  // ohrc_msgs::StateStamped state;
-  // state.header.stamp = ros::Time::now();
-  // state.state.pose = tf2::toMsg(des_eff_pose);
-  // state.state.twist.linear.x = des_eff_vel.vel[0];
-  // state.state.twist.linear.y = des_eff_vel.vel[1];
-  // state.state.twist.linear.z = des_eff_vel.vel[2];
-  // state.state.twist.angular.x = des_eff_vel.rot[0];
-  // state.state.twist.angular.y = des_eff_vel.rot[1];
-  // state.state.twist.angular.z = des_eff_vel.rot[2];
-  // desStatePublisher.publish(state);
+}
 
-  // geometry_msgs::TransformStamped transform;
-  // // if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
-  // //   return;
-
-  // transform = tf2::kdlToTransform(des_eff_pose);
-  // transform.header.stamp = ros::Time::now();
-
-  // transform.header.frame_id = robot_ns + chain_start;
-  // transform.child_frame_id = robot_ns + chain_end + "_d";
-  // br.sendTransform(transform);
+void CartController::publishCurEffPoseVel(const KDL::Frame& cur_eff_pose, const KDL::Twist& cur_eff_vel) {
+  publishState(cur_eff_pose, cur_eff_vel, &curStatePublisher);
 }
 
 void CartController::publishMarker(const KDL::JntArray q_cur) {

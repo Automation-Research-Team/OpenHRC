@@ -20,6 +20,9 @@ class MultiCartController {
   ros::ServiceServer service;
   bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
 
+  void publishState(const ros::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
+                    const std::vector<KDL::Twist> desVel);
+
 protected:
   ros::NodeHandle nh;
 
