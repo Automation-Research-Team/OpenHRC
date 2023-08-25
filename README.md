@@ -120,6 +120,9 @@ If you use this package in your academic research, we would appreciate it if you
 >(comming soon)
 
 
+## License
+This software is released under dual license of LGPL-v2.1 and individual license.
+About the individual license, please make a contact to the author.
 
 ## Author
 Shunki Itadera (https://staff.aist.go.jp/s.itadera/) - Researcher at ART, ICPS, AIST
