@@ -3,6 +3,8 @@
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
 
+  <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
+
   <node name="cart_trajectory_automation" pkg="ohrc_automation" type="cart_trajectory_automation"  respawn="false" output="screen">
     <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
     <!-- <rosparam command="load" file="$(find ohrc_automation)/config/impedance_config.yaml" /> -->
