@@ -341,6 +341,10 @@ public:
     return q_rest;
   }
 
+  inline void setqRest(const KDL::JntArray& q_rest) {
+    // this->q_rest = q_rest;
+  }
+
   double dt;
   double freq = 500.0;
 
