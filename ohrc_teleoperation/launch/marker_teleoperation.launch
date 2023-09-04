@@ -3,7 +3,6 @@
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
 
-
   <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
 
   <node name="marker_teleoperation" pkg="ohrc_teleoperation" type="marker_teleoperation"  respawn="false" output="screen">
