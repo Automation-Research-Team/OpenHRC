@@ -102,7 +102,6 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   this->state = state;  // TODO: check if this is necessary
 }
 
-
 void XrBodyInterface::resetInterface(){
   this->isFirst = true;
 }
