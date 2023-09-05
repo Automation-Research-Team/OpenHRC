@@ -103,6 +103,10 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 }
 
 
+void XrBodyInterface::resetInterface(){
+  this->isFirst = true;
+}
+
 void XrBodyInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) {
   std_msgs::Float32 amp;
 
