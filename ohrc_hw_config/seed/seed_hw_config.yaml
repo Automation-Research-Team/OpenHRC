@@ -1,9 +1,9 @@
 seed:
   chain_start: "body_link" # base frame of commands
-  chain_end: "l_hand_link" # target eff frame
+  chain_end: "r_hand_link" # target eff frame
 
   publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
-  topic_namespace: "larm_controller"
+  topic_namespace: "rarm_controller"
 
 
   initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
