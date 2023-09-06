@@ -129,7 +129,6 @@ include_directories(
                                src/geometry_msgs_utility/Point.cpp
                                src/geometry_msgs_utility/Vector3.cpp
                                src/geometry_msgs_utility/Twist.cpp
-                               src/nav_msgs_utility/Odometry.cpp
                                src/filter_utility/butterworth.cpp
                                src/filter_utility/bayes_normal_gamma.cpp
                                src/filter_utility/kalman.cpp)
