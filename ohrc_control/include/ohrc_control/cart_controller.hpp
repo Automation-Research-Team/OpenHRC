@@ -46,8 +46,8 @@ class CartController {
 
   std::mutex mtx_q;
 
-  KDL::Frame des_eff_pose, current_eff_pose;
-  KDL::Twist des_eff_vel;
+  KDL::Frame des_eef_pose, current_eef_pose;
+  KDL::Twist des_eef_vel;
   KDL::JntArray q_cur, dq_cur;
   std_msgs::Float64MultiArray cmd;
   Matrix3d userManipU;
@@ -115,9 +115,9 @@ protected:
 
   std::vector<std::string> nameJnt;
 
-  KDL::Frame _des_eff_pose;
-  KDL::Frame _current_eff_pose;
-  KDL::Twist _des_eff_vel;
+  KDL::Frame _des_eef_pose;
+  KDL::Frame _current_eef_pose;
+  KDL::Twist _des_eef_vel;
 
   geometry_msgs::WrenchStamped _force;
   bool flagForce = false;
@@ -154,8 +154,8 @@ protected:
 
   void initDesWithJnt(const KDL::JntArray& q_init);
   virtual void initWithJnt(const KDL::JntArray& q_init);
-  // virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
-  void filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
+  // virtual void getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel);
+  void filterDesEffPoseVel(KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel);
 
   int moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt);
 
@@ -189,7 +189,7 @@ public:
   void starting(const ros::Time& time);
   void stopping(const ros::Time& time);
 
-  void getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel);
+  void getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel);
   void getVelocity(const KDL::Frame& frame, const KDL::Frame& prev_frame, const double& dt, KDL::Twist& twist) const;
 
   inline void updateCurState() {
@@ -217,8 +217,8 @@ public:
     getState(q_cur, dq_cur, frame, twist);
   }
 
-  void publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel);
-  void publishCurEffPoseVel(const KDL::Frame& cur_eff_pose, const KDL::Twist& cur_eff_vel);
+  void publishDesEffPoseVel(const KDL::Frame& des_eef_pose, const KDL::Twist& des_eef_vel);
+  void publishCurEffPoseVel(const KDL::Frame& cur_eef_pose, const KDL::Twist& cur_eef_vel);
   void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
   void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
   void publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::Wrench& wrench, ros::Publisher* publisher);
@@ -321,10 +321,10 @@ public:
     return initialized;
   }
 
-  inline void setDesired(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
+  inline void setDesired(const KDL::Frame& des_eef_pose, const KDL::Twist& des_eef_vel) {
     std::lock_guard<std::mutex> lock(mtx);
-    this->_des_eff_pose = des_eff_pose;
-    this->_des_eff_vel = des_eff_vel;
+    this->_des_eef_pose = des_eef_pose;
+    this->_des_eef_vel = des_eef_vel;
   }
 
   inline void enablePoseFeedback() {
