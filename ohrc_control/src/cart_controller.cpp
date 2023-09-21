@@ -79,6 +79,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0))) {
     this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0));
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
+    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
     subFlagPtrs.push_back(&flagForce);
   } else
     ROS_WARN_STREAM("force/torque sensor TF was not found.");
@@ -349,6 +350,8 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   _force.header.stamp = msg->header.stamp;
   _force.header.frame_id = robot_ns + chain_end;
   _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff);
+
+  this->pubEefForce.publish(_force);
 
   if (!flagForce)
     flagForce = true;
