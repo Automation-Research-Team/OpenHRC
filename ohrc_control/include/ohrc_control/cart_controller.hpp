@@ -42,6 +42,7 @@ class CartController {
   ros::CallbackQueue queue;
   boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
   ros::NodeHandle nh_;
+  ros::Publisher pubEefForce;
 
   std::mutex mtx_q;
 
