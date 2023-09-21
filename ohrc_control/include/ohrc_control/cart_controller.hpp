@@ -42,7 +42,7 @@ class CartController {
   ros::CallbackQueue queue;
   boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
   ros::NodeHandle nh_;
-  ros::Publisher pubEefForce;
+  // ros::Publisher pubEefForce;
 
   std::mutex mtx_q;
 
@@ -221,6 +221,7 @@ public:
   void publishCurEffPoseVel(const KDL::Frame& cur_eff_pose, const KDL::Twist& cur_eff_vel);
   void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
   void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
+  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::Wrench& wrench, ros::Publisher* publisher);
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);

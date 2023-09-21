@@ -79,7 +79,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0))) {
     this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0));
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
-    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
+    // pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
     subFlagPtrs.push_back(&flagForce);
   } else
     ROS_WARN_STREAM("force/torque sensor TF was not found.");
@@ -351,7 +351,7 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   _force.header.frame_id = robot_ns + chain_end;
   _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff);
 
-  this->pubEefForce.publish(_force);
+  // this->pubEefForce.publish(_force);
 
   if (!flagForce)
     flagForce = true;
@@ -582,17 +582,21 @@ void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel,
   state.twist.angular.y = vel.rot[1];
   state.twist.angular.z = vel.rot[2];
   publisher->publish(state);
+}
 
-  // geometry_msgs::TransformStamped transform;
-  // // if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
-  // //   return;
+void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::Wrench& wrench, ros::Publisher* publisher) {
+  ohrc_msgs::State state;
+  state.header.stamp = ros::Time::now();
+  state.pose = tf2::toMsg(pose);
+  state.twist.linear.x = vel.vel[0];
+  state.twist.linear.y = vel.vel[1];
+  state.twist.linear.z = vel.vel[2];
+  state.twist.angular.x = vel.rot[0];
+  state.twist.angular.y = vel.rot[1];
+  state.twist.angular.z = vel.rot[2];
 
-  // transform = tf2::kdlToTransform(des_eff_pose);
-  // transform.header.stamp = ros::Time::now();
-
-  // transform.header.frame_id = robot_ns + chain_start;
-  // transform.child_frame_id = robot_ns + chain_end + "_d";
-  // br.sendTransform(transform);
+  state.wrench = wrench;
+  publisher->publish(state);
 }
 
 void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
@@ -600,7 +604,8 @@ void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const 
 }
 
 void CartController::publishCurEffPoseVel(const KDL::Frame& cur_eff_pose, const KDL::Twist& cur_eff_vel) {
-  publishState(cur_eff_pose, cur_eff_vel, &curStatePublisher);
+  std::lock_guard<std::mutex> lock(mtx);
+  publishState(cur_eff_pose, cur_eff_vel, _force.wrench, &curStatePublisher);
 }
 
 void CartController::publishMarker(const KDL::JntArray q_cur) {
