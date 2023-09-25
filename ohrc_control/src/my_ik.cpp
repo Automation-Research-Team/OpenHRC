@@ -104,6 +104,7 @@ MyIK::MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::Jnt
 }
 
 void MyIK::initialize() {
+  std::cout << ub.data.transpose() << std::endl;
   assert(nJnt == lb.data.size());
   assert(nJnt == ub.data.size());
 
@@ -139,13 +140,13 @@ VectorXd MyIK::getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double
   for (uint i = 0; i < x.size(); i++) {
     x[i] = q_cur(i);
 
-    if (types[i] == BasicJointType::Continuous)
-      continue;
+    // if (types[i] == BasicJointType::Continuous)
+    //   continue;
 
-    if (types[i] == BasicJointType::TransJoint) {
-      x[i] = std::min(x[i], upper[i]);
-      x[i] = std::max(x[i], lower[i]);
-    }
+    // if (types[i] == BasicJointType::TransJoint) {
+    //   x[i] = std::min(x[i], upper[i]);
+    //   x[i] = std::max(x[i], lower[i]);
+    // }
   }
 
   progress = -3;
@@ -180,13 +181,12 @@ VectorXd MyIK::getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<dou
 
   lower_vel_limits.resize(nJnt);
   upper_vel_limits.resize(nJnt);
-  for (uint i = 0; i < nJnt; i++) {
-    lower_vel_limits[i] = std::min((lower_limits[i] - x[i]) / dt, 0.0);
-    upper_vel_limits[i] = std::max((upper_limits[i] - x[i]) / dt, 0.0);
-    // std::cout << lower_vel_limits[i] << " < x [" << i << "] < " << upper_vel_limits[i] << std::endl;
-  }
 
-  // std::cout << "---" << std::endl;
+  double mergin = 1.0e-3;
+  for (uint i = 0; i < nJnt; i++) {
+    lower_vel_limits[i] = std::min((lower_limits[i] - x[i]) / dt, mergin);
+    upper_vel_limits[i] = std::max((upper_limits[i] - x[i]) / dt, -mergin);
+  }
 
   return x;
 }
