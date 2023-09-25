@@ -109,7 +109,7 @@ find_package(magic_enum CONFIG REQUIRED)
 # # DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ohrc_teleoperation
+  LIBRARIES ohrc_teleoperation ohrc_control ohrc_common
   CATKIN_DEPENDS roscpp
 
   # DEPENDS system_lib

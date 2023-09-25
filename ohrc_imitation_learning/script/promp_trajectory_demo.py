@@ -66,6 +66,12 @@ for promp in promps:
     Y_cmeans.append(Y_cmean)
     dY_cmeans.append(dY_cmean)
 
+plt.rcParams['text.usetex'] = True
+plt.rcParams['text.latex.preamble'] = [r'\usepackage{sansmath}', r'\sansmath']
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['font.sans-serif'] = 'Helvetica'
+plt.rcParams["font.size"] = 18
+
 
 test = [2, 4, 3]
 plt.figure()
@@ -75,7 +81,7 @@ for i in test:
 ax.grid(True)
 ax.set_ylabel("x")
 ax.set_xticklabels([])
-ax.legend(["c1", "c2", "c3"])
+
 
 ax = plt.subplot(312)
 for i in test:
@@ -101,8 +107,10 @@ for i in test:
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 ax.set_zlabel("z")
-ax.legend(["c1", "c2", "c3"])
-
+# ax.legend(["c1", "c2", "c3"])
+ax.legend(["model-1", "model-2", "model-3"],
+          loc="upper center", ncol=3)
+ax.axis('equal')
 plt.savefig("promp_3d.pdf", bbox_inches='tight')
 
 plt.show()
