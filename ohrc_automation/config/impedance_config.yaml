@@ -21,3 +21,7 @@ error_threshold:
 limit:
   time: 30.0
   force: 100.0
+
+target_rule:
+  repeat: true
+  rest_everytime: true

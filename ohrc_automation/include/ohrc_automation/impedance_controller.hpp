@@ -46,6 +46,7 @@ protected:
   double timeLimit = 30.0, forceLimit = 100.0;
   double posThr = 0.01, velThr = 0.01, forceThr = -0.01;
   double posThr_r = 0.01, velThr_r = 0.01, forceThr_r = -0.01;
+  bool repeat = true, restEverytime = true;
 
   virtual void setSubscriber();
   virtual bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd);

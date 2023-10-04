@@ -60,6 +60,12 @@ void ImpedanceController::initInterface() {
   if (!n.getParam("limit/force", forceLimit))
     ROS_ERROR_STREAM("force limit is not configured");
 
+  if (!n.getParam("target_rule/repeat", repeat))
+    ROS_ERROR_STREAM("repeat is not configured");
+
+  if (!n.getParam("target_rule/rest_everytime", restEverytime))
+    ROS_ERROR_STREAM("restEverytime is not configured");
+
   ROS_INFO_STREAM("error_threshold/target/pos: " << posThr << ", error_threshold/target/vel: " << velThr << ", error_threshold/target/force: " << forceThr);
   ROS_INFO_STREAM("error_threshold/rest/pos: " << posThr_r << ", error_threshold/rest/vel: " << velThr_r << ", error_threshold/rest/force: " << forceThr_r);
 
@@ -170,10 +176,10 @@ Affine3d ImpedanceController::getNextTarget(const TaskState& taskState, const st
       break;
 
     case TaskState::Success:
-      if (targetIdx == -1) {  // if going back to rest positon
+      if (restEverytime ? (targetIdx == -1) && ((nextTargetIdx != targetPoses.size() - 1) || repeat) : true) {  // if going back to rest positon
         nextTargetIdx++;
         if (nextTargetIdx == targetPoses.size())
-          nextTargetIdx = 0;
+          nextTargetIdx = repeat ? 0 : targetPoses.size() - 1;
         targetIdx = nextTargetIdx;
       } else {
         targetIdx = -1;
