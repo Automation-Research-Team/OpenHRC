@@ -7,3 +7,17 @@ target_topic:
   - "target"
   # - "/gazebo/automation_targets"
   # - "/gazebo/recovery_targets"
+
+error_threshold:
+  target:
+    pos: 0.01
+    vel: 0.01
+    force: -1
+  rest:
+    pos: 0.01
+    vel: 0.01
+    force: -1
+
+limit:
+  time: 30.0
+  force: 100.0

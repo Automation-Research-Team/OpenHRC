@@ -29,21 +29,30 @@ class ImpedanceController : public virtual Interface {
 
   ros::Subscriber subTarget;
 
+  ros::Time t_start;
+
   void getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK);
   ImpParam getImpParam(const ImpCoeff& impCoeff);
   Affine3d getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
 
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
+  bool NormReachedCheck(const VectorXd& delta_x, const VectorXd& force, const double posThr, const double velThr, const double forceThr);
+
 protected:
   ros::Publisher RespawnReqPublisher, targetDistPublisher;
   int stack = 0;
   Affine3d restPose;
+  double timeLimit = 30.0, forceLimit = 100.0;
+  double posThr = 0.01, velThr = 0.01, forceThr = -0.01;
+  double posThr_r = 0.01, velThr_r = 0.01, forceThr_r = -0.01;
 
   virtual void setSubscriber();
   virtual bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd);
 
-  virtual TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
+  TaskState updataTaskState(const VectorXd& delta_x, const int targetIdx);
+  virtual bool checkTargetReached(const VectorXd& delta_x, const VectorXd& force);
+  virtual bool checkRestTargetReached(const VectorXd& delta_x, const VectorXd& force);
 
   virtual void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
 

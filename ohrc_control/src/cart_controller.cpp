@@ -253,7 +253,7 @@ void CartController::signal_handler(int signum) {
   }
 }
 void CartController::resetFt() {
-  ROS_INFO_STREAM("Resetting FT sensor offset...");
+  ROS_INFO_STREAM("Called reset ft service.");
 
   std_srvs::Empty srv;
   client.call(srv);
