@@ -182,7 +182,7 @@ VectorXd MyIK::getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<dou
   lower_vel_limits.resize(nJnt);
   upper_vel_limits.resize(nJnt);
 
-  double mergin = 1.0e-3;
+  double mergin = 1.0e-2;
   for (uint i = 0; i < nJnt; i++) {
     lower_vel_limits[i] = std::min((lower_limits[i] - x[i]) / dt, mergin);
     upper_vel_limits[i] = std::max((upper_limits[i] - x[i]) / dt, -mergin);

@@ -138,7 +138,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   std::vector<VectorXd> es(nRobot);
   std::vector<Matrix<double, 6, 1>> vs(nRobot);
 
-  VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
+  VectorXd kp = .0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
   kp.tail(3) = kp.tail(3) * 0.5 / M_PI * 0.5;
 
   for (int i = 0; i < nRobot; i++) {
@@ -168,7 +168,7 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   std::vector<VectorXd> g(nRobot + nAddObj);
 
   // additonal objective term in QP (1) for singularity avoidance
-  w_h[nRobot] = 1.0e-1;
+  w_h[nRobot] = 1.0e-0;
   H[nRobot] = MatrixXd::Identity(nState, nState);
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
@@ -178,8 +178,8 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 
   for (int i = 0; i < nRobot; i++) {
-    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished() * 1.0e2;
-    double w_n = 0.0;  // 1.0e-6;  // this leads dq -> 0 witch is conflict with additonal task
+    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished() * 1.0e3;
+    double w_n =  1.0e-3;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
     H[i] = Js_[i].transpose() * Js_[i];

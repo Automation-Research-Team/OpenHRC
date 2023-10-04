@@ -41,6 +41,9 @@ void ImpedanceController::initInterface() {
   targetDistPublisher = n.advertise<std_msgs::Float32>(targetName + "/distance", 10);
 
   this->setSubscriber();
+
+
+  controller->updateFilterCutoff(10.0, 10.0);
 }
 
 void ImpedanceController::setSubscriber() {
