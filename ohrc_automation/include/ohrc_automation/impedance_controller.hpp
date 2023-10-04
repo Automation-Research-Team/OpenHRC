@@ -31,8 +31,11 @@ class ImpedanceController : public virtual Interface {
 
   ros::Time t_start;
 
+  void getParam();
+
   void getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK);
   ImpParam getImpParam(const ImpCoeff& impCoeff);
+  ImpCoeff getImpCoeff();
   Affine3d getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx);
 
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);

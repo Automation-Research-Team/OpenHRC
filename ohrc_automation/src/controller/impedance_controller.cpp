@@ -1,35 +1,17 @@
 #include "ohrc_automation/impedance_controller.hpp"
 
 void ImpedanceController::initInterface() {
-  ImpCoeff impCoeff;
-  std::vector<bool> isGotMDK(3, false);
-  isGotMDK[0] = n.getParam("imp_ceff/m", impCoeff.m_);
-  isGotMDK[1] = n.getParam("imp_ceff/d", impCoeff.d_);
-  isGotMDK[2] = n.getParam("imp_ceff/k", impCoeff.k_);
+  this->impParam = getImpParam(getImpCoeff());
 
-  int nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
+  this->getParam();
 
-  if (nGotMDK == 0) {
-    isGotMDK[0] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/m", impCoeff.m_);
-    isGotMDK[1] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/d", impCoeff.d_);
-    isGotMDK[2] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/k", impCoeff.k_);
-    nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
-  }
+  RespawnReqPublisher = n.advertise<std_msgs::Empty>(this->targetName + "/success", 10);
+  targetDistPublisher = n.advertise<std_msgs::Float32>(this->targetName + "/distance", 10);
 
-  if (nGotMDK == 3) {
-    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
-    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
-    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
-  } else if (nGotMDK == 2) {
-    ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
-    this->getCriticalDampingCoeff(impCoeff, isGotMDK);
-  } else if (nGotMDK < 2) {
-    ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
-    ros::shutdown();
-  }
+  this->setSubscriber();
+}
 
-  this->impParam = getImpParam(impCoeff);
-
+void ImpedanceController::getParam() {
   std::vector<std::string> targetTopicName_;
   if (n.getParam("target_topic", targetTopicName_))
     targetName = targetTopicName_[controller->getIndex()];
@@ -66,13 +48,8 @@ void ImpedanceController::initInterface() {
   if (!n.getParam("target_rule/rest_everytime", restEverytime))
     ROS_ERROR_STREAM("restEverytime is not configured");
 
-  ROS_INFO_STREAM("error_threshold/target/pos: " << posThr << ", error_threshold/target/vel: " << velThr << ", error_threshold/target/force: " << forceThr);
-  ROS_INFO_STREAM("error_threshold/rest/pos: " << posThr_r << ", error_threshold/rest/vel: " << velThr_r << ", error_threshold/rest/force: " << forceThr_r);
-
-  RespawnReqPublisher = n.advertise<std_msgs::Empty>(targetName + "/success", 10);
-  targetDistPublisher = n.advertise<std_msgs::Float32>(targetName + "/distance", 10);
-
-  this->setSubscriber();
+  ROS_INFO_STREAM("error_threshold/target/[pos, vel, force]: [" << posThr << ", " << velThr << ", " << forceThr << "]");
+  ROS_INFO_STREAM("error_threshold/rest/[pos, vel, force]: [" << posThr_r << ", " << velThr_r << ", " << forceThr_r << "]");
 }
 
 void ImpedanceController::setSubscriber() {
@@ -93,6 +70,37 @@ void ImpedanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std:
     impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
     impCoeff.k = impCoeff.d.array() * impCoeff.d.array() / impCoeff.m.array() * 0.25;
   }
+}
+
+ImpedanceController::ImpCoeff ImpedanceController::getImpCoeff() {
+  ImpCoeff impCoeff;
+  std::vector<bool> isGotMDK(3, false);
+  isGotMDK[0] = n.getParam("imp_ceff/m", impCoeff.m_);
+  isGotMDK[1] = n.getParam("imp_ceff/d", impCoeff.d_);
+  isGotMDK[2] = n.getParam("imp_ceff/k", impCoeff.k_);
+
+  int nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
+
+  if (nGotMDK == 0) {
+    isGotMDK[0] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/m", impCoeff.m_);
+    isGotMDK[1] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/d", impCoeff.d_);
+    isGotMDK[2] = n.getParam("imp_ceff_" + std::to_string(controller->getIndex()) + "/k", impCoeff.k_);
+    nGotMDK = std::accumulate(isGotMDK.begin(), isGotMDK.end(), 0);
+  }
+
+  if (nGotMDK == 3) {
+    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
+    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
+    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
+  } else if (nGotMDK == 2) {
+    ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
+    this->getCriticalDampingCoeff(impCoeff, isGotMDK);
+  } else if (nGotMDK < 2) {
+    ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
+    ros::shutdown();
+  }
+
+  return impCoeff;
 }
 
 ImpedanceController::ImpParam ImpedanceController::getImpParam(const ImpCoeff& impCoeff) {
