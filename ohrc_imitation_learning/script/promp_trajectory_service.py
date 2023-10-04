@@ -55,35 +55,60 @@ def main(mode=3):
     promp.imitate(T, Y)
 
     y_conditional_cov = np.array([0.0000025, 0.0000025, 0.0000025])
-    t_max = 5.0
+    t_max = 3.0
+
+    global targetPoses_prev, trjs_prev
+    targetPoses_prev = None
+    trjs_prev = None
 
     def generate_trjs(req):
         targetPoses = req.targetPoses
+
+        global targetPoses_prev, trjs_prev
+        if targetPoses_prev is None:
+            targetPoses_prev = targetPoses
+            for pose_prev in targetPoses_prev.poses:
+                pose_prev.position.x = 0.0
+                pose_prev.position.y = 0.0
+                pose_prev.position.z = 0.0
+
         trjs = []
 
-        for pose in targetPoses.poses:
-            y_cond = [-pose.position.x, -pose.position.y, -pose.position.z]
-            cpromp = promp.condition_position(
-                np.array(y_cond), y_cov=y_conditional_cov, t=0.0, t_max=t_max)
-
-            time = np.arange(0.0, t_max, 0.01)
-            Y_cmean = cpromp.mean_trajectory(time)
-            dY_cmean = cpromp.mean_velocities(time)
+        for i, pose in enumerate(targetPoses.poses):
+            pose_prev = targetPoses_prev.poses[i]
 
             trj = CartesianTrajectory()
             trj.header.frame_id = "world"
             trj.header.stamp = rospy.Time.now()
-            for i in range(len(time)):
-                point = CartesianTrajectoryPoint()
-                point.point.pose.position.x = Y_cmean[i, 0] - y_cond[0]
-                point.point.pose.position.y = Y_cmean[i, 1] - y_cond[1]
-                point.point.pose.position.z = Y_cmean[i, 2] - y_cond[2]
-                point.point.velocity.linear.x = dY_cmean[i, 0]/t_max
-                point.point.velocity.linear.y = dY_cmean[i, 1]/t_max
-                point.point.velocity.linear.z = dY_cmean[i, 2]/t_max
-                point.time_from_start = rospy.Duration.from_sec(time[i]*t_max)
-                trj.points.append(point)
+
+            if trjs_prev is not None and np.linalg.norm((np.array([pose.position.x, pose.position.y, pose.position.z]) - np.array([pose_prev.position.x, pose_prev.position.y, pose_prev.position.z]))) < 0.01:
+                trj = trjs_prev[i]
+                rospy.loginfo("Skipped trajectory generation.")
+            else:
+
+                y_cond = [-pose.position.x, -pose.position.y, -pose.position.z]
+                cpromp = promp.condition_position(
+                    np.array(y_cond), y_cov=y_conditional_cov, t=0.0, t_max=t_max)
+
+                time = np.arange(0.0, t_max, 0.01)
+                Y_cmean = cpromp.mean_trajectory(time)
+                dY_cmean = cpromp.mean_velocities(time)
+
+                for i in range(len(time)):
+                    point = CartesianTrajectoryPoint()
+                    point.point.pose.position.x = Y_cmean[i, 0] - y_cond[0]
+                    point.point.pose.position.y = Y_cmean[i, 1] - y_cond[1]
+                    point.point.pose.position.z = Y_cmean[i, 2] - y_cond[2]
+                    point.point.velocity.linear.x = dY_cmean[i, 0]/t_max
+                    point.point.velocity.linear.y = dY_cmean[i, 1]/t_max
+                    point.point.velocity.linear.z = dY_cmean[i, 2]/t_max
+                    point.time_from_start = rospy.Duration.from_sec(
+                        time[i]*t_max)
+                    trj.points.append(point)
             trjs.append(trj)
+
+        targetPoses_prev = targetPoses
+        trjs_prev = trjs
 
         rospy.loginfo("Generated trajectories.")
         return GetTrajectoriesResponse(trjs)

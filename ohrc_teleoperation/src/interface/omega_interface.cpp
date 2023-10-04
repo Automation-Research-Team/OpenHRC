@@ -48,15 +48,14 @@ void OmegaInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& tar
       ft_feedback += k_force * tf2::fromMsg(controller->getForceEef().wrench).head(3);
       break;
 
-    case HapticType::PositionForceFeedback:// force feedback type (a.k.a. position-force feedback control)
+    case HapticType::PositionForceFeedback:  // force feedback type (a.k.a. position-force feedback control)
       k_force = 0.1;
-      ft_feedback += k_force*(tf2::fromMsg(controller->getForceEef().wrench).head(3) - T_cur.rotation().transpose()* T_state_base.rotation()* ft_omega.head(3));  
+      ft_feedback += k_force * (tf2::fromMsg(controller->getForceEef().wrench).head(3) - T_cur.rotation().transpose() * T_state_base.rotation() * ft_omega.head(3));
       break;
 
     default:
       break;
   }
-
 
   VectorXd ft_feedback_vis = ft_feedback;
   ft_feedback_vis.head(3) = T_cur.rotation() * ft_feedback_vis.head(3);
@@ -68,8 +67,8 @@ void OmegaInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& tar
   wrench_omega_vis.wrench = tf2::toMsg(ft_feedback_vis, wrench_omega_vis.wrench);
   pubOmegaForceVis.publish(wrench_omega_vis);
 
-  ft_feedback.head(3) = T_state_base.rotation() * ft_feedback.head(3);
-  ft_feedback.tail(3) = T_state_base.rotation() * ft_feedback.tail(3);
+  ft_feedback.head(3) = T_state_base.rotation().transpose() * T_cur.rotation() * ft_feedback.head(3);
+  ft_feedback.tail(3) = T_state_base.rotation().transpose() * T_cur.rotation() * ft_feedback.tail(3);
   geometry_msgs::Wrench wrench_omega;
   wrench_omega = tf2::toMsg(ft_feedback, wrench_omega);
 
