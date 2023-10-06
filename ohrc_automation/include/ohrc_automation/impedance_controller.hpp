@@ -8,10 +8,7 @@
 #include "ohrc_control/interface.hpp"
 
 class ImpedanceController : public virtual Interface {
-  std::mutex mtx_imp;
   ros::Subscriber targetSubscriber;
-
-  std::vector<Affine3d> _targetPoses;
 
   bool _targetUpdated = false;
   // int targetIdx = -1,
@@ -43,9 +40,11 @@ class ImpedanceController : public virtual Interface {
   bool NormReachedCheck(const VectorXd& delta_x, const VectorXd& force, const double posThr, const double velThr, const double forceThr);
 
 protected:
+  std::mutex mtx_imp;
   ros::Publisher RespawnReqPublisher, targetDistPublisher;
   int stack = 0;
   Affine3d restPose;
+  std::vector<Affine3d> _targetPoses;
   double timeLimit = 30.0, forceLimit = 100.0;
   double posThr = 0.01, velThr = 0.01, forceThr = -0.01;
   double posThr_r = 0.01, velThr_r = 0.01, forceThr_r = -0.01;
@@ -59,6 +58,10 @@ protected:
   virtual bool checkRestTargetReached(const VectorXd& delta_x, const VectorXd& force);
 
   virtual void cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg);
+
+  inline ros::Duration getTrialTime() {
+    return ros::Time::now() - t_start;
+  }
 
 public:
   using Interface::Interface;

@@ -155,13 +155,13 @@ TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const in
       RespawnReqPublisher.publish(std_msgs::Empty());
       nCompletedTask++;
       taskState = TaskState::Success;
-      ROS_INFO_STREAM(controller->getRobotNs() + " reached the target pose");
+      ROS_INFO_STREAM(controller->getRobotNs() + " reached the target #" << targetIdx << " pose (" << nCompletedTask << ") ");
     }
   }
 
   // check if the robot eef failed to reach the target pose
-  if (taskState == TaskState::OnGoing && ((ros::Time::now() - t_start).toSec() > this->timeLimit || force.norm() > this->forceLimit)) {
-    RespawnReqPublisher.publish(std_msgs::Empty());
+  if (taskState == TaskState::OnGoing && (getTrialTime().toSec() > this->timeLimit || force.norm() > this->forceLimit)) {
+    // RespawnReqPublisher.publish(std_msgs::Empty());
     taskState = TaskState::Fail;
     ROS_ERROR_STREAM(controller->getRobotNs() + " failed to reach the target pose");
   }
@@ -217,10 +217,10 @@ bool ImpedanceController::updateImpedanceTarget(const VectorXd& x, VectorXd& xd)
     targetPoses[i] = T_base_world_inv * targetPoses[i];
 
   // update task state
-  taskState = updataTaskState(x - xd, targetIdx);
+  this->taskState = updataTaskState(x - xd, targetIdx);
 
   // update target pose
-  xd.head(3) = getNextTarget(taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
+  xd.head(3) = getNextTarget(this->taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
 
   // curTargetId = targetIdx;
 
@@ -251,6 +251,8 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
   // update target pose
   if (!this->updateImpedanceTarget(x, xd))
     xd.tail(3) = Vector3d::Zero();
+  else
+    taskState == TaskState::Initial;
 
   // get command state
   x = getControlState(x, xd, tf2::fromMsg(controller->getForceEef().wrench).head(3), controller->dt, this->impParam);
