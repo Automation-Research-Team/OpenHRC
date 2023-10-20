@@ -17,6 +17,11 @@ protected:
   std::string targetName;
   double targetDistance = 0.0;
 
+  inline void reset() {
+    controller->resetPose();
+    resetInterface();
+  }
+
 public:
   Interface(std::shared_ptr<CartController> controller) : n("~") {
     this->controller = controller;
@@ -31,15 +36,15 @@ public:
   int targetIdx = -1, nCompletedTask = 0;
   bool blocked = false;
 
-  std::string getTargetName() {
+  inline std::string getTargetName() {
     return this->targetName;
   }
 
-  double getTargetDistance() {
+  inline double getTargetDistance() {
     return this->targetDistance;
   }
 
-  TaskState getTaskState() {
+  inline TaskState getTaskState() {
     return this->taskState;
   }
 };

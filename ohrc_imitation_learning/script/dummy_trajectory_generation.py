@@ -93,16 +93,18 @@ def use_modeling_tool(A, B, N, Q, R, P, x0, xf, constraint=None, umax=None, umin
     if constraint is not None:
         zh = constraint["zh"]  # 0.1
         dh = constraint["dh"]  # 0.05
-        M = 2.0
-        if constraint["hang"]:
-            sign = 1.0
-        else:
-            sign = -1.0
+        M = 1.0e2
+        # if constraint["reverse"]:
+        # a = np.diag(np.array([1,
+        #   0, 0, 0, 0, 0, 1, 0, 0]))
+        # else:
+        a = np.diag(np.array([1,
+                              0, 0, 1, 0, 0, 0, 0, 0]))
         # Big-M method
         for t in range(N):
-            constrlist += [sign*(x[6, t] - zh) <= M*k[t]]
-            constrlist += [-(cvxpy.quad_form(x[:, t], np.diag(np.array([1,
-                             0, 0, 1, 0, 0, 0, 0, 0]))) - dh**2) >= -M*(1 - k[t])]
+            constrlist += [-(x[6, t] - zh) <= M*k[t]]
+            constrlist += [-(cvxpy.quad_form(x[:, t], a) -
+                             dh**2) >= -M*(1 - k[t])]
 
     prob = cvxpy.Problem(cvxpy.Minimize(costlist), constrlist)
 
@@ -221,7 +223,10 @@ def sample_func(args):
             constraint["zh"] = z
             constraint["dh"] = d
 
-            constraint["hang"] = False
+            if z == 0.1:
+                constraint["reverse"] = True
+            else:
+                constraint["reverse"] = False
             xt.append(getMinJerkTraj_QP(dt, tf, x0, xf, constraint))
             constraints.append(constraint)
 

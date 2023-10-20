@@ -128,7 +128,10 @@ void ImpedanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr
 }
 
 bool ImpedanceController::NormReachedCheck(const VectorXd& delta_x, const VectorXd& force, const double posThr, const double velThr, const double forceThr) {
-  return (delta_x.head(3).norm() < posThr && delta_x.tail(3).norm() < velThr && force.head(3).norm() > forceThr) ? true : false;
+  // std::cout << delta_x.head(3).norm() << ", " << delta_x.tail(3).norm() << ", " << force.head(3).norm() << std::endl;
+  // std::cout << posThr << ", " << velThr << ", " << forceThr << std::endl;
+  // std::cout << "---" << std::endl;
+  return (delta_x.head(3).norm() < posThr && delta_x.tail(3).norm() < velThr && force.head(3).norm() > forceThr);
 }
 
 // check if the robot eef reached the target pose

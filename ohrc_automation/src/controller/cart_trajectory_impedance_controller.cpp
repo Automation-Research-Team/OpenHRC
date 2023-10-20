@@ -80,6 +80,7 @@ bool CartTrajectoryImpedanceController::updateImpedanceTarget(const VectorXd& x,
 
   // if the target moved while reaching, go back to the rest pose and re-subscribe the trajectory topic
   if (forward == 1 && taskState == TaskState::OnGoing) {
+    // std::cout << (x_target_end_forward.head(3) + this->restPose.translation() - targetPoses[targetIdx].translation()).norm() << std::endl;
     if ((x_target_end_forward.head(3) + this->restPose.translation() - targetPoses[targetIdx].translation()).norm() > 0.03) {
       forward = -1;
       targetIdx--;

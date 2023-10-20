@@ -22,7 +22,7 @@ void XrBodyInterface::initInterface() {
 
   controller->updateFilterCutoff(10.0, 10.0);
 
-  pubFeedback = n.advertise<std_msgs::Float32>("/feedback/"+bodyPart_str, 2);
+  pubFeedback = n.advertise<std_msgs::Float32>("/feedback/" + bodyPart_str, 2);
 }
 
 void XrBodyInterface::setSubscriber() {
@@ -36,7 +36,7 @@ void XrBodyInterface::cbBody(const ohrc_msgs::BodyState::ConstPtr& msg) {
 }
 
 bool XrBodyInterface::getEnableFlag(const ohrc_msgs::HandState& handState, const ohrc_msgs::HandState& anotherHandState) {
-  if (handState.grip > 0.9)
+  if (handState.grip > 0.95)
     return true;
   else
     return false;
@@ -57,6 +57,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
     case BodyPart::RIGHT_HAND:
       state.pose = body.right_hand.pose;
       state.twist = body.right_hand.twist;
+      state.reset = body.right_hand.button[2];  // stick click
       if (getEnableFlag(body.right_hand, body.left_hand))
         state.enabled = true;
       break;
@@ -64,6 +65,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
     case BodyPart::LEFT_HAND:
       state.pose = body.left_hand.pose;
       state.twist = body.left_hand.twist;
+      state.reset = body.left_hand.button[2];  // stick click
       if (getEnableFlag(body.left_hand, body.right_hand))
         state.enabled = true;
       break;
@@ -87,9 +89,11 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
       if (hand == Hand::RIGHT) {
         state.pose = body.right_hand.pose;
         state.twist = body.right_hand.twist;
+        state.reset = body.right_hand.button[2];  // stick click
       } else {
         state.pose = body.left_hand.pose;
         state.twist = body.left_hand.twist;
+        state.reset = body.left_hand.button[2];  // stick click
       }
       break;
 
@@ -102,14 +106,14 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   this->state = state;  // TODO: check if this is necessary
 }
 
-void XrBodyInterface::resetInterface(){
+void XrBodyInterface::resetInterface() {
   this->isFirst = true;
 }
 
 void XrBodyInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) {
   std_msgs::Float32 amp;
 
-  amp.data = std::max(std::min((tf2::fromMsg(controller->getForceEef().wrench).head(3).norm()-3.0)/10.0, 1.0),0.0);
+  amp.data = std::max(std::min((tf2::fromMsg(controller->getForceEef().wrench).head(3).norm() - 3.0) / 10.0, 1.0), 0.0);
 
   if (controller->getOperationEnable())
     pubFeedback.publish(amp);

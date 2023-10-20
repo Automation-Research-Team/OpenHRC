@@ -586,6 +586,8 @@ void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel,
   state.twist.angular.y = vel.rot[1];
   state.twist.angular.z = vel.rot[2];
 
+  state.enabled = this->getOperationEnable();
+
   state.wrench = wrench;
   publisher->publish(state);
 }
