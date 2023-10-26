@@ -5,5 +5,5 @@
 *.pyc
 
 # csv files except for the ones that end with an underscore
-*.csv
-!*_.csv
+# *.csv
+# !*_.csv
