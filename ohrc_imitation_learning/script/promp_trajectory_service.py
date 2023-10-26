@@ -88,7 +88,8 @@ def main(mode=1):
                 trj = trjs_prev[i]
                 rospy.loginfo("Skipped trajectory generation.")
             else:
-                pose_prev = pose
+
+                targetPoses_prev.poses[i] = pose
 
                 y_cond = [-pose.position.x, -pose.position.y, -pose.position.z]
                 cpromp = promp.condition_position(
@@ -136,7 +137,7 @@ def main(mode=1):
         # targetPoses_prev = targetPoses
         trjs_prev = trjs
 
-        pub_trj.publish(trjs[0])
+        # pub_trj.publish(trjs[0])
 
         rospy.loginfo("Generated trajectories.")
         return GetTrajectoriesResponse(trjs)
