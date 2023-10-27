@@ -64,7 +64,7 @@ def main(mode=1):
     trjs_prev = None
 
     def generate_trjs(req):
-        t_max = 3.5 + (np.random.rand() - 0.5) / 0.5*0.5  # 3.0 ~ 4.0
+        t_max = 2.5 + (np.random.rand() - 0.5) / 0.5*0.5  # 2.0 ~ 3.0
         targetPoses = req.targetPoses
         restPose = req.restPose
 
