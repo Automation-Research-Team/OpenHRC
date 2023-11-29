@@ -182,7 +182,7 @@ VectorXd MyIK::getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<dou
   lower_vel_limits.resize(nJnt);
   upper_vel_limits.resize(nJnt);
 
-  double mergin = 1.0e-2;
+  double mergin = 1.0e-1;
   for (uint i = 0; i < nJnt; i++) {
     lower_vel_limits[i] = std::min((lower_limits[i] - x[i]) / dt, mergin);
     upper_vel_limits[i] = std::max((upper_limits[i] - x[i]) / dt, -mergin);
@@ -533,7 +533,17 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   }
 
   // get the controller input
-  dq_des.data = qpSolver.getSolution();
+  // dq_des.data = qpSolver.getSolution();
+  VectorXd dq = qpSolver.getSolution();
+
+  // hard constraint joint velocity limit
+  for (int i = 0; i < dq.size(); i++) {
+    if (std::isnan(dq[i]))
+      return -1;
+    dq[i] = std::min(std::max(dq[i], lower_vel_limits[i]), upper_vel_limits[i]);
+  }
+  dq_des.data = dq;
+
 
   return 1;
 }

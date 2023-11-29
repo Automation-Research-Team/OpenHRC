@@ -173,12 +173,12 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
   // additonal objective term in QP (2) for null space configuration
-  w_h[nRobot + 1] = 1.0e-1;
+  w_h[nRobot + 1] = 1.0e-0;
   H[nRobot + 1] = MatrixXd::Identity(nState, nState);
   g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 
   for (int i = 0; i < nRobot; i++) {
-    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished() * 1.0e3;
+    VectorXd w = (VectorXd(6) << 1.0, 1.0, 1.0, 0.5 / M_PI, 0.5 / M_PI, 0.5 / M_PI).finished() * 1.0e4;
     double w_n =  1.0e-3;  // this leads dq -> 0 witch is conflict with additonal task
     double gamma = 0.5 * es[i].transpose() * w.asDiagonal() * es[i] + w_n;
     // std::cout << gamma << std::endl;
@@ -260,14 +260,23 @@ int MultiMyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const st
   // get the controller input
   VectorXd dq_des_ = qpSolver.getSolution();
 
+
+
   // check if the solution does not include nan
   if (dq_des_.hasNaN())
     return -1;
 
   for (int i = 0; i < nRobot; i++) {
     dq_des[i].resize(myIKs[i]->getNJnt());
-    dq_des[i].data = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
+    // dq_des[i].data = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
+    VectorXd dq = dq_des_.segment(iJnt[i], myIKs[i]->getNJnt());
+
+    for (int j = 0; j < dq.size(); j++) 
+      dq[j] = std::min(std::max(dq[j], lower_vel_limits[i][j]), upper_vel_limits[i][j]);
+    
+    dq_des[i].data = dq;
   }
+
 
   // qpSolver.getPrimalVariable(primalVariable);
 
