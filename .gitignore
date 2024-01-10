@@ -1,4 +1,9 @@
+# bag files except for the ones that end with an underscore
 *.bag
-
 !*_.bag
+
 *.pyc
+
+# csv files except for the ones that end with an underscore
+# *.csv
+# !*_.csv

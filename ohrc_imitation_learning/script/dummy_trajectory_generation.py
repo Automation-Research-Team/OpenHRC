@@ -9,7 +9,7 @@ from multiprocessing import Pool
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def getMinJerkTraj_QP(dt, tf, x0, xf, constraint):
+def getMinJerkTraj_QP(dt, tf, x0, xf, constraint=None):
     t = np.arange(0.0, tf, dt)
 
     a = np.zeros((3, 3))
@@ -48,7 +48,7 @@ def getMinJerkTraj_QP(dt, tf, x0, xf, constraint):
     # # print((x))
 
 
-def use_modeling_tool(A, B, N, Q, R, P, x0, xf, constraint, umax=None, umin=None, xmin=None, xmax=None):
+def use_modeling_tool(A, B, N, Q, R, P, x0, xf, constraint=None, umax=None, umin=None, xmin=None, xmax=None):
     """
     solve MPC with modeling tool for test
     """
@@ -90,14 +90,21 @@ def use_modeling_tool(A, B, N, Q, R, P, x0, xf, constraint, umax=None, umin=None
     # constrlist += [x[:, 0] == x0[:, 0]]  # inital state constraints
     # constrlist += [x[:, -1] == xf[:, 0]]  # final state constraints
 
-    zh = constraint["zh"]  # 0.1
-    dh = constraint["dh"]  # 0.05
-    M = 2.0
-    # Big-M method
-    for t in range(N):
-        constrlist += [-(x[6, t] - zh) <= M*k[t]]
-        constrlist += [-(cvxpy.quad_form(x[:, t], np.diag(np.array([1,
-                         0, 0, 1, 0, 0, 0, 0, 0]))) - dh**2) >= -M*(1 - k[t])]
+    if constraint is not None:
+        zh = constraint["zh"]  # 0.1
+        dh = constraint["dh"]  # 0.05
+        M = 1.0e2
+        # if constraint["reverse"]:
+        # a = np.diag(np.array([1,
+        #   0, 0, 0, 0, 0, 1, 0, 0]))
+        # else:
+        a = np.diag(np.array([1,
+                              0, 0, 1, 0, 0, 0, 0, 0]))
+        # Big-M method
+        for t in range(N):
+            constrlist += [-(x[6, t] - zh) <= M*k[t]]
+            constrlist += [-(cvxpy.quad_form(x[:, t], a) -
+                             dh**2) >= -M*(1 - k[t])]
 
     prob = cvxpy.Problem(cvxpy.Minimize(costlist), constrlist)
 
@@ -198,25 +205,28 @@ def sample_func(args):
     xf = getFinalState(n)
 
     xt = []
+    constraints = []
 
     tf = (np.random.rand(1) - 0.5)*2.0 + 3.0  # 2.0 ~ 4.0
     xt.append(getMinJerkTraj(dt, tf, x0, xf))
+    constraints.append(None)
 
-    A = np.zeros((3, 3))
-    A[0, 1] = 1.0
-    A[1, 2] = 1.0
-
-    B = np.zeros((3, 1))
-    B[2] = 1.0
+    xt.append(getMinJerkTraj_QP(dt, tf, x0, xf, constraint=None))
+    constraints.append(None)
 
     zh = [0.1, 0.2]
-    dh = [0.03, 0.1]
-    constraints = []
+    dh = [0.03]
+
     for z in zh:
         for d in dh:
             constraint = dict()
             constraint["zh"] = z
             constraint["dh"] = d
+
+            if z == 0.1:
+                constraint["reverse"] = True
+            else:
+                constraint["reverse"] = False
             xt.append(getMinJerkTraj_QP(dt, tf, x0, xf, constraint))
             constraints.append(constraint)
 
@@ -226,6 +236,7 @@ def sample_func(args):
 def main():
     N = 100
 
+    # sample_func((N, 0))
     with Pool(processes=os.cpu_count()) as p:
         results = p.map(
             func=sample_func, iterable=zip(range(N), np.random.randint(0, 2 ** 32 - 1, N)))
@@ -242,12 +253,12 @@ def main():
         for j, xt in enumerate(result):
             ax[j].plot(xt["px"], xt["py"], xt["pz"])
 
-            if i == len(results)-1:
-                ax[j].axis('equal')
-                if j > 0:
-                    ax[j].plot(c[j-1]["dh"]*np.cos(t), c[j-1]["dh"] *
-                               np.sin(t), c[j-1]["zh"]*np.ones(t.size))
+            if i == N-1:
+                if c[j] is not None:
+                    ax[j].plot(c[j]["dh"]*np.cos(t), c[j]["dh"] *
+                               np.sin(t), c[j]["zh"]*np.ones(t.size))
 
+                    ax[j].axis('equal')
             directory = FILE_DIR+"/trajectory/case_"+str(j)
             if not os.path.exists(directory):
                 os.makedirs(directory)
