@@ -79,6 +79,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0))) {
     this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0));
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
+    // pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
     subFlagPtrs.push_back(&flagForce);
   } else
     ROS_WARN_STREAM("force/torque sensor TF was not found.");
@@ -252,7 +253,7 @@ void CartController::signal_handler(int signum) {
   }
 }
 void CartController::resetFt() {
-  ROS_INFO_STREAM("Resetting FT sensor offset...");
+  ROS_INFO_STREAM("Called reset ft service.");
 
   std_srvs::Empty srv;
   client.call(srv);
@@ -350,14 +351,16 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   _force.header.frame_id = robot_ns + chain_end;
   _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff);
 
+  // this->pubEefForce.publish(_force);
+
   if (!flagForce)
     flagForce = true;
 }
 
 void CartController::initDesWithJnt(const KDL::JntArray& q_cur) {
   std::lock_guard<std::mutex> lock(mtx);
-  fk_solver_ptr->JntToCart(q_cur, this->_des_eff_pose);
-  this->_des_eff_vel = KDL::Twist::Zero();
+  fk_solver_ptr->JntToCart(q_cur, this->_des_eef_pose);
+  this->_des_eef_vel = KDL::Twist::Zero();
 }
 
 int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt) {
@@ -370,9 +373,9 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
   if (s_moveInitPos.isFirst) {
     this->nameJnt = nameJnt;
     s_moveInitPos.q_initial = q_cur;
-    KDL::Frame init_eff_pose;
+    KDL::Frame init_eef_pose;
 
-    tf::transformEigenToKDL(T_init, init_eff_pose);
+    tf::transformEigenToKDL(T_init, init_eef_pose);
 
     KDL::JntArray q_init_expect;
     q_init_expect.resize(nJnt);
@@ -381,17 +384,17 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     int rc;
     switch (solver) {
       case SolverType::Trac_IK:
-        rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+        rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
         break;
 
       case SolverType::KDL:
-        rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des);
+        rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
         break;
 
       case SolverType::MyIK:
         myik_solver_ptr->setNameJnt(nameJnt);
         myik_solver_ptr->setIdxSegJnt(idxSegJnt);
-        rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eff_pose, s_moveInitPos.q_des, 5.0);
+        rc = myik_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des, 5.0);
         break;
     }
 
@@ -521,12 +524,12 @@ void CartController::sendTrajectoryActionCmd(const VectorXd& q_des, const Vector
   jntCmdPublisher.publish(cmd_trjAction);
 }
 #if 0
-void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
+void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_cur, const KDL::JntArray& dq_cur, KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel) {
   bool disable;
   {
     std::lock_guard<std::mutex> lock(mtx);
-    des_eff_pose = this->_des_eff_pose;
-    des_eff_vel = this->_des_eff_vel;
+    des_eef_pose = this->_des_eef_pose;
+    des_eef_vel = this->_des_eef_vel;
     disable = this->_disable;
   }
 
@@ -534,7 +537,7 @@ void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_c
   myik_solver_ptr->JntToCart(q_cur, frame);
   Affine3d T, Td;
   tf::transformKDLToEigen(frame, T);
-  tf::transformKDLToEigen(des_eff_pose, Td);
+  tf::transformKDLToEigen(des_eef_pose, Td);
 
   static ros::Time t0 = ros::Time::now();
   if (disable)
@@ -547,28 +550,32 @@ void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_c
   Td.translation() = s * (Td.translation() - T.translation()) + T.translation();
   Td.linear() = Quaterniond(T.rotation()).slerp(s, Quaterniond(Td.rotation())).toRotationMatrix();
 
-  tf::transformEigenToKDL(Td, des_eff_pose);
+  tf::transformEigenToKDL(Td, des_eef_pose);
 
   KDL::Twist twist;
   // myik_solver_ptr->JntVelToCartVel(q_cur, dq_cur, twist);
   Matrix<double, 6, 1> v, vd;
   tf::twistKDLToEigen(twist, v);
-  tf::twistKDLToEigen(des_eff_vel, vd);
+  tf::twistKDLToEigen(des_eef_vel, vd);
 
   vd = s * (vd - v) + v;
-  tf::twistEigenToKDL(vd, des_eff_vel);
+  tf::twistEigenToKDL(vd, des_eef_vel);
 }
 #endif
-void CartController::filterDesEffPoseVel(KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
+void CartController::filterDesEffPoseVel(KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel) {
   Matrix<double, 6, 1> vel;
-  tf::twistKDLToEigen(des_eff_vel, vel);
+  tf::twistKDLToEigen(des_eef_vel, vel);
   for (int i = 0; i < 6; i++)
     vel(i) = velFilter[i].filter(vel(i));
 
-  tf::twistEigenToKDL(vel, des_eff_vel);
+  tf::twistEigenToKDL(vel, des_eef_vel);
 }
 
 void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher) {
+  this->publishState(pose, vel, geometry_msgs::Wrench(), publisher);
+}
+
+void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::Wrench& wrench, ros::Publisher* publisher) {
   ohrc_msgs::State state;
   state.header.stamp = ros::Time::now();
   state.pose = tf2::toMsg(pose);
@@ -578,26 +585,18 @@ void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel,
   state.twist.angular.x = vel.rot[0];
   state.twist.angular.y = vel.rot[1];
   state.twist.angular.z = vel.rot[2];
+
+  state.wrench = wrench;
   publisher->publish(state);
-
-  // geometry_msgs::TransformStamped transform;
-  // // if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
-  // //   return;
-
-  // transform = tf2::kdlToTransform(des_eff_pose);
-  // transform.header.stamp = ros::Time::now();
-
-  // transform.header.frame_id = robot_ns + chain_start;
-  // transform.child_frame_id = robot_ns + chain_end + "_d";
-  // br.sendTransform(transform);
 }
 
-void CartController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
-  publishState(des_eff_pose, des_eff_vel, &desStatePublisher);
+void CartController::publishDesEffPoseVel(const KDL::Frame& des_eef_pose, const KDL::Twist& des_eef_vel) {
+  publishState(des_eef_pose, des_eef_vel, &desStatePublisher);
 }
 
-void CartController::publishCurEffPoseVel(const KDL::Frame& cur_eff_pose, const KDL::Twist& cur_eff_vel) {
-  publishState(cur_eff_pose, cur_eff_vel, &curStatePublisher);
+void CartController::publishCurEffPoseVel(const KDL::Frame& cur_eef_pose, const KDL::Twist& cur_eef_vel) {
+  std::lock_guard<std::mutex> lock(mtx);
+  publishState(cur_eef_pose, cur_eef_vel, _force.wrench, &curStatePublisher);
 }
 
 void CartController::publishMarker(const KDL::JntArray q_cur) {
@@ -644,7 +643,7 @@ void CartController::stopping(const ros::Time& /*time*/) {
   }
 }
 
-void CartController::getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel) {
+void CartController::getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel) {
   KDL::JntArray dq_cur;
   KDL::Frame cur_eef_pose;
   KDL::Twist cur_eef_vel;
@@ -652,13 +651,13 @@ void CartController::getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des
   // getState(q_cur, dq_cur);
 
   // // userManipU << 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
-  // getDesEffPoseVel(dt, q_cur, dq_cur, des_eff_pose, des_eff_vel);
-  // filterDesEffPoseVel(des_eff_pose, des_eff_vel);
+  // getDesEffPoseVel(dt, q_cur, dq_cur, des_eef_pose, des_eef_vel);
+  // filterDesEffPoseVel(des_eef_pose, des_eef_vel);
 
   getState(q_cur, dq_cur, cur_eef_pose, cur_eef_vel);
-  getDesState(cur_eef_pose, cur_eef_vel, des_eff_pose, des_eff_vel);
-  publishState(des_eff_pose, des_eff_vel, &desStatePublisher);
-  publishState(cur_eef_pose, cur_eef_vel, &curStatePublisher);
+  getDesState(cur_eef_pose, cur_eef_vel, des_eef_pose, des_eef_vel);
+  publishDesEffPoseVel(des_eef_pose, des_eef_vel);
+  publishCurEffPoseVel(cur_eef_pose, cur_eef_vel);
   // publishMarker(q_cur);
   //
 }
@@ -675,8 +674,8 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   bool disable, passThrough;
   {
     std::lock_guard<std::mutex> lock(mtx);
-    des_pose = this->_des_eff_pose;
-    des_vel = this->_des_eff_vel;
+    des_pose = this->_des_eef_pose;
+    des_vel = this->_des_eef_vel;
     disable = this->_disable;
     passThrough = this->_passThrough;
   }
@@ -740,11 +739,11 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
   userManipU << 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
 
-  // getDesEffPoseVel(dt, q_cur, dq_cur, des_eff_pose, des_eff_vel);
-  // // filterDesEffPoseVel(des_eff_pose, des_eff_vel);
-  // publishDesEffPoseVel(des_eff_pose, des_eff_vel);
+  // getDesEffPoseVel(dt, q_cur, dq_cur, des_eef_pose, des_eef_vel);
+  // // filterDesEffPoseVel(des_eef_pose, des_eef_vel);
+  // publishDesEffPoseVel(des_eef_pose, des_eef_vel);
   // publishMarker(q_cur);
-  getIKInput(dt, q_cur, des_eff_pose, des_eff_vel);
+  getIKInput(dt, q_cur, des_eef_pose, des_eef_vel);
 
   static KDL::JntArray dq_des(nJnt);
   static KDL::JntArray q_des(q_cur);  // TODO: this might should be initialized with q_init
@@ -756,13 +755,13 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
 
     switch (solver) {
       case SolverType::Trac_IK:
-        rc = tracik_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des);
+        rc = tracik_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des);
         break;
       case SolverType::KDL:
-        rc = kdl_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des);
+        rc = kdl_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des);
         break;
       case SolverType::MyIK:
-        rc = myik_solver_ptr->CartToJnt(q_cur, des_eff_pose, q_des, dt);
+        rc = myik_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des, dt);
         break;
     }
     if (rc < 0) {
@@ -780,7 +779,7 @@ void CartController::update(const ros::Time& time, const ros::Duration& period) 
     q_des_prev = q_des;
 
   } else if (controller == ControllerType::Velocity) {
-    rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
+    rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eef_pose, des_eef_vel, dq_des, dt);
 
     if (rc < 0) {
       ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
@@ -873,8 +872,8 @@ int CartController::control() {
   double dt = 1.0 / freq;
   // control
   ros::Rate r(freq);
-  KDL::Frame des_eff_pose, current_eff_pose;
-  KDL::Twist des_eff_vel;
+  KDL::Frame des_eef_pose, current_eef_pose;
+  KDL::Twist des_eef_vel;
   KDL::JntArray q_cur, dq_cur;
   std_msgs::Float64MultiArray cmd;
   Matrix3d userManipU;
@@ -891,9 +890,9 @@ int CartController::control() {
 
     userManipU << 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
 
-    getDesEffPoseVel(dt, q_cur, dq_cur, des_eff_pose, des_eff_vel);
-    // filterDesEffPoseVel(des_eff_pose, des_eff_vel);
-    // publishDesEffPoseVel(des_eff_pose, des_eff_vel);
+    getDesEffPoseVel(dt, q_cur, dq_cur, des_eef_pose, des_eef_vel);
+    // filterDesEffPoseVel(des_eef_pose, des_eef_vel);
+    // publishDesEffPoseVel(des_eef_pose, des_eef_vel);
     publishMarker(q_cur);
 
     if (controller == ControllerType::Position) {
@@ -901,11 +900,11 @@ int CartController::control() {
       static KDL::JntArray q_init = q_cur;
 
       if (solver == SolverType::Trac_IK)
-        rc = tracik_solver_ptr->CartToJnt(q_init, des_eff_pose, q_des);
+        rc = tracik_solver_ptr->CartToJnt(q_init, des_eef_pose, q_des);
       else if (solver == SolverType::KDL)
-        rc = kdl_solver_ptr->CartToJnt(q_init, des_eff_pose, q_des);
+        rc = kdl_solver_ptr->CartToJnt(q_init, des_eef_pose, q_des);
       else if (solver == SolverType::MyIK)
-        rc = myik_solver_ptr->CartToJnt(q_init, des_eff_pose, q_des, dt);
+        rc = myik_solver_ptr->CartToJnt(q_init, des_eef_pose, q_des, dt);
 
       if (rc < 0) {
         ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");
@@ -920,8 +919,8 @@ int CartController::control() {
     } else if (controller == ControllerType::Velocity) {
       KDL::JntArray dq_des(nJnt);
 
-      rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
-      // rc = myik_solver_ptr->CartToJntVel_qp_manipOpt(q_cur, des_eff_pose, des_eff_vel, dq_des, dt, userManipU);
+      rc = myik_solver_ptr->CartToJntVel_qp(q_cur, des_eef_pose, des_eef_vel, dq_des, dt);
+      // rc = myik_solver_ptr->CartToJntVel_qp_manipOpt(q_cur, des_eef_pose, des_eef_vel, dq_des, dt, userManipU);
 
       if (rc < 0) {
         ROS_WARN_STREAM("Failed to solve IK. Skip this control loop");

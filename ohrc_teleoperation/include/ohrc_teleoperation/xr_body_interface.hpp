@@ -27,6 +27,7 @@ protected:
 public:
   using StateTopicInterface::StateTopicInterface;
   void initInterface() override;
+  void resetInterface() override;
   void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
 };
 

@@ -110,8 +110,7 @@ find_package(magic_enum CONFIG REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ohrc_teleoperation
-  CATKIN_DEPENDS roscpp
-
+  CATKIN_DEPENDS roscpp ohrc_control ohrc_common
   # DEPENDS system_lib
 )
 

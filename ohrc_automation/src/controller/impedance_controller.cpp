@@ -1,6 +1,78 @@
 #include "ohrc_automation/impedance_controller.hpp"
 
 void ImpedanceController::initInterface() {
+  this->impParam = getImpParam(getImpCoeff());
+
+  this->getParam();
+
+  RespawnReqPublisher = n.advertise<std_msgs::Empty>(this->targetName + "/success", 10);
+  targetDistPublisher = n.advertise<std_msgs::Float32>(this->targetName + "/distance", 10);
+
+  this->setSubscriber();
+}
+
+void ImpedanceController::getParam() {
+  std::vector<std::string> targetTopicName_;
+  if (n.getParam("target_topic", targetTopicName_))
+    targetName = targetTopicName_[controller->getIndex()];
+  else if (!n.getParam("target_topic", targetName))
+    ROS_ERROR_STREAM("target pose topic name(s) are not configured");
+
+  if (!n.getParam("error_threshold/target/pos", posThr))
+    ROS_ERROR_STREAM("error_threshold/target/pos is not configured");
+
+  if (!n.getParam("error_threshold/target/vel", velThr))
+    ROS_ERROR_STREAM("error_threshold/target/vel is not configured");
+
+  if (!n.getParam("error_threshold/target/force", forceThr))
+    ROS_ERROR_STREAM("error_threshold/target/force is not configured");
+
+  if (!n.getParam("error_threshold/rest/pos", posThr_r))
+    ROS_ERROR_STREAM("error_threshold/rest/pos is not configured");
+
+  if (!n.getParam("error_threshold/rest/vel", velThr_r))
+    ROS_ERROR_STREAM("error_threshold/rest/vel is not configured");
+
+  if (!n.getParam("error_threshold/rest/force", forceThr_r))
+    ROS_ERROR_STREAM("error_threshold/rest/force is not configured");
+
+  if (!n.getParam("limit/time", timeLimit))
+    ROS_ERROR_STREAM("time limit is not configured");
+
+  if (!n.getParam("limit/force", forceLimit))
+    ROS_ERROR_STREAM("force limit is not configured");
+
+  if (!n.getParam("target_rule/repeat", repeat))
+    ROS_ERROR_STREAM("repeat is not configured");
+
+  if (!n.getParam("target_rule/rest_everytime", restEverytime))
+    ROS_ERROR_STREAM("restEverytime is not configured");
+
+  ROS_INFO_STREAM("error_threshold/target/[pos, vel, force]: [" << posThr << ", " << velThr << ", " << forceThr << "]");
+  ROS_INFO_STREAM("error_threshold/rest/[pos, vel, force]: [" << posThr_r << ", " << velThr_r << ", " << forceThr_r << "]");
+}
+
+void ImpedanceController::setSubscriber() {
+  targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetName, 1, &ImpedanceController::cbTargetPoses, this, th);
+}
+
+void ImpedanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK) {
+  if (isGotMDK[0] == false) {
+    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
+    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
+    impCoeff.m = impCoeff.d.array() * impCoeff.d.array() / impCoeff.k.array() * 0.25;
+  } else if (isGotMDK[1] == false) {
+    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
+    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
+    impCoeff.d = 2.0 * (impCoeff.m.array() * impCoeff.k.array()).cwiseSqrt();
+  } else if (isGotMDK[2] == false) {
+    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
+    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
+    impCoeff.k = impCoeff.d.array() * impCoeff.d.array() / impCoeff.m.array() * 0.25;
+  }
+}
+
+ImpedanceController::ImpCoeff ImpedanceController::getImpCoeff() {
   ImpCoeff impCoeff;
   std::vector<bool> isGotMDK(3, false);
   isGotMDK[0] = n.getParam("imp_ceff/m", impCoeff.m_);
@@ -28,39 +100,7 @@ void ImpedanceController::initInterface() {
     ros::shutdown();
   }
 
-  this->impParam = getImpParam(impCoeff);
-
-  std::vector<std::string> targetTopicName_;
-  // std::string targetName;
-  if (n.getParam("target_topic", targetTopicName_))
-    targetName = targetTopicName_[controller->getIndex()];
-  else if (!n.getParam("target_topic", targetName))
-    ROS_ERROR_STREAM("target pose topic name(s) are not configured");
-
-  RespawnReqPublisher = n.advertise<std_msgs::Empty>(targetName + "/success", 10);
-  targetDistPublisher = n.advertise<std_msgs::Float32>(targetName + "/distance", 10);
-
-  this->setSubscriber();
-}
-
-void ImpedanceController::setSubscriber() {
-  targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetName, 1, &ImpedanceController::cbTargetPoses, this, th);
-}
-
-void ImpedanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK) {
-  if (isGotMDK[0] == false) {
-    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
-    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
-    impCoeff.m = impCoeff.d.array() * impCoeff.d.array() / impCoeff.k.array() * 0.25;
-  } else if (isGotMDK[1] == false) {
-    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
-    impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
-    impCoeff.d = 2.0 * (impCoeff.m.array() * impCoeff.k.array()).cwiseSqrt();
-  } else if (isGotMDK[2] == false) {
-    impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
-    impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
-    impCoeff.k = impCoeff.d.array() * impCoeff.d.array() / impCoeff.m.array() * 0.25;
-  }
+  return impCoeff;
 }
 
 ImpedanceController::ImpParam ImpedanceController::getImpParam(const ImpCoeff& impCoeff) {
@@ -87,36 +127,48 @@ void ImpedanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr
   this->_targetUpdated = true;
 }
 
+bool ImpedanceController::NormReachedCheck(const VectorXd& delta_x, const VectorXd& force, const double posThr, const double velThr, const double forceThr) {
+  return (delta_x.head(3).norm() < posThr && delta_x.tail(3).norm() < velThr && force.head(3).norm() > forceThr) ? true : false;
+}
+
+// check if the robot eef reached the target pose
+// delta_x: position error (3) and velocity error (3)
+bool ImpedanceController::checkTargetReached(const VectorXd& delta_x, const VectorXd& force) {
+  return NormReachedCheck(delta_x, force, this->posThr, this->velThr, this->forceThr);
+}
+
+bool ImpedanceController::checkRestTargetReached(const VectorXd& delta_x, const VectorXd& force) {
+  return NormReachedCheck(delta_x, force, this->posThr_r, this->velThr_r, this->forceThr_r);
+}
+
 TaskState ImpedanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx) {
   TaskState taskState = TaskState::OnGoing;
 
-  double f = tf2::fromMsg(controller->getForceEef().wrench).head(3).norm();
-  if (targetIdx == -1) {
-    if (delta_x.head(3).norm() < 0.02 && delta_x.tail(3).norm() < 0.01 && !blocked)
+  VectorXd force = tf2::fromMsg(controller->getForceEef().wrench).head(3);
+
+  // check if the robot eef reached the target pose
+  if (targetIdx == -1) {  // if going back to rest positon
+    if (checkRestTargetReached(delta_x, force) && !blocked)
       taskState = TaskState::Success;
   } else {
-    if (delta_x.head(3).norm() < 0.01) {  // && f > 20.0) {
+    if (checkTargetReached(delta_x, force)) {
       RespawnReqPublisher.publish(std_msgs::Empty());
       nCompletedTask++;
       taskState = TaskState::Success;
-    } else if (delta_x.head(3).norm() > 0.03 && f > 50.0)
-      stack++;
-    // taskState = TaskState::Fail;
-
-    // std::cout << delta_x.tail(3).norm() << ", " << delta_x.head(3).norm() << ", " << f << std::endl;
+      ROS_INFO_STREAM(controller->getRobotNs() + " reached the target pose");
+    }
   }
 
-  static ros::Time t_start = ros::Time::now();
-  if (taskState == TaskState::OnGoing && (stack > 1.0 / dt || (ros::Time::now() - t_start).toSec() > 30.0)) {
-    stack = 0;
+  // check if the robot eef failed to reach the target pose
+  if (taskState == TaskState::OnGoing && ((ros::Time::now() - t_start).toSec() > this->timeLimit || force.norm() > this->forceLimit)) {
     RespawnReqPublisher.publish(std_msgs::Empty());
     taskState = TaskState::Fail;
-    ROS_ERROR_STREAM("Failed to reaching");
-  } else if (taskState == TaskState::Success)
-    stack = 0;
+    ROS_ERROR_STREAM(controller->getRobotNs() + " failed to reach the target pose");
+  }
 
+  // rest timer
   if (taskState == TaskState::Success || taskState == TaskState::Fail)
-    t_start = ros::Time::now();
+    this->t_start = ros::Time::now();
 
   return taskState;
 }
@@ -132,10 +184,10 @@ Affine3d ImpedanceController::getNextTarget(const TaskState& taskState, const st
       break;
 
     case TaskState::Success:
-      if (targetIdx == -1) {  // if going back to rest positon
+      if (restEverytime ? (targetIdx == -1) && ((nextTargetIdx != targetPoses.size() - 1) || repeat) : true) {  // if going back to rest positon
         nextTargetIdx++;
         if (nextTargetIdx == targetPoses.size())
-          nextTargetIdx = 0;
+          nextTargetIdx = repeat ? 0 : targetPoses.size() - 1;
         targetIdx = nextTargetIdx;
       } else {
         targetIdx = -1;
@@ -188,6 +240,8 @@ void ImpedanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) 
 
     taskState = TaskState::OnGoing;
     controller->startOperation();
+
+    this->t_start = ros::Time::now();
   }
 
   // update only position using subscribed q.
