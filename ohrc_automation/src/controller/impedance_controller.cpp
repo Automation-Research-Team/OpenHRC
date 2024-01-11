@@ -6,7 +6,7 @@ void ImpedanceController::initInterface() {
   this->getParam();
 
   RespawnReqPublisher = n.advertise<std_msgs::Empty>(this->targetName + "/success", 10);
-  targetDistPublisher = n.advertise<std_msgs::Float32>(this->targetName + "/distance", 10);
+  targetDistPublisher = n.advertise<std_msgs::Float32>("/" + controller->getRobotNs() + "/distance", 10);
 
   this->setSubscriber();
 }
