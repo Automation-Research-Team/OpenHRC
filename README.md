@@ -65,7 +65,7 @@ Note: The default tool `catkin_make` cannot compile non-ROS code.
 
 
 ## Docker-VNC Installation
-If you want to install OpenHRC natively on Ubuntu 20.04, please see the [Native Installation](#Native-Installation-(Ubuntu-20.04)) section and skip this section.
+If you want to install OpenHRC natively on Ubuntu 20.04, please see the [Native Installation](#Native-(Ubuntu-20.04)-/-Docker-(on-Ubuntu-distribution)-Installation) section and skip this section.
 
 This package can be tested in a Docker container, which should work on Linux, Windows, and macOS. The Dockerfile is based on https://github.com/Tiryoh/docker-ros-desktop-vnc.
 
