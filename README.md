@@ -19,12 +19,11 @@ OpenHRC has been developed and tested in the following environments:
 Currently, this library is not compatible with ROS2. Although there are intentions to port this package to ROS2, there is no specific plan in place.
 
 
-## Native (Ubuntu 20.04)/ Docker (on any Ubuntu distribution) Installation
+## Native (Ubuntu 20.04) / Docker (on Ubuntu distribution) Installation
 
-If you want to test on other operating systems, please take a look at [Docker-VNC Installation](#Docker-VNC-Installation) section.
+If you just try OpneHRC with minimum effor on other operating systems, please take a look at [Docker-VNC Installation](#Docker-VNC-Installation) section.
 
 In the following instruction, the catkin workspace directory is assumed to be `~/catkin_ws` on host.
-
 
 ### Clone the Source Code
 ```
@@ -40,6 +39,8 @@ $ cd ~/catkin_ws/src/OpenHRC
 $ sudo sh install-docker-rocker.sh
 $ rocker --nvidia --x11 --user --home osrf/ros:noetic-desktop-full
 ```
+
+This instruction uses a docker (rocker) image offered by OSRF, including minimum ROS setting, and comples OpenHRC manuallly. 
 
 
 ### Resolve Dependencies
