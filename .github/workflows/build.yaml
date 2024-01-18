@@ -60,25 +60,18 @@ jobs:
       run: |
         sudo apt install -y curl
         curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/use_docker_rocker/install-docker-rocker.sh | /bin/bash
-        rocker --x11 --user --home osrf/ros:noetic-desktop-full
-
-    - name: pre build
+        
+    - name: build on docker
       run: |
+        rocker --x11 --user --home osrf/ros:noetic-desktop-full
         cd ${CATKIN_WS}/src/OpenHRC
         git submodule update --init --recursive
         rosdep update
         rosdep install -i -y --from-paths ./ 
-
-    - name: build
-      run: |
         source /opt/ros/noetic/setup.bash
         cd ${CATKIN_WS}
         catkin build
-
-    - name: test
-      run: |
         source /opt/ros/noetic/setup.bash
-        cd ${CATKIN_WS}
         catkin test
 
   docker_vnc_build:

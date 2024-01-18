@@ -32,7 +32,7 @@ $ cd ~/catkin_ws/src
 $ git clone https://github.com/itadera/OpenHRC.git 
 ```
 
-### (Option) Install and Run Docker and Rocker
+### (Option) Install and Run Docker with Rocker
 
 ```
 $ cd ~/catkin_ws/src/OpenHRC
@@ -40,8 +40,8 @@ $ sudo sh install-docker-rocker.sh
 $ rocker --nvidia --x11 --user --home osrf/ros:noetic-desktop-full
 ```
 
-This instruction uses a docker (rocker) image offered by OSRF, including minimum ROS setting, and comples OpenHRC manuallly. 
-
+This instruction uses a docker image offered by OSRF, including minimum ROS setting, and comples OpenHRC manuallly. 
+If your PC has no NVIDIA GPU, please remove `--nvidia` option.
 
 ### Resolve Dependencies
 ```
