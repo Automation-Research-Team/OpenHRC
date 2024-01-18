@@ -60,7 +60,7 @@ jobs:
       run: |
         sudo apt install -y curl
         curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/use_docker_rocker/install-docker-rocker.sh | /bin/bash
-        rocker --nvidia --x11 --user --home osrf/ros:noetic-desktop-full
+        rocker --x11 --user --home osrf/ros:noetic-desktop-full
 
     - name: pre build
       run: |
