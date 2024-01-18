@@ -73,9 +73,7 @@ jobs:
         
     - name: build on docker
       run: |
-        rocker --privileged --name test --user --home osrf/ros:noetic-desktop-full
-        docker ps -a
-        docker exec test /bin/bash `cd ${CATKIN_WS}/src/OpenHRC && rosdep update && rosdep install -i -y --from-paths ./ && cd ${CATKIN_WS} && catkin build && catkin test`
+        rocker --user --home osrf/ros:noetic-desktop-full /bin/bash `cd ${CATKIN_WS}/src/OpenHRC && rosdep update && rosdep install -i -y --from-paths ./ && cd ${CATKIN_WS} && catkin build && catkin test`
 
   docker_vnc_build:
     runs-on: ubuntu-latest
