@@ -63,7 +63,7 @@ jobs:
         
     - name: build on docker
       run: |
-        rocker --x11 --user --home osrf/ros:noetic-desktop-full
+        rocker --x11 --user --home osrf/ros:noetic-desktop-full /bin/bash
         cd ${CATKIN_WS}/src/OpenHRC
         git submodule update --init --recursive
         rosdep update
