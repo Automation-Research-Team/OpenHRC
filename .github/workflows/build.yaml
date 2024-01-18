@@ -62,6 +62,8 @@ jobs:
       run: |
         mkdir -p ${CATKIN_WS}/src
         ln -s ${GITHUB_WORKSPACE} ${CATKIN_WS}/src/
+        cd ${CATKIN_WS}/src/OpenHRC
+        git submodule update --init --recursive
 
     - name: install docker engine
       run: |
@@ -72,13 +74,12 @@ jobs:
     - name: build on docker
       run: |
         rocker --name test --user --home osrf/ros:noetic-desktop-full
-        docker exec test /bin/bash && cd ${CATKIN_WS}/src/OpenHRC && \
-          git submodule update --init --recursive && \
+        docker exec test /bin/bash `cd ${CATKIN_WS}/src/OpenHRC && \
           rosdep update && \
           rosdep install -i -y --from-paths ./ && \ 
           cd ${CATKIN_WS} && \
           catkin build && \
-          catkin test
+          catkin test`
 
   docker_vnc_build:
     runs-on: ubuntu-latest
