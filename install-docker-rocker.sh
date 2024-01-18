@@ -9,4 +9,4 @@ sudo apt update
 sudo apt -y install docker-ce docker-ce-cli containerd.io
 sudo apt -y install docker-compose-plugin
 sudo gpasswd -a $USER docker
-sudo apt install python3-rocker
+pip install rocker
