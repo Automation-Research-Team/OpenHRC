@@ -79,7 +79,7 @@ $ sudo service docker start
 
 If you encounter an issue with `permission denied`, please try:
 ```bash
-sudo chmod 666 /var/run/docker.sock
+$ sudo chmod 666 /var/run/docker.sock
 ```
 
 This install instruction uses Docker Engine, not Docker Desktop, which is not free for commercial use. Both options are compatible, but Docker Engine may offer better performance. If you prefer Docker Desktop, please follow the instructions at https://docs.docker.com/desktop/.
