@@ -64,13 +64,13 @@ jobs:
     - name: build on docker
       run: |
         rocker --name test --x11 --user --home osrf/ros:noetic-desktop-full
-        docker exec test cd ${CATKIN_WS}/src/OpenHRC && \
-        git submodule update --init --recursive && \
-        rosdep update && \
-        rosdep install -i -y --from-paths ./ && \ 
-        cd ${CATKIN_WS} && \
-        catkin build && \
-        catkin test
+        docker exec test /bin/bash && cd ${CATKIN_WS}/src/OpenHRC && \
+          git submodule update --init --recursive && \
+          rosdep update && \
+          rosdep install -i -y --from-paths ./ && \ 
+          cd ${CATKIN_WS} && \
+          catkin build && \
+          catkin test
 
   docker_vnc_build:
     runs-on: ubuntu-latest
