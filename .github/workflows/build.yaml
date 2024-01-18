@@ -68,7 +68,7 @@ jobs:
     - name: install docker engine
       run: |
         sudo apt install -y curl
-        curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/use_docker_rocker/install-docker-rocker.sh | /bin/bash
+        curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash
         sudo service docker start
         
     - name: build on docker
@@ -90,7 +90,7 @@ jobs:
     - name: install docker engine
       run: |
         sudo apt install -y curl
-        curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/use_docker_rocker/install-docker-rocker.sh | /bin/bash
+        curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash
         sudo service docker start
 
     - name: init ws
