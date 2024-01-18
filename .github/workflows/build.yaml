@@ -15,8 +15,10 @@ jobs:
       with:
         required-ros-distributions: noetic
 
-    # - name: Install catkin tool
-    #   run: sudo apt-get install python3-catkin-tools
+    - name: apt update and upgrade
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
 
     - name: Init workspace
       run: |
@@ -44,18 +46,51 @@ jobs:
         cd ${CATKIN_WS}
         catkin test
         
-
   docker_build:
+    runs-on: ubuntu-latest
+    env:
+      CATKIN_WS: /home/runner/work/catkin_ws
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: apt update and upgrade
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
+
+    - name: Init workspace
+      run: |
+        mkdir -p ${CATKIN_WS}/src
+        ln -s ${GITHUB_WORKSPACE} ${CATKIN_WS}/src/
+        cd ${CATKIN_WS}/src/OpenHRC
+        git submodule update --init --recursive
+
+    - name: install docker engine
+      run: |
+        sudo apt install -y curl
+        curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash
+        sudo service docker start
+        
+    - name: build on docker
+      run: |
+        rocker --user --home osrf/ros:noetic-desktop-full /bin/bash `cd ${CATKIN_WS}/src/OpenHRC && rosdep update && rosdep install -i -y --from-paths ./ && cd ${CATKIN_WS} && catkin build && catkin test`
+
+  docker_vnc_build:
     runs-on: ubuntu-latest
     env:
       WS: /home/runner/work
     steps:
     - uses: actions/checkout@v3
 
+    - name: apt update and upgrade
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
+
     - name: install docker engine
       run: |
         sudo apt install -y curl
-        curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/install-docker.sh | /bin/bash
+        curl -s curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash
         sudo service docker start
 
     - name: init ws

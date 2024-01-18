@@ -19,25 +19,36 @@ OpenHRC has been developed and tested in the following environments:
 Currently, this library is not compatible with ROS2. Although there are intentions to port this package to ROS2, there is no specific plan in place.
 
 
-## Native Installation (Ubuntu 20.04)
+## Native (Ubuntu 20.04) / Docker (on Ubuntu distribution) Installation
 
-For other operating systems, please move on to the [Docker Installation](#Docker-Installation) section.
+If you just try OpneHRC with minimum effor on other operating systems, please take a look at [Docker-VNC Installation](#Docker-VNC-Installation) section.
 
-In the following instruction, the catkin workspace directory is assumed to be `~/catkin_ws`.
+In the following instruction, the catkin workspace directory is assumed to be `~/catkin_ws` on host.
 
 ### Clone the Source Code
-```
+```bash
+$ mkdir -p ~/catkin_ws/src
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/itadera/OpenHRC.git 
-```
-
-### Resolve Dependencies
-```
-$ cd ~/catkin_ws/src/OpenHRC
 
 ### Clone submodule sources
+$ cd ~/catkin_ws/src/OpenHRC
 $ git submodule update --init --recursive
+```
 
+### (Option) Install and Run Docker with Rocker
+
+```bash
+$ cd ~/catkin_ws/src/OpenHRC
+$ sudo sh install-docker-rocker.sh
+$ rocker --nvidia --x11 --user --home osrf/ros:noetic-desktop-full
+```
+
+This instruction uses a docker image offered by OSRF, including minimum ROS setting, and comples OpenHRC manuallly. 
+If your PC has no NVIDIA GPU, please remove `--nvidia` option.
+
+### Resolve Dependencies
+```bash
 ### Install dependency packages
 $ rosdep update
 $ rosdep install -i -y --from-paths ./ 
@@ -46,46 +57,54 @@ $ rosdep install -i -y --from-paths ./
 ### Build
 Compile with `catkin-tools`, which should be installed as a dependency above:
 
-```
+```bash
+$ cd ~/catkin_ws
 $ catkin build -DCMAKE_BUILD_TYPE=Release
 ```
 Note: The default tool `catkin_make` cannot compile non-ROS code.
 
 
-## Docker Installation
+## Docker-VNC Installation
 If you want to install OpenHRC natively on Ubuntu 20.04, please see the [Native Installation](#Native-Installation-(Ubuntu-20.04)) section and skip this section.
 
 This package can be tested in a Docker container, which should work on Linux, Windows, and macOS. The Dockerfile is based on https://github.com/Tiryoh/docker-ros-desktop-vnc.
 
 ### Install Docker
 If you are using Linux (Ubuntu) or WSL2 on Windows, please run:
-```
+```bash
 $ sudo apt install -y curl
-$ curl -s https://raw.githubusercontent.com/karaage0703/ubuntu-setup/master/install-docker.sh | /bin/bash
+$ curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash
 $ sudo service docker start
 ```
 
 If you encounter an issue with `permission denied`, please try:
-```
-sudo chmod 666 /var/run/docker.sock
+```bash
+$ sudo chmod 666 /var/run/docker.sock
 ```
 
-This install instruction uses Docker Engine, not Docker Desktop, which is not free for commercial use. Both options are acceptable, but Docker Engine may offer better performance. If you prefer Docker Desktop, please follow the instructions at https://docs.docker.com/desktop/.
+This install instruction uses Docker Engine, not Docker Desktop, which is not free for commercial use. Both options are compatible, but Docker Engine may offer better performance. If you prefer Docker Desktop, please follow the instructions at https://docs.docker.com/desktop/.
+
+
+On other OS such as native Windows and macOS, please install Docker Desktop from https://www.docker.com/products/docker-desktop and start it.
+
+The following commands are excuted inside of Docker Container.
 
 ### Clone Sources
-```
+```bash
+$ mkdir -p ~/catkin_ws/src
+$ cd ~/catkin_ws/src
 $ git clone https://github.com/itadera/OpenHRC.git 
 ```
 
 ### Build Docker Image
-```
+```bash
 $ cd OpenHRC
-$ docker build -t openhrc:noetic . --no-cache
+$ docker build -t openhrc-vnc:noetic . --no-cache
 ```
 
 ### Run Docker 
-```
-$ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc:noetic
+```bash
+$ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc-vnc:noetic
 ```
 You can now access the desktop GUI at 
 http://localhost:6080/
@@ -95,15 +114,18 @@ http://localhost:6080/
 To test either the native or Docker installation, you can first try the teleoperation node with interactive markers for UR5e.
 
 Open a terminal and run:
-```
+```bash
+$ source ~/catkin_ws/devel/setup.bash
 $ roslaunch ohrc_hw_config ur5e_bringup.launch
 ```
 This command launches the UR5e simulation on Gazebo.
 
-Open another terminal and run:
-```
+Open another terminal (if on Docker, run `docker exec <container ID> /bin/bash`) and run:
+```bash
+$ source ~/catkin_ws/devel/setup.bash
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch
 ```
+
 This command starts the robot controller, allowing you to operate the end-effector using an interactive marker on Rviz.
 
 
