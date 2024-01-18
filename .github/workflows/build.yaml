@@ -47,7 +47,7 @@ jobs:
   docker_build:
     runs-on: ubuntu-latest
     env:
-      WS: /home/runner/work
+      CATKIN_WS: /home/runner/work/catkin_ws
     steps:
     - uses: actions/checkout@v3
 
