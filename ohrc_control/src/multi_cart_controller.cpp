@@ -223,6 +223,11 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
 
   this->publishState(time, curPose, curVel, desPose, desVel);
 
+  std::vector<KDL::JntArray> q_rest(nRobot);
+  for (int i = 0; i < nRobot; i++)
+    q_rest[i] = cartControllers[i]->getqRest();
+  multimyik_solver_ptr->setqRest(q_rest);
+
   if (controller == ControllerType::Velocity) {
     int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, desPose, desVel, dq_des, dt);
 

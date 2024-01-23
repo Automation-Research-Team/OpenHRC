@@ -54,6 +54,9 @@ void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Fra
 
   tf::transformEigenToKDL(T, pos);
   tf::twistEigenToKDL(v, twist);
+
+  if (state.reset)
+    this->reset();
   // update pos and twist
 }
 

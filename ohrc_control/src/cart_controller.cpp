@@ -253,7 +253,7 @@ void CartController::signal_handler(int signum) {
   }
 }
 void CartController::resetFt() {
-  ROS_INFO_STREAM("Resetting FT sensor offset...");
+  ROS_INFO_STREAM("Called reset ft service.");
 
   std_srvs::Empty srv;
   client.call(srv);
@@ -585,6 +585,8 @@ void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel,
   state.twist.angular.x = vel.rot[0];
   state.twist.angular.y = vel.rot[1];
   state.twist.angular.z = vel.rot[2];
+
+  state.enabled = this->getOperationEnable();
 
   state.wrench = wrench;
   publisher->publish(state);

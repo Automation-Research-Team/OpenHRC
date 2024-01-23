@@ -104,7 +104,7 @@ MyIK::MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::Jnt
 }
 
 void MyIK::initialize() {
-  std::cout << ub.data.transpose() << std::endl;
+  // std::cout << ub.data.transpose() << std::endl;
   assert(nJnt == lb.data.size());
   assert(nJnt == ub.data.size());
 

@@ -170,6 +170,7 @@ set(controllers
   impedance
   dmp
   cart_trajectory
+  joint_trajectory
 )
 
 foreach(controller ${controllers})

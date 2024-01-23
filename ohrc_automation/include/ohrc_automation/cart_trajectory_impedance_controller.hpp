@@ -3,16 +3,22 @@
 
 #include <algorithm>
 
-#include "ohrc_automation/cart_trajectory_controller.hpp"
+// #include "ohrc_automation/cart_trajectory_controller.hpp"
 #include "ohrc_automation/impedance_controller.hpp"
 #include "ohrc_msgs/GetTrajectories.h"
 
-class CartTrajectoryImpedanceController : public CartTrajectoryController, public ImpedanceController {
+class CartTrajectoryImpedanceController : public ImpedanceController {
   ros::ServiceClient client;
   std::vector<moveit_msgs::CartesianTrajectory> _trjs;
   bool _flagTrjs = false;
   int targetIdx = 0;
   int nTrjs = 0;
+
+  moveit_msgs::CartesianTrajectory trj;
+  bool updateTrjs = true;
+
+  int t_i = 0;
+  int forward = 1;  // -1: rest, 1: target
 
   bool updateImpedanceTarget(const VectorXd& x, VectorXd& xd) override;
 
@@ -26,7 +32,7 @@ class CartTrajectoryImpedanceController : public CartTrajectoryController, publi
   bool getTrajectories(const geometry_msgs::PoseArray& targetPoses, std::vector<moveit_msgs::CartesianTrajectory>& trjs);
 
 public:
-  using CartTrajectoryController::CartTrajectoryController;
+  // using CartTrajectoryController::CartTrajectoryController;
   using ImpedanceController::ImpedanceController;
 
   void initInterface() override final;

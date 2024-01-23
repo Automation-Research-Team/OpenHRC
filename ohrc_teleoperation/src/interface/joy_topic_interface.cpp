@@ -1,7 +1,6 @@
 #include "ohrc_teleoperation/joy_topic_interface.hpp"
 
 void JoyTopicInterface::initInterface() {
-
   n.getParam("gain/horizontal", gain_h);
   n.getParam("gain/rotational", gain_r);
 
@@ -38,10 +37,9 @@ void JoyTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
   twist_msg.angular.y = joy.axes[4] * gain_r;
   twist_msg.angular.z = joy.axes[5] * gain_r;
 
-  if (joy.buttons[1] == 1.0) {
-    controller->resetPose();
-    resetInterface();
-  }
+  if (joy.buttons[1] == 1.0)
+    this->reset();
+
   setPoseFromTwistMsg(twist_msg, pos, twist);
 }
 
