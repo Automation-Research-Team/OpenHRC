@@ -2,10 +2,12 @@
 [![ROS build workflow](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml)
 ![GitHub](https://img.shields.io/github/license/itadera/OpenHRC)
 # OpenHRC
-Open Human-Robot Collaboration/Cooperation Library
+#### Open Human-Robot Collaboration/Cooperation Library
 
 Aiming to enhance research on human-robot interaction, we develop this open ROS package for offering easy implementation of HRC software such as interaction and teleoperation.
 OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.
+
+[Dodygen documentation](https://itadera.github.io/OpenHRC/) is under construction.
 
 ## Requirements
 OpenHRC has been developed and tested in the following environments:
@@ -147,7 +149,7 @@ This software is released under dual license of LGPL-v2.1 and individual license
 About the individual license, please make a contact to the author.
 
 ## Author
-Shunki Itadera (https://staff.aist.go.jp/s.itadera/) - Researcher at ART, ICPS, AIST
+Shunki Itadera (https://itadera.github.io/) - Researcher at ART, ICPS, AIST
 
 We welcome any feedback and contributions. Please feel free to contact us if you have any questions or comments.
 
