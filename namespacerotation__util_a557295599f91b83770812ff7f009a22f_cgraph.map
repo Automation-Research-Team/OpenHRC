@@ -1,0 +1,7 @@
+<map id="rotation_util::getErrorEuler" name="rotation_util::getErrorEuler">
+<area shape="rect" id="node1" title=" " alt="" coords="5,31,200,57"/>
+<area shape="rect" id="node2" href="$namespacerotation__util.html#a95f9fd416b92bde89b1eb74411a6afff" title=" " alt="" coords="248,23,451,65"/>
+<area shape="rect" id="node3" href="$namespacerotation__util.html#a8a4e330252f4b695a70095ef4da224c5" title="checkFlipQuaternionSign" alt="" coords="499,23,669,65"/>
+<area shape="rect" id="node4" href="$namespacerotation__util.html#a0a30d8b42971e9294f4fd8da7f5f2730" title="checkQuaternionSign" alt="" coords="717,5,964,32"/>
+<area shape="rect" id="node5" href="$namespacerotation__util.html#a5b99074de5097cfecc0546e147a8f934" title="flipQuaterionSign" alt="" coords="730,56,951,83"/>
+</map>

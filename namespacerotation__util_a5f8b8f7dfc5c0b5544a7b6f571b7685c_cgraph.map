@@ -1,0 +1,7 @@
+<map id="rotation_util::getQuaternionLogError" name="rotation_util::getQuaternionLogError">
+<area shape="rect" id="node1" title=" " alt="" coords="5,23,208,65"/>
+<area shape="rect" id="node2" href="$namespacerotation__util.html#a95f9fd416b92bde89b1eb74411a6afff" title=" " alt="" coords="256,23,459,65"/>
+<area shape="rect" id="node3" href="$namespacerotation__util.html#a8a4e330252f4b695a70095ef4da224c5" title="checkFlipQuaternionSign" alt="" coords="507,23,677,65"/>
+<area shape="rect" id="node4" href="$namespacerotation__util.html#a0a30d8b42971e9294f4fd8da7f5f2730" title="checkQuaternionSign" alt="" coords="725,5,972,32"/>
+<area shape="rect" id="node5" href="$namespacerotation__util.html#a5b99074de5097cfecc0546e147a8f934" title="flipQuaterionSign" alt="" coords="738,56,959,83"/>
+</map>

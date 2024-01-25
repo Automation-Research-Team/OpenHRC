@@ -1,0 +1,10 @@
+<map id="rotation_util::flipQuaterionSign" name="rotation_util::flipQuaterionSign">
+<area shape="rect" id="node1" title="flipQuaterionSign" alt="" coords="725,129,947,156"/>
+<area shape="rect" id="node2" href="$namespacerotation__util.html#a8a4e330252f4b695a70095ef4da224c5" title="checkFlipQuaternionSign" alt="" coords="507,122,677,163"/>
+<area shape="rect" id="node3" href="$namespacerotation__util.html#a95f9fd416b92bde89b1eb74411a6afff" title=" " alt="" coords="256,122,459,163"/>
+<area shape="rect" id="node4" href="$namespacerotation__util.html#a557295599f91b83770812ff7f009a22f" title=" " alt="" coords="9,5,204,32"/>
+<area shape="rect" id="node5" href="$namespacerotation__util.html#ad643752e8c944a6f2442322d4648d21c" title="getQuaternionError" alt="" coords="5,57,208,98"/>
+<area shape="rect" id="node6" href="$namespacerotation__util.html#a7e62b4f413d60d93766448669173763f" title=" " alt="" coords="5,122,208,163"/>
+<area shape="rect" id="node7" href="$namespacerotation__util.html#a5f8b8f7dfc5c0b5544a7b6f571b7685c" title=" " alt="" coords="5,187,208,229"/>
+<area shape="rect" id="node8" href="$classCartController.html#a227903965a823a7bcc37efe4c43329c1" title=" " alt="" coords="9,253,204,280"/>
+</map>
