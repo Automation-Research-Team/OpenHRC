@@ -5,7 +5,8 @@ PROJECT_NAME           = OpenHRC
 
 # Set the output directory for the generated documentation
 OUTPUT_DIRECTORY       = docs
-USE_MDFILE_AS_MAINPAGE = /README.md
+INPUT_DIRECTORY        = README.md 
+USE_MDFILE_AS_MAINPAGE = README.md
 
 
 FULL_PATH_NAMES        = NO
