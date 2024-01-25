@@ -151,7 +151,7 @@ include_directories(
 )
 ## Declare a C++ library
 add_library(${PROJECT_NAME}   src/my_ik.cpp
-                              src/multi_my_ik.cpp 
+                              # src/multi_my_ik.cpp 
                               src/cart_controller.cpp 
                               src/multi_cart_controller.cpp 
                               src/forwarding_controller.cpp

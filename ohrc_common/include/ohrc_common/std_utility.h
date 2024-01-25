@@ -107,6 +107,12 @@ inline Eigen::VectorXd concatenateVectors(std::vector<KDL::JntArray> vecs) {
   return concatenateVectors(v);
 }
 
-};      // namespace std_utility
+template <typename T>
+inline std::vector<T> makeOneVector(T in) {
+  std::vector<T> out = { in };
+  return out;
+}
+
+};  // namespace std_utility
 
 #endif  // STD_UTILITY_H

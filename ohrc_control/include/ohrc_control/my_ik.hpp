@@ -40,7 +40,7 @@ class MyIK {
 
   std::mutex mtx_;
   std::vector<KDL::JntArray> solutions;
-  std::vector<std::pair<double, uint> > errors;
+  std::vector<std::pair<double, uint>> errors;
 
   // std::thread task1, task2;
   KDL::Twist bounds;
@@ -67,6 +67,27 @@ class MyIK {
 
   int addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
 
+  std::vector<std::vector<long long>> combsRobot, combosLink;
+
+  int addCollisionAvoidance(const std::vector<Affine3d>& Ts, const std::vector<MatrixXd>& Js_, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_,
+                            std::vector<MatrixXd>& A_ca);
+  int addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
+
+  int calcCollisionAvoidance(int c0, int c1, const std::vector<std::vector<Vector3d>>& p_all, const std::vector<std::vector<KDL::Jacobian>>& J_all, double ds, double di,
+                             double eta, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
+
+  bool getClosestPointLineSegments(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, double& as, double& bs);
+  double getDistance(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs);
+  Vector3d getVec(const Vector3d& a0, const Vector3d& a1, const Vector3d& b0, const Vector3d& b1, const double& as, const double& bs);
+
+  bool enableCollisionAvoidance = true;
+  std::vector<double> w_h, init_w_h;
+
+  std::vector<KDL::JntArray> q_rest;
+
+  int nAddObj = 0;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> primalVariable;
+
 public:
   VectorXd getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double>& artificial_lower_limits, std::vector<double>& artificial_upper_limits, const double& dt);
   VectorXd getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits, std::vector<double>& upper_vel_limits, const double& dt);
@@ -75,12 +96,19 @@ public:
        Affine3d T_base_world = Affine3d::Identity(), SolveType _type = Pure);
   MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps = 1e-5, Affine3d T_base_world = Affine3d::Identity(),
        SolveType _type = Pure);
+  MyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<std::string>& URDF_param, const std::vector<Affine3d>& T_base_world,
+       const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps = 1e-5, SolveType _type = Pure);
 
   int CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt = 1.0e5);
+  int CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<KDL::Frame>& p_in, std::vector<KDL::JntArray>& q_out, const double& dt);
+
   int CartToJntVel(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt = 1.0e-5);
   int CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt);
+
   int CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt);
   int CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_vel, const VectorXd& e, KDL::JntArray& dq_des, const double& dt);
+  int CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::vector<KDL::Frame>& des_eff_pose, const std::vector<KDL::Twist>& des_eff_vel,
+                      std::vector<KDL::JntArray>& dq_des, const double& dt);
 
   int CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt,
                                const MatrixXd& userManipU);
@@ -89,6 +117,23 @@ public:
 
   VectorXd getRandomJnt(const double& dt);
   VectorXd getRandomJntVel(const double& dt);
+
+  // bool initialized = false;
+  // double eps;
+  // SolveType solvetype;
+
+  std::vector<std::shared_ptr<MyIK>> myIKs;
+
+  int nState = 0;
+  std::vector<int> iJnt;
+  // const std::vector<std::shared_ptr<MyIK>> myIKs;
+
+  const int nRobot;
+
+  void resetRobotWeight();
+  void setRobotWeight(int robotIndex, double rate);
+
+  void setqRest(const std::vector<KDL::JntArray>& q_rest);
 
   inline int JntToCart(const KDL::JntArray& q_in, KDL::Frame& p_out) {
     return fksolver->JntToCart(q_in, p_out);
