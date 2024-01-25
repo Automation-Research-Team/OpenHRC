@@ -1,5 +1,3 @@
-// #include "ohrc_control/multi_cart_controller.hpp"
-
 #include "ohrc_control/multi_cart_controller.hpp"
 
 MultiCartController::MultiCartController() {
@@ -22,7 +20,7 @@ MultiCartController::MultiCartController() {
   for (int i = 0; i < nRobot; i++)
     cartControllers[i]->getInfo(base_link[i], tip_link[i], URDF_param[i], T_base_root[i], myik_ptr[i]);
 
-  multimyik_solver_ptr.reset(new MyIK::MultiMyIK(base_link, tip_link, URDF_param, T_base_root, myik_ptr));
+  multimyik_solver_ptr.reset(new MyIK::MyIK(base_link, tip_link, URDF_param, T_base_root, myik_ptr));
 
   service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
 

@@ -6,7 +6,7 @@
 
 #include "ohrc_control/cart_controller.hpp"
 #include "ohrc_control/interface.hpp"
-#include "ohrc_control/multi_my_ik.hpp"
+#include "ohrc_control/my_ik.hpp"
 #include "ohrc_control/ohrc_control.hpp"
 
 using namespace ohrc_control;
@@ -41,7 +41,7 @@ protected:
   std::string date;
 
   // MyIK
-  std::unique_ptr<MyIK::MultiMyIK> multimyik_solver_ptr;
+  std::unique_ptr<MyIK::MyIK> multimyik_solver_ptr;
 
   ControllerType controller;
   PublisherType publisher;
