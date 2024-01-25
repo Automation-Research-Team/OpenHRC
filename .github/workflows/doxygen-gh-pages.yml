@@ -3,7 +3,8 @@ name: Doxygen GitHub Pages Deploy Action
 on:
   push:
     branches:
-      - add_doxygen
+      # - add_doxygen
+      - main
 
 jobs:
   deploy:
