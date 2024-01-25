@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['bayesnormalgamma_796',['BayesNormalGamma',['../classBayesNormalGamma.html',1,'']]],
-  ['butterworth_797',['butterworth',['../classbutterworth.html',1,'']]]
+  ['bayesnormalgamma_799',['BayesNormalGamma',['../classBayesNormalGamma.html',1,'']]],
+  ['butterworth_800',['butterworth',['../classbutterworth.html',1,'']]]
 ];

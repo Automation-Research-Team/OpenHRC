@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenHRC: ohrc_automation</title>
+<title>OpenHRC: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,10 +62,111 @@ $(function() {
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">ohrc_automation </div>  </div>
+<div class="title">OpenHRC Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_ohrc_automation_README"></a> This package provides autonomous motion controllers for OpenHRC. </p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a> <img src="https://img.shields.io/github/v/release/itadera/OpenHRC" alt="GitHub release (latest by date)" class="inline"/> <a href="https://github.com/itadera/OpenHRC/actions/workflows/build.yaml"><img src="https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg" alt="ROS build workflow" style="pointer-events: none;" class="inline"/></a> <img src="https://img.shields.io/github/license/itadera/OpenHRC" alt="GitHub" class="inline"/> </p>
+<h1><a class="anchor" id="autotoc_md26"></a>
+OpenHRC</h1>
+<h4><a class="anchor" id="autotoc_md27"></a>
+Open Human-Robot Collaboration/Cooperation Library</h4>
+<p>Aiming to enhance research on human-robot interaction, we develop this open ROS package for offering easy implementation of HRC software such as interaction and teleoperation. OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.</p>
+<p><a href="https://itadera.github.io/OpenHRC/">Documentation by Doxygen</a> is under construction.</p>
+<h2><a class="anchor" id="autotoc_md28"></a>
+Requirements</h2>
+<p>OpenHRC has been developed and tested in the following environments:</p><ul>
+<li>Development Environment: Ubuntu 20.04 (ROS Noetic)</li>
+<li>Tested Environments:<ul>
+<li>Ubuntu 20.04 (native, Docker)</li>
+<li>Ubuntu 22.04 (Docker)</li>
+<li>Windows 11 (Docker on WSL2)</li>
+<li>macOS (Docker)</li>
+</ul>
+</li>
+</ul>
+<p>Currently, this library is not compatible with ROS2. Although there are intentions to port this package to ROS2, there is no specific plan in place.</p>
+<h2><a class="anchor" id="autotoc_md29"></a>
+Native (Ubuntu 20.04) / Docker (on Ubuntu distribution) Installation</h2>
+<p>If you just try OpneHRC with minimum effor on other operating systems, please take a look at <a href="#Docker-VNC-Installation">Docker-VNC Installation</a> section.</p>
+<p>In the following instruction, the catkin workspace directory is assumed to be <code>~/catkin_ws</code> on host.</p>
+<h3><a class="anchor" id="autotoc_md30"></a>
+Clone the Source Code</h3>
+<div class="fragment"><div class="line">$ mkdir -p ~/catkin_ws/src</div>
+<div class="line">$ cd ~/catkin_ws/src</div>
+<div class="line">$ git clone https://github.com/itadera/OpenHRC.git </div>
+<div class="line"> </div>
+<div class="line">### Clone submodule sources</div>
+<div class="line">$ cd ~/catkin_ws/src/OpenHRC</div>
+<div class="line">$ git submodule update --init --recursive</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md31"></a>
+(Option) Install and Run Docker with Rocker</h3>
+<div class="fragment"><div class="line">$ cd ~/catkin_ws/src/OpenHRC</div>
+<div class="line">$ sudo sh install-docker-rocker.sh</div>
+<div class="line">$ rocker --nvidia --x11 --user --home osrf/ros:noetic-desktop-full</div>
+</div><!-- fragment --><p>This instruction uses a docker image offered by OSRF, including minimum ROS setting, and comples OpenHRC manuallly. If your PC has no NVIDIA GPU, please remove <code>--nvidia</code> option.</p>
+<h3><a class="anchor" id="autotoc_md32"></a>
+Resolve Dependencies</h3>
+<div class="fragment"><div class="line">### Install dependency packages</div>
+<div class="line">$ rosdep update</div>
+<div class="line">$ rosdep install -i -y --from-paths ./ </div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md33"></a>
+Build</h3>
+<p>Compile with <code>catkin-tools</code>, which should be installed as a dependency above:</p>
+<div class="fragment"><div class="line">$ cd ~/catkin_ws</div>
+<div class="line">$ catkin build -DCMAKE_BUILD_TYPE=Release</div>
+</div><!-- fragment --><p> Note: The default tool <code>catkin_make</code> cannot compile non-ROS code.</p>
+<h2><a class="anchor" id="autotoc_md34"></a>
+Docker-VNC Installation</h2>
+<p>If you want to install OpenHRC natively on Ubuntu 20.04, please see the <a href="#Native-(Ubuntu-20.04)-/-Docker-(on-Ubuntu-distribution)-Installation">Native Installation</a> section and skip this section.</p>
+<p>This package can be tested in a Docker container, which should work on Linux, Windows, and macOS. The Dockerfile is based on <a href="https://github.com/Tiryoh/docker-ros-desktop-vnc">https://github.com/Tiryoh/docker-ros-desktop-vnc</a>.</p>
+<h3><a class="anchor" id="autotoc_md35"></a>
+Install Docker</h3>
+<p>If you are using Linux (Ubuntu) or WSL2 on Windows, please run: </p><div class="fragment"><div class="line">$ sudo apt install -y curl</div>
+<div class="line">$ curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash</div>
+<div class="line">$ sudo service docker start</div>
+</div><!-- fragment --><p>If you encounter an issue with <code>permission denied</code>, please try: </p><div class="fragment"><div class="line">$ sudo chmod 666 /var/run/docker.sock</div>
+</div><!-- fragment --><p>This install instruction uses Docker Engine, not Docker Desktop, which is not free for commercial use. Both options are compatible, but Docker Engine may offer better performance. If you prefer Docker Desktop, please follow the instructions at <a href="https://docs.docker.com/desktop/">https://docs.docker.com/desktop/</a>.</p>
+<p>On other OS such as native Windows and macOS, please install Docker Desktop from <a href="https://www.docker.com/products/docker-desktop">https://www.docker.com/products/docker-desktop</a> and start it.</p>
+<p>The following commands are excuted inside of Docker Container.</p>
+<h3><a class="anchor" id="autotoc_md36"></a>
+Clone Sources</h3>
+<div class="fragment"><div class="line">$ mkdir -p ~/catkin_ws/src</div>
+<div class="line">$ cd ~/catkin_ws/src</div>
+<div class="line">$ git clone https://github.com/itadera/OpenHRC.git </div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md37"></a>
+Build Docker Image</h3>
+<div class="fragment"><div class="line">$ cd OpenHRC</div>
+<div class="line">$ docker build -t openhrc-vnc:noetic . --no-cache</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md38"></a>
+Run Docker</h3>
+<div class="fragment"><div class="line">$ docker run --rm -it -p 10000:10000 -p 5005:5005 -p 6080:80 --shm-size=512m openhrc-vnc:noetic</div>
+</div><!-- fragment --><p> You can now access the desktop GUI at <a href="http://localhost:6080/">http://localhost:6080/</a></p>
+<h2><a class="anchor" id="autotoc_md39"></a>
+Getting Started</h2>
+<p>To test either the native or Docker installation, you can first try the teleoperation node with interactive markers for UR5e.</p>
+<p>Open a terminal and run: </p><div class="fragment"><div class="line">$ source ~/catkin_ws/devel/setup.bash</div>
+<div class="line">$ roslaunch ohrc_hw_config ur5e_bringup.launch</div>
+</div><!-- fragment --><p> This command launches the UR5e simulation on Gazebo.</p>
+<p>Open another terminal (if on Docker, run <code>docker exec &lt;container ID&gt; /bin/bash</code>) and run: </p><div class="fragment"><div class="line">$ source ~/catkin_ws/devel/setup.bash</div>
+<div class="line">$ roslaunch ohrc_teleoperation marker_teleoperation.launch</div>
+</div><!-- fragment --><p>This command starts the robot controller, allowing you to operate the end-effector using an interactive marker on Rviz.</p>
+<h2><a class="anchor" id="autotoc_md40"></a>
+Tutorials</h2>
+<ol type="1">
+<li>Teleoperation library: <a href="./ohrc_teleoperation">ohrc_teleoperation</a></li>
+<li>Imitation Learning library: <a href="./ohrc_imitation_learning">ohrc_imitation_learning</a></li>
+</ol>
+<h2><a class="anchor" id="autotoc_md41"></a>
+Citation</h2>
+<p>If you use this package in your academic research, we would appreciate it if you could cite the following paper. &gt;(comming soon)</p>
+<h2><a class="anchor" id="autotoc_md42"></a>
+License</h2>
+<p>This software is released under dual license of LGPL-v2.1 and individual license. About the individual license, please make a contact to the author.</p>
+<h2><a class="anchor" id="autotoc_md43"></a>
+Author</h2>
+<p>Shunki Itadera (<a href="https://itadera.github.io/">https://itadera.github.io/</a>) - Researcher at ART, ICPS, AIST</p>
+<p>We welcome any feedback and contributions. Please feel free to contact us if you have any questions or comments.</p>
+<p>Besides, we are looking for research collaborators and students who are interested in Human-Robot Interaction using OpenHRC. If you are interested, please send me an email. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
