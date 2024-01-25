@@ -3,20 +3,35 @@
 # Set the project name
 PROJECT_NAME           = OpenHRC
 
-# Set the project version
-PROJECT_VERSION        = 1.0
-
 # Set the output directory for the generated documentation
 OUTPUT_DIRECTORY       = docs
+<!-- USE_MDFILE_AS_MAINPAGE = ./README.md
+Input                  = ./README.md -->
 
-# Set the input directories for the source code
-INPUT                  = ./
 
-# Set the file patterns to include in the documentation
-FILE_PATTERNS          = *.cpp *.h
+FULL_PATH_NAMES        = NO
 
-# Set the output format for the generated documentation
-GENERATE_HTML          = YES
+EXTRACT_ALL            = YES
 
-# Set the ROS specific configuration
-GENERATE_ROS_PACKAGE   = YES
+EXTRACT_PRIVATE        = YES
+
+EXTRACT_STATIC         = YES
+
+EXTRACT_ANON_NSPACES   = YES
+
+RECURSIVE              = YES
+
+EXCLUDE                = ./3rd_party
+ｆ
+SOURCE_BROWSER         = YES
+
+REFERENCED_BY_RELATION = YES
+
+REFERENCES_RELATION    = YES
+
+
+GENERATE_LATEX         = NO
+
+CALL_GRAPH             = YES
+
+CALLER_GRAPH           = YES

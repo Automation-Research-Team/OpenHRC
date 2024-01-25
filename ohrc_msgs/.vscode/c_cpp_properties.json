@@ -1,0 +1,38 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/shunki/ros/ros1/mfbt_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/Azure_Kinect_ROS_Driver/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/CoT-Rec/ctr_controller/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/3rd_party/magic_enum/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/ohrc_automation/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/ohrc_bilateral_ctrl_tutorial/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/ohrc_chatgpt/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/ohrc_common/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/ohrc_control/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/ohrc_teleoperation/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/omega_hatptic_device/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/3rd_party/osqp/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/OpenHRC/3rd_party/osqp-eigen/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/realsense_gazebo_plugin/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/toroboarm_robot/roboticsgroup_gazebo_plugins/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/CoT-Rec/sensors_description/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/toroboarm_robot/toroboarm_common/include/**",
+        "/home/shunki/ros/ros1/mfbt_ws/src/toroboarm_robot/toroboarm_driver/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
