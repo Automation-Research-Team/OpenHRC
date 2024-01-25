@@ -1,0 +1,22 @@
+# Doxyfile configuration file
+
+# Set the project name
+PROJECT_NAME           = OpenHRC
+
+# Set the project version
+PROJECT_VERSION        = 1.0
+
+# Set the output directory for the generated documentation
+OUTPUT_DIRECTORY       = docs
+
+# Set the input directories for the source code
+INPUT                  = ./
+
+# Set the file patterns to include in the documentation
+FILE_PATTERNS          = *.cpp *.h
+
+# Set the output format for the generated documentation
+GENERATE_HTML          = YES
+
+# Set the ROS specific configuration
+GENERATE_ROS_PACKAGE   = YES
