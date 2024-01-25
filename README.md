@@ -7,7 +7,7 @@
 Aiming to enhance research on human-robot interaction, we develop this open ROS package for offering easy implementation of HRC software such as interaction and teleoperation.
 OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.
 
-[Dodygen documentation](https://itadera.github.io/OpenHRC/) is under construction.
+[Documentation by Dodygen](https://itadera.github.io/OpenHRC/) is under construction.
 
 ## Requirements
 OpenHRC has been developed and tested in the following environments:
