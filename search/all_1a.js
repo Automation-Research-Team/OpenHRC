@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['z_791',['z',['../namespacepromp__trajectory__publisher.html#a0519097a418283b91e242a8ba11c9193',1,'promp_trajectory_publisher']]],
-  ['z_5fdim_792',['z_dim',['../classKalman.html#ad772c334b92b32f908497fe871908845',1,'Kalman']]],
-  ['zeta0_793',['zeta0',['../classBayesNormalGamma.html#abcee2c6206bb0e48adb0181d413fa154',1,'BayesNormalGamma']]]
+  ['z_787',['z',['../namespacepromp__trajectory__publisher.html#a0519097a418283b91e242a8ba11c9193',1,'promp_trajectory_publisher']]],
+  ['z_5fdim_788',['z_dim',['../classKalman.html#ad772c334b92b32f908497fe871908845',1,'Kalman']]],
+  ['zeta0_789',['zeta0',['../classBayesNormalGamma.html#abcee2c6206bb0e48adb0181d413fa154',1,'BayesNormalGamma']]]
 ];
