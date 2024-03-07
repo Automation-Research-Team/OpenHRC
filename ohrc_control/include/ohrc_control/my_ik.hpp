@@ -26,7 +26,7 @@ namespace MyIK {
 enum SolveType { Pure };
 enum BasicJointType { RotJoint, TransJoint, Continuous };
 
-class MyIK {
+class MyIK : std::enable_shared_from_this<MyIK> {
   bool initialized, enableSelfCollisionAvoidance = false;
 
   KDL::Chain chain;
@@ -85,7 +85,7 @@ class MyIK {
 
   std::vector<KDL::JntArray> q_rest;
 
-  int nAddObj = 0;
+  int nAddObj = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> primalVariable;
 
 public:
@@ -219,6 +219,10 @@ public:
   }
   inline void disablePoseFeedback() {
     this->poseFeedbackDisabled = true;
+  }
+
+  inline bool getInitialized() {
+    return this->initialized;
   }
 };
 

@@ -123,11 +123,16 @@ MyIK::MyIK(const std::vector<std::string>& base_link, const std::vector<std::str
     combsRobot = std_utility::comb(nRobot, 2);
 
   // initialize Ik weights
-  nAddObj = 2;
+  // nAddObj = 2;
   init_w_h.resize(nRobot + nAddObj, 1.0e4);
   w_h = init_w_h;
 
-  initialized = true;
+  int initializedRobot = 0;
+  for (int i = 0; i < nRobot; i++)
+    initializedRobot += (int)myIKs[i]->getInitialized();
+
+  if (initializedRobot == nRobot)
+    initialized = true;
 }
 
 void MyIK::initialize() {
@@ -151,6 +156,22 @@ void MyIK::initialize() {
   }
 
   assert(types.size() == lb.data.size());
+
+  MyIK* a = this;
+  myIKs.resize(1);
+  myIKs[0] = std::shared_ptr<MyIK>(a);
+
+  iJnt.resize(nRobot + 1, 0);
+  for (int i = 0; i < nRobot; i++) {
+    nState += myIKs[i]->getNJnt();
+    iJnt[i + 1] = iJnt[i] + myIKs[i]->getNJnt();
+  }
+
+  init_w_h.resize(nRobot + nAddObj, 1.0e4);
+  w_h = init_w_h;
+
+  q_rest.resize(nRobot);
+  q_rest[0] = KDL::JntArray(nJnt);
 
   initialized = true;
 }
@@ -441,7 +462,7 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
 
   return 1;
 }
-
+#if 0
 int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_vel, const VectorXd& e, KDL::JntArray& dq_des, const double& dt) {
   KDL::Jacobian jac(nJnt);
   JntToJac(q_cur, jac);
@@ -540,7 +561,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   return 1;
 }
-
+#endif
 int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt) {
   // KDL::Twist des_eff_vel_ = des_eff_vel;
 
@@ -574,6 +595,7 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
 
   for (int i = 0; i < nRobot; i++) {
     KDL::Jacobian jac(myIKs[i]->getNJnt());
+
     myIKs[i]->JntToJac(q_cur[i], jac);
     Js[i] = jac.data;
 

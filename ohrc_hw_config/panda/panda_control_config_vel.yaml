@@ -17,4 +17,7 @@ follower_list: # robot namespace list. They should be unique. ("") means the rob
 
 priority: "Manual" #"Automation" #  (for multi-follower)
 MF_mode: "Individual" #"Parallel" #   (for multi-follower)
-IK_mode: "Order" # "Concatenated" #(for multi-follower)
+
+# Type of solving IK. "Concatenated" mode solve IK for all robots at once. "Order" mode solve IK for each robot in order. "Parallel" mode solve IK for all robots in multi thread.
+# When you operate single robot, "Concatenated" mode is equivalent to "Order" mode.
+IK_mode: "Concatenated" # "Order" # "Parallel" #

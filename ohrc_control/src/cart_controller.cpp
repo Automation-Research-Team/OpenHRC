@@ -58,7 +58,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   vik_solver_ptr.reset(new KDL::ChainIkSolverVel_pinv(chain));
   kdl_solver_ptr.reset(new KDL::ChainIkSolverPos_NR_JL(chain, ll, ul, *fk_solver_ptr, *vik_solver_ptr, 1, eps));
 
-  myik_solver_ptr.reset(new MyIK::MyIK(chain_start, chain_end, urdf_param, eps, T_base_root));
+  myik_solver_ptr = std::make_shared<MyIK::MyIK>(chain_start, chain_end, urdf_param, eps, T_base_root);
   valid = myik_solver_ptr->getKDLChain(chain);
   chain_segs = chain.segments;
 
@@ -365,10 +365,6 @@ void CartController::initDesWithJnt(const KDL::JntArray& q_cur) {
 
 int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<std::string> nameJnt, std::vector<int> idxSegJnt) {
   ROS_INFO_STREAM_ONCE("Moving initial posiiton");
-  // static bool isFirst = true;
-
-  // static KDL::JntArray s_moveInitPos.q_des;
-  // static KDL::JntArray s_moveInitPos.q_init = q_cur;
 
   if (s_moveInitPos.isFirst) {
     this->nameJnt = nameJnt;
@@ -401,7 +397,8 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
     if (rc < 0) {
       ROS_ERROR_STREAM("Failed to find initial joint angle. Please check if the initial position is appropriate.");
       return false;
-    }
+    } else
+      ROS_INFO_STREAM("Successfuly soloved initial joint angles.");
 
     s_moveInitPos.isFirst = false;
 

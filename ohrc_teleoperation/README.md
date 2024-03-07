@@ -103,7 +103,7 @@ $ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=seed controlle
 #### myCobot 
 If you use myCobot (which is not included in this package installation), please run
 ```
-## install gazebo simulation of Fetch Robot like
+## install gazebo simulation of myCobot Robot
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/Tiryoh/mycobot_ros.git
 $ cd mycobot_ros
@@ -115,6 +115,24 @@ $ roslaunch mycobot_gazebo mycobot_with_emptyworld.launch
 
 # launch the following teleoperation controller using topic interface of JointTrajectoryController
 $ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=mycobot controller:=vel_trj
+```
+
+#### crane_x7
+If you use crane_x7 (which is not included in this package installation), please run
+```
+## install gazebo simulation of crane_x7
+## official instruction: https://github.com/rt-net/crane_x7_ros
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/rt-net/crane_x7_ros.git
+$ git clone https://github.com/rt-net/crane_x7_description.git
+$ rosdep install -i -y --from-paths ./ 
+$ catkin build -DCMAKE_BUILD_TYPE=Release
+
+# launch gazebo simulation with crane_x7 (removed MoveIt! part from the original launch file)
+$ roslaunch ohrc_hw_config crane_x7_wtih_table.launch
+
+# launch the following teleoperation controller using topic interface of JointTrajectoryController
+$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=crane_x7 controller:=vel_trj
 ```
 
 ## Example - Teleoperation using geometry_msgs/twist topic
