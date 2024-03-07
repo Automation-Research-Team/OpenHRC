@@ -144,7 +144,7 @@ Seed-noid (SEED-R7)</h3>
 <div class="line">$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=seed controller:=vel_trj</div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md17"></a>
 myCobot</h3>
-<p>If you use myCobot (which is not included in this package installation), please run </p><div class="fragment"><div class="line">## install gazebo simulation of Fetch Robot like</div>
+<p>If you use myCobot (which is not included in this package installation), please run </p><div class="fragment"><div class="line">## install gazebo simulation of myCobot Robot</div>
 <div class="line">$ cd ~/catkin_ws/src</div>
 <div class="line">$ git clone https://github.com/Tiryoh/mycobot_ros.git</div>
 <div class="line">$ cd mycobot_ros</div>
@@ -156,11 +156,26 @@ myCobot</h3>
 <div class="line"> </div>
 <div class="line"># launch the following teleoperation controller using topic interface of JointTrajectoryController</div>
 <div class="line">$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=mycobot controller:=vel_trj</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md18"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md18"></a>
+crane_x7</h3>
+<p>If you use crane_x7 (which is not included in this package installation), please run </p><div class="fragment"><div class="line">## install gazebo simulation of crane_x7</div>
+<div class="line">## official instruction: https://github.com/rt-net/crane_x7_ros</div>
+<div class="line">$ cd ~/catkin_ws/src</div>
+<div class="line">$ git clone https://github.com/rt-net/crane_x7_ros.git</div>
+<div class="line">$ git clone https://github.com/rt-net/crane_x7_description.git</div>
+<div class="line">$ rosdep install -i -y --from-paths ./ </div>
+<div class="line">$ catkin build -DCMAKE_BUILD_TYPE=Release</div>
+<div class="line"> </div>
+<div class="line"># launch gazebo simulation with crane_x7 (removed MoveIt! part from the original launch file)</div>
+<div class="line">$ roslaunch ohrc_hw_config crane_x7_wtih_table.launch</div>
+<div class="line"> </div>
+<div class="line"># launch the following teleoperation controller using topic interface of JointTrajectoryController</div>
+<div class="line">$ roslaunch ohrc_teleoperation marker_teleoperation.launch robot:=crane_x7 controller:=vel_trj</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md19"></a>
 Example - Teleoperation using geometry_msgs/twist topic</h1>
 <p>This subscribes twist topic as a commanded velocity of a robot end-effector. </p><div class="fragment"><div class="line">$ rosrun (some nodes to generate command velocity)</div>
 <div class="line">$ roslaunch ohrc_teleoperation twist_topic_teleoperation.launch robot:=(robot) controller:=(controller)</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md19"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md20"></a>
 Example - Teleoperation using sensor_msgs/joy topic</h1>
 <p>This subscribes joy topic as a velocity command of a robot end-effector. If you have 3D mouse (spacenav) <a href="http://wiki.ros.org/spacenav_node">http://wiki.ros.org/spacenav_node</a> </p><div class="fragment"><div class="line">### install spacenav node</div>
 <div class="line">$ sudo apt install spacenavd</div>
@@ -168,13 +183,13 @@ Example - Teleoperation using sensor_msgs/joy topic</h1>
 <div class="line"> </div>
 <div class="line">$ roslaunch ohrc_teleoperation joy_topic_teleoperation.launch spacenav:=true robot:=(robot) controller:=(controller)</div>
 </div><!-- fragment --><p> The arg <code>spacenav:=true</code> launch spacenav node with specific options. The second button (usually RIGHT button) is used as a trigger for resetting robot's pose.</p>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md21"></a>
 Example - Teleoperation using haptic interface &lt;tt&gt;Omega&lt;/tt&gt;</h1>
 <div class="fragment"><div class="line">$ roslaunch ohrc_teleoperation omega_teleoperation.launch robot:=(robot) controller:=(controller)</div>
 </div><!-- fragment --><hr  />
- <h1><a class="anchor" id="autotoc_md22"></a>
+ <h1><a class="anchor" id="autotoc_md23"></a>
 Development</h1>
-<h2><a class="anchor" id="autotoc_md23"></a>
+<h2><a class="anchor" id="autotoc_md24"></a>
 How to teleoperate a robot from another interface</h2>
 <p>The easiest way is just to develop a node publishing a topic of the target end-effector state. The node is assumed that</p>
 <ol type="1">
@@ -199,7 +214,7 @@ How to teleoperate a robot from another interface</h2>
 <p>If you want to add any modifications but still want to use <code>ohrc_msgs/state</code> topic, please make another interface referring to <code><a class="el" href="classStateTopicInterface.html">StateTopicInterface</a></code> class. (see <code><a class="el" href="omega__interface_8cpp.html">omega_interface.cpp</a></code>). For example, this way can add a synchronous feedback function.</p>
 <p>If you want to develop from a lower scratch, e.g., calling API of the interface(device) synchronously without pub/sub <code>ohrc_msgs/state</code> topic, please develop another interface node referring to <code><a class="el" href="classMultiCartController.html">MultiCartController</a></code> class. (see <code><a class="el" href="marker__interface_8cpp.html">marker_interface.cpp</a></code>).</p>
 <hr  />
- <h1><a class="anchor" id="autotoc_md25"></a>
+ <h1><a class="anchor" id="autotoc_md26"></a>
 Author</h1>
 <p>Shunki Itadera, Ph.D. (<a href="#" onclick="location.href='mai'+'lto:'+'s.i'+'ta'+'der'+'a@'+'ais'+'t.'+'go.'+'jp'; return false;">s.ita<span style="display: none;">.nosp@m.</span>dera<span style="display: none;">.nosp@m.</span>@aist<span style="display: none;">.nosp@m.</span>.go.<span style="display: none;">.nosp@m.</span>jp</a>) - Researcher at ART, ICPS, AIST </p>
 </div></div><!-- contents -->

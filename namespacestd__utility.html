@@ -94,9 +94,11 @@ Functions</h2></td></tr>
 <tr class="separator:a35a96d95e729b0ff86f671bce3ad37e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a233b4137020fa201ee807f6a6f5f9eab"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestd__utility.html#a233b4137020fa201ee807f6a6f5f9eab">concatenateVectors</a> (std::vector&lt; KDL::JntArray &gt; vecs)</td></tr>
 <tr class="separator:a233b4137020fa201ee807f6a6f5f9eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafb45153fe3db5de59384c2da6471857"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:aafb45153fe3db5de59384c2da6471857"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacestd__utility.html#aafb45153fe3db5de59384c2da6471857">makeOneVector</a> (T in)</td></tr>
-<tr class="separator:aafb45153fe3db5de59384c2da6471857"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a044dca41a88dbfdcb3763e1657b69d53"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestd__utility.html#a044dca41a88dbfdcb3763e1657b69d53">concatenateVectors</a> (KDL::JntArray vec)</td></tr>
+<tr class="separator:a044dca41a88dbfdcb3763e1657b69d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76b5d77b513601b20b5031f059f52d30"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a76b5d77b513601b20b5031f059f52d30"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacestd__utility.html#a76b5d77b513601b20b5031f059f52d30">makeVector</a> (T in)</td></tr>
+<tr class="separator:a76b5d77b513601b20b5031f059f52d30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a12ba5d357b547f0e3b95fa2c3c02a2b3"></a>
@@ -135,7 +137,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="std__utility_8h_source.html#l00012">12</a> of file <a class="el" href="std__utility_8h_source.html">std_utility.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00931">MyIK::MyIK::addCollisionAvoidance()</a>, and <a class="el" href="my__ik_8cpp_source.html#l00106">MyIK::MyIK::MyIK()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00953">MyIK::MyIK::addCollisionAvoidance()</a>, and <a class="el" href="my__ik_8cpp_source.html#l00106">MyIK::MyIK::MyIK()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -149,8 +151,36 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a044dca41a88dbfdcb3763e1657b69d53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a044dca41a88dbfdcb3763e1657b69d53">&#9670;&nbsp;</a></span>concatenateVectors() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::VectorXd std_utility::concatenateVectors </td>
+          <td>(</td>
+          <td class="paramtype">KDL::JntArray&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="std__utility_8h_source.html#l00110">110</a> of file <a class="el" href="std__utility_8h_source.html">std_utility.h</a>.</p>
+
+</div>
+</div>
 <a id="a35a96d95e729b0ff86f671bce3ad37e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a35a96d95e729b0ff86f671bce3ad37e4">&#9670;&nbsp;</a></span>concatenateVectors() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a35a96d95e729b0ff86f671bce3ad37e4">&#9670;&nbsp;</a></span>concatenateVectors() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -175,7 +205,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="std__utility_8h_source.html#l00089">89</a> of file <a class="el" href="std__utility_8h_source.html">std_utility.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00561">MyIK::MyIK::CartToJntVel_qp()</a>, and <a class="el" href="std__utility_8h_source.html#l00102">concatenateVectors()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00582">MyIK::MyIK::CartToJntVel_qp()</a>, and <a class="el" href="std__utility_8h_source.html#l00102">concatenateVectors()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -190,7 +220,7 @@ Here is the caller graph for this function:</div>
 </div>
 </div>
 <a id="a233b4137020fa201ee807f6a6f5f9eab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a233b4137020fa201ee807f6a6f5f9eab">&#9670;&nbsp;</a></span>concatenateVectors() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a233b4137020fa201ee807f6a6f5f9eab">&#9670;&nbsp;</a></span>concatenateVectors() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -376,8 +406,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="aafb45153fe3db5de59384c2da6471857"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafb45153fe3db5de59384c2da6471857">&#9670;&nbsp;</a></span>makeOneVector()</h2>
+<a id="a76b5d77b513601b20b5031f059f52d30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76b5d77b513601b20b5031f059f52d30">&#9670;&nbsp;</a></span>makeVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -388,7 +418,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;T&gt; std_utility::makeOneVector </td>
+          <td class="memname">std::vector&lt;T&gt; std_utility::makeVector </td>
           <td>(</td>
           <td class="paramtype">T&#160;</td>
           <td class="paramname"><em>in</em></td><td>)</td>
@@ -402,15 +432,15 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="std__utility_8h_source.html#l00111">111</a> of file <a class="el" href="std__utility_8h_source.html">std_utility.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="std__utility_8h_source.html#l00115">115</a> of file <a class="el" href="std__utility_8h_source.html">std_utility.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00254">MyIK::MyIK::CartToJnt()</a>, and <a class="el" href="my__ik_8cpp_source.html#l00544">MyIK::MyIK::CartToJntVel_qp()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00275">MyIK::MyIK::CartToJnt()</a>, and <a class="el" href="my__ik_8cpp_source.html#l00565">MyIK::MyIK::CartToJntVel_qp()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="namespacestd__utility_aafb45153fe3db5de59384c2da6471857_icgraph.png" border="0" usemap="#anamespacestd__utility_aafb45153fe3db5de59384c2da6471857_icgraph" alt=""/></div>
-<map name="anamespacestd__utility_aafb45153fe3db5de59384c2da6471857_icgraph" id="anamespacestd__utility_aafb45153fe3db5de59384c2da6471857_icgraph">
-<area shape="rect" title=" " alt="" coords="259,31,456,57"/>
+<div class="center"><img src="namespacestd__utility_a76b5d77b513601b20b5031f059f52d30_icgraph.png" border="0" usemap="#anamespacestd__utility_a76b5d77b513601b20b5031f059f52d30_icgraph" alt=""/></div>
+<map name="anamespacestd__utility_a76b5d77b513601b20b5031f059f52d30_icgraph" id="anamespacestd__utility_a76b5d77b513601b20b5031f059f52d30_icgraph">
+<area shape="rect" title=" " alt="" coords="259,31,429,57"/>
 <area shape="rect" href="classMyIK_1_1MyIK.html#ae2887d80bdd61ad27c0e4929b9dc7746" title=" " alt="" coords="27,5,189,32"/>
 <area shape="rect" href="classMyIK_1_1MyIK.html#ab4e2cab59ab3064c4f60a44cc31bb9bd" title=" " alt="" coords="5,56,211,83"/>
 </map>
@@ -532,7 +562,7 @@ template&lt;typename T , typename U &gt; </div>
 
 <p class="reference">References <a class="el" href="Point_8cpp_source.html#l00110">geometry_msgs_utility::sum()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00445">MyIK::MyIK::CartToJntVel_qp()</a>, and <a class="el" href="my__ik_8cpp_source.html#l00713">MyIK::MyIK::CartToJntVel_qp_manipOpt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00582">MyIK::MyIK::CartToJntVel_qp()</a>, and <a class="el" href="my__ik_8cpp_source.html#l00735">MyIK::MyIK::CartToJntVel_qp_manipOpt()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -548,7 +578,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="namespacestd__utility_adbe0a9aeef769beaaac27f732794e23e_icgraph.png" border="0" usemap="#anamespacestd__utility_adbe0a9aeef769beaaac27f732794e23e_icgraph" alt=""/></div>
 <map name="anamespacestd__utility_adbe0a9aeef769beaaac27f732794e23e_icgraph" id="anamespacestd__utility_adbe0a9aeef769beaaac27f732794e23e_icgraph">
 <area shape="rect" title=" " alt="" coords="259,35,441,61"/>
-<area shape="rect" href="classMyIK_1_1MyIK.html#a3ccac3e909269585d001811ccedac2cf" title=" " alt="" coords="5,5,211,32"/>
+<area shape="rect" href="classMyIK_1_1MyIK.html#a8d436c9c2cc44d561d9c816e25a340a3" title=" " alt="" coords="5,5,211,32"/>
 <area shape="rect" href="classMyIK_1_1MyIK.html#a8b0338690524cab592ba8ecac2351755" title=" " alt="" coords="17,57,199,98"/>
 </map>
 </div>

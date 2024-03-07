@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['a_36',['A',['../structImpedanceController_1_1ImpParam.html#ac21328ee44f701e551b2a15f511e53e6',1,'ImpedanceController::ImpParam']]],
-  ['a_37',['a',['../classbutterworth.html#a9db03628af375006c6b46024a9ceed9a',1,'butterworth']]],
+  ['a_36',['a',['../classbutterworth.html#a9db03628af375006c6b46024a9ceed9a',1,'butterworth']]],
+  ['a_37',['A',['../structImpedanceController_1_1ImpParam.html#ac21328ee44f701e551b2a15f511e53e6',1,'ImpedanceController::ImpParam']]],
   ['aborted_38',['aborted',['../classMyIK_1_1MyIK.html#a8d7d5367a67dd713f7d9697372e860e8',1,'MyIK::MyIK']]],
   ['adaptation_39',['adaptation',['../classMultiCartController.html#a42f3901b140549663f236b2421651746',1,'MultiCartController']]],
   ['adaptation_40',['Adaptation',['../classMultiCartController.html#ada1b09dcdfb4e67620b6f0536cfd2c9aafc481977636976cf0d63863e98b3bb0e',1,'MultiCartController']]],
