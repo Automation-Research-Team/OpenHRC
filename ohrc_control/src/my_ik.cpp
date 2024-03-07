@@ -252,8 +252,8 @@ VectorXd MyIK::getRandomJntVel(const double& dt) {
 }
 
 int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt) {
-  std::vector<KDL::JntArray> q_out_ = std_utility::makeOneVector(q_out);
-  int out = this->CartToJnt(std_utility::makeOneVector(q_init), std_utility::makeOneVector(p_in), q_out_, dt);
+  std::vector<KDL::JntArray> q_out_ = std_utility::makeVector(q_out);
+  int out = this->CartToJnt(std_utility::makeVector(q_init), std_utility::makeVector(p_in), q_out_, dt);
   q_out = q_out_[0];
   return out;
 }
@@ -552,8 +552,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
   //   updateVelP(q_cur, des_eff_pose, des_eff_vel_, e);
 
   // return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
-  std::vector<KDL::JntArray> dq_des_ = std_utility::makeOneVector(dq_des);
-  int out = this->CartToJntVel_qp(std_utility::makeOneVector(q_cur), std_utility::makeOneVector(des_eff_pose), std_utility::makeOneVector(des_eff_vel), dq_des_, dt);
+  std::vector<KDL::JntArray> dq_des_ = std_utility::makeVector(dq_des);
+  int out = this->CartToJntVel_qp(std_utility::makeVector(q_cur), std_utility::makeVector(des_eff_pose), std_utility::makeVector(des_eff_vel), dq_des_, dt);
   dq_des = dq_des_[0];
   return out;
 }

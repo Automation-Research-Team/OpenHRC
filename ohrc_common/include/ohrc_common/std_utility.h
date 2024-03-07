@@ -108,7 +108,7 @@ inline Eigen::VectorXd concatenateVectors(std::vector<KDL::JntArray> vecs) {
 }
 
 template <typename T>
-inline std::vector<T> makeOneVector(T in) {
+inline std::vector<T> makeVector(T in) {
   std::vector<T> out = { in };
   return out;
 }

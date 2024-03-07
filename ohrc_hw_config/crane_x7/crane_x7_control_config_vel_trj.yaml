@@ -6,7 +6,7 @@ controller: "Velocity" # "Position" or "Velocity"
 
 solver: "MyIK"
 
-self_collision_avoidance: true
+self_collision_avoidance: false
 
 control_freq: 30.0
 
