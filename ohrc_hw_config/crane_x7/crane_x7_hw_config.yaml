@@ -1,8 +1,9 @@
-chain_start: "base_link" # base frame of commands
-chain_end: "crane_x7_gripper_base_link" # target eff frame
+crane_x7:
+  chain_start: "base_link" # base frame of commands
+  chain_end: "crane_x7_gripper_base_link" # target eff frame
 
-publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
-topic_namespace: "/crane_x7/arm_controller"
+  publisher: "Trajectory" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+  topic_namespace: "/crane_x7/arm_controller"
 
-initIKAngle: [0, 0., 0, 0, 0, 0, 0, 0] # size of this should be equal to DoF
-initial_pose: [0.2, 0.0, 0.16, 0, PI/2, 0] # [x, y, z, roll, pitch, yaw]
+  initIKAngle: [0, 0.8, 0, -2.0, 0, -0.4, 0] # size of this should be equal to DoF
+  initial_pose: [0.08, 0.0, 0.37, 0, 1.57079, 0] # [x, y, z, roll, pitch, yaw]

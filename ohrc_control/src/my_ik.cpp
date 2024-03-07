@@ -123,11 +123,16 @@ MyIK::MyIK(const std::vector<std::string>& base_link, const std::vector<std::str
     combsRobot = std_utility::comb(nRobot, 2);
 
   // initialize Ik weights
-  nAddObj = 2;
+  // nAddObj = 2;
   init_w_h.resize(nRobot + nAddObj, 1.0e4);
   w_h = init_w_h;
 
-  initialized = true;
+  int initializedRobot = 0;
+  for (int i = 0; i < nRobot; i++)
+    initializedRobot += (int)myIKs[i]->getInitialized();
+
+  if (initializedRobot == nRobot)
+    initialized = true;
 }
 
 void MyIK::initialize() {
@@ -151,6 +156,22 @@ void MyIK::initialize() {
   }
 
   assert(types.size() == lb.data.size());
+
+  MyIK* a = this;
+  myIKs.resize(1);
+  myIKs[0] = std::shared_ptr<MyIK>(a);
+
+  iJnt.resize(nRobot + 1, 0);
+  for (int i = 0; i < nRobot; i++) {
+    nState += myIKs[i]->getNJnt();
+    iJnt[i + 1] = iJnt[i] + myIKs[i]->getNJnt();
+  }
+
+  init_w_h.resize(nRobot + nAddObj, 1.0e4);
+  w_h = init_w_h;
+
+  q_rest.resize(nRobot);
+  q_rest[0] = KDL::JntArray(nJnt);
 
   initialized = true;
 }
@@ -252,8 +273,8 @@ VectorXd MyIK::getRandomJntVel(const double& dt) {
 }
 
 int MyIK::CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt) {
-  std::vector<KDL::JntArray> q_out_ = std_utility::makeOneVector(q_out);
-  int out = this->CartToJnt(std_utility::makeOneVector(q_init), std_utility::makeOneVector(p_in), q_out_, dt);
+  std::vector<KDL::JntArray> q_out_ = std_utility::makeVector(q_out);
+  int out = this->CartToJnt(std_utility::makeVector(q_init), std_utility::makeVector(p_in), q_out_, dt);
   q_out = q_out_[0];
   return out;
 }
@@ -441,7 +462,7 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
 
   return 1;
 }
-
+#if 0
 int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_vel, const VectorXd& e, KDL::JntArray& dq_des, const double& dt) {
   KDL::Jacobian jac(nJnt);
   JntToJac(q_cur, jac);
@@ -540,7 +561,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
 
   return 1;
 }
-
+#endif
 int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt) {
   // KDL::Twist des_eff_vel_ = des_eff_vel;
 
@@ -552,8 +573,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
   //   updateVelP(q_cur, des_eff_pose, des_eff_vel_, e);
 
   // return CartToJntVel_qp(q_cur, des_eff_vel_, e, dq_des, dt);
-  std::vector<KDL::JntArray> dq_des_ = std_utility::makeOneVector(dq_des);
-  int out = this->CartToJntVel_qp(std_utility::makeOneVector(q_cur), std_utility::makeOneVector(des_eff_pose), std_utility::makeOneVector(des_eff_vel), dq_des_, dt);
+  std::vector<KDL::JntArray> dq_des_ = std_utility::makeVector(dq_des);
+  int out = this->CartToJntVel_qp(std_utility::makeVector(q_cur), std_utility::makeVector(des_eff_pose), std_utility::makeVector(des_eff_vel), dq_des_, dt);
   dq_des = dq_des_[0];
   return out;
 }
@@ -574,6 +595,7 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
 
   for (int i = 0; i < nRobot; i++) {
     KDL::Jacobian jac(myIKs[i]->getNJnt());
+
     myIKs[i]->JntToJac(q_cur[i], jac);
     Js[i] = jac.data;
 
@@ -599,7 +621,7 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
   std::vector<VectorXd> g(nRobot + nAddObj);
 
   // additonal objective term in QP (1) for singularity avoidance
-  w_h[nRobot] = 1.0e-1;
+  w_h[nRobot] = 1.0e-0;
   H[nRobot] = MatrixXd::Identity(nState, nState);
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
