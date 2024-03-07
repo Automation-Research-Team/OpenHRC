@@ -1,17 +1,15 @@
 #include "ohrc_teleoperation/marker_interface.hpp"
 
 void MarkerInterface::initInterface() {
-  server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eff_marker"));
+  server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eef_marker"));
   configMarker();
 }
 
 void MarkerInterface::configMarker() {
+  // set initial marker config
   int_marker.header.frame_id = controller->getRobotNs() + controller->getChainStart();
   int_marker.header.stamp = ros::Time(0);
   int_marker.pose = tf2::toMsg(controller->getT_init());
-
-  // int_marker.pose.position = tf2::toMsg(Vector3d(cartController->getT_init().translation()));
-  // int_marker.pose.orientation = tf2::toMsg(Quaterniond(cartController->getT_init().rotation().transpose()));
   int_marker.scale = 0.1;
   int_marker.name = controller->getRobotNs();
 
@@ -48,16 +46,14 @@ void MarkerInterface::configMarker() {
     int_marker.controls.push_back(control);
   }
 
-  // add the interactive marker to our collection &
-  // tell the server to call processFeedback() when feedback arrives for it
-  //   server.insert(int_marker, boost::bind(&MarkerInterface::processFeedback, this, _1));
+  // add the interactive marker
   server->insert(int_marker);
   server->setCallback(int_marker.name, boost::bind(&MarkerInterface::processFeedback, this, _1));
 
   // 'commit' changes and send to all clients
   server->applyChanges();
 
-  ROS_INFO_STREAM("Set interactive marker: " << controller->getRobotNs() << "eff_marker");
+  ROS_INFO_STREAM("Set interactive marker: " << controller->getRobotNs() << "eef_marker");
 }
 
 void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {

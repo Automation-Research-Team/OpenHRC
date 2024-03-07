@@ -20,6 +20,10 @@
   <!-- Change the controller type of gripper from position to effort -->
   <arg name="use_effort_gripper" default="false" />
 
+  <arg name="use_gazebo" default="true" />
+    <!-- Allow user to turn fake_execution on and off -->
+  <arg name="fake_execution" default="false" />
+
   <include file="$(find crane_x7_control)/launch/crane_x7_fake_control.launch">
     <arg name="use_effort_gripper" value="$(arg use_effort_gripper)" />
   </include>
@@ -40,16 +44,6 @@
  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
         args="-urdf -model crane_x7 -param robot_description -z 1.02"/>
-
-
-  <arg name="use_gazebo" default="true" />
-  <arg name="load_robot_description" default="true" />
-    <!-- Allow user to turn fake_execution on and off -->
-  <arg name="fake_execution" default="false" />
-
-    <include file="$(find crane_x7_moveit_config)/launch/planning_context.launch">
-    <arg name="load_robot_description" value="$(arg load_robot_description)"/>
-  </include>
 
     <!-- We do not have a robot connected, so publish fake joint states -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)">

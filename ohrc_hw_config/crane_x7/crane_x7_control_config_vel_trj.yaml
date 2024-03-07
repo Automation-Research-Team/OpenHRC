@@ -8,7 +8,7 @@ solver: "MyIK"
 
 self_collision_avoidance: false
 
-control_freq: 30.0
+control_freq: 100.0
 
 
 

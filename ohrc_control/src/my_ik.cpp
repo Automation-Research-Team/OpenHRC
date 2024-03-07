@@ -621,7 +621,7 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
   std::vector<VectorXd> g(nRobot + nAddObj);
 
   // additonal objective term in QP (1) for singularity avoidance
-  w_h[nRobot] = 1.0e-1;
+  w_h[nRobot] = 1.0e-0;
   H[nRobot] = MatrixXd::Identity(nState, nState);
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
