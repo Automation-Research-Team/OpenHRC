@@ -11,7 +11,6 @@
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <kdl/chainfksolvervel_recursive.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
-#include <kdl_parser/kdl_parser.hpp>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -49,7 +48,7 @@ class MyIK : std::enable_shared_from_this<MyIK> {
   int progress;
   bool aborted;
 
-  unsigned int nJnt;
+  unsigned int nJnt, nSeg;
 
   std::unique_ptr<KDL::ChainJntToJacSolver> jacsolver;
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fksolver;
@@ -63,7 +62,7 @@ class MyIK : std::enable_shared_from_this<MyIK> {
 
   bool poseFeedbackDisabled = false;
 
-  void initialize();
+  void initializeSingleRobot(const KDL::Chain& chain);
 
   int addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
 
@@ -92,11 +91,14 @@ public:
   VectorXd getUpdatedJntLimit(const KDL::JntArray& q_cur, std::vector<double>& artificial_lower_limits, std::vector<double>& artificial_upper_limits, const double& dt);
   VectorXd getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits, std::vector<double>& upper_vel_limits, const double& dt);
 
+  // single robot initilizer (with URDF)
   MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param = "/robot_description", double _eps = 1e-5,
        Affine3d T_base_world = Affine3d::Identity(), SolveType _type = Pure);
+  // single robot initilizer (without URDF)
   MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps = 1e-5, Affine3d T_base_world = Affine3d::Identity(),
        SolveType _type = Pure);
-  MyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<std::string>& URDF_param, const std::vector<Affine3d>& T_base_world,
+  // multiple robot initilizer
+  MyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
        const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps = 1e-5, SolveType _type = Pure);
 
   int CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt = 1.0e5);
@@ -200,6 +202,10 @@ public:
 
   inline unsigned int getNJnt() {
     return nJnt;
+  }
+
+  inline unsigned int getNSeg() {
+    return nSeg;
   }
 
   inline void setNameJnt(std::vector<std::string> name) {
