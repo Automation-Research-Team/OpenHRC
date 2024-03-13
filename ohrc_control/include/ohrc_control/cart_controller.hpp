@@ -42,7 +42,7 @@ class CartController {
   ros::CallbackQueue queue;
   boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
   ros::NodeHandle nh_;
-  // ros::Publisher pubEefForce;
+  ros::Publisher pubEefForce;
 
   std::mutex mtx_q;
 
@@ -243,10 +243,9 @@ public:
   inline bool getOperationEnable() const {
     return !_disable;
   }
-  inline void getInfo(std::string& chain_start, std::string& chain_end, std::string& urdf_param, Affine3d& T_base_root, std::shared_ptr<MyIK::MyIK>& myik) {
+  inline void getInfo(std::string& chain_start, std::string& chain_end, Affine3d& T_base_root, std::shared_ptr<MyIK::MyIK>& myik) {
     chain_start = getChainStart();
     chain_end = this->chain_end;
-    urdf_param = this->urdf_param;
     T_base_root = this->T_base_root;
     myik = this->myik_solver_ptr;
   }
