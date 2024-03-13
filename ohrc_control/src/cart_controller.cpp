@@ -75,14 +75,18 @@ void CartController::init(std::string robot, std::string hw_config) {
     subFlagPtrs.push_back(&flagArmMarker);
   }
 
-  ROS_INFO_STREAM("Looking for force/torque sensor TF.");
-  if (trans.canTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + "ft_sensor_link", ros::Time(0), ros::Duration(1.0));
-    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + "ft_sensor/filtered", 2, &CartController::cbForce, this, th);
-    // pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
+  std::string ft_sensor_link, ft_topic;
+  nh.param("/" + robot_ns + "/ft_sensor_link", ft_sensor_link, std::string("ft_sensor_link"));
+  nh.param("/" + robot_ns + "/ft_topic", ft_topic, std::string("ft_sensor/filtered"));
+
+  ROS_INFO_STREAM("Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
+  if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0))) {
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0));
+    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 2, &CartController::cbForce, this, th);
+    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
     subFlagPtrs.push_back(&flagForce);
   } else
-    ROS_WARN_STREAM("force/torque sensor TF was not found.");
+    ROS_WARN_STREAM("force/torque sensor was not found. Compliance control does not work.");
   client = nh.serviceClient<std_srvs::Empty>("/" + robot_ns + "ft_filter/reset_offset");
 
   if (publisher == PublisherType::Trajectory)
@@ -351,7 +355,7 @@ void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) 
   _force.header.frame_id = robot_ns + chain_end;
   _force.wrench = geometry_msgs_utility::transformFT(msg->wrench, Tft_eff);
 
-  // this->pubEefForce.publish(_force);
+  this->pubEefForce.publish(_force);
 
   if (!flagForce)
     flagForce = true;

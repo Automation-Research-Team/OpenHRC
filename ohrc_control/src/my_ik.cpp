@@ -7,7 +7,7 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
   ros::NodeHandle nh("~");
 
   urdf::Model robot_model = model_utility::getURDFModel(URDF_param, nh);
-  KDL::Chain chain = model_utility::getKDLChain(robot_model, base_link, tip_link);
+  chain = model_utility::getKDLChain(robot_model, base_link, tip_link);
 
   nJnt = chain.getNrOfJoints();
   nSeg = chain.getNrOfSegments();
