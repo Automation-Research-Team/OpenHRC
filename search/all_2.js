@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['b_57',['b',['../classbutterworth.html#a75ee30344051d6e2ca5c42e1e1ca3330',1,'butterworth']]],
-  ['b_58',['B',['../structImpedanceController_1_1ImpParam.html#afa13d99ee4a61ef593ee51307592f02a',1,'ImpedanceController::ImpParam']]],
+  ['b_57',['B',['../structImpedanceController_1_1ImpParam.html#afa13d99ee4a61ef593ee51307592f02a',1,'ImpedanceController::ImpParam']]],
+  ['b_58',['b',['../classbutterworth.html#a75ee30344051d6e2ca5c42e1e1ca3330',1,'butterworth']]],
   ['bagfile_59',['bagfile',['../namespacerosbag__record.html#a0e135bedd9b22b28b8bbc5010d57759c',1,'rosbag_record']]],
   ['basicjointtype_60',['BasicJointType',['../namespaceMyIK.html#ae6a895781154c727e48c885b66f9f18f',1,'MyIK']]],
   ['bayes_5fnormal_5fgamma_2ecpp_61',['bayes_normal_gamma.cpp',['../bayes__normal__gamma_8cpp.html',1,'']]],

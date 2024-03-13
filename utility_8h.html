@@ -74,6 +74,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="gazebo__utility_8h_source.html">ohrc_common/gazebo_utility.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="geometry__msgs__utility_8h_source.html">ohrc_common/geometry_msgs_utility/geometry_msgs_utility.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="math__utility_8h_source.html">ohrc_common/math_utility.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="model__utility_8h_source.html">ohrc_common/model_utility.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="nav__msgs__utility_8h_source.html">ohrc_common/nav_msgs_utility/nav_msgs_utility.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="std__utility_8h_source.html">ohrc_common/std_utility.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="subscriber__utility_8h_source.html">ohrc_common/subscriber_utility.h</a>&quot;</code><br />
@@ -83,46 +84,49 @@ Include dependency graph for utility.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="utility_8h__incl.png" border="0" usemap="#autility_8h" alt=""/></div>
 <map name="autility_8h" id="autility_8h">
-<area shape="rect" title=" " alt="" coords="847,5,918,32"/>
-<area shape="rect" href="coordination__utility_8h.html" title=" " alt="" coords="366,363,565,404"/>
-<area shape="rect" href="filter__utility_8h.html" title=" " alt="" coords="2126,363,2282,404"/>
-<area shape="rect" href="gazebo__utility_8h.html" title=" " alt="" coords="5,87,171,129"/>
-<area shape="rect" href="geometry__msgs__utility_8h.html" title=" " alt="" coords="997,80,1179,136"/>
-<area shape="rect" href="math__utility_8h.html" title=" " alt="" coords="1475,370,1682,397"/>
-<area shape="rect" href="transform__utility_8h.html" title=" " alt="" coords="846,363,1029,404"/>
-<area shape="rect" href="nav__msgs__utility_8h.html" title=" " alt="" coords="464,87,656,129"/>
-<area shape="rect" href="std__utility_8h.html" title=" " alt="" coords="2085,95,2278,121"/>
-<area shape="rect" href="subscriber__utility_8h.html" title=" " alt="" coords="234,87,419,129"/>
-<area shape="rect" title=" " alt="" coords="338,467,422,493"/>
-<area shape="rect" title=" " alt="" coords="447,467,607,493"/>
-<area shape="rect" title=" " alt="" coords="682,467,785,493"/>
-<area shape="rect" href="bayes__normal__gamma_8h.html" title=" " alt="" coords="2213,452,2376,508"/>
-<area shape="rect" href="butterworth_8h.html" title=" " alt="" coords="1858,459,2017,501"/>
-<area shape="rect" href="kalman_8h.html" title=" " alt="" coords="2041,459,2189,501"/>
-<area shape="rect" title=" " alt="" coords="2065,556,2164,583"/>
-<area shape="rect" title=" " alt="" coords="605,556,683,583"/>
-<area shape="rect" href="Point_8h.html" title=" " alt="" coords="1596,273,1777,315"/>
-<area shape="rect" href="Twist_8h.html" title=" " alt="" coords="589,363,771,404"/>
-<area shape="rect" href="Vector3_8h.html" title=" " alt="" coords="1269,363,1451,404"/>
-<area shape="rect" href="Wrench_8h.html" title=" " alt="" coords="920,273,1101,315"/>
-<area shape="rect" href="WrenchStamped_8h.html" title=" " alt="" coords="1048,184,1280,225"/>
-<area shape="rect" title=" " alt="" coords="1707,370,1883,397"/>
-<area shape="rect" title=" " alt="" coords="1679,467,1747,493"/>
-<area shape="rect" title=" " alt="" coords="1771,467,1834,493"/>
-<area shape="rect" title=" " alt="" coords="1463,467,1655,493"/>
-<area shape="rect" title=" " alt="" coords="1053,370,1245,397"/>
-<area shape="rect" title=" " alt="" coords="1005,467,1211,493"/>
-<area shape="rect" title=" " alt="" coords="1236,467,1439,493"/>
-<area shape="rect" title=" " alt="" coords="860,467,980,493"/>
-<area shape="rect" title=" " alt="" coords="1125,281,1376,307"/>
-<area shape="rect" href="Odometry_8h.html" title=" " alt="" coords="157,363,341,404"/>
-<area shape="rect" title=" " alt="" coords="95,467,262,493"/>
-<area shape="rect" title=" " alt="" coords="2429,191,2515,218"/>
-<area shape="rect" title=" " alt="" coords="2009,191,2119,218"/>
-<area shape="rect" title=" " alt="" coords="2144,191,2219,218"/>
-<area shape="rect" title=" " alt="" coords="2243,191,2323,218"/>
-<area shape="rect" title=" " alt="" coords="2347,191,2405,218"/>
-<area shape="rect" title=" " alt="" coords="295,191,359,218"/>
+<area shape="rect" title=" " alt="" coords="1254,5,1325,32"/>
+<area shape="rect" href="coordination__utility_8h.html" title=" " alt="" coords="389,363,587,404"/>
+<area shape="rect" href="filter__utility_8h.html" title=" " alt="" coords="2101,363,2257,404"/>
+<area shape="rect" href="gazebo__utility_8h.html" title=" " alt="" coords="5,273,171,315"/>
+<area shape="rect" href="geometry__msgs__utility_8h.html" title=" " alt="" coords="1135,80,1316,136"/>
+<area shape="rect" href="math__utility_8h.html" title=" " alt="" coords="1498,370,1705,397"/>
+<area shape="rect" href="transform__utility_8h.html" title=" " alt="" coords="869,363,1051,404"/>
+<area shape="rect" href="model__utility_8h.html" title=" " alt="" coords="2213,95,2427,121"/>
+<area shape="rect" href="nav__msgs__utility_8h.html" title=" " alt="" coords="335,87,527,129"/>
+<area shape="rect" href="std__utility_8h.html" title=" " alt="" coords="1561,95,1754,121"/>
+<area shape="rect" href="subscriber__utility_8h.html" title=" " alt="" coords="1951,87,2137,129"/>
+<area shape="rect" title=" " alt="" coords="346,467,430,493"/>
+<area shape="rect" title=" " alt="" coords="455,467,615,493"/>
+<area shape="rect" title=" " alt="" coords="690,467,793,493"/>
+<area shape="rect" href="bayes__normal__gamma_8h.html" title=" " alt="" coords="2273,452,2436,508"/>
+<area shape="rect" href="butterworth_8h.html" title=" " alt="" coords="1779,459,1938,501"/>
+<area shape="rect" href="kalman_8h.html" title=" " alt="" coords="2101,459,2249,501"/>
+<area shape="rect" title=" " alt="" coords="2125,556,2224,583"/>
+<area shape="rect" title=" " alt="" coords="1394,556,1473,583"/>
+<area shape="rect" href="Point_8h.html" title=" " alt="" coords="1619,273,1800,315"/>
+<area shape="rect" href="Twist_8h.html" title=" " alt="" coords="612,363,793,404"/>
+<area shape="rect" href="Vector3_8h.html" title=" " alt="" coords="1292,363,1473,404"/>
+<area shape="rect" href="Wrench_8h.html" title=" " alt="" coords="1084,273,1265,315"/>
+<area shape="rect" href="WrenchStamped_8h.html" title=" " alt="" coords="956,184,1188,225"/>
+<area shape="rect" title=" " alt="" coords="1729,370,1905,397"/>
+<area shape="rect" title=" " alt="" coords="1687,467,1755,493"/>
+<area shape="rect" title=" " alt="" coords="1962,467,2025,493"/>
+<area shape="rect" title=" " alt="" coords="1471,467,1663,493"/>
+<area shape="rect" title=" " alt="" coords="1076,370,1268,397"/>
+<area shape="rect" title=" " alt="" coords="962,467,1169,493"/>
+<area shape="rect" title=" " alt="" coords="1193,467,1396,493"/>
+<area shape="rect" title=" " alt="" coords="817,467,937,493"/>
+<area shape="rect" title=" " alt="" coords="809,281,1060,307"/>
+<area shape="rect" title=" " alt="" coords="2433,191,2538,218"/>
+<area shape="rect" title=" " alt="" coords="2219,191,2408,218"/>
+<area shape="rect" href="Odometry_8h.html" title=" " alt="" coords="180,363,364,404"/>
+<area shape="rect" title=" " alt="" coords="103,467,270,493"/>
+<area shape="rect" title=" " alt="" coords="1492,191,1577,218"/>
+<area shape="rect" title=" " alt="" coords="1602,191,1713,218"/>
+<area shape="rect" title=" " alt="" coords="1737,191,1812,218"/>
+<area shape="rect" title=" " alt="" coords="1836,191,1916,218"/>
+<area shape="rect" title=" " alt="" coords="1940,191,1999,218"/>
+<area shape="rect" title=" " alt="" coords="2023,191,2087,218"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
