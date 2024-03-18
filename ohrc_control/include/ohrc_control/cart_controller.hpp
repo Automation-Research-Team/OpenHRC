@@ -86,6 +86,8 @@ class CartController {
 
   ros::Time prev_time = ros::Time::now();
 
+  bool ftFound = false;
+
 protected:
   SolverType solver;
   ControllerType controller;
@@ -344,6 +346,10 @@ public:
 
   inline void setqRest(const KDL::JntArray& q_rest) {
     // this->q_rest = q_rest;
+  }
+
+  inline bool getFtFound() {
+    return ftFound;
   }
 
   double dt;
