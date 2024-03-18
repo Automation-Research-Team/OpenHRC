@@ -2,59 +2,7 @@
 
 void AdmittanceController::initInterface() {
   this->impParam = getImpParam(getImpCoeff());
-
-  // this->getParam();
-
-  // RespawnReqPublisher = n.advertise<std_msgs::Empty>(this->targetName + "/success", 10);
-  // targetDistPublisher = n.advertise<std_msgs::Float32>("/" + controller->getRobotNs() + "/distance", 10);
-
-  // this->setSubscriber();
 }
-
-// void AdmittanceController::getParam() {
-//   std::vector<std::string> targetTopicName_;
-//   if (n.getParam("target_topic", targetTopicName_))
-//     targetName = targetTopicName_[controller->getIndex()];
-//   else if (!n.getParam("target_topic", targetName))
-//     ROS_ERROR_STREAM("target pose topic name(s) are not configured");
-
-//   if (!n.getParam("error_threshold/target/pos", posThr))
-//     ROS_ERROR_STREAM("error_threshold/target/pos is not configured");
-
-//   if (!n.getParam("error_threshold/target/vel", velThr))
-//     ROS_ERROR_STREAM("error_threshold/target/vel is not configured");
-
-//   if (!n.getParam("error_threshold/target/force", forceThr))
-//     ROS_ERROR_STREAM("error_threshold/target/force is not configured");
-
-//   if (!n.getParam("error_threshold/rest/pos", posThr_r))
-//     ROS_ERROR_STREAM("error_threshold/rest/pos is not configured");
-
-//   if (!n.getParam("error_threshold/rest/vel", velThr_r))
-//     ROS_ERROR_STREAM("error_threshold/rest/vel is not configured");
-
-//   if (!n.getParam("error_threshold/rest/force", forceThr_r))
-//     ROS_ERROR_STREAM("error_threshold/rest/force is not configured");
-
-//   if (!n.getParam("limit/time", timeLimit))
-//     ROS_ERROR_STREAM("time limit is not configured");
-
-//   if (!n.getParam("limit/force", forceLimit))
-//     ROS_ERROR_STREAM("force limit is not configured");
-
-//   if (!n.getParam("target_rule/repeat", repeat))
-//     ROS_ERROR_STREAM("repeat is not configured");
-
-//   if (!n.getParam("target_rule/rest_everytime", restEverytime))
-//     ROS_ERROR_STREAM("restEverytime is not configured");
-
-//   ROS_INFO_STREAM("error_threshold/target/[pos, vel, force]: [" << posThr << ", " << velThr << ", " << forceThr << "]");
-//   ROS_INFO_STREAM("error_threshold/rest/[pos, vel, force]: [" << posThr_r << ", " << velThr_r << ", " << forceThr_r << "]");
-// }
-
-// void AdmittanceController::setSubscriber() {
-// targetSubscriber = n.subscribe<geometry_msgs::PoseArray>(targetName, 1, &AdmittanceController::cbTargetPoses, this, th);
-// }
 
 void AdmittanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std::vector<bool>& isGotMDK) {
   if (isGotMDK[0] == false) {
@@ -121,115 +69,9 @@ AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff&
   return impParam;
 }
 
-// void AdmittanceController::cbTargetPoses(const geometry_msgs::PoseArray::ConstPtr& msg) {
-//   std::lock_guard<std::mutex> lock(mtx_imp);
-//   tf2::fromMsg(*msg, _targetPoses);
-//   this->_targetUpdated = true;
-// }
-
-// bool AdmittanceController::NormReachedCheck(const VectorXd& delta_x, const VectorXd& force, const double posThr, const double velThr, const double forceThr) {
-//   // std::cout << delta_x.head(3).norm() << ", " << delta_x.tail(3).norm() << ", " << force.head(3).norm() << std::endl;
-//   // std::cout << posThr << ", " << velThr << ", " << forceThr << std::endl;
-//   // std::cout << "---" << std::endl;
-//   return (delta_x.head(3).norm() < posThr && delta_x.tail(3).norm() < velThr && force.head(3).norm() > forceThr);
-// }
-
-// // check if the robot eef reached the target pose
-// // delta_x: position error (3) and velocity error (3)
-// bool AdmittanceController::checkTargetReached(const VectorXd& delta_x, const VectorXd& force) {
-//   return NormReachedCheck(delta_x, force, this->posThr, this->velThr, this->forceThr);
-// }
-
-// bool AdmittanceController::checkRestTargetReached(const VectorXd& delta_x, const VectorXd& force) {
-//   return NormReachedCheck(delta_x, force, this->posThr_r, this->velThr_r, this->forceThr_r);
-// }
-
-// TaskState AdmittanceController::updataTaskState(const VectorXd& delta_x, const int targetIdx) {
-//   TaskState taskState = TaskState::OnGoing;
-
-//   VectorXd force = tf2::fromMsg(controller->getForceEef().wrench).head(3);
-
-//   // check if the robot eef reached the target pose
-//   if (targetIdx == -1) {  // if going back to rest positon
-//     if (checkRestTargetReached(delta_x, force) && !blocked)
-//       taskState = TaskState::Success;
-//   } else {
-//     if (checkTargetReached(delta_x, force)) {
-//       RespawnReqPublisher.publish(std_msgs::Empty());
-//       nCompletedTask++;
-//       taskState = TaskState::Success;
-//       ROS_INFO_STREAM(controller->getRobotNs() + " reached the target #" << targetIdx << " pose (" << nCompletedTask << ") ");
-//     }
-//   }
-
-//   // check if the robot eef failed to reach the target pose
-//   if (taskState == TaskState::OnGoing && (getTrialTime().toSec() > this->timeLimit || force.norm() > this->forceLimit)) {
-//     // RespawnReqPublisher.publish(std_msgs::Empty());
-//     taskState = TaskState::Fail;
-//     ROS_ERROR_STREAM(controller->getRobotNs() + " failed to reach the target pose");
-//   }
-
-//   // rest timer
-//   if (taskState == TaskState::Success || taskState == TaskState::Fail)
-//     this->t_start = ros::Time::now();
-
-//   return taskState;
-// }
-
 VectorXd AdmittanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam) {
   return (MatrixXd::Identity(6, 6) + impParam.A * dt) * x + dt * impParam.B * exForce + dt * impParam.C * xd;
 }
-
-// Affine3d AdmittanceController::getNextTarget(const TaskState& taskState, const std::vector<Affine3d>& targetPoses, const Affine3d& restPose, int& targetIdx, int& nextTargetIdx)
-// {
-//   switch (taskState) {
-//     case TaskState::Fail:
-//       targetIdx = -1;
-//       break;
-
-//     case TaskState::Success:
-//       if (restEverytime ? (targetIdx == -1) && ((nextTargetIdx != targetPoses.size() - 1) || repeat) : true) {  // if going back to rest positon
-//         nextTargetIdx++;
-//         if (nextTargetIdx == targetPoses.size())
-//           nextTargetIdx = repeat ? 0 : targetPoses.size() - 1;
-//         targetIdx = nextTargetIdx;
-//       } else {
-//         targetIdx = -1;
-//       }
-//       break;
-//   }
-
-//   if (targetIdx == -1)  // if going back to rest positon
-//     return restPose;
-//   else
-//     return targetPoses[targetIdx];
-// }
-
-// bool AdmittanceController::updateImpedanceTarget(const VectorXd& x, VectorXd& xd) {
-//   std::vector<Affine3d> targetPoses;
-//   // subsribe target poses
-//   {
-//     std::lock_guard<std::mutex> lock(mtx_imp);
-//     if (!this->_targetUpdated)
-//       return false;
-//     targetPoses = _targetPoses;
-//   }
-
-//   // transform target pose coordinate from world to base
-//   Affine3d T_base_world_inv = controller->getT_base_world().inverse();
-//   for (int i = 0; i < targetPoses.size(); i++)
-//     targetPoses[i] = T_base_world_inv * targetPoses[i];
-
-//   // update task state
-//   this->taskState = updataTaskState(x - xd, targetIdx);
-
-//   // update target pose
-//   xd.head(3) = getNextTarget(this->taskState, targetPoses, restPose, targetIdx, nextTargetIdx).translation();
-
-//   // curTargetId = targetIdx;
-
-//   return true;
-// }
 
 void AdmittanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   KDL::Frame frame;
@@ -244,8 +86,6 @@ void AdmittanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist)
 
     taskState = TaskState::OnGoing;
     // controller->startOperation();
-
-    this->t_start = ros::Time::now();
   }
 
   // update only position using subscribed q.
@@ -253,10 +93,6 @@ void AdmittanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist)
   x.head(3) << frame.p[0], frame.p[1], frame.p[2];
 
   // update target pose
-  // if (!this->updateImpedanceTarget(x, xd))
-  //   xd.tail(3) = Vector3d::Zero();
-  // else
-  //   taskState == TaskState::Initial;
   xd << pose.p.x(), pose.p.y(), pose.p.z(), twist.vel.x(), twist.vel.y(), twist.vel.z();
 
   // get command state
