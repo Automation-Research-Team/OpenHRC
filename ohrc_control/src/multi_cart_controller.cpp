@@ -46,7 +46,7 @@ MultiCartController::MultiCartController() {
   enbaleAdmittanceControl.resize(nRobot, false);
   for (int i = 0; i < nRobot; i++) {
     admittanceControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
-    enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound();
+    enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
   }
 }
 
@@ -125,6 +125,9 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
     this->date = std_utility::getDatetimeStr();
     n.setParam("date", date);
   }
+
+  n.param("enableEefForceAdmittance", enableEefForceAdmittanceParam, false);
+  ROS_INFO_STREAM("enableEefForceAdmittance: " << enableEefForceAdmittanceParam);
 
   return true;
 }

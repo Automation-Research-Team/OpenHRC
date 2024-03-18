@@ -2,15 +2,18 @@
 <launch>
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
+  <arg name="interface" default="marker" />
+  <arg name="enableEefForceAdmittance" default="false" />
 
   <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
   <rosparam command="load" file="$(find ohrc_control)/config/admittance_config.yaml" />
-  
-  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 0 0 0 world xr_frame" />
-  <node name="k4abt_body_teleoperation" pkg="ohrc_teleoperation" type="k4abt_body_teleoperation"  respawn="false" output="screen">
+
+  <node name="$(arg interface)_teleoperation" pkg="ohrc_teleoperation" type="$(arg interface)_teleoperation"  respawn="false" output="screen">
     <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
-    <rosparam command="load" file="$(find ohrc_teleoperation)/config/k4abt_body_config.yaml" />
+    <rosparam command="load" file="$(find ohrc_teleoperation)/config/$(arg interface)_config.yaml" />
+    <param name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </node>
 
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/config/teleoperation.rviz"/>
+
 </launch>

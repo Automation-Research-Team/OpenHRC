@@ -25,6 +25,7 @@ class MultiCartController {
                     const std::vector<KDL::Twist> desVel);
 
   std::vector<bool> enbaleAdmittanceControl;
+  bool enableEefForceAdmittanceParam;
 
 protected:
   ros::NodeHandle nh;
@@ -79,12 +80,16 @@ protected:
 
   void initInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->initInterface();
-    admittanceControllers[controller->getIndex()]->initInterface();
+
+    if (enbaleAdmittanceControl[controller->getIndex()])
+      admittanceControllers[controller->getIndex()]->initInterface();
   }
 
   void resetInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->resetInterface();
-    admittanceControllers[controller->getIndex()]->resetInterface();
+
+    if (enbaleAdmittanceControl[controller->getIndex()])
+      admittanceControllers[controller->getIndex()]->resetInterface();
   }
 
   void feedback(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
