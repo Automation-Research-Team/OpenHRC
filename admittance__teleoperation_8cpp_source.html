@@ -69,18 +69,20 @@ $(function() {
 <div class="title">admittance_teleoperation.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="admittance__teleoperation_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;ohrc_control/admittance_controller.hpp&quot;</span></div>
+<a href="admittance__teleoperation_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="admittance__controller_8hpp.html">ohrc_control/admittance_controller.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno"><a class="line" href="admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d">    3</a></span>&#160;std::unique_ptr&lt;AdmittanceController&gt; <a class="code" href="admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d">admittanceController</a>;</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="admittance__teleoperation_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">    5</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="admittance__teleoperation_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv) {</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;  ros::init(argc, argv, <span class="stringliteral">&quot;admittance_teleoperation&quot;</span>);</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  <a class="code" href="admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d">admittanceController</a>.reset(<span class="keyword">new</span> AdmittanceController());</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  <a class="code" href="admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d">admittanceController</a>.reset(<span class="keyword">new</span> <a class="code" href="classAdmittanceController.html">AdmittanceController</a>());</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d">admittanceController</a>-&gt;control() &lt; 0)</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    ROS_ERROR(<span class="stringliteral">&quot;End by some fails&quot;</span>);</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;}</div>
+<div class="ttc" id="aadmittance__controller_8hpp_html"><div class="ttname"><a href="admittance__controller_8hpp.html">admittance_controller.hpp</a></div></div>
 <div class="ttc" id="aadmittance__teleoperation_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="admittance__teleoperation_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="admittance__teleoperation_8cpp_source.html#l00005">admittance_teleoperation.cpp:5</a></div></div>
 <div class="ttc" id="aadmittance__teleoperation_8cpp_html_a8a22c9d82dc77ed2026f56ec9920c61d"><div class="ttname"><a href="admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d">admittanceController</a></div><div class="ttdeci">std::unique_ptr&lt; AdmittanceController &gt; admittanceController</div><div class="ttdef"><b>Definition:</b> <a href="admittance__teleoperation_8cpp_source.html#l00003">admittance_teleoperation.cpp:3</a></div></div>
+<div class="ttc" id="aclassAdmittanceController_html"><div class="ttname"><a href="classAdmittanceController.html">AdmittanceController</a></div><div class="ttdef"><b>Definition:</b> <a href="admittance__controller_8hpp_source.html#l00006">admittance_controller.hpp:6</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
