@@ -4,6 +4,7 @@
 #include <numeric>
 #include <thread>
 
+#include "ohrc_control/admittance_controller.hpp"
 #include "ohrc_control/cart_controller.hpp"
 #include "ohrc_control/interface.hpp"
 #include "ohrc_control/my_ik.hpp"
@@ -12,7 +13,7 @@
 using namespace ohrc_control;
 
 class MultiCartController {
-  bool getInitParam();
+  bool getInitParam(std::vector<std::string>& robots);
   void updateDesired();
   std::vector<KDL::Frame> desPose;
   std::vector<KDL::Twist> desVel;
@@ -23,6 +24,8 @@ class MultiCartController {
   void publishState(const ros::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
 
+  bool enbaleAdmittanceControl = true;
+
 protected:
   ros::NodeHandle nh;
 
@@ -30,7 +33,7 @@ protected:
   enum class IKMode { None, Concatenated, Order, Parallel } IKmode;
 
   std::vector<std::shared_ptr<CartController>> cartControllers;
-  std::vector<std::string> robots;
+  // std::vector<std::string> robots;
   std::vector<std::string> hw_configs;
   int nRobot = 0;
 
@@ -64,16 +67,24 @@ protected:
   virtual void runLoopEnd(){};
 
   std::vector<std::shared_ptr<Interface>> interfaces;
+  std::vector<std::shared_ptr<Interface>> admittanceControllers;
+
   void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->updateTargetPose(pose, twist);
   }
 
+  void applyAdmittanceControl(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+    admittanceControllers[controller->getIndex()]->updateTargetPose(pose, twist);
+  }
+
   void initInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->initInterface();
+    admittanceControllers[controller->getIndex()]->initInterface();
   }
 
   void resetInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->resetInterface();
+    admittanceControllers[controller->getIndex()]->resetInterface();
   }
 
   void feedback(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {

@@ -1,7 +1,8 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
 MultiCartController::MultiCartController() {
-  if (!getInitParam())
+  std::vector<std::string> robots;
+  if (!getInitParam(robots))
     ros::shutdown();
 
   dt = 1.0 / freq;
@@ -40,9 +41,13 @@ MultiCartController::MultiCartController() {
   desVel.resize(nRobot);
 
   interfaces.resize(nRobot);
+
+  admittanceControllers.resize(nRobot);
+  for (int i = 0; i < nRobot; i++)
+    admittanceControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
 }
 
-bool MultiCartController::getInitParam() {
+bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   ros::NodeHandle n("~");
 
   XmlRpc::XmlRpcValue my_list;
@@ -275,21 +280,21 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
 }
 
 void MultiCartController::updateDesired() {
-  for (int i = 0; i < nRobot; i++)
+  for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->updateCurState();
 
-  for (int i = 0; i < nRobot; i++) {
     tf::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
     desVel[i] = KDL::Twist();
+
+    updateTargetPose(desPose[i], desVel[i], cartControllers[i]);
+
+    if (enbaleAdmittanceControl)
+      applyAdmittanceControl(desPose[i], desVel[i], cartControllers[i]);
+
+    cartControllers[i]->setDesired(desPose[i], desVel[i]);
   }
 
   preInterfaceProcess(interfaces);
-
-  for (int i = 0; i < nRobot; i++)
-    updateTargetPose(desPose[i], desVel[i], cartControllers[i]);
-
-  for (int i = 0; i < robots.size(); i++)
-    cartControllers[i]->setDesired(desPose[i], desVel[i]);
 }
 
 int MultiCartController::control() {
@@ -314,10 +319,10 @@ int MultiCartController::control() {
     updateDesired();
 
     if (IKmode == IKMode::Order) {
-      for (int i = 0; i < robots.size(); i++)
+      for (int i = 0; i < nRobot; i++)
         cartControllers[i]->update();
     } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
-      for (int i = 0; i < robots.size(); i++) {
+      for (int i = 0; i < nRobot; i++) {
         CartController* c = cartControllers[i].get();
         workers[i].reset(new std::thread([c]() { c->update(); }));
         // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
