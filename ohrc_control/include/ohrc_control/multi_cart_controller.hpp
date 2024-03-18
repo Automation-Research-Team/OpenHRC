@@ -24,7 +24,7 @@ class MultiCartController {
   void publishState(const ros::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
 
-  bool enbaleAdmittanceControl = true;
+  std::vector<bool> enbaleAdmittanceControl;
 
 protected:
   ros::NodeHandle nh;

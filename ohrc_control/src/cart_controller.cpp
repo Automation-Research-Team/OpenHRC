@@ -85,6 +85,7 @@ void CartController::init(std::string robot, std::string hw_config) {
     subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 2, &CartController::cbForce, this, th);
     pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
     subFlagPtrs.push_back(&flagForce);
+    this->ftFound = true;
   } else
     ROS_WARN_STREAM("force/torque sensor was not found. Compliance control does not work.");
   client = nh.serviceClient<std_srvs::Empty>("/" + robot_ns + "ft_filter/reset_offset");

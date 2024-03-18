@@ -43,8 +43,11 @@ MultiCartController::MultiCartController() {
   interfaces.resize(nRobot);
 
   admittanceControllers.resize(nRobot);
-  for (int i = 0; i < nRobot; i++)
+  enbaleAdmittanceControl.resize(nRobot, false);
+  for (int i = 0; i < nRobot; i++) {
     admittanceControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
+    enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound();
+  }
 }
 
 bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
@@ -288,7 +291,7 @@ void MultiCartController::updateDesired() {
 
     updateTargetPose(desPose[i], desVel[i], cartControllers[i]);
 
-    if (enbaleAdmittanceControl)
+    if (enbaleAdmittanceControl[i])
       applyAdmittanceControl(desPose[i], desVel[i], cartControllers[i]);
 
     cartControllers[i]->setDesired(desPose[i], desVel[i]);
