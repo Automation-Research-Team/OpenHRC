@@ -7,7 +7,7 @@ void PoseTopicInterface::initInterface() {
   setSubscriber();
 
   Affine3d T_state_base = controller->getTransform_base(this->topicFrameId);
-  R = T_state_base.rotation().transpose();
+  R = T_state_base.rotation();
 
   bool diablePoseFeedback;
   n.param("diable_pose_feedback", diablePoseFeedback, false);
@@ -16,6 +16,8 @@ void PoseTopicInterface::initInterface() {
     ROS_WARN_STREAM("Pose feedback is disabled");
     controller->disablePoseFeedback();
   }
+
+  controller->updateFilterCutoff(10.0, 10.0);
 }
 
 void PoseTopicInterface::setSubscriber() {

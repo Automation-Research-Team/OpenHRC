@@ -7,9 +7,9 @@
   <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.launch">
     <arg name="interface" value="pose_topic" />
 
-    <arg name="robot" default="$(arg robot)" />
-    <arg name="controller" default="$(arg controller)" />
-    <arg name="enableEefForceAdmittance" default="$(arg enableEefForceAdmittance)" />
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="controller" value="$(arg controller)" />
+    <arg name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </include>
     
 </launch>

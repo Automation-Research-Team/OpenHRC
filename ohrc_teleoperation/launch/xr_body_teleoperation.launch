@@ -7,11 +7,12 @@
   <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.launch">
     <arg name="interface" value="xr_body" />
 
-    <arg name="robot" default="$(arg robot)" />
-    <arg name="controller" default="$(arg controller)" />
-    <arg name="enableEefForceAdmittance" default="$(arg enableEefForceAdmittance)" />
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="controller" value="$(arg controller)" />
+    <arg name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </include>
-    
+  
+  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 0 0 0 world xr_frame" />
   <include file="$(find ros_tcp_endpoint)/launch/endpoint.launch" />
 
 </launch>

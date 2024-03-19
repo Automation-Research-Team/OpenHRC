@@ -5,12 +5,18 @@
   <arg name="interface" default="marker" />
   <arg name="enableEefForceAdmittance" default="false" />
 
-  <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
-  <rosparam command="load" file="$(find ohrc_control)/config/admittance_config.yaml" />
+  <arg name="hw_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
+  <arg name="admittance_config" default="$(find ohrc_control)/config/admittance_config.yaml" />
+  <arg name="control_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
+  <arg name="interface_config" default="$(find ohrc_teleoperation)/config/$(arg interface)_config.yaml" />
+
+
+  <rosparam command="load" file="$(arg hw_config)" />
+  <rosparam command="load" file="$(arg admittance_config)" />
 
   <node name="$(arg interface)_teleoperation" pkg="ohrc_teleoperation" type="$(arg interface)_teleoperation"  respawn="false" output="screen">
-    <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
-    <rosparam command="load" file="$(find ohrc_teleoperation)/config/$(arg interface)_config.yaml" />
+    <rosparam command="load" file="$(arg control_config)" />
+    <rosparam command="load" file="$(arg interface_config)" />
     <param name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </node>
 
