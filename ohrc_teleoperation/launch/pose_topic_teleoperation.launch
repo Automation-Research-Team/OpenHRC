@@ -5,7 +5,7 @@
   <arg name="enableEefForceAdmittance" default="false" />
 
   <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.launch">
-    <arg name="interface" value="marker" />
+    <arg name="interface" value="pose_topic" />
 
     <arg name="robot" value="$(arg robot)" />
     <arg name="controller" value="$(arg controller)" />

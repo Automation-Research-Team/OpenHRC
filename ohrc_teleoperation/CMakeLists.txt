@@ -161,6 +161,7 @@ set(interfaces
   marker
   state_topic
   twist_topic
+  pose_topic
 )
 
 foreach(interface ${interfaces})
