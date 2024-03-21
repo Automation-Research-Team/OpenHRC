@@ -10,6 +10,7 @@
   <arg name="control_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
   <arg name="interface_config" default="$(find ohrc_teleoperation)/config/$(arg interface)_config.yaml" />
 
+  <arg name="rviz_config" default="$(find ohrc_teleoperation)/config/teleoperation.rviz" />
 
   <rosparam command="load" file="$(arg hw_config)" />
   <rosparam command="load" file="$(arg admittance_config)" />
@@ -20,6 +21,6 @@
     <param name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </node>
 
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/config/teleoperation.rviz"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)" />
 
 </launch>
