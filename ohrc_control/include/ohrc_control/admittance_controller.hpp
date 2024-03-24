@@ -21,6 +21,10 @@ class AdmittanceController : public virtual Interface {
   VectorXd getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam);
 
   Affine3d restPose;
+  bool skipMass = false;
+  
+  std::unique_ptr<math_utility::Integrator> integrator;
+  std::function<VectorXd(const double& t, const VectorXd&, const std::vector<VectorXd>&)> f_dx;
 
 public:
   using Interface::Interface;
