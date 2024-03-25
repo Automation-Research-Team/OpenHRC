@@ -47,6 +47,9 @@ MultiCartController::MultiCartController() {
   for (int i = 0; i < nRobot; i++) {
     admittanceControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
     enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
+
+    if (enbaleAdmittanceControl[i])
+      cartControllers[i]->disablePoseFeedback();
   }
 }
 
