@@ -128,7 +128,7 @@ protected:
 
   KDL::JntArray _q_cur, _dq_cur, _q_cur_t, _dq_cur_t;
 
-  std::vector<butterworth> velFilter, jntFilter;
+  std::vector<butterworth> posFilter, velFilter, jntFilter;
 
   TransformUtility trans;
   tf2_ros::TransformBroadcaster br;
@@ -227,6 +227,9 @@ public:
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);
+  void updatePosFilterCutoff(const double posFreq);
+  void updateVelFilterCutoff(const double velFreq);
+  void updateJntFilterCutoff(const double jntFreq);
   void updateFilterCutoff(const double velFreq, const double jntFreq);
 
   inline void startOperation() {
@@ -326,6 +329,7 @@ public:
     std::lock_guard<std::mutex> lock(mtx);
     this->_des_eef_pose = des_eef_pose;
     this->_des_eef_vel = des_eef_vel;
+    filterDesEffPoseVel(this->_des_eef_pose, this->_des_eef_vel);
   }
 
   inline void enablePoseFeedback() {

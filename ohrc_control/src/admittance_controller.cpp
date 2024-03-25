@@ -85,7 +85,7 @@ AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff&
 VectorXd AdmittanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam) {
   if (skipMass) {
     VectorXd x_ = integrator->integrate(0.0, x.head(3), {exForce, xd.head(3), xd.tail(3)});
-    return (VectorXd(6) << x_, f_dx(0.0, x_, {exForce, xd.head(3), xd.tail(3)})).finished();
+    return (VectorXd(6) << x_, f_dx(0.0, x.head(3), {exForce, xd.head(3), xd.tail(3)})).finished();
 
   }else
     return integrator->integrate(0.0, x, {exForce, xd}); //impParam.A * x + impParam.B * exForce + impParam.C * xd;

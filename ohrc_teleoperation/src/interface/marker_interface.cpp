@@ -5,14 +5,14 @@ void MarkerInterface::initInterface() {
   configMarker();
 
 
-  // controller->updateFilterCutoff(10.0, 50.0);
+  controller->updatePosFilterCutoff(10.0);
 }
 
 void MarkerInterface::configMarker() {
   // set initial marker config
   int_marker.header.frame_id = controller->getRobotNs() + controller->getChainStart();
   int_marker.header.stamp = ros::Time(0);
-  int_marker.pose = tf2::toMsg(controller->getT_init());
+  int_marker.pose = tf2::toMsg(controller->getT_cur());
   int_marker.scale = 0.1;
   int_marker.name = controller->getRobotNs();
 

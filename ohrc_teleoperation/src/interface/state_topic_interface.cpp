@@ -10,7 +10,7 @@ void StateTopicInterface::initInterface() {
 }
 
 void StateTopicInterface::setSubscriber() {
-  subState = n.subscribe<ohrc_msgs::State>(stateTopicName, 2, &StateTopicInterface::cbState, this, th);
+  subState = n.subscribe<ohrc_msgs::State>(stateTopicName, 1, &StateTopicInterface::cbState, this, th);
 }
 
 void StateTopicInterface::cbState(const ohrc_msgs::State::ConstPtr& msg) {
@@ -33,8 +33,8 @@ void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Fra
     return;
 
   if (isFirst) {
-    T = controller->getT_init();
-    T_start = controller->getT_init();
+    T = controller->getT_cur();
+    T_start = controller->getT_cur();
     T_state_start = T_state;
     isFirst = false;
   }

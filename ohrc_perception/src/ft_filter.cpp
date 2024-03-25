@@ -116,6 +116,7 @@ int main(int argc, char** argv) {
     tf2::toMsg(tf2::fromMsg(raw.wrench) - offset, raw_dz.wrench);
     forceLpf_->LPF(raw_dz, raw_dz);
     forceLpf->deadZone_LPF(raw_dz, filtered);
+    // geometry_msgs_utility::deadZone(filtered,filtered, paramDeadZone);
 
     pub.publish(filtered);
 
