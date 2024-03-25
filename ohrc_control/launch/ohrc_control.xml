@@ -26,7 +26,7 @@
     <param name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </node>
 
-  <include file="$(find ohrc_perception)/launch/ft_sensor_filter.launch" if="$(arg use_ft_filter)"/>
+  <!-- <include file="$(find ohrc_perception)/launch/ft_sensor_filter.launch" if="$(arg use_ft_filter)"/> -->
   
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)" />
 
