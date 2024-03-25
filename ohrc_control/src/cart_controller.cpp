@@ -67,7 +67,7 @@ void CartController::init(std::string robot, std::string hw_config) {
 
   nh.param("/" + hw_config_ns + "initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
 
-  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 2, &CartController::cbJntState, this, th);
+  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 1, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
 
   if (useManipOpt) {
@@ -82,8 +82,8 @@ void CartController::init(std::string robot, std::string hw_config) {
   ROS_INFO_STREAM("Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
   if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0))) {
     this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0));
-    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 2, &CartController::cbForce, this, th);
-    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
+    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 1, &CartController::cbForce, this, th);
+    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 1);
     subFlagPtrs.push_back(&flagForce);
     this->ftFound = true;
   } else

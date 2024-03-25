@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="app" default="" />
+  <arg name="app_dir" value="$(eval find('ohrc_' + app))" />
+
+  <arg name="robot" default="ur5e" />
+  <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
+  <arg name="interface" default="marker" />
+  <arg name="enableEefForceAdmittance" default="false" />
+  <arg name="use_ft_filter" default="true" />
+
+  <arg name="hw_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
+  <arg name="admittance_config" default="$(find ohrc_control)/config/admittance_config.yaml" />
+  <arg name="control_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
+  <arg name="interface_config" default="$(arg app_dir)/config/$(arg interface)_config.yaml" />
+
+
+  <arg name="rviz_config" default="$(arg app_dir)/config/teleoperation.rviz" />
+
+  <rosparam command="load" file="$(arg hw_config)" />
+  <rosparam command="load" file="$(arg admittance_config)" />
+
+  <node name="$(arg interface)_$(arg app)" pkg="ohrc_$(arg app)" type="$(arg interface)_$(arg app)"  respawn="false" output="screen">
+    <rosparam command="load" file="$(arg control_config)" />
+    <rosparam command="load" file="$(arg interface_config)" />
+    <param name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
+  </node>
+
+  <include file="$(find ohrc_perception)/launch/ft_sensor_filter.launch" if="$(arg use_ft_filter)"/>
+  
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)" />
+
+</launch>

@@ -318,8 +318,11 @@ int MultiCartController::control() {
   double count = 0.0;
 
   ros::Rate r(freq);
+  ros::Duration dur(dt);
+  ros::Time t;
 
   while (ros::ok()) {
+    t = ros::Time::now();
     // begin = std::chrono::high_resolution_clock::now();
 
     if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
@@ -329,16 +332,16 @@ int MultiCartController::control() {
 
     if (IKmode == IKMode::Order) {
       for (int i = 0; i < nRobot; i++)
-        cartControllers[i]->update();
+        cartControllers[i]->update(t, dur);
     } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
       for (int i = 0; i < nRobot; i++) {
         CartController* c = cartControllers[i].get();
-        workers[i].reset(new std::thread([c]() { c->update(); }));
+        workers[i].reset(new std::thread([c, t, dur]() { c->update(t, dur); }));
         // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
       }
       std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
     } else if (IKmode == IKMode::Concatenated)
-      this->update(ros::Time::now(), ros::Duration(dt));
+      this->update(t, dur);
 
     // std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - begin);
     // ROS_INFO_STREAM("IK time: " << t.count() * 1.0e-3 << "[ms]");

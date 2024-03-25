@@ -4,7 +4,7 @@
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
   <arg name="enableEefForceAdmittance" default="false" />
 
-  <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.launch">
+  <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.xml">
     <arg name="interface" value="state_topic" />
 
     <arg name="robot" value="$(arg robot)" />
