@@ -10,8 +10,8 @@
   lpf_order: 2
   deadzone:
     force:
-      lower: -0.01
-      upper: 0.01
+      lower: -0.3
+      upper: 0.3
     torque:
       lower: -0.1
       upper: 0.1
