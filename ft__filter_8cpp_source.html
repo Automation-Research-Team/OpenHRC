@@ -80,7 +80,7 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="geometry__msgs__utility_8h.html">ohrc_common/geometry_msgs_utility/geometry_msgs_utility.h</a>&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;ohrc_msgs/Contact.h&quot;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">   12</a></span>&#160;std::unique_ptr&lt;geometry_msgs_utility::WrenchStamped&gt; <a class="code" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">forceLpf</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">   12</a></span>&#160;std::unique_ptr&lt;geometry_msgs_utility::WrenchStamped&gt; <a class="code" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">forceLpf</a>, <a class="code" href="ft__filter_8cpp.html#a5db1193195b4232ab7358c5104b4f3fb">forceLpf_</a>;</div>
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">   13</a></span>&#160;ros::Publisher <a class="code" href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">pub</a>, <a class="code" href="ft__filter_8cpp.html#a2ffd5902f54aef2a4632aa4986f04558">pub_cnt</a>;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">   15</a></span>&#160;<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a> = 1;</div>
@@ -157,51 +157,55 @@ $(function() {
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    ROS_ERROR(<span class="stringliteral">&quot;Failed to get deadzone/torque/upper setting&quot;</span>);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <a class="code" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">forceLpf</a>.reset(<span class="keyword">new</span> <a class="code" href="classgeometry__msgs__utility_1_1WrenchStamped.html">geometry_msgs_utility::WrenchStamped</a>(paramLpf, paramDeadZone));</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  ros::ServiceServer service = n.advertiseService(<span class="stringliteral">&quot;reset_offset&quot;</span>, <a class="code" href="ft__filter_8cpp.html#a0085da2677197d70ace5e492819b5d70">reset_offset</a>);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  ros::Subscriber sub = nh.subscribe(topic_name_raw, 2, <a class="code" href="ft__filter_8cpp.html#a7e32e936446469f743c114101b99ea5a">cbForce</a>);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <a class="code" href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">pub</a> = nh.advertise&lt;geometry_msgs::WrenchStamped&gt;(topic_name_filtered, 2);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <a class="code" href="ft__filter_8cpp.html#a2ffd5902f54aef2a4632aa4986f04558">pub_cnt</a> = nh.advertise&lt;ohrc_msgs::Contact&gt;(<span class="stringliteral">&quot;contact&quot;</span>, 2);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  ros::AsyncSpinner spinner(2);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  spinner.start();</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  ros::Rate r(paramLpf.<a class="code" href="structgeometry__msgs__utility_1_1Wrench_1_1paramLPF.html#aeee59bad1c19cf85250708f50f99470f">sampling_freq</a>);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordflow">while</span> (ros::ok()) {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    geometry_msgs::WrenchStamped raw, raw_dz, filtered;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      std::lock_guard&lt;std::mutex&gt; lock(<a class="code" href="ft__filter_8cpp.html#ad5e0dbd36f0d71fce9b00b7f991b2f38">mtx</a>);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      raw = <a class="code" href="ft__filter_8cpp.html#aea15c74b455bc3549a6f689b933d9c85">raw_</a>;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a> &lt; <a class="code" href="ft__filter_8cpp.html#abb1923b8422bf5f73704009a86caf91b">nMax</a>) {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      <a class="code" href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a> = (<a class="code" href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a> * (<a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a> - 1) + <a class="code" href="namespacetf2.html#acd313341e2b34b12e9d0bff5ca0a78af">tf2::fromMsg</a>(raw.wrench)) / <a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a>;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a>++;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      r.sleep();</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    raw_dz.header = raw.header;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <a class="code" href="namespacetf2.html#a96b0859df745e8a4dc13a020710b4561">tf2::toMsg</a>(<a class="code" href="namespacetf2.html#acd313341e2b34b12e9d0bff5ca0a78af">tf2::fromMsg</a>(raw.wrench) - <a class="code" href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a>, raw_dz.wrench);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">forceLpf</a>-&gt;deadZone_LPF(raw_dz, filtered);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">pub</a>.publish(filtered);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    ohrc_msgs::Contact cnt;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    cnt.f_norm = <a class="code" href="namespacetf2.html#acd313341e2b34b12e9d0bff5ca0a78af">tf2::fromMsg</a>(filtered.wrench).norm();</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">if</span> (cnt.f_norm &gt; 10.0)</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      cnt.contact = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a2ffd5902f54aef2a4632aa4986f04558">pub_cnt</a>.publish(cnt);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    r.sleep();</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  }</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="comment">// ros::spin();</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <a class="code" href="ft__filter_8cpp.html#a5db1193195b4232ab7358c5104b4f3fb">forceLpf_</a>.reset(<span class="keyword">new</span> <a class="code" href="classgeometry__msgs__utility_1_1WrenchStamped.html">geometry_msgs_utility::WrenchStamped</a>(paramLpf, paramDeadZone));</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  ros::ServiceServer service = n.advertiseService(<span class="stringliteral">&quot;reset_offset&quot;</span>, <a class="code" href="ft__filter_8cpp.html#a0085da2677197d70ace5e492819b5d70">reset_offset</a>);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  ros::Subscriber sub = nh.subscribe(topic_name_raw, 1, <a class="code" href="ft__filter_8cpp.html#a7e32e936446469f743c114101b99ea5a">cbForce</a>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <a class="code" href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">pub</a> = nh.advertise&lt;geometry_msgs::WrenchStamped&gt;(topic_name_filtered, 2);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <a class="code" href="ft__filter_8cpp.html#a2ffd5902f54aef2a4632aa4986f04558">pub_cnt</a> = nh.advertise&lt;ohrc_msgs::Contact&gt;(<span class="stringliteral">&quot;contact&quot;</span>, 2);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  ros::AsyncSpinner spinner(2);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  spinner.start();</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  ros::Rate r(paramLpf.<a class="code" href="structgeometry__msgs__utility_1_1Wrench_1_1paramLPF.html#aeee59bad1c19cf85250708f50f99470f">sampling_freq</a>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordflow">while</span> (ros::ok()) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    geometry_msgs::WrenchStamped raw, raw_dz, filtered;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      std::lock_guard&lt;std::mutex&gt; lock(<a class="code" href="ft__filter_8cpp.html#ad5e0dbd36f0d71fce9b00b7f991b2f38">mtx</a>);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      raw = <a class="code" href="ft__filter_8cpp.html#aea15c74b455bc3549a6f689b933d9c85">raw_</a>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a> &lt; <a class="code" href="ft__filter_8cpp.html#abb1923b8422bf5f73704009a86caf91b">nMax</a>) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      <a class="code" href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a> = (<a class="code" href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a> * (<a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a> - 1) + <a class="code" href="namespacetf2.html#acd313341e2b34b12e9d0bff5ca0a78af">tf2::fromMsg</a>(raw.wrench)) / <a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      <a class="code" href="ft__filter_8cpp.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a>++;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;      r.sleep();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    raw_dz.header = raw.header;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <a class="code" href="namespacetf2.html#a96b0859df745e8a4dc13a020710b4561">tf2::toMsg</a>(<a class="code" href="namespacetf2.html#acd313341e2b34b12e9d0bff5ca0a78af">tf2::fromMsg</a>(raw.wrench) - <a class="code" href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a>, raw_dz.wrench);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a5db1193195b4232ab7358c5104b4f3fb">forceLpf_</a>-&gt;LPF(raw_dz, raw_dz);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a2960f5e0efe5c7027a60076bb639c271">forceLpf</a>-&gt;deadZone_LPF(raw_dz, filtered);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="comment">// geometry_msgs_utility::deadZone(filtered,filtered, paramDeadZone);</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">pub</a>.publish(filtered);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    ohrc_msgs::Contact cnt;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    cnt.f_norm = <a class="code" href="namespacetf2.html#acd313341e2b34b12e9d0bff5ca0a78af">tf2::fromMsg</a>(filtered.wrench).norm();</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">if</span> (cnt.f_norm &gt; 10.0)</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      cnt.contact = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <a class="code" href="ft__filter_8cpp.html#a2ffd5902f54aef2a4632aa4986f04558">pub_cnt</a>.publish(cnt);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    r.sleep();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">// ros::spin();</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;}</div>
 <div class="ttc" id="aclassgeometry__msgs__utility_1_1WrenchStamped_html"><div class="ttname"><a href="classgeometry__msgs__utility_1_1WrenchStamped.html">geometry_msgs_utility::WrenchStamped</a></div><div class="ttdef"><b>Definition:</b> <a href="WrenchStamped_8h_source.html#l00013">WrenchStamped.h:13</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_a00057c9ed32281966a0d92e550248568"><div class="ttname"><a href="ft__filter_8cpp.html#a00057c9ed32281966a0d92e550248568">offset</a></div><div class="ttdeci">Eigen::VectorXd offset</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00017">ft_filter.cpp:17</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_a0085da2677197d70ace5e492819b5d70"><div class="ttname"><a href="ft__filter_8cpp.html#a0085da2677197d70ace5e492819b5d70">reset_offset</a></div><div class="ttdeci">bool reset_offset(std_srvs::Empty::Request &amp;req, std_srvs::Empty::Response &amp;res)</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00042">ft_filter.cpp:42</a></div></div>
@@ -210,6 +214,7 @@ $(function() {
 <div class="ttc" id="aft__filter_8cpp_html_a2ffd5902f54aef2a4632aa4986f04558"><div class="ttname"><a href="ft__filter_8cpp.html#a2ffd5902f54aef2a4632aa4986f04558">pub_cnt</a></div><div class="ttdeci">ros::Publisher pub_cnt</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00013">ft_filter.cpp:13</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_a350594df3e8f6948c8462edfd41ce086"><div class="ttname"><a href="ft__filter_8cpp.html#a350594df3e8f6948c8462edfd41ce086">pub</a></div><div class="ttdeci">ros::Publisher pub</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00013">ft_filter.cpp:13</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="ft__filter_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00050">ft_filter.cpp:50</a></div></div>
+<div class="ttc" id="aft__filter_8cpp_html_a5db1193195b4232ab7358c5104b4f3fb"><div class="ttname"><a href="ft__filter_8cpp.html#a5db1193195b4232ab7358c5104b4f3fb">forceLpf_</a></div><div class="ttdeci">std::unique_ptr&lt; geometry_msgs_utility::WrenchStamped &gt; forceLpf_</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00012">ft_filter.cpp:12</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_a7e32e936446469f743c114101b99ea5a"><div class="ttname"><a href="ft__filter_8cpp.html#a7e32e936446469f743c114101b99ea5a">cbForce</a></div><div class="ttdeci">void cbForce(const geometry_msgs::WrenchStamped::ConstPtr &amp;msg)</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00022">ft_filter.cpp:22</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_abb1923b8422bf5f73704009a86caf91b"><div class="ttname"><a href="ft__filter_8cpp.html#abb1923b8422bf5f73704009a86caf91b">nMax</a></div><div class="ttdeci">unsigned int nMax</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00016">ft_filter.cpp:16</a></div></div>
 <div class="ttc" id="aft__filter_8cpp_html_ad5e0dbd36f0d71fce9b00b7f991b2f38"><div class="ttname"><a href="ft__filter_8cpp.html#ad5e0dbd36f0d71fce9b00b7f991b2f38">mtx</a></div><div class="ttdeci">std::mutex mtx</div><div class="ttdef"><b>Definition:</b> <a href="ft__filter_8cpp_source.html#l00019">ft_filter.cpp:19</a></div></div>

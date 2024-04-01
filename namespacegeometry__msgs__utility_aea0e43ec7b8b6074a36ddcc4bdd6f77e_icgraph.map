@@ -1,5 +1,6 @@
 <map id="geometry_msgs_utility::deadZone" name="geometry_msgs_utility::deadZone">
-<area shape="rect" id="node1" title=" " alt="" coords="236,39,408,80"/>
-<area shape="rect" id="node2" href="$namespacegeometry__msgs__utility.html#a73b952392053a76626711a57a431b284" title=" " alt="" coords="11,5,183,47"/>
-<area shape="rect" id="node3" href="$classgeometry__msgs__utility_1_1Wrench.html#ad6e741e68b9b7b20e11a9bb127b5ace6" title=" " alt="" coords="5,71,188,112"/>
+<area shape="rect" id="node1" title=" " alt="" coords="524,39,696,80"/>
+<area shape="rect" id="node2" href="$namespacegeometry__msgs__utility.html#a73b952392053a76626711a57a431b284" title=" " alt="" coords="299,5,471,47"/>
+<area shape="rect" id="node3" href="$classgeometry__msgs__utility_1_1Wrench.html#ad6e741e68b9b7b20e11a9bb127b5ace6" title=" " alt="" coords="293,71,476,112"/>
+<area shape="rect" id="node4" href="$classgeometry__msgs__utility_1_1WrenchStamped.html#a9b5815075c6560f70b009146661f2006" title=" " alt="" coords="5,71,245,112"/>
 </map>

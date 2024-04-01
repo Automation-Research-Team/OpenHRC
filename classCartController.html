@@ -147,6 +147,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4ba5275a34ab12fa33639488699644d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9b575326d57eeb9ac982c0636a96ec2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#ad9b575326d57eeb9ac982c0636a96ec2">filterJnt</a> (KDL::JntArray &amp;q)</td></tr>
 <tr class="separator:ad9b575326d57eeb9ac982c0636a96ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf691f8189a34c81b285cb665ddc106a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#abf691f8189a34c81b285cb665ddc106a">updatePosFilterCutoff</a> (const double posFreq)</td></tr>
+<tr class="separator:abf691f8189a34c81b285cb665ddc106a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03192e70d27ee069d38b2b9a8a2ed7bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#a03192e70d27ee069d38b2b9a8a2ed7bd">updateVelFilterCutoff</a> (const double velFreq)</td></tr>
+<tr class="separator:a03192e70d27ee069d38b2b9a8a2ed7bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01f57cc9e1572b5911de1a9288825d7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#a01f57cc9e1572b5911de1a9288825d7d">updateJntFilterCutoff</a> (const double jntFreq)</td></tr>
+<tr class="separator:a01f57cc9e1572b5911de1a9288825d7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcc43b246ed1e20cb611adf07bb49dc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#abcc43b246ed1e20cb611adf07bb49dc7">updateFilterCutoff</a> (const double velFreq, const double jntFreq)</td></tr>
 <tr class="separator:abcc43b246ed1e20cb611adf07bb49dc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46de19af2e65de197b2f933af0cbcc3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#a46de19af2e65de197b2f933af0cbcc3a">startOperation</a> ()</td></tr>
@@ -334,6 +340,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:ae46ec53bb10dbb8b155ff065a18f8be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af046b78869e6b9255215822a1f0335b8"><td class="memItemLeft" align="right" valign="top">KDL::JntArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#af046b78869e6b9255215822a1f0335b8">_dq_cur_t</a></td></tr>
 <tr class="separator:af046b78869e6b9255215822a1f0335b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a319c3d9ba895c5b28bc4b7f671cb60e3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classbutterworth.html">butterworth</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#a319c3d9ba895c5b28bc4b7f671cb60e3">posFilter</a></td></tr>
+<tr class="separator:a319c3d9ba895c5b28bc4b7f671cb60e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcb7168d0e3a812889c6c218a8a35093"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classbutterworth.html">butterworth</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#adcb7168d0e3a812889c6c218a8a35093">velFilter</a></td></tr>
 <tr class="separator:adcb7168d0e3a812889c6c218a8a35093"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af85e1d4b1dad430e0f4f1385aed1ea51"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classbutterworth.html">butterworth</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCartController.html#af85e1d4b1dad430e0f4f1385aed1ea51">jntFilter</a></td></tr>
@@ -634,7 +642,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00223">223</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00232">232</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 </div>
 </div>
@@ -663,9 +671,9 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00338">338</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00347">347</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00104">_userManipU</a>, <a class="el" href="cart__controller_8hpp_source.html#l00105">flagArmMarker</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="arm__marker_8hpp_source.html#l00005">ArmMarker::ManipulabilityEllipsoid</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00104">_userManipU</a>, <a class="el" href="cart__controller_8hpp_source.html#l00105">flagArmMarker</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="arm__marker_8hpp_source.html#l00005">ArmMarker::ManipulabilityEllipsoid</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 <div class="dynheader">
@@ -713,9 +721,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00353">353</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00362">362</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00124">_force</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_end</a>, <a class="el" href="cart__controller_8hpp_source.html#l00125">flagForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>, <a class="el" href="cart__controller_8hpp_source.html#l00045">pubEefForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00113">Tft_eff</a>, and <a class="el" href="Wrench_8h_source.html#l00053">geometry_msgs_utility::transformFT()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00124">_force</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_end</a>, <a class="el" href="cart__controller_8hpp_source.html#l00125">flagForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>, <a class="el" href="cart__controller_8hpp_source.html#l00045">pubEefForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00113">Tft_eff</a>, and <a class="el" href="Wrench_8h_source.html#l00053">geometry_msgs_utility::transformFT()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 <div class="dynheader">
@@ -766,9 +774,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00286">286</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00295">295</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00129">_dq_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00129">_q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00144">chain_segs</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">dq_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00362">flagJntState</a>, <a class="el" href="cart__controller_8cpp_source.html#l00365">initDesWithJnt()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00081">initialized</a>, <a class="el" href="cart__controller_8cpp_source.html#l00267">initWithJnt()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00058">CartController::s_cbJntState::isFirst</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00047">mtx_q</a>, <a class="el" href="cart__controller_8hpp_source.html#l00118">nameJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00129">_dq_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00129">_q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00144">chain_segs</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">dq_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00366">flagJntState</a>, <a class="el" href="cart__controller_8cpp_source.html#l00374">initDesWithJnt()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00081">initialized</a>, <a class="el" href="cart__controller_8cpp_source.html#l00276">initWithJnt()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00058">CartController::s_cbJntState::isFirst</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00047">mtx_q</a>, <a class="el" href="cart__controller_8hpp_source.html#l00118">nameJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 <div class="dynheader">
@@ -814,9 +822,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00851">851</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00860">860</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00356">freq</a>, <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00642">stopping()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00722">update()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>, <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00651">stopping()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00731">update()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -859,7 +867,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00241">241</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00244">244</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -886,9 +894,9 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00335">335</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00339">339</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -926,7 +934,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00237">237</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00240">240</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -953,9 +961,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00331">331</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00335">335</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1004,7 +1012,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00567">567</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00576">576</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00131">velFilter</a>.</p>
 
@@ -1026,11 +1034,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00846">846</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00855">855</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00131">jntFilter</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1104,7 +1112,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00258">258</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00261">261</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1131,7 +1139,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00254">254</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00257">257</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1173,11 +1181,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00677">677</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00686">686</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00120">_des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00122">_des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00127">_disable</a>, <a class="el" href="cart__controller_8hpp_source.html#l00127">_passThrough</a>, <a class="el" href="cart__controller_8hpp_source.html#l00335">disablePoseFeedback()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00331">enablePoseFeedback()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00120">_des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00122">_des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00127">_disable</a>, <a class="el" href="cart__controller_8hpp_source.html#l00127">_passThrough</a>, <a class="el" href="cart__controller_8hpp_source.html#l00339">disablePoseFeedback()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00335">enablePoseFeedback()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1224,7 +1232,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00308">308</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00311">311</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>.</p>
 
@@ -1253,7 +1261,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00351">351</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00355">355</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1295,11 +1303,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00650">650</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00659">659</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00049">des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">dq_cur</a>, <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00203">getState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00601">publishCurEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00597">publishDesEffPoseVel()</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00049">des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">dq_cur</a>, <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00203">getState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00610">publishCurEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00606">publishDesEffPoseVel()</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1350,7 +1358,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00278">278</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00281">281</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1400,7 +1408,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00248">248</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00251">251</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1427,9 +1435,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00131">131</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00140">140</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_end</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00356">freq</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">hw_config_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00073">initPose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00072">initPoseFrame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00095">nh</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00076">publisherTopicName</a>, <a class="el" href="cart__controller_8hpp_source.html#l00149">root_frame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00092">solver</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00106">useManipOpt</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_end</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">hw_config_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00073">initPose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00072">initPoseFrame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00095">nh</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00076">publisherTopicName</a>, <a class="el" href="cart__controller_8hpp_source.html#l00149">root_frame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00092">solver</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00106">useManipOpt</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 <div class="dynheader">
@@ -1467,7 +1475,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00317">317</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00320">320</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1494,7 +1502,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00313">313</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00316">316</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1521,9 +1529,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00245">245</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00248">248</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00580">publishState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00589">publishState()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1559,7 +1567,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00343">343</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00347">347</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1586,7 +1594,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00274">274</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00277">277</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1626,7 +1634,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00203">203</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1713,7 +1721,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00304">304</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00307">307</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1740,7 +1748,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00287">287</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00290">290</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 
@@ -1769,7 +1777,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00283">283</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00286">286</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1796,7 +1804,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00300">300</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00303">303</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1823,7 +1831,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00339">339</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00343">343</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -1867,11 +1875,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00480">480</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00489">489</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00118">nameJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00517">sendTrajectoryActionCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00505">sendTrajectoryCmd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00526">sendTrajectoryActionCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00514">sendTrajectoryCmd()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1937,7 +1945,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00493">493</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00502">502</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00118">nameJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 
@@ -1959,7 +1967,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00239">239</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00248">248</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="transform__utility_8h_source.html#l00061">TransformUtility::getTransform()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00133">trans</a>.</p>
 
@@ -2023,9 +2031,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00271">271</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00280">280</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00355">dt</a>, <a class="el" href="coordination__utility_8h_source.html#l00044">rotation_util::getQuaternionError()</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00359">dt</a>, <a class="el" href="coordination__utility_8h_source.html#l00044">rotation_util::getQuaternionError()</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2116,7 +2124,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00028">28</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00129">_q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00070">_q_init_expect</a>, <a class="el" href="transform__utility_8h_source.html#l00066">TransformUtility::canTransform()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00338">cbArmMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00143">chain</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_end</a>, <a class="el" href="cart__controller_8hpp_source.html#l00144">chain_segs</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="cart__controller_8hpp_source.html#l00055">client</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">curStatePublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">desStatePublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00355">dt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00358">eps</a>, <a class="el" href="cart__controller_8hpp_source.html#l00142">fk_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00105">flagArmMarker</a>, <a class="el" href="cart__controller_8hpp_source.html#l00125">flagForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00362">flagJntState</a>, <a class="el" href="cart__controller_8hpp_source.html#l00356">freq</a>, <a class="el" href="cart__controller_8hpp_source.html#l00089">ftFound</a>, <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="transform__utility_8h_source.html#l00061">TransformUtility::getTransform()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00239">getTransform_base()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">hw_config_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00073">initPose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00072">initPoseFrame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">jntFilter</a>, <a class="el" href="cart__controller_8hpp_source.html#l00097">jntStateSubscriber</a>, <a class="el" href="cart__controller_8hpp_source.html#l00138">kdl_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">markerPublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00095">nh</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00045">pubEefForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00076">publisherTopicName</a>, <a class="el" href="cart__controller_8cpp_source.html#l00226">resetService()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00149">root_frame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00078">service</a>, <a class="el" href="cart__controller_8hpp_source.html#l00043">spinner</a>, <a class="el" href="cart__controller_8hpp_source.html#l00100">subFlagPtrs</a>, <a class="el" href="cart__controller_8hpp_source.html#l00097">subForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00151">T_base_root</a>, <a class="el" href="cart__controller_8hpp_source.html#l00112">T_init</a>, <a class="el" href="cart__controller_8hpp_source.html#l00113">Tft_eff</a>, <a class="el" href="cart__controller_8hpp_source.html#l00098">th</a>, <a class="el" href="cart__controller_8hpp_source.html#l00141">tracik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00133">trans</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">urdf_param</a>, <a class="el" href="cart__controller_8hpp_source.html#l00106">useManipOpt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00097">userArmMarker</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">velFilter</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00137">vik_solver_ptr</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00129">_q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00070">_q_init_expect</a>, <a class="el" href="transform__utility_8h_source.html#l00066">TransformUtility::canTransform()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00347">cbArmMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00143">chain</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_end</a>, <a class="el" href="cart__controller_8hpp_source.html#l00144">chain_segs</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="cart__controller_8hpp_source.html#l00055">client</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">curStatePublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">desStatePublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00359">dt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00362">eps</a>, <a class="el" href="cart__controller_8hpp_source.html#l00142">fk_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00105">flagArmMarker</a>, <a class="el" href="cart__controller_8hpp_source.html#l00125">flagForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00366">flagJntState</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>, <a class="el" href="cart__controller_8hpp_source.html#l00089">ftFound</a>, <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="transform__utility_8h_source.html#l00061">TransformUtility::getTransform()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00248">getTransform_base()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">hw_config_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00073">initPose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00072">initPoseFrame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">jntFilter</a>, <a class="el" href="cart__controller_8hpp_source.html#l00097">jntStateSubscriber</a>, <a class="el" href="cart__controller_8hpp_source.html#l00138">kdl_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">markerPublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00095">nh</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">posFilter</a>, <a class="el" href="cart__controller_8hpp_source.html#l00045">pubEefForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00076">publisherTopicName</a>, <a class="el" href="cart__controller_8cpp_source.html#l00235">resetService()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00149">root_frame</a>, <a class="el" href="cart__controller_8hpp_source.html#l00078">service</a>, <a class="el" href="cart__controller_8hpp_source.html#l00043">spinner</a>, <a class="el" href="cart__controller_8hpp_source.html#l00100">subFlagPtrs</a>, <a class="el" href="cart__controller_8hpp_source.html#l00097">subForce</a>, <a class="el" href="cart__controller_8hpp_source.html#l00151">T_base_root</a>, <a class="el" href="cart__controller_8hpp_source.html#l00112">T_init</a>, <a class="el" href="cart__controller_8hpp_source.html#l00113">Tft_eff</a>, <a class="el" href="cart__controller_8hpp_source.html#l00098">th</a>, <a class="el" href="cart__controller_8hpp_source.html#l00141">tracik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00133">trans</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">urdf_param</a>, <a class="el" href="cart__controller_8hpp_source.html#l00106">useManipOpt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00097">userArmMarker</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">velFilter</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00137">vik_solver_ptr</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2173,11 +2181,11 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00365">365</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00374">374</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00120">_des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00122">_des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00142">fk_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00120">_des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00122">_des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00142">fk_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2215,9 +2223,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00267">267</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00276">276</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2254,7 +2262,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00321">321</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00324">324</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -2304,7 +2312,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00266">266</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00269">269</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -2342,7 +2350,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00262">262</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00265">265</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -2386,7 +2394,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00270">270</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00273">273</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -2430,11 +2438,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00371">371</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00380">380</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00070">_q_init_expect</a>, <a class="el" href="cart__controller_8hpp_source.html#l00063">CartController::s_moveInitPos::isFirst</a>, <a class="el" href="cart__controller_8hpp_source.html#l00138">kdl_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00118">nameJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00064">CartController::s_moveInitPos::q_des</a>, <a class="el" href="cart__controller_8hpp_source.html#l00065">CartController::s_moveInitPos::q_initial</a>, <a class="el" href="cart__controller_8hpp_source.html#l00083">q_rest</a>, <a class="el" href="cart__controller_8hpp_source.html#l00054">rc</a>, <a class="el" href="cart__controller_8cpp_source.html#l00463">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00517">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00505">sendTrajectoryCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00469">sendVelocityCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00092">solver</a>, <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>, <a class="el" href="cart__controller_8hpp_source.html#l00112">T_init</a>, <a class="el" href="cart__controller_8hpp_source.html#l00066">CartController::s_moveInitPos::t_s</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00141">tracik_solver_ptr</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00070">_q_init_expect</a>, <a class="el" href="cart__controller_8hpp_source.html#l00063">CartController::s_moveInitPos::isFirst</a>, <a class="el" href="cart__controller_8hpp_source.html#l00138">kdl_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00118">nameJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00064">CartController::s_moveInitPos::q_des</a>, <a class="el" href="cart__controller_8hpp_source.html#l00065">CartController::s_moveInitPos::q_initial</a>, <a class="el" href="cart__controller_8hpp_source.html#l00083">q_rest</a>, <a class="el" href="cart__controller_8hpp_source.html#l00054">rc</a>, <a class="el" href="cart__controller_8cpp_source.html#l00472">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00526">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00514">sendTrajectoryCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00478">sendVelocityCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00092">solver</a>, <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>, <a class="el" href="cart__controller_8hpp_source.html#l00112">T_init</a>, <a class="el" href="cart__controller_8hpp_source.html#l00066">CartController::s_moveInitPos::t_s</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00141">tracik_solver_ptr</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2487,11 +2495,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00601">601</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00610">610</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00124">_force</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">curStatePublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00576">publishState()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00124">_force</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">curStatePublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00585">publishState()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2540,11 +2548,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00597">597</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00606">606</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00049">des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">desStatePublisher</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00576">publishState()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00049">des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">desStatePublisher</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00585">publishState()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2583,9 +2591,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00606">606</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00615">615</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">markerPublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00150">chain_start</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">markerPublisher</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>.</p>
 
 </div>
 </div>
@@ -2627,9 +2635,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00580">580</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00589">589</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00245">getOperationEnable()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, and <a class="el" href="Wrench_8h_source.html#l00030">tf2::toMsg()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00248">getOperationEnable()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, and <a class="el" href="Wrench_8h_source.html#l00030">tf2::toMsg()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2675,11 +2683,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00576">576</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00585">585</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00601">publishCurEffPoseVel()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00597">publishDesEffPoseVel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00610">publishCurEffPoseVel()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00606">publishDesEffPoseVel()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2718,11 +2726,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00260">260</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00269">269</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00055">client</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2751,11 +2759,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00231">231</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00240">240</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00081">initialized</a>, <a class="el" href="cart__controller_8hpp_source.html#l00058">CartController::s_cbJntState::isFirst</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00063">CartController::s_moveInitPos::isFirst</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00226">resetService()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00235">resetService()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2803,9 +2811,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00226">226</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00235">235</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00231">resetPose()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00240">resetPose()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 <div class="dynheader">
@@ -2861,11 +2869,11 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00806">806</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00815">815</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00355">dt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8cpp_source.html#l00463">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00517">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00505">sendTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00469">sendVelocityCmd()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00359">dt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8cpp_source.html#l00472">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00526">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00514">sendTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00478">sendVelocityCmd()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -2915,11 +2923,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00463">463</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00472">472</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00469">sendVelocityCmd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00478">sendVelocityCmd()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -2973,11 +2981,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00517">517</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00526">526</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00480">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00489">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3044,9 +3052,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00522">522</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00531">531</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00480">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00489">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3093,11 +3101,11 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00505">505</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00514">514</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00480">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00489">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3164,9 +3172,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00511">511</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00520">520</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00480">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00489">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>, and <a class="el" href="promp__trajectory__demo_8py_source.html#l00036">promp_trajectory_demo::T</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3211,11 +3219,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00826">826</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00835">835</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00355">dt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8cpp_source.html#l00463">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00517">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00505">sendTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00469">sendVelocityCmd()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00359">dt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, <a class="el" href="cart__controller_8cpp_source.html#l00472">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00526">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00514">sendTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00478">sendVelocityCmd()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3265,11 +3273,11 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00469">469</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00478">478</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00463">sendPositionCmd()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00472">sendPositionCmd()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00473">sendVelocityCmd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00482">sendVelocityCmd()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3343,9 +3351,9 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00473">473</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00482">482</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00469">sendVelocityCmd()</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00478">sendVelocityCmd()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3393,7 +3401,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00325">325</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00328">328</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>.</p>
 
@@ -3423,7 +3431,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00347">347</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00351">351</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -3451,7 +3459,7 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00243">243</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00252">252</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00095">nh</a>, <a class="el" href="cart__controller_8hpp_source.html#l00094">publisher</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>.</p>
 
@@ -3481,11 +3489,11 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00620">620</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00629">629</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="gazebo__utility_8h_source.html#l00007">gazebo_utility::checkGazeboInit()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00036">subscriber_utility::checkSubTopic()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>, <a class="el" href="cart__controller_8cpp_source.html#l00260">resetFt()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00043">spinner</a>, <a class="el" href="cart__controller_8hpp_source.html#l00100">subFlagPtrs</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00197">updateCurState()</a>.</p>
+<p class="reference">References <a class="el" href="gazebo__utility_8h_source.html#l00007">gazebo_utility::checkGazeboInit()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00036">subscriber_utility::checkSubTopic()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>, <a class="el" href="cart__controller_8cpp_source.html#l00269">resetFt()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00150">robot_ns</a>, <a class="el" href="cart__controller_8hpp_source.html#l00043">spinner</a>, <a class="el" href="cart__controller_8hpp_source.html#l00100">subFlagPtrs</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00197">updateCurState()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00851">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00860">control()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3534,7 +3542,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00232">232</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00235">235</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 </div>
 </div>
@@ -3562,11 +3570,11 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00642">642</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00651">651</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00360">jntCmdPublisher</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00052">cmd</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00364">jntCmdPublisher</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00851">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00860">control()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3603,11 +3611,11 @@ Here is the caller graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00722">722</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00731">731</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00356">freq</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00851">control()</a>, and <a class="el" href="multi__cart__controller_8cpp_source.html#l00306">MultiCartController::control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00860">control()</a>, and <a class="el" href="multi__cart__controller_8cpp_source.html#l00309">MultiCartController::control()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3648,9 +3656,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00725">725</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00734">734</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00104">_userManipU</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00049">des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00355">dt</a>, <a class="el" href="cart__controller_8cpp_source.html#l00846">filterJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00138">kdl_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00361">mtx</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00087">prev_time</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00054">rc</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00092">solver</a>, <a class="el" href="promp__trajectory__demo_8py_source.html#l00059">promp_trajectory_demo::time</a>, <a class="el" href="cart__controller_8hpp_source.html#l00141">tracik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00197">updateCurState()</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00053">userManipU</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00104">_userManipU</a>, <a class="el" href="cart__controller_8hpp_source.html#l00093">controller</a>, <a class="el" href="cart__controller_8hpp_source.html#l00049">des_eef_pose</a>, <a class="el" href="cart__controller_8hpp_source.html#l00050">des_eef_vel</a>, <a class="el" href="cart__controller_8hpp_source.html#l00359">dt</a>, <a class="el" href="cart__controller_8cpp_source.html#l00855">filterJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00138">kdl_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00365">mtx</a>, <a class="el" href="cart__controller_8hpp_source.html#l00147">myik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, <a class="el" href="cart__controller_8hpp_source.html#l00087">prev_time</a>, <a class="el" href="cart__controller_8hpp_source.html#l00051">q_cur</a>, <a class="el" href="cart__controller_8hpp_source.html#l00054">rc</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00092">solver</a>, <a class="el" href="promp__trajectory__demo_8py_source.html#l00059">promp_trajectory_demo::time</a>, <a class="el" href="cart__controller_8hpp_source.html#l00141">tracik_solver_ptr</a>, <a class="el" href="cart__controller_8hpp_source.html#l00197">updateCurState()</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00053">userManipU</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -3704,7 +3712,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00197">197</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -3745,9 +3753,107 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00121">121</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00135">135</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00356">freq</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">jntFilter</a>, <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00131">velFilter</a>.</p>
+<p class="reference">References <a class="el" href="cart__controller_8cpp_source.html#l00130">updateJntFilterCutoff()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00125">updateVelFilterCutoff()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classCartController_abcc43b246ed1e20cb611adf07bb49dc7_cgraph.png" border="0" usemap="#aclassCartController_abcc43b246ed1e20cb611adf07bb49dc7_cgraph" alt=""/></div>
+<map name="aclassCartController_abcc43b246ed1e20cb611adf07bb49dc7_cgraph" id="aclassCartController_abcc43b246ed1e20cb611adf07bb49dc7_cgraph">
+<area shape="rect" title=" " alt="" coords="5,39,204,80"/>
+<area shape="rect" href="classCartController.html#a01f57cc9e1572b5911de1a9288825d7d" title=" " alt="" coords="254,5,437,47"/>
+<area shape="rect" href="classCartController.html#a03192e70d27ee069d38b2b9a8a2ed7bd" title=" " alt="" coords="252,71,439,112"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a01f57cc9e1572b5911de1a9288825d7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01f57cc9e1572b5911de1a9288825d7d">&#9670;&nbsp;</a></span>updateJntFilterCutoff()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CartController::updateJntFilterCutoff </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>jntFreq</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00130">130</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>, <a class="el" href="cart__controller_8hpp_source.html#l00131">jntFilter</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00115">nJnt</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00135">updateFilterCutoff()</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classCartController_a01f57cc9e1572b5911de1a9288825d7d_icgraph.png" border="0" usemap="#aclassCartController_a01f57cc9e1572b5911de1a9288825d7d_icgraph" alt=""/></div>
+<map name="aclassCartController_a01f57cc9e1572b5911de1a9288825d7d_icgraph" id="aclassCartController_a01f57cc9e1572b5911de1a9288825d7d_icgraph">
+<area shape="rect" title=" " alt="" coords="252,5,435,47"/>
+<area shape="rect" href="classCartController.html#abcc43b246ed1e20cb611adf07bb49dc7" title=" " alt="" coords="5,5,204,47"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="abf691f8189a34c81b285cb665ddc106a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf691f8189a34c81b285cb665ddc106a">&#9670;&nbsp;</a></span>updatePosFilterCutoff()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CartController::updatePosFilterCutoff </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>posFreq</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00120">120</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00131">posFilter</a>.</p>
+
+</div>
+</div>
+<a id="a03192e70d27ee069d38b2b9a8a2ed7bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03192e70d27ee069d38b2b9a8a2ed7bd">&#9670;&nbsp;</a></span>updateVelFilterCutoff()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CartController::updateVelFilterCutoff </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>velFreq</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cart__controller_8cpp_source.html#l00125">125</a> of file <a class="el" href="cart__controller_8cpp_source.html">cart_controller.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="cart__controller_8hpp_source.html#l00360">freq</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00131">velFilter</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00135">updateFilterCutoff()</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classCartController_a03192e70d27ee069d38b2b9a8a2ed7bd_icgraph.png" border="0" usemap="#aclassCartController_a03192e70d27ee069d38b2b9a8a2ed7bd_icgraph" alt=""/></div>
+<map name="aclassCartController_a03192e70d27ee069d38b2b9a8a2ed7bd_icgraph" id="aclassCartController_a03192e70d27ee069d38b2b9a8a2ed7bd_icgraph">
+<area shape="rect" title=" " alt="" coords="252,5,439,47"/>
+<area shape="rect" href="classCartController.html#abcc43b246ed1e20cb611adf07bb49dc7" title=" " alt="" coords="5,5,204,47"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -3798,7 +3904,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00120">120</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00365">initDesWithJnt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00374">initDesWithJnt()</a>.</p>
 
 </div>
 </div>
@@ -3824,7 +3930,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00122">122</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00365">initDesWithJnt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00374">initDesWithJnt()</a>.</p>
 
 </div>
 </div>
@@ -3850,7 +3956,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00127">127</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>.</p>
 
 </div>
 </div>
@@ -3876,7 +3982,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00129">129</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>.</p>
 
 </div>
 </div>
@@ -3926,7 +4032,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00124">124</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00601">publishCurEffPoseVel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00610">publishCurEffPoseVel()</a>.</p>
 
 </div>
 </div>
@@ -3952,7 +4058,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00127">127</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>.</p>
 
 </div>
 </div>
@@ -3978,7 +4084,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00129">129</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4028,7 +4134,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00070">70</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>.</p>
 
 </div>
 </div>
@@ -4054,7 +4160,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00104">104</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00338">cbArmMarker()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00347">cbArmMarker()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4130,7 +4236,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00150">150</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4156,7 +4262,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00144">144</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4182,7 +4288,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00150">150</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00239">getTransform_base()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00606">publishMarker()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00248">getTransform_base()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00615">publishMarker()</a>.</p>
 
 </div>
 </div>
@@ -4208,7 +4314,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00055">55</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00260">resetFt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00269">resetFt()</a>.</p>
 
 </div>
 </div>
@@ -4234,7 +4340,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00052">52</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00463">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00473">sendVelocityCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00243">signal_handler()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00642">stopping()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00472">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00482">sendVelocityCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00252">signal_handler()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00651">stopping()</a>.</p>
 
 </div>
 </div>
@@ -4260,7 +4366,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00093">93</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00243">signal_handler()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00642">stopping()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00252">signal_handler()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00651">stopping()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4300,9 +4406,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00360">360</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00364">364</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00601">publishCurEffPoseVel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00610">publishCurEffPoseVel()</a>.</p>
 
 </div>
 </div>
@@ -4328,7 +4434,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00049">49</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00597">publishDesEffPoseVel()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00606">publishDesEffPoseVel()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4354,7 +4460,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00050">50</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00567">filterDesEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00597">publishDesEffPoseVel()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00576">filterDesEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00606">publishDesEffPoseVel()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4370,9 +4476,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00360">360</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00364">364</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00597">publishDesEffPoseVel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00606">publishDesEffPoseVel()</a>.</p>
 
 </div>
 </div>
@@ -4398,7 +4504,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00051">51</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>.</p>
 
 </div>
 </div>
@@ -4414,9 +4520,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00355">355</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00359">359</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00271">getVelocity()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00280">getVelocity()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4432,7 +4538,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00358">358</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00362">362</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
@@ -4460,7 +4566,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00142">142</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00365">initDesWithJnt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00374">initDesWithJnt()</a>.</p>
 
 </div>
 </div>
@@ -4486,7 +4592,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00105">105</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00338">cbArmMarker()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00347">cbArmMarker()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4536,7 +4642,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00125">125</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4552,9 +4658,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00362">362</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00366">366</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4570,9 +4676,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00356">356</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00360">360</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00851">control()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00722">update()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00121">updateFilterCutoff()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00860">control()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00731">update()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00130">updateJntFilterCutoff()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00120">updatePosFilterCutoff()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00125">updateVelFilterCutoff()</a>.</p>
 
 </div>
 </div>
@@ -4624,7 +4730,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00150">150</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4674,7 +4780,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00081">81</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00231">resetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00240">resetPose()</a>.</p>
 
 </div>
 </div>
@@ -4700,7 +4806,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00073">73</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4726,7 +4832,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00072">72</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -4742,9 +4848,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00360">360</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00364">364</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00463">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00517">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00505">sendTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00642">stopping()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00472">sendPositionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00526">sendTrajectoryActionCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00514">sendTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00651">stopping()</a>.</p>
 
 </div>
 </div>
@@ -4770,7 +4876,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00131">131</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00846">filterJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00121">updateFilterCutoff()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00855">filterJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00130">updateJntFilterCutoff()</a>.</p>
 
 </div>
 </div>
@@ -4822,7 +4928,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00138">138</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4862,9 +4968,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00360">360</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00364">364</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00606">publishMarker()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00615">publishMarker()</a>.</p>
 
 </div>
 </div>
@@ -4880,9 +4986,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00361">361</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00365">365</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00338">cbArmMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00677">getDesState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00365">initDesWithJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00601">publishCurEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00347">cbArmMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00686">getDesState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00374">initDesWithJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00610">publishCurEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4908,7 +5014,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00047">47</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>.</p>
 
 </div>
 </div>
@@ -4934,7 +5040,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00147">147</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00606">publishMarker()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00615">publishMarker()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -4960,7 +5066,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00118">118</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00480">getTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00489">getTrajectoryCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>.</p>
 
 </div>
 </div>
@@ -4986,7 +5092,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00095">95</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00016">CartController()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00243">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00016">CartController()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00252">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -5036,7 +5142,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00115">115</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00846">filterJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00480">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00642">stopping()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00121">updateFilterCutoff()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00855">filterJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00489">getTrajectoryCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00651">stopping()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00130">updateJntFilterCutoff()</a>.</p>
 
 </div>
 </div>
@@ -5064,6 +5170,32 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a319c3d9ba895c5b28bc4b7f671cb60e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a319c3d9ba895c5b28bc4b7f671cb60e3">&#9670;&nbsp;</a></span>posFilter</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="classbutterworth.html">butterworth</a>&gt; CartController::posFilter</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00131">131</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00120">updatePosFilterCutoff()</a>.</p>
+
+</div>
+</div>
 <a id="af4c2422995baac37b86474895404c12e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af4c2422995baac37b86474895404c12e">&#9670;&nbsp;</a></span>prev_time</h2>
 
@@ -5086,7 +5218,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00087">87</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -5112,7 +5244,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00045">45</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -5138,7 +5270,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00094">94</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00576">publishState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00806">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00826">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00243">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00585">publishState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00815">sendPosCmd()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00835">sendVelCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00252">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -5164,7 +5296,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00076">76</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -5190,7 +5322,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00051">51</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00286">cbJntState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00650">getIKInput()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00365">initDesWithJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00606">publishMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00473">sendVelocityCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00295">cbJntState()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00659">getIKInput()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00374">initDesWithJnt()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00615">publishMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00482">sendVelocityCmd()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -5216,7 +5348,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00083">83</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>.</p>
 
 </div>
 </div>
@@ -5266,7 +5398,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00054">54</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -5292,7 +5424,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00150">150</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00239">getTransform_base()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00606">publishMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00243">signal_handler()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00248">getTransform_base()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00615">publishMarker()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00252">signal_handler()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>.</p>
 
 </div>
 </div>
@@ -5318,7 +5450,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00149">149</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00016">CartController()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00016">CartController()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -5414,7 +5546,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00092">92</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -5440,7 +5572,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00043">43</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>.</p>
 
 </div>
 </div>
@@ -5490,7 +5622,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00100">100</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00620">starting()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00629">starting()</a>.</p>
 
 </div>
 </div>
@@ -5568,7 +5700,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00112">112</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>.</p>
 
 </div>
 </div>
@@ -5594,7 +5726,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00113">113</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00353">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00362">cbForce()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -5670,7 +5802,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00141">141</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00371">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00380">moveInitPos()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -5696,7 +5828,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00133">133</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00239">getTransform_base()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00248">getTransform_base()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -5748,7 +5880,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00106">106</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00131">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00140">getInitParam()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>.</p>
 
 </div>
 </div>
@@ -5800,7 +5932,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00053">53</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00725">update()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00734">update()</a>.</p>
 
 </div>
 </div>
@@ -5826,7 +5958,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="cart__controller_8hpp_source.html#l00131">131</a> of file <a class="el" href="cart__controller_8hpp_source.html">cart_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00567">filterDesEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00121">updateFilterCutoff()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cart__controller_8cpp_source.html#l00576">filterDesEffPoseVel()</a>, <a class="el" href="cart__controller_8cpp_source.html#l00028">init()</a>, and <a class="el" href="cart__controller_8cpp_source.html#l00125">updateVelFilterCutoff()</a>.</p>
 
 </div>
 </div>
