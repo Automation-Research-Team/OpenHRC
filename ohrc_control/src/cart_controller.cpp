@@ -67,7 +67,7 @@ void CartController::init(std::string robot, std::string hw_config) {
 
   nh.param("/" + hw_config_ns + "initIKAngle", _q_init_expect, std::vector<double>(nJnt, 0.0));
 
-  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 2, &CartController::cbJntState, this, th);
+  jntStateSubscriber = nh.subscribe("/" + robot_ns + "joint_states", 1, &CartController::cbJntState, this, th);
   subFlagPtrs.push_back(&flagJntState);
 
   if (useManipOpt) {
@@ -82,8 +82,8 @@ void CartController::init(std::string robot, std::string hw_config) {
   ROS_INFO_STREAM("Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
   if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0))) {
     this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0));
-    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 2, &CartController::cbForce, this, th);
-    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 2);
+    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 1, &CartController::cbForce, this, th);
+    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 1);
     subFlagPtrs.push_back(&flagForce);
     this->ftFound = true;
   } else
@@ -109,23 +109,32 @@ void CartController::init(std::string robot, std::string hw_config) {
            (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
   T_init = T_init_base * T_init;
 
-  for (int i = 0; i < 6; i++)
-    // velFilter.push_back(butterworth(2, 10.0, freq));
-    velFilter.push_back(butterworth(2, freq / 3.0, freq));
-
+  for (int i = 0; i < 6; i++){
+    posFilter.push_back(butterworth(2, freq / 10.0, freq));
+    velFilter.push_back(butterworth(2, freq / 20.0, freq));
+  }
   for (int i = 0; i < nJnt; i++)
-    // jntFilter.push_back(butterworth(2, 20.0, freq));
-    jntFilter.push_back(butterworth(2, freq / 5.0, freq));
+    jntFilter.push_back(butterworth(2, freq / 50.0, freq));
+}
+
+void CartController::updatePosFilterCutoff(const double posFreq) {
+  for (int i = 0; i < 6; i++)
+    posFilter[i] = butterworth(2, posFreq, freq);
+}
+
+void CartController::updateVelFilterCutoff(const double velFreq) {
+  for (int i = 0; i < 6; i++)
+    velFilter[i] = butterworth(2, velFreq, freq);
+}
+
+void CartController::updateJntFilterCutoff(const double jntFreq) {
+  for (int i = 0; i < nJnt; i++)
+    jntFilter[i] = butterworth(2, jntFreq, freq);
 }
 
 void CartController::updateFilterCutoff(const double velFreq, const double jntFreq) {
-  for (int i = 0; i < 6; i++)
-    velFilter[i] = butterworth(2, velFreq, freq);
-  // velFilter.push_back(butterworth(2, freq / 3.0, freq));
-
-  for (int i = 0; i < nJnt; i++)
-    jntFilter[i] = butterworth(2, jntFreq, freq);
-  // jntFilter.push_back(butterworth(2, freq / 3.0, freq));
+  this->updateVelFilterCutoff(velFreq);
+  this->updateJntFilterCutoff(jntFreq);
 }
 
 bool CartController::getInitParam() {

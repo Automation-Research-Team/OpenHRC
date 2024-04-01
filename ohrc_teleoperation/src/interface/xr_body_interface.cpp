@@ -20,13 +20,15 @@ void XrBodyInterface::initInterface() {
     return;
   }
 
-  controller->updateFilterCutoff(10.0, 10.0);
+  // controller->updateFilterCutoff(10.0, 10.0);
+  controller->disablePoseFeedback();
+  controller->updateVelFilterCutoff(70.0);
 
   pubFeedback = n.advertise<std_msgs::Float32>("/feedback/" + bodyPart_str, 2);
 }
 
 void XrBodyInterface::setSubscriber() {
-  subBody = n.subscribe<ohrc_msgs::BodyState>(stateTopicName, 2, &XrBodyInterface::cbBody, this, th);
+  subBody = n.subscribe<ohrc_msgs::BodyState>(stateTopicName, 1, &XrBodyInterface::cbBody, this, th);
 }
 
 void XrBodyInterface::cbBody(const ohrc_msgs::BodyState::ConstPtr& msg) {

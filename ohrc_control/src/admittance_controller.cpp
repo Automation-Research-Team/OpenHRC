@@ -40,6 +40,9 @@ AdmittanceController::ImpCoeff AdmittanceController::getImpCoeff() {
     impCoeff.m = Map<Vector3d>(impCoeff.m_.data());
     impCoeff.d = Map<Vector3d>(impCoeff.d_.data());
     impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
+
+    skipMass = (impCoeff.m.array() < 1.0e-2).all();
+      
   } else if (nGotMDK == 2) {
     ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
@@ -54,23 +57,38 @@ AdmittanceController::ImpCoeff AdmittanceController::getImpCoeff() {
 AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff& impCoeff) {
   ROS_INFO_STREAM("Imp Coeff: m:[ " << impCoeff.m.transpose() << " ], d:[ " << impCoeff.d.transpose() << " ], k:[ " << impCoeff.k.transpose() << " ]");
 
-  MatrixXd M_inv = impCoeff.m.cwiseInverse().asDiagonal(), D = impCoeff.d.asDiagonal(), K = impCoeff.k.asDiagonal();
+  
 
   ImpParam impParam;
-  impParam.A.block(0, 3, 3, 3) = Matrix3d::Identity();
-  impParam.A.block(3, 0, 3, 3) = -M_inv * K;
-  impParam.A.block(3, 3, 3, 3) = -M_inv * D;
+  if (skipMass) {
+    MatrixXd D_inv = impCoeff.d.cwiseInverse().asDiagonal(), K = impCoeff.k.asDiagonal();
+    f_dx = [K, D_inv](const double& t, const VectorXd& x, const std::vector<VectorXd>& u) { return -K * D_inv * x + D_inv * u[0] + K * D_inv * u[1] + u[2]; };
 
-  impParam.B.block(3, 0, 3, 3) = M_inv;
+  }else{
+    MatrixXd M_inv = impCoeff.m.cwiseInverse().asDiagonal(), D = impCoeff.d.asDiagonal(), K = impCoeff.k.asDiagonal();
+    MatrixXd A = MatrixXd::Zero(6, 6), B = MatrixXd::Zero(6, 3), C = MatrixXd::Zero(6, 6);
+    A.block(0, 3, 3, 3) = Matrix3d::Identity();
+    A.block(3, 0, 3, 3) = -M_inv * K;
+    A.block(3, 3, 3, 3) = -M_inv * D;
 
-  impParam.C.block(3, 0, 3, 3) = M_inv * K;
-  impParam.C.block(3, 3, 3, 3) = M_inv * D;
+    B.block(3, 0, 3, 3) = M_inv;
 
+    C.block(3, 0, 3, 3) = M_inv * K;
+    C.block(3, 3, 3, 3) = M_inv * D;
+
+    f_dx = [A, B, C](const double& t, const VectorXd& x, const std::vector<VectorXd>& u) { return A * x + B * u[0] + C * u[1]; };
+  }
+  integrator.reset(new math_utility::Integrator(math_utility::Integrator::Method::RungeKutta, f_dx, dt));
   return impParam;
 }
 
 VectorXd AdmittanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam) {
-  return (MatrixXd::Identity(6, 6) + impParam.A * dt) * x + dt * impParam.B * exForce + dt * impParam.C * xd;
+  if (skipMass) {
+    VectorXd x_ = integrator->integrate(0.0, x.head(3), {exForce, xd.head(3), xd.tail(3)});
+    return (VectorXd(6) << x_, f_dx(0.0, x.head(3), {exForce, xd.head(3), xd.tail(3)})).finished();
+
+  }else
+    return integrator->integrate(0.0, x, {exForce, xd}); //impParam.A * x + impParam.B * exForce + impParam.C * xd;
 }
 
 void AdmittanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {

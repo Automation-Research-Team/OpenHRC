@@ -226,6 +226,9 @@ public:
   inline void disablePoseFeedback() {
     this->poseFeedbackDisabled = true;
   }
+  inline bool getPoseFeedbackDisabled() {
+    return this->poseFeedbackDisabled;
+  }
 
   inline bool getInitialized() {
     return this->initialized;

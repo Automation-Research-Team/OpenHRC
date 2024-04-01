@@ -3,13 +3,16 @@
 void MarkerInterface::initInterface() {
   server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eef_marker"));
   configMarker();
+
+
+  controller->updatePosFilterCutoff(10.0);
 }
 
 void MarkerInterface::configMarker() {
   // set initial marker config
   int_marker.header.frame_id = controller->getRobotNs() + controller->getChainStart();
   int_marker.header.stamp = ros::Time(0);
-  int_marker.pose = tf2::toMsg(controller->getT_init());
+  int_marker.pose = tf2::toMsg(controller->getT_cur());
   int_marker.scale = 0.1;
   int_marker.name = controller->getRobotNs();
 

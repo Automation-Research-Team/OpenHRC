@@ -9,7 +9,7 @@
 #include "ohrc_common/geometry_msgs_utility/geometry_msgs_utility.h"
 #include "ohrc_msgs/Contact.h"
 
-std::unique_ptr<geometry_msgs_utility::WrenchStamped> forceLpf;
+std::unique_ptr<geometry_msgs_utility::WrenchStamped> forceLpf, forceLpf_;
 ros::Publisher pub, pub_cnt;
 
 unsigned int count = 1;
@@ -86,10 +86,11 @@ int main(int argc, char** argv) {
     ROS_ERROR("Failed to get deadzone/torque/upper setting");
 
   forceLpf.reset(new geometry_msgs_utility::WrenchStamped(paramLpf, paramDeadZone));
+  forceLpf_.reset(new geometry_msgs_utility::WrenchStamped(paramLpf, paramDeadZone));
 
   ros::ServiceServer service = n.advertiseService("reset_offset", reset_offset);
 
-  ros::Subscriber sub = nh.subscribe(topic_name_raw, 2, cbForce);
+  ros::Subscriber sub = nh.subscribe(topic_name_raw, 1, cbForce);
   pub = nh.advertise<geometry_msgs::WrenchStamped>(topic_name_filtered, 2);
   pub_cnt = nh.advertise<ohrc_msgs::Contact>("contact", 2);
 
@@ -111,8 +112,11 @@ int main(int argc, char** argv) {
     }
 
     raw_dz.header = raw.header;
+
     tf2::toMsg(tf2::fromMsg(raw.wrench) - offset, raw_dz.wrench);
+    forceLpf_->LPF(raw_dz, raw_dz);
     forceLpf->deadZone_LPF(raw_dz, filtered);
+    // geometry_msgs_utility::deadZone(filtered,filtered, paramDeadZone);
 
     pub.publish(filtered);
 

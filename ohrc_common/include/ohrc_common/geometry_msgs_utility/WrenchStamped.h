@@ -19,6 +19,7 @@ public:
 
   using Wrench::deadZone_LPF;
   void deadZone_LPF(geometry_msgs::WrenchStamped raw_wrench, geometry_msgs::WrenchStamped &filtered_wrench);
+  void LPF(geometry_msgs::WrenchStamped raw_wrench, geometry_msgs::WrenchStamped &filtered_wrench);
 };
 }  // namespace geometry_msgs_utility
 

@@ -6,7 +6,7 @@
 class Interface {
 protected:
   ros::NodeHandle n;
-  double dt;
+  const double dt;
 
   std::shared_ptr<CartController> controller;
 
@@ -23,9 +23,8 @@ protected:
   }
 
 public:
-  Interface(std::shared_ptr<CartController> controller) : n("~") {
+  Interface(std::shared_ptr<CartController> controller) : n("~"), dt(controller->dt) {
     this->controller = controller;
-    dt = controller->dt;
   }
 
   virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist){};
