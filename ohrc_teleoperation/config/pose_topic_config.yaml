@@ -2,4 +2,4 @@
 topic_name: "/cmd_pose"
 frame_id: "world"
 
-diable_pose_feedback: true
+diable_pose_feedback: false # if this true, the robot does not move to the target pose

@@ -17,11 +17,11 @@ void PoseTopicInterface::initInterface() {
     controller->disablePoseFeedback();
   }
 
-  controller->updateFilterCutoff(10.0, 10.0);
+  controller->updatePosFilterCutoff(10.0);
 }
 
 void PoseTopicInterface::setSubscriber() {
-  subPose = n.subscribe<geometry_msgs::Pose>(topicName, 2, &PoseTopicInterface::cbPose, this, th);
+  subPose = n.subscribe<geometry_msgs::Pose>(topicName, 1, &PoseTopicInterface::cbPose, this, th);
 }
 
 void PoseTopicInterface::cbPose(const geometry_msgs::Pose::ConstPtr& msg) {
@@ -48,8 +48,8 @@ void PoseTopicInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
   static Affine3d initT = T_base;
 
-  if (prevPoses.p.data[0] == 0.0 && prevPoses.p.data[1] == 0.0 && prevPoses.p.data[2] == 0.0)  // initilize
-    prevPoses = pose;
+  // if (prevPoses.p.data[0] == 0.0 && prevPoses.p.data[1] == 0.0 && prevPoses.p.data[2] == 0.0)  // initilize
+  // prevPoses = pose;
 
   Vector3d pos = T_base.translation() - initT.translation() + controller->getT_init().translation();
 
@@ -58,9 +58,10 @@ void PoseTopicInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
   // controller->getVelocity(pose, prevPoses, dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
 
-  prevPoses = pose;
+  // prevPoses = pose;
 }
 
 void PoseTopicInterface::resetInterface() {
   ROS_WARN_STREAM("Reset marker position");
+  _flagTopic = false;
 }
