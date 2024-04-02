@@ -11,6 +11,7 @@
   <arg name="control_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
   <arg name="interface_config" default="$(find ohrc_teleoperation)/config/$(arg interface)_config.yaml" />
 
+  <arg name="use_rviz" default="true" />
   <arg name="rviz_config" default="$(find ohrc_teleoperation)/config/teleoperation.rviz" />
 
   <include file="$(find ohrc_control)/launch/ohrc_control.xml">
@@ -27,6 +28,7 @@
     <arg name="control_config" value="$(arg control_config)" />
     <arg name="interface_config" value="$(arg interface_config)" />
 
+    <arg name="use_rviz" value="true" />
     <arg name="rviz_config" value="$(arg rviz_config)" />
   </include>
 

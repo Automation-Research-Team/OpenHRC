@@ -15,6 +15,7 @@
   <arg name="interface_config" default="$(arg app_dir)/config/$(arg interface)_config.yaml" />
 
 
+  <arg name="use_rviz" default="true" />
   <arg name="rviz_config" default="$(arg app_dir)/config/teleoperation.rviz" />
 
   <rosparam command="load" file="$(arg hw_config)" />
@@ -28,6 +29,6 @@
 
   <!-- <include file="$(find ohrc_perception)/launch/ft_sensor_filter.launch" if="$(arg use_ft_filter)"/> -->
   
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)" />
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_config)" if="$(arg use_rviz)"/>
 
 </launch>
