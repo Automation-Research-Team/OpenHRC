@@ -96,10 +96,10 @@ VectorXd AdmittanceController::getControlState(const VectorXd& x, const VectorXd
   if (skipMass) {
     std::unordered_map<std::string, Eigen::MatrixXd> u;
     if (variable) {
-      double d_gain_x = 1.0 - std::max(0., std::min(0.5, std::abs(xd[3]) / 1.0));
-      double d_gain_y = 1.0 - std::max(0., std::min(0.5, std::abs(xd[4]) / 1.0));
-      double d_gain_z = 1.0 - std::max(0., std::min(0.5, std::abs(xd[5]) / 1.0));
-      std::cout << "d_gain_x: " << d_gain_x  << ", d_gain_y: " << d_gain_y << ", d_gain_z: " << d_gain_z << std::endl;
+      double d_gain_x = 1.0 - std::max(0., std::min(0.4, std::abs(xd[3]) / 1.0));
+      double d_gain_y = 1.0 - std::max(0., std::min(0.4, std::abs(xd[4]) / 1.0));
+      double d_gain_z = 1.0 - std::max(0., std::min(0.4, std::abs(xd[5]) / 1.0));
+      // std::cout << "d_gain_x: " << d_gain_x  << ", d_gain_y: " << d_gain_y << ", d_gain_z: " << d_gain_z << std::endl;
       u = { { "force", exForce }, { "xd_p", xd.head(3) }, { "xd_v", xd.tail(3) }, { "D_gain", Vector3d(d_gain_x, d_gain_y, d_gain_z) } };
     } else
       u = { { "force", exForce }, { "xd_p", xd.head(3) }, { "xd_v", xd.tail(3) } };

@@ -151,7 +151,7 @@ VectorXd MyIK::getUpdatedJntVelLimit(const KDL::JntArray& q_cur, std::vector<dou
   lower_vel_limits.resize(nJnt);
   upper_vel_limits.resize(nJnt);
 
-  double mergin = 1.0e-3;
+  double mergin = 1.0e-2;
   for (uint i = 0; i < nJnt; i++) {
     lower_vel_limits[i] = std::min((lower_limits[i] - x[i]) / dt, mergin);
     upper_vel_limits[i] = std::max((upper_limits[i] - x[i]) / dt, -mergin);
@@ -540,7 +540,7 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
   g[nRobot] = VectorXd::Zero(nState);  // this will be updated in the loop below
 
   // additonal objective term in QP (2) for null space configuration
-  w_h[nRobot + 1] = 1.0e-1;
+  w_h[nRobot + 1] = 1.0e-0;
   H[nRobot + 1] = MatrixXd::Identity(nState, nState);
   g[nRobot + 1] = (std_utility::concatenateVectors(q_rest) - std_utility::concatenateVectors(q_cur)).transpose();
 

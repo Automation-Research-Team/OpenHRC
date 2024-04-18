@@ -115,7 +115,7 @@ void XrBodyInterface::resetInterface() {
 void XrBodyInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) {
   std_msgs::Float32 amp;
 
-  amp.data = std::max(std::min((tf2::fromMsg(controller->getForceEef().wrench).head(3).norm() - 3.0) / 10.0, 1.0), 0.0);
+  amp.data = std::max(std::min((tf2::fromMsg(controller->getForceEef().wrench).head(3).norm() - 1.0) / 10.0, 1.0), 0.0);
 
   if (controller->getOperationEnable())
     pubFeedback.publish(amp);
