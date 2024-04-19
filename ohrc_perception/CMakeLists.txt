@@ -127,6 +127,7 @@ include_directories(
 
 set(singles
   ft_filter
+  body_state_visualizer
   # k4abt_body_state_publisher
 )
 

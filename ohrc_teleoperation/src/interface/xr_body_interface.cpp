@@ -37,7 +37,7 @@ void XrBodyInterface::cbBody(const ohrc_msgs::BodyState::ConstPtr& msg) {
   _flagTopic = true;
 }
 
-bool XrBodyInterface::getEnableFlag(const ohrc_msgs::HandState& handState, const ohrc_msgs::HandState& anotherHandState) {
+bool XrBodyInterface::getEnableFlag(const ohrc_msgs::BodyPartState& handState, const ohrc_msgs::BodyPartState& anotherBodyPartState) {
   if (handState.grip > 0.95)
     return true;
   else
