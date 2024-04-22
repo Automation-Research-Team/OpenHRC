@@ -70,7 +70,7 @@ AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff&
       };
     else
       f_dx = [K, D_inv](const double& t, const VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) {
-        std::cout << "D_inv: " << D_inv << std::endl;
+        // std::cout << "D_inv: " << D_inv << std::endl;
         return -K * D_inv * x + D_inv * u.at("force") + K * D_inv * u.at("xd_p") + u.at("xd_v");
       };
 
