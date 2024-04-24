@@ -1,21 +1,22 @@
 <map id="human_arm_perception.cpp" name="human_arm_perception.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="681,5,884,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,87,112,114"/>
-<area shape="rect" id="node3" title=" " alt="" coords="59,169,219,196"/>
-<area shape="rect" id="node4" title=" " alt="" coords="898,87,1129,114"/>
-<area shape="rect" id="node5" title=" " alt="" coords="1153,87,1279,114"/>
-<area shape="rect" id="node6" href="$arm__marker_8hpp.html" title=" " alt="" coords="1303,87,1515,114"/>
-<area shape="rect" id="node7" title=" " alt="" coords="657,169,735,196"/>
-<area shape="rect" id="node8" title=" " alt="" coords="1540,87,1679,114"/>
-<area shape="rect" id="node9" href="$coordination__utility_8h.html" title=" " alt="" coords="186,80,385,121"/>
-<area shape="rect" id="node12" href="$math__utility_8h.html" title=" " alt="" coords="409,87,615,114"/>
-<area shape="rect" id="node15" href="$transform__utility_8h.html" title=" " alt="" coords="691,80,874,121"/>
-<area shape="rect" id="node19" title=" " alt="" coords="1703,80,1849,121"/>
-<area shape="rect" id="node10" title=" " alt="" coords="243,169,327,196"/>
-<area shape="rect" id="node11" title=" " alt="" coords="351,169,454,196"/>
-<area shape="rect" id="node13" title=" " alt="" coords="478,169,546,196"/>
-<area shape="rect" id="node14" title=" " alt="" coords="570,169,633,196"/>
-<area shape="rect" id="node16" title=" " alt="" coords="759,169,966,196"/>
-<area shape="rect" id="node17" title=" " alt="" coords="991,169,1193,196"/>
-<area shape="rect" id="node18" title=" " alt="" coords="1217,169,1337,196"/>
+<area shape="rect" id="node1" title=" " alt="" coords="690,5,893,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="13,87,119,114"/>
+<area shape="rect" id="node3" title=" " alt="" coords="114,169,274,196"/>
+<area shape="rect" id="node4" title=" " alt="" coords="907,87,1137,114"/>
+<area shape="rect" id="node5" title=" " alt="" coords="1161,87,1288,114"/>
+<area shape="rect" id="node6" href="$arm__marker_8hpp.html" title=" " alt="" coords="1312,87,1524,114"/>
+<area shape="rect" id="node7" title=" " alt="" coords="752,169,831,196"/>
+<area shape="rect" id="node8" title=" " alt="" coords="1549,87,1687,114"/>
+<area shape="rect" id="node9" href="$coordination__utility_8h.html" title=" " alt="" coords="144,80,343,121"/>
+<area shape="rect" id="node12" href="$math__utility_8h.html" title=" " alt="" coords="417,87,624,114"/>
+<area shape="rect" id="node16" href="$transform__utility_8h.html" title=" " alt="" coords="700,80,883,121"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1711,80,1858,121"/>
+<area shape="rect" id="node10" title=" " alt="" coords="5,169,89,196"/>
+<area shape="rect" id="node11" title=" " alt="" coords="299,169,401,196"/>
+<area shape="rect" id="node13" title=" " alt="" coords="425,169,493,196"/>
+<area shape="rect" id="node14" title=" " alt="" coords="517,169,641,196"/>
+<area shape="rect" id="node15" title=" " alt="" coords="665,169,728,196"/>
+<area shape="rect" id="node17" title=" " alt="" coords="855,169,1061,196"/>
+<area shape="rect" id="node18" title=" " alt="" coords="1086,169,1289,196"/>
+<area shape="rect" id="node19" title=" " alt="" coords="1313,169,1433,196"/>
 </map>

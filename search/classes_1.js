@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['bayesnormalgamma_840',['BayesNormalGamma',['../classBayesNormalGamma.html',1,'']]],
-  ['butterworth_841',['butterworth',['../classbutterworth.html',1,'']]]
+  ['bayesnormalgamma_848',['BayesNormalGamma',['../classBayesNormalGamma.html',1,'']]],
+  ['bodystateprediction_849',['BodyStatePrediction',['../classBodyStatePrediction.html',1,'']]],
+  ['bodystatevisualizer_850',['BodyStateVisualizer',['../classBodyStateVisualizer.html',1,'']]],
+  ['butterworth_851',['butterworth',['../classbutterworth.html',1,'']]]
 ];

@@ -145,10 +145,12 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a92c42f45374c289efe49a54d6293cfad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52251d79b1eb11f744556bd18fe64b83"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdmittanceController.html#a52251d79b1eb11f744556bd18fe64b83">skipMass</a> = false</td></tr>
 <tr class="separator:a52251d79b1eb11f744556bd18fe64b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c39b6fe50df3d9bcb56b719e705ed05"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdmittanceController.html#a2c39b6fe50df3d9bcb56b719e705ed05">variable</a> = false</td></tr>
+<tr class="separator:a2c39b6fe50df3d9bcb56b719e705ed05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac88a2741e0badcb9dd1aeb51a4fe141a"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmath__utility_1_1Integrator.html">math_utility::Integrator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdmittanceController.html#ac88a2741e0badcb9dd1aeb51a4fe141a">integrator</a></td></tr>
 <tr class="separator:ac88a2741e0badcb9dd1aeb51a4fe141a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7e975eeba83a6950b88cf848c5e589b"><td class="memItemLeft" align="right" valign="top">std::function&lt; VectorXd(const double &amp;t, const VectorXd &amp;, const std::vector&lt; VectorXd &gt; &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdmittanceController.html#ac7e975eeba83a6950b88cf848c5e589b">f_dx</a></td></tr>
-<tr class="separator:ac7e975eeba83a6950b88cf848c5e589b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7b6750163150c2d02fad19dbdd3801f"><td class="memItemLeft" align="right" valign="top">std::function&lt; VectorXd(const double &amp;t, const VectorXd &amp;, const std::unordered_map&lt; std::string, Eigen::MatrixXd &gt; &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAdmittanceController.html#aa7b6750163150c2d02fad19dbdd3801f">f_dx</a></td></tr>
+<tr class="separator:aa7b6750163150c2d02fad19dbdd3801f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -234,11 +236,11 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="admittance__controller_8cpp_source.html#l00085">85</a> of file <a class="el" href="admittance__controller_8cpp_source.html">admittance_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="admittance__controller_8cpp_source.html#l00095">95</a> of file <a class="el" href="admittance__controller_8cpp_source.html">admittance_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="admittance__controller_8hpp_source.html#l00027">f_dx</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00026">integrator</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00024">skipMass</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00007">x</a>, and <a class="el" href="admittance__controller_8hpp_source.html#l00007">xd</a>.</p>
+<p class="reference">References <a class="el" href="admittance__controller_8hpp_source.html#l00028">f_dx</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00027">integrator</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00024">skipMass</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00025">variable</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00007">x</a>, and <a class="el" href="admittance__controller_8hpp_source.html#l00007">xd</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00094">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00115">updateTargetPose()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -378,7 +380,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="admittance__controller_8cpp_source.html#l00057">57</a> of file <a class="el" href="admittance__controller_8cpp_source.html">admittance_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="admittance__controller_8hpp_source.html#l00013">AdmittanceController::ImpCoeff::d</a>, <a class="el" href="interface_8hpp_source.html#l00009">Interface::dt</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00027">f_dx</a>, <a class="el" href="classAdmittanceController.html#a7823b9681c1f1577e58ce6dbfbe93ad4">impParam</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00026">integrator</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00013">AdmittanceController::ImpCoeff::k</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00013">AdmittanceController::ImpCoeff::m</a>, <a class="el" href="classmath__utility_1_1Integrator.html#aab863309005231f5b1c21c7e2e0052fdace1e2811d7456a693c9af29a92127f7b">math_utility::Integrator::RungeKutta</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00024">skipMass</a>, and <a class="el" href="admittance__controller_8hpp_source.html#l00007">x</a>.</p>
+<p class="reference">References <a class="el" href="admittance__controller_8hpp_source.html#l00013">AdmittanceController::ImpCoeff::d</a>, <a class="el" href="interface_8hpp_source.html#l00009">Interface::dt</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00028">f_dx</a>, <a class="el" href="classAdmittanceController.html#a7823b9681c1f1577e58ce6dbfbe93ad4">impParam</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00027">integrator</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00013">AdmittanceController::ImpCoeff::k</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00013">AdmittanceController::ImpCoeff::m</a>, <a class="el" href="classmath__utility_1_1Integrator.html#aab863309005231f5b1c21c7e2e0052fdace1e2811d7456a693c9af29a92127f7b">math_utility::Integrator::RungeKutta</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00024">skipMass</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00025">variable</a>, and <a class="el" href="admittance__controller_8hpp_source.html#l00007">x</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00003">initInterface()</a>.</p>
 <div class="dynheader">
@@ -495,9 +497,9 @@ Here is the call graph for this function:</div>
 
 <p>Reimplemented from <a class="el" href="classInterface.html#ad9e0cea8f86cdb59e7335b10b3907e6d">Interface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="admittance__controller_8cpp_source.html#l00094">94</a> of file <a class="el" href="admittance__controller_8cpp_source.html">admittance_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="admittance__controller_8cpp_source.html#l00115">115</a> of file <a class="el" href="admittance__controller_8cpp_source.html">admittance_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="admittance__controller_8cpp_source.html#l00085">getControlState()</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00023">restPose</a>, <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00007">x</a>, and <a class="el" href="admittance__controller_8hpp_source.html#l00007">xd</a>.</p>
+<p class="reference">References <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00023">restPose</a>, <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>, <a class="el" href="admittance__controller_8hpp_source.html#l00007">x</a>, and <a class="el" href="admittance__controller_8hpp_source.html#l00007">xd</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -512,8 +514,8 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ac7e975eeba83a6950b88cf848c5e589b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7e975eeba83a6950b88cf848c5e589b">&#9670;&nbsp;</a></span>f_dx</h2>
+<a id="aa7b6750163150c2d02fad19dbdd3801f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7b6750163150c2d02fad19dbdd3801f">&#9670;&nbsp;</a></span>f_dx</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -522,7 +524,7 @@ Here is the call graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::function&lt;VectorXd(const double&amp; t, const VectorXd&amp;, const std::vector&lt;VectorXd&gt;&amp;)&gt; AdmittanceController::f_dx</td>
+          <td class="memname">std::function&lt;VectorXd(const double&amp; t, const VectorXd&amp;, const std::unordered_map&lt;std::string, Eigen::MatrixXd&gt;&amp;)&gt; AdmittanceController::f_dx</td>
         </tr>
       </table>
   </td>
@@ -532,9 +534,9 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00027">27</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00028">28</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00085">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
 
 </div>
 </div>
@@ -582,9 +584,9 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00026">26</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00027">27</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00085">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
 
 </div>
 </div>
@@ -610,7 +612,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00023">23</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00094">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00115">updateTargetPose()</a>.</p>
 
 </div>
 </div>
@@ -636,7 +638,33 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00024">24</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00085">getControlState()</a>, <a class="el" href="admittance__controller_8cpp_source.html#l00023">getImpCoeff()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, <a class="el" href="admittance__controller_8cpp_source.html#l00023">getImpCoeff()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
+
+</div>
+</div>
+<a id="a2c39b6fe50df3d9bcb56b719e705ed05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c39b6fe50df3d9bcb56b719e705ed05">&#9670;&nbsp;</a></span>variable</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool AdmittanceController::variable = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00025">25</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>.</p>
 
 </div>
 </div>
@@ -662,7 +690,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00007">7</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00085">getControlState()</a>, <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00094">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, <a class="el" href="admittance__controller_8cpp_source.html#l00057">getImpParam()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00115">updateTargetPose()</a>.</p>
 
 </div>
 </div>
@@ -688,7 +716,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="admittance__controller_8hpp_source.html#l00007">7</a> of file <a class="el" href="admittance__controller_8hpp_source.html">admittance_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00085">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00094">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="admittance__controller_8cpp_source.html#l00095">getControlState()</a>, and <a class="el" href="admittance__controller_8cpp_source.html#l00115">updateTargetPose()</a>.</p>
 
 </div>
 </div>
