@@ -6,6 +6,7 @@
 
 #include "ohrc_control/admittance_controller.hpp"
 #include "ohrc_control/cart_controller.hpp"
+#include "ohrc_control/feedback_controller.hpp"
 #include "ohrc_control/interface.hpp"
 #include "ohrc_control/my_ik.hpp"
 #include "ohrc_control/ohrc_control.hpp"

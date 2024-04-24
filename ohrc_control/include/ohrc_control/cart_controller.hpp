@@ -313,6 +313,10 @@ public:
     return this->_force;
   }
 
+  inline VectorXd getForceEefVec() {
+    return tf2::fromMsg(getForceEef().wrench);
+  }
+
   inline unsigned int getNJnt() {
     return nJnt;
   }
