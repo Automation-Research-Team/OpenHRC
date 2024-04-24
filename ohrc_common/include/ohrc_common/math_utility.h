@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include <Eigen/Dense>
+#include <unordered_map>
 #include <vector>
 
 namespace math_utility {
@@ -122,14 +123,12 @@ inline Eigen::Quaterniond QuatFromTwoVectors(Eigen::Vector3d u, Eigen::Vector3d 
   return Eigen::Quaterniond(d + sqrt(d * d + w.dot(w)), w(0), w(1), w(2)).normalized();
 }
 
-
-
 class Integrator {
-  inline Eigen::VectorXd EulerIntegrate(const double& t,const Eigen::VectorXd& x, const std::vector<Eigen::VectorXd>& u){
+  inline Eigen::VectorXd EulerIntegrate(const double& t, const Eigen::VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) {
     return x + dt * f(t, x, u);
   }
 
-  inline Eigen::VectorXd RungeKuttaIntegrate(const double& t, const Eigen::VectorXd& x, const std::vector<Eigen::VectorXd>& u){
+  inline Eigen::VectorXd RungeKuttaIntegrate(const double& t, const Eigen::VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) {
     Eigen::VectorXd k1 = f(t, x, u);
     Eigen::VectorXd k2 = f(t + dt * 0.5, x + dt * 0.5 * k1, u);
     Eigen::VectorXd k3 = f(t + dt * 0.5, x + dt * 0.5 * k2, u);
@@ -139,22 +138,20 @@ class Integrator {
   }
 
   const double dt;
-  std::function<Eigen::VectorXd(const double& t, const Eigen::VectorXd&, const std::vector<Eigen::VectorXd>&)> f;
+  std::function<Eigen::VectorXd(const double& t, const Eigen::VectorXd&, const std::unordered_map<std::string, Eigen::MatrixXd>&)> f;
 
 public:
   enum class Method { Euler, RungeKutta };
-  Integrator(const Method method, std::function<Eigen::VectorXd(const double& t, const Eigen::VectorXd&, const std::vector<Eigen::VectorXd>&)> f, double dt)
-    : dt(dt), f(f){
-    if(method == Method::Euler)
-      integrate = [this](const double& t, const Eigen::VectorXd& x, const std::vector<Eigen::VectorXd>& u) { return this->EulerIntegrate(t, x, u); };
-    else if(method == Method::RungeKutta)
-      integrate = [this](const double& t, const Eigen::VectorXd& x, const std::vector<Eigen::VectorXd>& u) { return this->RungeKuttaIntegrate(t, x, u); };
+  Integrator(const Method method, std::function<Eigen::VectorXd(const double& t, const Eigen::VectorXd&, const std::unordered_map<std::string, Eigen::MatrixXd>&)> f, double dt)
+    : dt(dt), f(f) {
+    if (method == Method::Euler)
+      integrate = [this](const double& t, const Eigen::VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) { return this->EulerIntegrate(t, x, u); };
+    else if (method == Method::RungeKutta)
+      integrate = [this](const double& t, const Eigen::VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) { return this->RungeKuttaIntegrate(t, x, u); };
     else
       throw std::invalid_argument("Invalid integration method");
-
   }
-  std::function<Eigen::VectorXd(const double& t,const Eigen::VectorXd&,const std::vector<Eigen::VectorXd>&)> integrate;
-
+  std::function<Eigen::VectorXd(const double& t, const Eigen::VectorXd&, const std::unordered_map<std::string, Eigen::MatrixXd>&)> integrate;
 };
 
 };  // namespace math_utility

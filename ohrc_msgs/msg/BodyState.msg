@@ -1,3 +1,3 @@
-ohrc_msgs/HandState head
-ohrc_msgs/HandState left_hand
-ohrc_msgs/HandState right_hand
+ohrc_msgs/BodyPartState head
+ohrc_msgs/BodyPartState left_hand
+ohrc_msgs/BodyPartState right_hand

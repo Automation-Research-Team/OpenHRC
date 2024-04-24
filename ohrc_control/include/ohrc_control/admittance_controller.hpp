@@ -22,9 +22,10 @@ class AdmittanceController : public virtual Interface {
 
   Affine3d restPose;
   bool skipMass = false;
-  
+  bool variable = false;
+
   std::unique_ptr<math_utility::Integrator> integrator;
-  std::function<VectorXd(const double& t, const VectorXd&, const std::vector<VectorXd>&)> f_dx;
+  std::function<VectorXd(const double& t, const VectorXd&, const std::unordered_map<std::string, Eigen::MatrixXd>&)> f_dx;
 
 public:
   using Interface::Interface;

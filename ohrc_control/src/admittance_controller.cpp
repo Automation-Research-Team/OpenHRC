@@ -42,7 +42,7 @@ AdmittanceController::ImpCoeff AdmittanceController::getImpCoeff() {
     impCoeff.k = Map<Vector3d>(impCoeff.k_.data());
 
     skipMass = (impCoeff.m.array() < 1.0e-2).all();
-      
+
   } else if (nGotMDK == 2) {
     ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
@@ -57,14 +57,24 @@ AdmittanceController::ImpCoeff AdmittanceController::getImpCoeff() {
 AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff& impCoeff) {
   ROS_INFO_STREAM("Imp Coeff: m:[ " << impCoeff.m.transpose() << " ], d:[ " << impCoeff.d.transpose() << " ], k:[ " << impCoeff.k.transpose() << " ]");
 
-  
-
   ImpParam impParam;
   if (skipMass) {
     MatrixXd D_inv = impCoeff.d.cwiseInverse().asDiagonal(), K = impCoeff.k.asDiagonal();
-    f_dx = [K, D_inv](const double& t, const VectorXd& x, const std::vector<VectorXd>& u) { return -K * D_inv * x + D_inv * u[0] + K * D_inv * u[1] + u[2]; };
 
-  }else{
+    variable = true;
+
+    if (variable)
+      f_dx = [K, D_inv](const double& t, const VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) {
+        auto D_gain_inv = u.at("D_gain").cwiseInverse().asDiagonal();
+        return -K * D_inv * D_gain_inv * x + D_inv * D_gain_inv * u.at("force") + K * D_inv * D_gain_inv * u.at("xd_p") + u.at("xd_v");
+      };
+    else
+      f_dx = [K, D_inv](const double& t, const VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) {
+        std::cout << "D_inv: " << D_inv << std::endl;
+        return -K * D_inv * x + D_inv * u.at("force") + K * D_inv * u.at("xd_p") + u.at("xd_v");
+      };
+
+  } else {
     MatrixXd M_inv = impCoeff.m.cwiseInverse().asDiagonal(), D = impCoeff.d.asDiagonal(), K = impCoeff.k.asDiagonal();
     MatrixXd A = MatrixXd::Zero(6, 6), B = MatrixXd::Zero(6, 3), C = MatrixXd::Zero(6, 6);
     A.block(0, 3, 3, 3) = Matrix3d::Identity();
@@ -76,7 +86,7 @@ AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff&
     C.block(3, 0, 3, 3) = M_inv * K;
     C.block(3, 3, 3, 3) = M_inv * D;
 
-    f_dx = [A, B, C](const double& t, const VectorXd& x, const std::vector<VectorXd>& u) { return A * x + B * u[0] + C * u[1]; };
+    f_dx = [A, B, C](const double& t, const VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) { return A * x + B * u.at("force") + C * u.at("xd"); };
   }
   integrator.reset(new math_utility::Integrator(math_utility::Integrator::Method::RungeKutta, f_dx, dt));
   return impParam;
@@ -84,11 +94,22 @@ AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff&
 
 VectorXd AdmittanceController::getControlState(const VectorXd& x, const VectorXd& xd, const VectorXd& exForce, const double dt, const ImpParam& impParam) {
   if (skipMass) {
-    VectorXd x_ = integrator->integrate(0.0, x.head(3), {exForce, xd.head(3), xd.tail(3)});
-    return (VectorXd(6) << x_, f_dx(0.0, x.head(3), {exForce, xd.head(3), xd.tail(3)})).finished();
+    std::unordered_map<std::string, Eigen::MatrixXd> u;
+    if (variable) {
+      double d_gain_x = 1.0 - std::max(0., std::min(0.4, std::abs(xd[3]) / 1.0));
+      double d_gain_y = 1.0 - std::max(0., std::min(0.4, std::abs(xd[4]) / 1.0));
+      double d_gain_z = 1.0 - std::max(0., std::min(0.4, std::abs(xd[5]) / 1.0));
+      // std::cout << "d_gain_x: " << d_gain_x  << ", d_gain_y: " << d_gain_y << ", d_gain_z: " << d_gain_z << std::endl;
+      u = { { "force", exForce }, { "xd_p", xd.head(3) }, { "xd_v", xd.tail(3) }, { "D_gain", Vector3d(d_gain_x, d_gain_y, d_gain_z) } };
+    } else
+      u = { { "force", exForce }, { "xd_p", xd.head(3) }, { "xd_v", xd.tail(3) } };
+    VectorXd x_ = integrator->integrate(0.0, x.head(3), u);
+    return (VectorXd(6) << x_, f_dx(0.0, x.head(3), u)).finished();
 
-  }else
-    return integrator->integrate(0.0, x, {exForce, xd}); //impParam.A * x + impParam.B * exForce + impParam.C * xd;
+  } else {
+    std::unordered_map<std::string, Eigen::MatrixXd> u = { { "force", exForce }, { "xd", xd } };
+    return integrator->integrate(0.0, x, u);
+  }
 }
 
 void AdmittanceController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {

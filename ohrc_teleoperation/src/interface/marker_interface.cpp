@@ -4,7 +4,7 @@ void MarkerInterface::initInterface() {
   server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eef_marker"));
   configMarker();
 
-
+  // Kalman kf(3);
   controller->updatePosFilterCutoff(10.0);
 }
 

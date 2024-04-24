@@ -22,7 +22,7 @@ class XrBodyInterface : virtual public StateTopicInterface {
   void setSubscriber() override;
 
 protected:
-  virtual bool getEnableFlag(const ohrc_msgs::HandState& handState, const ohrc_msgs::HandState& anotherHandState);
+  virtual bool getEnableFlag(const ohrc_msgs::BodyPartState& handState, const ohrc_msgs::BodyPartState& anotherBodyPartState);
 
 public:
   using StateTopicInterface::StateTopicInterface;
