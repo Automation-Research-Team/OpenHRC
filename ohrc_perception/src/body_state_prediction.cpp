@@ -3,7 +3,7 @@
 
 #include "ohrc_msgs/BodyState.h"
 
-class BodyStateVisualizer {
+class BodyStatePrediction {
   ros::NodeHandle n;
   ros::Subscriber sub;
   ros::Publisher bodyStateMarkerPublisher;
@@ -14,23 +14,24 @@ class BodyStateVisualizer {
 
   void cbBodyState(const ohrc_msgs::BodyState::ConstPtr& msg);
   void publishBodyStateMarker(const ohrc_msgs::BodyState& bodyState);
+  void predictBodyState(ohrc_msgs::BodyState& bodyState);
 
 public:
-  BodyStateVisualizer();
+  BodyStatePrediction();
   int run();
 };
 
-BodyStateVisualizer::BodyStateVisualizer() {
-  sub = n.subscribe("/body_state", 1000, &BodyStateVisualizer::cbBodyState, this);
+BodyStatePrediction::BodyStatePrediction() {
+  sub = n.subscribe("/body_state", 1000, &BodyStatePrediction::cbBodyState, this);
   bodyStateMarkerPublisher = n.advertise<visualization_msgs::MarkerArray>("/body_state/marker", 1);
 }
 
-void BodyStateVisualizer::cbBodyState(const ohrc_msgs::BodyState::ConstPtr& msg) {
+void BodyStatePrediction::cbBodyState(const ohrc_msgs::BodyState::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mtx);
   _bodyState = *msg;
 }
 
-void BodyStateVisualizer::publishBodyStateMarker(const ohrc_msgs::BodyState& bodyState) {
+void BodyStatePrediction::publishBodyStateMarker(const ohrc_msgs::BodyState& bodyState) {
   visualization_msgs::MarkerArray markerArray;
   visualization_msgs::Marker marker;
   marker.header.frame_id = "xr_frame";
@@ -63,7 +64,11 @@ void BodyStateVisualizer::publishBodyStateMarker(const ohrc_msgs::BodyState& bod
   bodyStateMarkerPublisher.publish(markerArray);
 }
 
-int BodyStateVisualizer::run() {
+void BodyStatePrediction::predictBodyState(ohrc_msgs::BodyState& bodyState) {
+  // predict body state
+}
+
+int BodyStatePrediction::run() {
   ros::Rate r(50);
   ohrc_msgs::BodyState bodyState;
   while (ros::ok()) {
@@ -71,6 +76,7 @@ int BodyStateVisualizer::run() {
       std::lock_guard<std::mutex> lock(mtx);
       bodyState = _bodyState;
     }
+    predictBodyState(bodyState);
     publishBodyStateMarker(bodyState);
 
     ros::spinOnce();
@@ -82,8 +88,8 @@ int BodyStateVisualizer::run() {
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "body_state_visualizer");
-  BodyStateVisualizer BodyStateVisualizer;
-  BodyStateVisualizer.run();
+  BodyStatePrediction BodyStatePrediction;
+  BodyStatePrediction.run();
 
   return 0;
 }
