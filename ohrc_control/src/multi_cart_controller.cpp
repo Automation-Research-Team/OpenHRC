@@ -42,14 +42,18 @@ MultiCartController::MultiCartController() {
 
   interfaces.resize(nRobot);
 
-  admittanceControllers.resize(nRobot);
-  enbaleAdmittanceControl.resize(nRobot, false);
+  baseControllers.resize(nRobot);
+  // enbaleAdmittanceControl.resize(nRobot, false);
   for (int i = 0; i < nRobot; i++) {
-    admittanceControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
-    enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
+    // enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
 
-    if (enbaleAdmittanceControl[i])
-      cartControllers[i]->disablePoseFeedback();
+    if (cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam)//(enbaleAdmittanceControl[i])
+      baseControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
+    else
+      baseControllers[i] = std::make_shared<FeedbackController>(cartControllers[i]);
+
+
+    cartControllers[i]->disablePoseFeedback(); //TODO: Pose feedback would be always enable. original feedback code can be removed. 
   }
 }
 
@@ -130,14 +134,18 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   }
 
   n.param("enableEefForceAdmittance", enableEefForceAdmittanceParam, false);
-  ROS_INFO_STREAM("enableEefForceAdmittance: " << enableEefForceAdmittanceParam);
-
+  if (enableEefForceAdmittanceParam)
+    ROS_INFO_STREAM("enableEefForceAdmittance: " << std::boolalpha << enableEefForceAdmittanceParam);
+  else
+    ROS_INFO_STREAM("enableEefForceAdmittance is " << std::boolalpha << enableEefForceAdmittanceParam << ", so feedback controller is used instead.");
+  
   return true;
 }
 
 bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
   for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->resetPose();
+    cartControllers[i]->resetFt();
     resetInterface(cartControllers[i]);
   }
   return true;
@@ -297,8 +305,7 @@ void MultiCartController::updateDesired() {
 
     updateTargetPose(desPose[i], desVel[i], cartControllers[i]);
 
-    if (enbaleAdmittanceControl[i])
-      applyAdmittanceControl(desPose[i], desVel[i], cartControllers[i]);
+    // applyBaseControl(desPose[i], desVel[i], cartControllers[i]);
 
     cartControllers[i]->setDesired(desPose[i], desVel[i]);
   }
