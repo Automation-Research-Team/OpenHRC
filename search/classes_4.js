@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['forwardingcontroller_856',['ForwardingController',['../classForwardingController.html',1,'']]]
+  ['feedbackcontroller_864',['FeedbackController',['../classFeedbackController.html',1,'']]],
+  ['forwardingcontroller_865',['ForwardingController',['../classForwardingController.html',1,'']]]
 ];
