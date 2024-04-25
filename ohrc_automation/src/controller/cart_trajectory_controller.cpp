@@ -2,6 +2,8 @@
 
 void CartTrajectoryController::initInterface() {
   this->setSubscriber();
+  T_init = controller->getT_cur();
+  controller->enablePoseFeedback();
 }
 
 void CartTrajectoryController::setSubscriber() {
@@ -29,15 +31,16 @@ void CartTrajectoryController::updateTargetPose(KDL::Frame& pos, KDL::Twist& twi
   if (start) {
     t_start = ros::Time::now();
     start = false;
+    i = 0;
   }
 
-  static int i = 0;
   bool stop = false;
   if (i >= trj.points.size()) {
+    i = trj.points.size()-1;
     stop = true;
   }
 
-  Affine3d T_init = controller->getT_init();
+
   Affine3d target;
   tf2::fromMsg(trj.points[i].point.pose, target);
   target.translation() = T_init.translation() + target.translation();
@@ -57,4 +60,13 @@ void CartTrajectoryController::updateTargetPose(KDL::Frame& pos, KDL::Twist& twi
 
   if ((ros::Time::now() - t_start).toNSec() > trj.points[i].time_from_start.toNSec())
     i++;
+}
+
+void CartTrajectoryController::resetInterface(){
+  T_init = controller->getT_cur();
+  start = true;
+  _trj = moveit_msgs::CartesianTrajectory();
+  _trj.points.resize(1);
+  _trj.points[0].time_from_start = ros::Duration(1.0);
+  controller->enablePoseFeedback();
 }

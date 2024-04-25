@@ -5,7 +5,7 @@
 
 #include "ohrc_control/interface.hpp"
 
-class MarkerInterface : public Interface {
+class MarkerInterface : virtual public  Interface {
   visualization_msgs::InteractiveMarker int_marker;
 
   std::unique_ptr<interactive_markers::InteractiveMarkerServer> server;
@@ -24,10 +24,10 @@ class MarkerInterface : public Interface {
 
 public:
   using Interface::Interface;
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
 
-  void initInterface() override;
-  void resetInterface() override;
+  virtual void initInterface() override;
+  virtual void resetInterface() override;
 };
 
 #endif  // MARKER_INTERFACE_HPP

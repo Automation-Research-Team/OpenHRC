@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   ohrc_control
   ohrc_common
+  ohrc_msgs
 
   interactive_markers
 )
@@ -110,7 +111,7 @@ find_package(magic_enum CONFIG REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ohrc_teleoperation
-  CATKIN_DEPENDS roscpp ohrc_control ohrc_common
+  CATKIN_DEPENDS roscpp ohrc_control ohrc_common ohrc_msgs
   # DEPENDS system_lib
 )
 

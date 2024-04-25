@@ -6,6 +6,9 @@ void MarkerInterface::initInterface() {
 
   // Kalman kf(3);
   controller->updatePosFilterCutoff(10.0);
+
+  controller->enablePoseFeedback(); //tentative
+  _markerPose = tf2::toMsg(controller->getT_cur());
 }
 
 void MarkerInterface::configMarker() {
@@ -73,10 +76,10 @@ void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
-    if (!_flagSubInteractiveMarker) {
-      // controller->disableOperation();
-      return;
-    }
+    // if (!_flagSubInteractiveMarker) {
+      // tf::transformEigenToKDL(controller->getT_cur(),pose);
+      // return;
+    // }
     // _flagSubInteractiveMarker[controller->getIndex()] = false;
     markerPose = _markerPose;
     // markerDt = _markerDt[controller->getIndex()];
@@ -95,9 +98,10 @@ void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
 void MarkerInterface::resetInterface() {
   ROS_WARN_STREAM("Reset marker position");
-  server->setPose(int_marker.name, int_marker.pose);
+  server->setPose(int_marker.name, tf2::toMsg(controller->getT_cur()));
   server->applyChanges();
 
-  _markerPose = int_marker.pose;
+  _markerPose = tf2::toMsg(controller->getT_cur());
   _flagSubInteractiveMarker = false;
+  controller->enablePoseFeedback(); //tentative
 }

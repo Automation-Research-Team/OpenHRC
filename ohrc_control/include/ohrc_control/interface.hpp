@@ -24,7 +24,7 @@ protected:
   }
 
 public:
-  Interface(std::shared_ptr<CartController> controller) : n("~"), dt(controller->dt) {
+  Interface(const std::shared_ptr<CartController> controller) : n("~"), dt(controller->dt) {
     this->controller = controller;
   }
 
