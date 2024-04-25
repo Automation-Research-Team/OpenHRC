@@ -61,7 +61,7 @@ AdmittanceController::ImpParam AdmittanceController::getImpParam(const ImpCoeff&
   if (skipMass) {
     MatrixXd D_inv = impCoeff.d.cwiseInverse().asDiagonal(), K = impCoeff.k.asDiagonal();
 
-    variable = true;
+    variable = false;
 
     if (variable)
       f_dx = [K, D_inv](const double& t, const VectorXd& x, const std::unordered_map<std::string, Eigen::MatrixXd>& u) {

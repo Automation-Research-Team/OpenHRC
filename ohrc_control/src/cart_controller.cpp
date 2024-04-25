@@ -233,7 +233,8 @@ CartController::~CartController() {
 }
 
 bool CartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
-  resetPose();
+  this->resetPose();
+  this->resetFt();
   return true;
 }
 

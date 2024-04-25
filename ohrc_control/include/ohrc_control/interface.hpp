@@ -19,6 +19,7 @@ protected:
 
   inline void reset() {
     controller->resetPose();
+    controller->resetFt();
     resetInterface();
   }
 

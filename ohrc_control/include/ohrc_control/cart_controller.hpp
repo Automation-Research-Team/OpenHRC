@@ -164,7 +164,6 @@ protected:
   const int index = 0;
   // int moveInitPos();
 
-  void resetFt();
 
   void sendPositionCmd(const VectorXd& q_des);
   void sendVelocityCmd(const VectorXd& dq_des);
@@ -370,6 +369,8 @@ public:
   bool flagJntState = false;
 
   void resetPose();
+  void resetFt();
+
 
   void sendPosCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt);
   void sendVelCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt);

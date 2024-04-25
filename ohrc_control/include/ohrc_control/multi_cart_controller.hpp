@@ -25,7 +25,7 @@ class MultiCartController {
   void publishState(const ros::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
 
-  std::vector<bool> enbaleAdmittanceControl;
+  // std::vector<bool> enbaleAdmittanceControl;
   bool enableEefForceAdmittanceParam;
 
 protected:
@@ -69,28 +69,25 @@ protected:
   virtual void runLoopEnd(){};
 
   std::vector<std::shared_ptr<Interface>> interfaces;
-  std::vector<std::shared_ptr<Interface>> admittanceControllers;
+  std::vector<std::shared_ptr<Interface>> baseControllers;
 
   void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->updateTargetPose(pose, twist);
+    baseControllers[controller->getIndex()]->updateTargetPose(pose, twist);
   }
 
-  void applyAdmittanceControl(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
-    admittanceControllers[controller->getIndex()]->updateTargetPose(pose, twist);
-  }
+  // void applyBaseControl(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+  //   baseControllers[controller->getIndex()]->updateTargetPose(pose, twist);
+  // }
 
   void initInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->initInterface();
-
-    if (enbaleAdmittanceControl[controller->getIndex()])
-      admittanceControllers[controller->getIndex()]->initInterface();
+    baseControllers[controller->getIndex()]->initInterface();
   }
 
   void resetInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->resetInterface();
-
-    if (enbaleAdmittanceControl[controller->getIndex()])
-      admittanceControllers[controller->getIndex()]->resetInterface();
+    baseControllers[controller->getIndex()]->resetInterface();
   }
 
   void feedback(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
