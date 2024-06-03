@@ -8,6 +8,7 @@ void JoyTopicInterface::initInterface() {
 }
 
 void JoyTopicInterface::setSubscriber() {
+  getTopicAndFrameName("/spacenav/joy", "user_frame");
   subJoy = n.subscribe<sensor_msgs::Joy>(stateTopicName, 2, &JoyTopicInterface::cbJoy, this, th);
 }
 

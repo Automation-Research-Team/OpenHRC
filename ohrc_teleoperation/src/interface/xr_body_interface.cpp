@@ -1,16 +1,11 @@
 #include "ohrc_teleoperation/xr_body_interface.hpp"
 
 void XrBodyInterface::initInterface() {
-  stateTopicName = "/body_state";
-  stateFrameId = "xr_frame";
-
   StateTopicInterface::initInterface();
-
-  // bodyPart = BodyPart::EITHER_HANDS;
 
   std::string bodyPart_str;
   if (!n.param(controller->getRobotNs() + "body_part", bodyPart_str, std::string("RIGHT_HAND")))
-    ROS_WARN_STREAM("Used body part is not choisen {RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS}: Default RIGHT_HAND");
+    ROS_WARN_STREAM("Used body part for " << controller->getRobotNs() << " is not choisen {RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS}: Default RIGHT_HAND");
   else
     ROS_INFO_STREAM("body_part: " << bodyPart_str);
 
@@ -28,6 +23,7 @@ void XrBodyInterface::initInterface() {
 }
 
 void XrBodyInterface::setSubscriber() {
+  getTopicAndFrameName("/body_state", "user_frame");
   subBody = n.subscribe<ohrc_msgs::BodyState>(stateTopicName, 1, &XrBodyInterface::cbBody, this, th);
 }
 

@@ -5,6 +5,7 @@
   <arg name="interface" default="marker" />
   <arg name="enableEefForceAdmittance" default="false" />
   <arg name="use_ft_filter" default="true" />
+  <arg name="user_frame_viewpoint" default="back" />
 
   <arg name="hw_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
   <arg name="admittance_config" default="$(find ohrc_control)/config/admittance_config.yaml" />
@@ -31,5 +32,10 @@
     <arg name="use_rviz" value="true" />
     <arg name="rviz_config" value="$(arg rviz_config)" />
   </include>
+    
+  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 0 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'back')" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 3.141592 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'face')" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 -1.57079 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'right')"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 1.57079 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'left')"/>
 
 </launch>

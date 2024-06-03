@@ -23,15 +23,24 @@ protected:
     resetInterface();
   }
 
+  std::string stateTopicName = "/state", stateFrameId = "world";
+  inline void getTopicAndFrameName(std::string DefaultStateTopicName, std::string DefaultStateFrameId) {
+    if (!n.param(controller->getRobotNs() + "topic_name", stateTopicName, DefaultStateTopicName) &&
+        !n.param(controller->getRobotNs() + "frame_id", stateFrameId, DefaultStateFrameId))
+      ROS_WARN_STREAM("topic_name and/or frame_id is not explicitly configured. Use default: " << stateTopicName << " : " << stateFrameId);
+    else
+      ROS_INFO_STREAM("topic_name: " << stateTopicName << "  frame_id: " << stateFrameId);
+  }
+
 public:
   Interface(std::shared_ptr<CartController> controller) : n("~"), dt(controller->dt) {
     this->controller = controller;
   }
 
-  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist){};
-  virtual void initInterface(){};
-  virtual void resetInterface(){};
-  virtual void feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist){};
+  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {};
+  virtual void initInterface() {};
+  virtual void resetInterface() {};
+  virtual void feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) {};
 
   int targetIdx = -1, nCompletedTask = 0;
   bool blocked = false;

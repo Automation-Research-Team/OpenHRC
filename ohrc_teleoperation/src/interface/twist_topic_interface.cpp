@@ -4,16 +4,10 @@ void TwistTopicInterface::initInterface() {
   n.param("trans_ratio", k_trans, 1.0);
   ROS_INFO_STREAM("translation ratio: " << k_trans);
 
-  // stateFrameId = root_frame;
-
-  n.getParam("topic_name", stateTopicName);
-  n.getParam("frame_id", stateFrameId);
-
   setSubscriber();
 
   Affine3d T_state_base = controller->getTransform_base(this->stateFrameId);
   R = T_state_base.rotation().transpose();
-
 
   bool diablePoseFeedback;
   n.param("diable_pose_feedback", diablePoseFeedback, false);
@@ -25,6 +19,7 @@ void TwistTopicInterface::initInterface() {
 }
 
 void TwistTopicInterface::setSubscriber() {
+  this->getTopicAndFrameName("/cmd_vel", "user_frame");
   subTwist = n.subscribe<geometry_msgs::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
 }
 

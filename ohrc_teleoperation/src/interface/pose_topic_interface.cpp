@@ -1,12 +1,9 @@
 #include "ohrc_teleoperation/pose_topic_interface.hpp"
 
 void PoseTopicInterface::initInterface() {
-  n.getParam("topic_name", topicName);
-  n.getParam("frame_id", topicFrameId);
-
   setSubscriber();
 
-  Affine3d T_state_base = controller->getTransform_base(this->topicFrameId);
+  Affine3d T_state_base = controller->getTransform_base(this->stateFrameId);
   R = T_state_base.rotation();
 
   bool diablePoseFeedback;
@@ -21,7 +18,8 @@ void PoseTopicInterface::initInterface() {
 }
 
 void PoseTopicInterface::setSubscriber() {
-  subPose = n.subscribe<geometry_msgs::Pose>(topicName, 1, &PoseTopicInterface::cbPose, this, th);
+  getTopicAndFrameName("/pose", "user_frame");
+  subPose = n.subscribe<geometry_msgs::Pose>(stateTopicName, 1, &PoseTopicInterface::cbPose, this, th);
 }
 
 void PoseTopicInterface::cbPose(const geometry_msgs::Pose::ConstPtr& msg) {

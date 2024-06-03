@@ -11,7 +11,7 @@ class JoyTopicInterface : virtual public TwistTopicInterface {
   double gain_h = 0.1, gain_r = 0.1;
 
 protected:
-  std::string stateTopicName = "/spacenav/joy", stateFrameId = "world";
+  // std::string stateTopicName = "/spacenav/joy", stateFrameId = "world";
 
   void cbJoy(const sensor_msgs::Joy::ConstPtr& msg);
   void setSubscriber() override;

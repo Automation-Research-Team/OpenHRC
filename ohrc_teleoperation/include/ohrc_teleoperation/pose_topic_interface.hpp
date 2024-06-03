@@ -24,8 +24,6 @@ protected:
   ohrc_msgs::State state;
   KDL::Frame prevPoses;
 
-  std::string topicName = "/pose", topicFrameId = "world";
-
   void cbPose(const geometry_msgs::Pose::ConstPtr& msg);
   // virtual void modifyTargetState(geometry?::State& state){};
   virtual void setSubscriber();

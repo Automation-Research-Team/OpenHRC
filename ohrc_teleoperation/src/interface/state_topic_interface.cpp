@@ -10,6 +10,7 @@ void StateTopicInterface::initInterface() {
 }
 
 void StateTopicInterface::setSubscriber() {
+  getTopicAndFrameName("/state", "user_frame");
   subState = n.subscribe<ohrc_msgs::State>(stateTopicName, 1, &StateTopicInterface::cbState, this, th);
 }
 
