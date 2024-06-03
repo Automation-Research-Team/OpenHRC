@@ -3,6 +3,7 @@
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
   <arg name="enableEefForceAdmittance" default="false" />
+  <arg name="spacenav" default="true" />
 
   <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.xml">
     <arg name="interface" value="joy_topic" />
@@ -12,12 +13,10 @@
     <arg name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
   </include>
     
-
   <node pkg="spacenav_node" type="spacenav_node" name="spacenav_node" output="log" if="$(arg spacenav)">
     <param name="zero_when_static" value="false"/>
     <param name="static_trans_deadband" value="0.01"/>
     <param name="static_rot_deadband" value="0.01"/>
   </node>
 
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/config/teleoperation.rviz"/>
 </launch>
