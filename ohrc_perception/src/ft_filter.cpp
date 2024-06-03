@@ -19,6 +19,8 @@ Eigen::VectorXd offset = Eigen::VectorXd::Zero(6);
 std::mutex mtx;
 geometry_msgs::WrenchStamped raw_;
 
+bool reseted = false;
+
 void cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
   // geometry_msgs::WrenchStamped raw_dz, filtered;
 
@@ -40,10 +42,18 @@ void cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
 }
 
 bool reset_offset(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
-  std::lock_guard<std::mutex> lock(mtx);
-  count = 1;
-  offset = Eigen::VectorXd::Zero(6);
-  ROS_INFO_STREAM("Resetting ft sensor offset...");
+  {
+    std::lock_guard<std::mutex> lock(mtx);
+    reseted = false;
+    count = 1;
+    offset = Eigen::VectorXd::Zero(6);
+    ROS_INFO_STREAM("Resetting ft sensor offset...");
+  }
+
+  while (!reseted && ros::ok()) {
+    ros::Duration(0.1).sleep();
+  }
+  ROS_INFO_STREAM("Reseted ft sensor offset.");
   return true;
 }
 
@@ -91,7 +101,7 @@ int main(int argc, char** argv) {
   ros::ServiceServer service = n.advertiseService("reset_offset", reset_offset);
 
   ros::Subscriber sub = nh.subscribe(topic_name_raw, 1, cbForce);
-  pub = nh.advertise<geometry_msgs::WrenchStamped>(topic_name_filtered, 2);
+  pub = nh.advertise<geometry_msgs::WrenchStamped>(topic_name_filtered, 1);
   pub_cnt = nh.advertise<ohrc_msgs::Contact>("contact", 2);
 
   ros::AsyncSpinner spinner(2);
@@ -110,6 +120,7 @@ int main(int argc, char** argv) {
       r.sleep();
       continue;
     }
+    reseted = true;
 
     raw_dz.header = raw.header;
 

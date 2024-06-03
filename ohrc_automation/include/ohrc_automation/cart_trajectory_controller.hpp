@@ -6,7 +6,10 @@
 
 #include "ohrc_control/interface.hpp"
 
-class CartTrajectoryController : public virtual Interface {
+class CartTrajectoryController : virtual public Interface {
+  Affine3d T_init ;
+  int i = 0;
+  bool start = true;
 protected:
   std::mutex mtx_cart;
   ros::Subscriber trjSubscriber;
@@ -22,6 +25,7 @@ public:
   // CartTrajectoryController(std::shared_ptr<CartController> controller) : Interface(controller) {
   // }
   virtual void initInterface() override;
+  virtual void resetInterface() override;
 
   virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
 };

@@ -4,8 +4,10 @@ void MarkerInterface::initInterface() {
   server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eef_marker"));
   configMarker();
 
-  // Kalman kf(3);
   controller->updatePosFilterCutoff(10.0);
+
+  // controller->enablePoseFeedback();  // tentative
+  _markerPose = tf2::toMsg(controller->getT_cur());
 }
 
 void MarkerInterface::configMarker() {
@@ -69,18 +71,27 @@ void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarke
 
 void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   geometry_msgs::Pose markerPose;
-  // controller->enableOperation();
   double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
     if (!_flagSubInteractiveMarker) {
-      // controller->disableOperation();
+      count_disable++;
+    } else {
+      subFirst = true;
+      count_disable = 0;
+    }
+
+    if (count_disable * dt > 0.5) {  // disable operation after 0.5 s
+      controller->disableOperation();
+      if (subFirst)
+        pose = prevPoses;
       return;
     }
-    // _flagSubInteractiveMarker[controller->getIndex()] = false;
+
     markerPose = _markerPose;
-    // markerDt = _markerDt[controller->getIndex()];
+
     controller->enableOperation();
+    _flagSubInteractiveMarker = false;
   }
 
   tf2::fromMsg(markerPose, pose);
@@ -94,10 +105,13 @@ void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 }
 
 void MarkerInterface::resetInterface() {
+  controller->disableOperation();
   ROS_WARN_STREAM("Reset marker position");
-  server->setPose(int_marker.name, int_marker.pose);
+  _markerPose = int_marker.pose;  // tf2::toMsg(controller->getT_cur());
+  server->setPose(int_marker.name, _markerPose);
   server->applyChanges();
 
-  _markerPose = int_marker.pose;
   _flagSubInteractiveMarker = false;
+  count_disable = 0;
+  // controller->enablePoseFeedback();  // tentative
 }

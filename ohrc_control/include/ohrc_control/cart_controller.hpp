@@ -164,7 +164,6 @@ protected:
   const int index = 0;
   // int moveInitPos();
 
-
   void sendPositionCmd(const VectorXd& q_des);
   void sendVelocityCmd(const VectorXd& dq_des);
   void sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_des, const KDL::JntArray& q_cur, const bool& lastLoop);
@@ -335,12 +334,12 @@ public:
     filterDesEffPoseVel(this->_des_eef_pose, this->_des_eef_vel);
   }
 
-  inline void enablePoseFeedback() {
-    myik_solver_ptr->enablePoseFeedback();
+  inline void enablePoseFeedback() {        // no longer used
+    myik_solver_ptr->enablePoseFeedback();  // no longer used
   }
 
-  inline void disablePoseFeedback() {
-    myik_solver_ptr->disablePoseFeedback();
+  inline void disablePoseFeedback() {        // no longer used
+    myik_solver_ptr->disablePoseFeedback();  // no longer used
   }
 
   inline Affine3d getTft_eff() {
@@ -370,7 +369,6 @@ public:
 
   void resetPose();
   void resetFt();
-
 
   void sendPosCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt);
   void sendVelCmd(const KDL::JntArray& q_des, const KDL::JntArray& dq_des, const double& dt);

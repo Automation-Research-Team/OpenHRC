@@ -109,7 +109,7 @@ void CartController::init(std::string robot, std::string hw_config) {
            (AngleAxisd(initPose[3], Vector3d::UnitX()) * AngleAxisd(initPose[4], Vector3d::UnitY()) * AngleAxisd(initPose[5], Vector3d::UnitZ()));
   T_init = T_init_base * T_init;
 
-  for (int i = 0; i < 6; i++){
+  for (int i = 0; i < 6; i++) {
     posFilter.push_back(butterworth(2, freq / 10.0, freq));
     velFilter.push_back(butterworth(2, freq / 20.0, freq));
   }
@@ -244,6 +244,10 @@ void CartController::resetPose() {
   s_cbJntState.isFirst = true;
   initialized = false;
   s_moveInitPos.isFirst = true;
+
+  while (!isInitialized() && ros::ok()) {
+    ros::Duration(0.1).sleep();
+  }
 }
 
 Affine3d CartController::getTransform_base(std::string target) {
@@ -640,8 +644,7 @@ void CartController::starting(const ros::Time& time) {
   subscriber_utility::checkSubTopic(subFlagPtrs, &mtx, robot_ns);
 
   this->resetFt();
-  // TODO: reset ft sensor offset
-  //
+
   updateCurState();
 }
 
@@ -701,9 +704,9 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   static ros::Time t0 = ros::Time::now();
   if (disable) {
     t0 = ros::Time::now();
-    disablePoseFeedback();
+    disablePoseFeedback();  // no longer used
   } else
-    enablePoseFeedback();
+    enablePoseFeedback();  // no longer used
 
   double s = (ros::Time::now() - t0).toSec() / 3.0;
   if (s > 1.0 || passThrough)

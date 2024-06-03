@@ -21,10 +21,8 @@ protected:
   ohrc_msgs::State _state;
   bool _flagTopic = false;
 
-  std::string stateTopicName = "/state", stateFrameId = "world";
-
   void cbState(const ohrc_msgs::State::ConstPtr& msg);
-  virtual void modifyTargetState(ohrc_msgs::State& state){};
+  virtual void modifyTargetState(ohrc_msgs::State& state) {};
 
   virtual void setSubscriber();
   void getTargetState(const ohrc_msgs::State& state, KDL::Frame& pos, KDL::Twist& twist);

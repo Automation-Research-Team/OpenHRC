@@ -60,7 +60,7 @@ class MyIK : std::enable_shared_from_this<MyIK> {
   std::vector<int> idxSegJnt;
   // OsqpEigen::Solver qpSolver;
 
-  bool poseFeedbackDisabled = false;
+  bool poseFeedbackDisabled = false;  // no longer used
 
   void initializeSingleRobot(const KDL::Chain& chain);
 
@@ -220,13 +220,13 @@ public:
     return this->idxSegJnt;
   }
 
-  inline void enablePoseFeedback() {
+  inline void enablePoseFeedback() {  // no longer used
     this->poseFeedbackDisabled = false;
   }
-  inline void disablePoseFeedback() {
+  inline void disablePoseFeedback() {  // no longer used
     this->poseFeedbackDisabled = true;
   }
-  inline bool getPoseFeedbackDisabled() {
+  inline bool getPoseFeedbackDisabled() {  // no longer used
     return this->poseFeedbackDisabled;
   }
 
