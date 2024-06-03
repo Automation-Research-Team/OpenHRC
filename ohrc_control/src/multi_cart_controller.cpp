@@ -47,13 +47,12 @@ MultiCartController::MultiCartController() {
   for (int i = 0; i < nRobot; i++) {
     // enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
 
-    if (cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam)//(enbaleAdmittanceControl[i])
+    if (cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam)  //(enbaleAdmittanceControl[i])
       baseControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
     else
       baseControllers[i] = std::make_shared<FeedbackController>(cartControllers[i]);
 
-
-    cartControllers[i]->disablePoseFeedback(); //TODO: Pose feedback would be always enable. original feedback code can be removed. 
+    cartControllers[i]->disablePoseFeedback();  // TODO: Pose feedback would be always enable. original feedback code can be removed.
   }
 }
 
@@ -138,15 +137,15 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
     ROS_INFO_STREAM("enableEefForceAdmittance: " << std::boolalpha << enableEefForceAdmittanceParam);
   else
     ROS_INFO_STREAM("enableEefForceAdmittance is " << std::boolalpha << enableEefForceAdmittanceParam << ", so feedback controller is used instead.");
-  
+
   return true;
 }
 
 bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
   for (int i = 0; i < nRobot; i++) {
+    resetInterface(cartControllers[i]);
     cartControllers[i]->resetPose();
     cartControllers[i]->resetFt();
-    resetInterface(cartControllers[i]);
   }
   return true;
 }

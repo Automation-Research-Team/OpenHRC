@@ -244,6 +244,10 @@ void CartController::resetPose() {
   s_cbJntState.isFirst = true;
   initialized = false;
   s_moveInitPos.isFirst = true;
+
+  while (!isInitialized() && ros::ok()) {
+    ros::Duration(0.1).sleep();
+  }
 }
 
 Affine3d CartController::getTransform_base(std::string target) {
@@ -640,8 +644,7 @@ void CartController::starting(const ros::Time& time) {
   subscriber_utility::checkSubTopic(subFlagPtrs, &mtx, robot_ns);
 
   this->resetFt();
-  // TODO: reset ft sensor offset
-  //
+
   updateCurState();
 }
 

@@ -6,7 +6,7 @@ void MarkerInterface::initInterface() {
 
   controller->updatePosFilterCutoff(10.0);
 
-  controller->enablePoseFeedback();  // tentative
+  // controller->enablePoseFeedback();  // tentative
   _markerPose = tf2::toMsg(controller->getT_cur());
 }
 
@@ -105,11 +105,12 @@ void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 }
 
 void MarkerInterface::resetInterface() {
+  controller->disableOperation();
   ROS_WARN_STREAM("Reset marker position");
-  server->setPose(int_marker.name, tf2::toMsg(controller->getT_cur()));
+  _markerPose = int_marker.pose;  // tf2::toMsg(controller->getT_cur());
+  server->setPose(int_marker.name, _markerPose);
   server->applyChanges();
 
-  _markerPose = tf2::toMsg(controller->getT_cur());
   _flagSubInteractiveMarker = false;
   count_disable = 0;
   // controller->enablePoseFeedback();  // tentative
