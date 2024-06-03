@@ -9,16 +9,17 @@ void PoseTopicInterface::initInterface() {
   bool diablePoseFeedback;
   n.param("diable_pose_feedback", diablePoseFeedback, false);
 
-  if (diablePoseFeedback) {
-    ROS_WARN_STREAM("Pose feedback is disabled");
-    controller->disablePoseFeedback();
-  }
+  controller->enablePoseFeedback();  // tentative
+  // if (diablePoseFeedback) {
+  //   ROS_WARN_STREAM("Pose feedback is disabled");
+  //   controller->disablePoseFeedback();
+  // }
 
   controller->updatePosFilterCutoff(10.0);
 }
 
 void PoseTopicInterface::setSubscriber() {
-  getTopicAndFrameName("/pose", "user_frame");
+  getTopicAndFrameName("/cmd_pose", "user_frame");
   subPose = n.subscribe<geometry_msgs::Pose>(stateTopicName, 1, &PoseTopicInterface::cbPose, this, th);
 }
 

@@ -142,11 +142,13 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
 }
 
 bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
+  ROS_INFO_STREAM("Resetting...");
   for (int i = 0; i < nRobot; i++) {
     resetInterface(cartControllers[i]);
     cartControllers[i]->resetPose();
     cartControllers[i]->resetFt();
   }
+  ROS_INFO_STREAM("Restart!");
   return true;
 }
 

@@ -33,9 +33,9 @@
     <arg name="rviz_config" value="$(arg rviz_config)" />
   </include>
     
-  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 0 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'back')" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 3.141592 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'face')" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 -1.57079 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'right')"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="xr_frame_broadcaster" args="0 0 0 1.57079 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'left')"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="user_frame_broadcaster" args="0 0 0 0 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'back')" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="user_frame_broadcaster" args="0 0 0 3.141592 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'face')" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="user_frame_broadcaster" args="0 0 0 1.57079 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'right')"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="user_frame_broadcaster" args="0 0 0 -1.57079 0 0 world user_frame" if="$(eval user_frame_viewpoint == 'left')"/>
 
 </launch>
