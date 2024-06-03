@@ -18,9 +18,12 @@ class MarkerInterface : public Interface {
   double _markerDt;
   ros::Time t_prev;
 
+  bool subFirst = false;
+
   std::mutex mtx_marker;
 
   bool _flagSubInteractiveMarker = false;
+  int count_disable = 0;
 
 public:
   using Interface::Interface;

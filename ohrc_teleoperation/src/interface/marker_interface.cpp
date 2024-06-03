@@ -4,7 +4,6 @@ void MarkerInterface::initInterface() {
   server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eef_marker"));
   configMarker();
 
-  // Kalman kf(3);
   controller->updatePosFilterCutoff(10.0);
 }
 
@@ -69,18 +68,27 @@ void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarke
 
 void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
   geometry_msgs::Pose markerPose;
-  // controller->enableOperation();
   double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_marker);
     if (!_flagSubInteractiveMarker) {
-      // controller->disableOperation();
+      count_disable++;
+    } else {
+      subFirst = true;
+      count_disable = 0;
+    }
+
+    if (count_disable * dt > 0.5) {  // disable operation after 0.5 s
+      controller->disableOperation();
+      if (subFirst)
+        pose = prevPoses;
       return;
     }
-    // _flagSubInteractiveMarker[controller->getIndex()] = false;
+
     markerPose = _markerPose;
-    // markerDt = _markerDt[controller->getIndex()];
+
     controller->enableOperation();
+    _flagSubInteractiveMarker = false;
   }
 
   tf2::fromMsg(markerPose, pose);
@@ -100,4 +108,5 @@ void MarkerInterface::resetInterface() {
 
   _markerPose = int_marker.pose;
   _flagSubInteractiveMarker = false;
+  count_disable = 0;
 }
