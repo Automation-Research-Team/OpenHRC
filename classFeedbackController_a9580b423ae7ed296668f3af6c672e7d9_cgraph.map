@@ -1,4 +1,4 @@
-<map id="FeedbackController::PIControl" name="FeedbackController::PIControl">
+<map id="FeedbackController::adaptivePIControl" name="FeedbackController::adaptivePIControl">
 <area shape="rect" id="node1" title=" " alt="" coords="5,5,153,47"/>
 <area shape="rect" id="node2" href="$feedback__controller_8cpp.html#ae57e62396ab651373824382e9b3bba28" title=" " alt="" coords="201,13,324,39"/>
 </map>

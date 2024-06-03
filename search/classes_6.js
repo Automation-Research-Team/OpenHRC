@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['jointtrajectorycontroller_871',['JointTrajectoryController',['../classJointTrajectoryController.html',1,'']]],
-  ['joytopicinterface_872',['JoyTopicInterface',['../classJoyTopicInterface.html',1,'']]]
+  ['jointtrajectorycontroller_885',['JointTrajectoryController',['../classJointTrajectoryController.html',1,'']]],
+  ['joytopicinterface_886',['JoyTopicInterface',['../classJoyTopicInterface.html',1,'']]]
 ];

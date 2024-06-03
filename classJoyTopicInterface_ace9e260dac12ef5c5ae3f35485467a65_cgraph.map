@@ -1,6 +1,7 @@
 <map id="JoyTopicInterface::initInterface" name="JoyTopicInterface::initInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,147,47"/>
-<area shape="rect" id="node2" href="$classTwistTopicInterface.html#a475f16d975a95ff6df33ac655afd184b" title=" " alt="" coords="195,5,341,47"/>
-<area shape="rect" id="node3" href="$classTwistTopicInterface.html#aecccca8d5519f0af736a75e18cfaeae6" title=" " alt="" coords="389,5,536,47"/>
-<area shape="rect" id="node4" href="$classTwistTopicInterface.html#a1257c0413e2258d023c56d0d250a9fa8" title=" " alt="" coords="584,5,731,47"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,35,147,76"/>
+<area shape="rect" id="node2" href="$classTwistTopicInterface.html#a475f16d975a95ff6df33ac655afd184b" title=" " alt="" coords="195,35,341,76"/>
+<area shape="rect" id="node3" href="$classTwistTopicInterface.html#aecccca8d5519f0af736a75e18cfaeae6" title=" " alt="" coords="389,35,536,76"/>
+<area shape="rect" id="node4" href="$classTwistTopicInterface.html#a1257c0413e2258d023c56d0d250a9fa8" title=" " alt="" coords="634,5,781,47"/>
+<area shape="rect" id="node5" href="$classInterface.html#a42a94c03ef215146781dea78b23deb10" title=" " alt="" coords="584,71,831,98"/>
 </map>

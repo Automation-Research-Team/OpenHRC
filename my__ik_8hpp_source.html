@@ -131,7 +131,7 @@ $(function() {
 <div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#ab401f8a1d4265afdb77928489f77c77f">   60</a></span>&#160;  std::vector&lt;int&gt; <a class="code" href="classMyIK_1_1MyIK.html#ab401f8a1d4265afdb77928489f77c77f">idxSegJnt</a>;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="comment">// OsqpEigen::Solver qpSolver;</span></div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#ac8b97ff5fd67201139779b6ab984a5a2">   63</a></span>&#160;  <span class="keywordtype">bool</span> poseFeedbackDisabled = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#ac8b97ff5fd67201139779b6ab984a5a2">   63</a></span>&#160;  <span class="keywordtype">bool</span> poseFeedbackDisabled = <span class="keyword">false</span>;  <span class="comment">// no longer used</span></div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keywordtype">void</span> initializeSingleRobot(<span class="keyword">const</span> KDL::Chain&amp; chain);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
@@ -291,13 +291,13 @@ $(function() {
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keywordflow">return</span> this-&gt;idxSegJnt;</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;  }</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
-<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#a6615be4e119742411db5d7a44e09ffe1">  223</a></span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classMyIK_1_1MyIK.html#a6615be4e119742411db5d7a44e09ffe1">enablePoseFeedback</a>() {</div>
+<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#a6615be4e119742411db5d7a44e09ffe1">  223</a></span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classMyIK_1_1MyIK.html#a6615be4e119742411db5d7a44e09ffe1">enablePoseFeedback</a>() {  <span class="comment">// no longer used</span></div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    this-&gt;poseFeedbackDisabled = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;  }</div>
-<div class="line"><a name="l00226"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#a55dd8c4c46f7f449d264daf03756dcb6">  226</a></span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classMyIK_1_1MyIK.html#a55dd8c4c46f7f449d264daf03756dcb6">disablePoseFeedback</a>() {</div>
+<div class="line"><a name="l00226"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#a55dd8c4c46f7f449d264daf03756dcb6">  226</a></span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classMyIK_1_1MyIK.html#a55dd8c4c46f7f449d264daf03756dcb6">disablePoseFeedback</a>() {  <span class="comment">// no longer used</span></div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    this-&gt;poseFeedbackDisabled = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;  }</div>
-<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#a5418c475782ba3d9b22854bff2dab3a7">  229</a></span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classMyIK_1_1MyIK.html#a5418c475782ba3d9b22854bff2dab3a7">getPoseFeedbackDisabled</a>() {</div>
+<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="classMyIK_1_1MyIK.html#a5418c475782ba3d9b22854bff2dab3a7">  229</a></span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classMyIK_1_1MyIK.html#a5418c475782ba3d9b22854bff2dab3a7">getPoseFeedbackDisabled</a>() {  <span class="comment">// no longer used</span></div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keywordflow">return</span> this-&gt;poseFeedbackDisabled;</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  }</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>

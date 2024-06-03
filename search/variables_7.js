@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['gain_5fh_1422',['gain_h',['../classJoyTopicInterface.html#ac4ba7a9bef380ab0c4142327b1bde95d',1,'JoyTopicInterface']]],
-  ['gain_5fr_1423',['gain_r',['../classJoyTopicInterface.html#a81b39ec9ce5a5ced89e8698321de9819',1,'JoyTopicInterface']]]
+  ['gain_5fh_1449',['gain_h',['../classJoyTopicInterface.html#ac4ba7a9bef380ab0c4142327b1bde95d',1,'JoyTopicInterface']]],
+  ['gain_5fr_1450',['gain_r',['../classJoyTopicInterface.html#a81b39ec9ce5a5ced89e8698321de9819',1,'JoyTopicInterface']]]
 ];

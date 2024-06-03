@@ -1,4 +1,6 @@
 <map id="MarkerInterface" name="MarkerInterface">
-<area shape="rect" id="node1" title=" " alt="" coords="5,80,131,107"/>
-<area shape="rect" id="node2" href="$classInterface.html" title=" " alt="" coords="28,5,108,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="66,80,191,107"/>
+<area shape="rect" id="node3" href="$classSwitchingInterface.html" title=" " alt="" coords="9,155,248,211"/>
+<area shape="rect" id="node2" href="$classInterface.html" title=" " alt="" coords="89,5,169,32"/>
+<area shape="rect" id="node4" href="$classMarkerTeleoperationCartTrajectory.html" title=" " alt="" coords="5,259,252,285"/>
 </map>

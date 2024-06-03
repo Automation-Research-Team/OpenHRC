@@ -1,19 +1,21 @@
 <map id="Interface" name="Interface">
 <area shape="rect" id="node1" title=" " alt="" coords="5,309,85,336"/>
 <area shape="rect" id="node2" href="$classAdmittanceController.html" title=" " alt="" coords="142,5,303,32"/>
-<area shape="rect" id="node3" href="$classCartTrajectoryController.html" title=" " alt="" coords="134,56,311,83"/>
-<area shape="rect" id="node4" href="$classDmpController.html" title=" " alt="" coords="164,107,281,133"/>
-<area shape="rect" id="node5" href="$classFeedbackController.html" title=" " alt="" coords="149,157,297,184"/>
-<area shape="rect" id="node6" href="$classImpedanceController.html" title=" " alt="" coords="143,208,302,235"/>
-<area shape="rect" id="node8" href="$classJointTrajectoryController.html" title=" " alt="" coords="133,259,312,285"/>
-<area shape="rect" id="node9" href="$classMarkerInterface.html" title=" " alt="" coords="160,309,285,336"/>
-<area shape="rect" id="node10" href="$classMoveEndEffector.html" title=" " alt="" coords="157,360,289,387"/>
-<area shape="rect" id="node11" href="$classPoseTopicInterface.html" title=" " alt="" coords="151,411,295,437"/>
-<area shape="rect" id="node12" href="$classStateTopicInterface.html" title=" " alt="" coords="149,461,296,488"/>
-<area shape="rect" id="node16" href="$classTwistTopicInterface.html" title=" " alt="" coords="149,512,296,539"/>
-<area shape="rect" id="node7" href="$classCartTrajectoryImpedanceController.html" title=" " alt="" coords="360,208,609,235"/>
-<area shape="rect" id="node13" href="$classOmegaInterface.html" title=" " alt="" coords="421,411,548,437"/>
-<area shape="rect" id="node14" href="$classXrBodyInterface.html" title=" " alt="" coords="421,461,548,488"/>
-<area shape="rect" id="node15" href="$classK4abtBodyInterface.html" title=" " alt="" coords="657,461,808,488"/>
-<area shape="rect" id="node17" href="$classJoyTopicInterface.html" title=" " alt="" coords="418,512,551,539"/>
+<area shape="rect" id="node3" href="$classCartTrajectoryController.html" title=" " alt="" coords="134,208,311,235"/>
+<area shape="rect" id="node6" href="$classDmpController.html" title=" " alt="" coords="164,107,281,133"/>
+<area shape="rect" id="node7" href="$classFeedbackController.html" title=" " alt="" coords="149,157,297,184"/>
+<area shape="rect" id="node8" href="$classImpedanceController.html" title=" " alt="" coords="143,309,302,336"/>
+<area shape="rect" id="node10" href="$classJointTrajectoryController.html" title=" " alt="" coords="133,259,312,285"/>
+<area shape="rect" id="node11" href="$classMarkerInterface.html" title=" " alt="" coords="160,56,285,83"/>
+<area shape="rect" id="node12" href="$classMoveEndEffector.html" title=" " alt="" coords="157,360,289,387"/>
+<area shape="rect" id="node13" href="$classPoseTopicInterface.html" title=" " alt="" coords="151,411,295,437"/>
+<area shape="rect" id="node14" href="$classStateTopicInterface.html" title=" " alt="" coords="149,461,296,488"/>
+<area shape="rect" id="node18" href="$classTwistTopicInterface.html" title=" " alt="" coords="149,512,296,539"/>
+<area shape="rect" id="node4" href="$classSwitchingInterface.html" title=" " alt="" coords="365,117,604,173"/>
+<area shape="rect" id="node5" href="$classMarkerTeleoperationCartTrajectory.html" title=" " alt="" coords="657,132,904,159"/>
+<area shape="rect" id="node9" href="$classCartTrajectoryImpedanceController.html" title=" " alt="" coords="360,309,609,336"/>
+<area shape="rect" id="node15" href="$classOmegaInterface.html" title=" " alt="" coords="421,461,548,488"/>
+<area shape="rect" id="node16" href="$classXrBodyInterface.html" title=" " alt="" coords="421,411,548,437"/>
+<area shape="rect" id="node17" href="$classK4abtBodyInterface.html" title=" " alt="" coords="705,411,856,437"/>
+<area shape="rect" id="node19" href="$classJoyTopicInterface.html" title=" " alt="" coords="418,512,551,539"/>
 </map>

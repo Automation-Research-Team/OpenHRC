@@ -148,6 +148,8 @@ Variables</h2></td></tr>
 <tr class="separator:ad5e0dbd36f0d71fce9b00b7f991b2f38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea15c74b455bc3549a6f689b933d9c85"><td class="memItemLeft" align="right" valign="top">geometry_msgs::WrenchStamped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ft__filter_8cpp.html#aea15c74b455bc3549a6f689b933d9c85">raw_</a></td></tr>
 <tr class="separator:aea15c74b455bc3549a6f689b933d9c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f927d49068d699dc0d16de50560e070"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ft__filter_8cpp.html#a0f927d49068d699dc0d16de50560e070">reseted</a> = false</td></tr>
+<tr class="separator:a0f927d49068d699dc0d16de50560e070"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a7e32e936446469f743c114101b99ea5a"></a>
@@ -166,11 +168,11 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00022">22</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00024">24</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00020">raw_</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -209,9 +211,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00050">50</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00060">60</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00022">cbForce()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00015">count</a>, <a class="el" href="Wrench_8h_source.html#l00064">geometry_msgs_utility::Wrench::paramLPF::cutoff_freq</a>, <a class="el" href="Wrench_8h_source.html#l00046">geometry_msgs_utility::paramDeadZone::force_lower</a>, <a class="el" href="Wrench_8h_source.html#l00045">geometry_msgs_utility::paramDeadZone::force_upper</a>, <a class="el" href="ft__filter_8cpp_source.html#l00012">forceLpf</a>, <a class="el" href="ft__filter_8cpp_source.html#l00012">forceLpf_</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>, <a class="el" href="ft__filter_8cpp_source.html#l00016">nMax</a>, <a class="el" href="ft__filter_8cpp_source.html#l00017">offset</a>, <a class="el" href="Wrench_8h_source.html#l00063">geometry_msgs_utility::Wrench::paramLPF::order</a>, <a class="el" href="ft__filter_8cpp_source.html#l00013">pub</a>, <a class="el" href="ft__filter_8cpp_source.html#l00013">pub_cnt</a>, <a class="el" href="ft__filter_8cpp_source.html#l00020">raw_</a>, <a class="el" href="ft__filter_8cpp_source.html#l00042">reset_offset()</a>, <a class="el" href="Wrench_8h_source.html#l00065">geometry_msgs_utility::Wrench::paramLPF::sampling_freq</a>, <a class="el" href="Wrench_8h_source.html#l00030">tf2::toMsg()</a>, <a class="el" href="Wrench_8h_source.html#l00048">geometry_msgs_utility::paramDeadZone::torque_lower</a>, and <a class="el" href="Wrench_8h_source.html#l00047">geometry_msgs_utility::paramDeadZone::torque_upper</a>.</p>
+<p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00024">cbForce()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00015">count</a>, <a class="el" href="Wrench_8h_source.html#l00064">geometry_msgs_utility::Wrench::paramLPF::cutoff_freq</a>, <a class="el" href="Wrench_8h_source.html#l00046">geometry_msgs_utility::paramDeadZone::force_lower</a>, <a class="el" href="Wrench_8h_source.html#l00045">geometry_msgs_utility::paramDeadZone::force_upper</a>, <a class="el" href="ft__filter_8cpp_source.html#l00012">forceLpf</a>, <a class="el" href="ft__filter_8cpp_source.html#l00012">forceLpf_</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>, <a class="el" href="ft__filter_8cpp_source.html#l00016">nMax</a>, <a class="el" href="ft__filter_8cpp_source.html#l00017">offset</a>, <a class="el" href="Wrench_8h_source.html#l00063">geometry_msgs_utility::Wrench::paramLPF::order</a>, <a class="el" href="ft__filter_8cpp_source.html#l00013">pub</a>, <a class="el" href="ft__filter_8cpp_source.html#l00013">pub_cnt</a>, <a class="el" href="ft__filter_8cpp_source.html#l00020">raw_</a>, <a class="el" href="ft__filter_8cpp_source.html#l00044">reset_offset()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00022">reseted</a>, <a class="el" href="Wrench_8h_source.html#l00065">geometry_msgs_utility::Wrench::paramLPF::sampling_freq</a>, <a class="el" href="Wrench_8h_source.html#l00030">tf2::toMsg()</a>, <a class="el" href="Wrench_8h_source.html#l00048">geometry_msgs_utility::paramDeadZone::torque_lower</a>, and <a class="el" href="Wrench_8h_source.html#l00047">geometry_msgs_utility::paramDeadZone::torque_upper</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -253,11 +255,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00042">42</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00044">44</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00015">count</a>, <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00017">offset</a>.</p>
+<p class="reference">References <a class="el" href="ft__filter_8cpp_source.html#l00015">count</a>, <a class="el" href="ft__filter_8cpp_source.html#l00019">mtx</a>, <a class="el" href="ft__filter_8cpp_source.html#l00017">offset</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00022">reseted</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -285,7 +287,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00015">15</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00808">MyIK::MyIK::addSelfCollisionAvoidance()</a>, <a class="el" href="multi__cart__controller_8cpp_source.html#l00316">MultiCartController::control()</a>, <a class="el" href="math__utility_8h_source.html#l00026">math_utility::inConvex()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00042">reset_offset()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l00808">MyIK::MyIK::addSelfCollisionAvoidance()</a>, <a class="el" href="multi__cart__controller_8cpp_source.html#l00317">MultiCartController::control()</a>, <a class="el" href="math__utility_8h_source.html#l00026">math_utility::inConvex()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00044">reset_offset()</a>.</p>
 
 </div>
 </div>
@@ -303,7 +305,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00012">12</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 
 </div>
 </div>
@@ -321,7 +323,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00012">12</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 
 </div>
 </div>
@@ -339,7 +341,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00019">19</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00022">cbForce()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00036">subscriber_utility::checkSubTopic()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00010">subscriber_utility::checkTopic()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00310">CartController::getForceEef()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00042">reset_offset()</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00331">CartController::setDesired()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00024">cbForce()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00036">subscriber_utility::checkSubTopic()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00010">subscriber_utility::checkTopic()</a>, <a class="el" href="cart__controller_8hpp_source.html#l00309">CartController::getForceEef()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>, <a class="el" href="ft__filter_8cpp_source.html#l00044">reset_offset()</a>, and <a class="el" href="cart__controller_8hpp_source.html#l00330">CartController::setDesired()</a>.</p>
 
 </div>
 </div>
@@ -357,7 +359,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00016">16</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 
 </div>
 </div>
@@ -375,7 +377,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00017">17</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00042">reset_offset()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00044">reset_offset()</a>.</p>
 
 </div>
 </div>
@@ -393,7 +395,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00013">13</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 
 </div>
 </div>
@@ -411,7 +413,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00013">13</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
 
 </div>
 </div>
@@ -429,7 +431,25 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00020">20</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00022">cbForce()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00050">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00024">cbForce()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>.</p>
+
+</div>
+</div>
+<a id="a0f927d49068d699dc0d16de50560e070"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f927d49068d699dc0d16de50560e070">&#9670;&nbsp;</a></span>reseted</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool reseted = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ft__filter_8cpp_source.html#l00022">22</a> of file <a class="el" href="ft__filter_8cpp_source.html">ft_filter.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ft__filter_8cpp_source.html#l00060">main()</a>, and <a class="el" href="ft__filter_8cpp_source.html#l00044">reset_offset()</a>.</p>
 
 </div>
 </div>

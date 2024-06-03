@@ -1,0 +1,15 @@
+<map id="ohrc_shared_control" name="ohrc_shared_control">
+<area shape="rect" id="node2" href="dir_732ca2b2f89141cce1f43139f8a02a62.html" title="include" alt="" coords="244,123,316,171"/>
+<area shape="rect" id="node4" href="dir_64f159562d18b18e5366f22b862db572.html" title="ohrc_teleoperation" alt="" coords="5,219,149,267"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000034_000004.html" title="1" alt="" coords="142,211,151,226"/>
+<area shape="rect" id="node5" href="dir_9131f7f04a394d3f4cd7a167667ed556.html" title="ohrc_automation" alt="" coords="174,219,306,267"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000034_000015.html" title="1" alt="" coords="260,198,269,213"/>
+<area shape="rect" id="node6" href="dir_8a8e962ebf9e57a2de69d7c853169529.html" title="ohrc_control" alt="" coords="241,315,343,363"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000034_000000.html" title="1" alt="" coords="314,294,323,308"/>
+<area shape="rect" id="node3" href="dir_ffd85fc973615181572001b48cdd6367.html" title="src" alt="" coords="244,27,316,75"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000033_000034.html" title="1" alt="" coords="284,97,293,112"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000033_000000.html" title="1" alt="" coords="325,297,334,312"/>
+<area shape="rect" id="edge7-headlabel" href="dir_000004_000000.html" title="14" alt="" coords="218,293,236,307"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000015_000000.html" title="10" alt="" coords="269,287,287,302"/>
+<area shape="rect" id="clust1" href="dir_f2ee0929842fe4f16c8447ff50fd6210.html" alt="" coords="233,16,505,181"/>
+</map>
