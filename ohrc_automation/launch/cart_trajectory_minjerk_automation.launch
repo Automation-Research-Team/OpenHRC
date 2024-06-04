@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot" default="ur5e" />
+  <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
+  <arg name="feedback_mode" default="PositionFeedback" />
+  <arg name="use_rviz" default="true" />
+
+  <include file="$(find ohrc_automation)/launch/ohrc_automation.xml">
+    <arg name="interface" value="cart_trajectory_minjerk" />
+
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="controller" value="$(arg controller)" />
+    <arg name="feedback_mode" value="$(arg feedback_mode)" />
+    <arg name="use_rviz" value="$(arg use_rviz)" />
+  </include>
+</launch>

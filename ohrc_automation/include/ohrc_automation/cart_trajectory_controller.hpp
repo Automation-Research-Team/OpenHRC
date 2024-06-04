@@ -7,18 +7,24 @@
 #include "ohrc_control/interface.hpp"
 
 class CartTrajectoryController : virtual public Interface {
-  Affine3d T_init ;
+  Affine3d T_init;
   int i = 0;
   bool start = true;
+
 protected:
   std::mutex mtx_cart;
   ros::Subscriber trjSubscriber;
+  bool relative = true;
 
   moveit_msgs::CartesianTrajectory _trj;
 
   void cbCartTrajectory(const moveit_msgs::CartesianTrajectory::ConstPtr& msg);
 
   virtual void setSubscriber();
+
+  virtual moveit_msgs::CartesianTrajectory interpolateTrajectory(const moveit_msgs::CartesianTrajectory& trj) {
+    return trj;
+  };
 
 public:
   using Interface::Interface;
