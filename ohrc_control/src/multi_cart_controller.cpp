@@ -47,10 +47,12 @@ MultiCartController::MultiCartController() {
   for (int i = 0; i < nRobot; i++) {
     // enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
 
-    if (cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam)  //(enbaleAdmittanceControl[i])
+    if (cartControllers[i]->getFtFound() && feedbackMode == FeedbackMode::Admittance)  // enableEefForceAdmittanceParam)  //(enbaleAdmittanceControl[i])
       baseControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
-    else
-      baseControllers[i] = std::make_shared<FeedbackController>(cartControllers[i]);
+    else if (feedbackMode == FeedbackMode::PositionFeedback)
+      baseControllers[i] = std::make_shared<PositionFeedbackController>(cartControllers[i]);
+    else if (feedbackMode == FeedbackMode::HybridFeedback)
+      baseControllers[i] = std::make_shared<HybridFeedbackController>(cartControllers[i]);
 
     cartControllers[i]->disablePoseFeedback();  // TODO: Pose feedback would be always enable. original feedback code can be removed.
   }
@@ -132,11 +134,13 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
     n.setParam("date", date);
   }
 
-  n.param("enableEefForceAdmittance", enableEefForceAdmittanceParam, false);
-  if (enableEefForceAdmittanceParam)
-    ROS_INFO_STREAM("enableEefForceAdmittance: " << std::boolalpha << enableEefForceAdmittanceParam);
-  else
-    ROS_INFO_STREAM("enableEefForceAdmittance is " << std::boolalpha << enableEefForceAdmittanceParam << ", so feedback controller is used instead.");
+  // n.param("enableEefForceAdmittance", enableEefForceAdmittanceParam, false);
+  // if (enableEefForceAdmittanceParam)
+  //   ROS_INFO_STREAM("enableEefForceAdmittance: " << std::boolalpha << enableEefForceAdmittanceParam);
+  // else
+  //   ROS_INFO_STREAM("enableEefForceAdmittance is " << std::boolalpha << enableEefForceAdmittanceParam << ", so feedback controller is used instead.");
+
+  feedbackMode = this->getEnumParam("feedback_mode", FeedbackMode::None, "PositionFeedback", n);
 
   return true;
 }

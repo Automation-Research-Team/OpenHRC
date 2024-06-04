@@ -2,7 +2,7 @@
 <launch>
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
-  <arg name="enableEefForceAdmittance" default="false" />
+  <arg name="feedback_mode" default="PositionFeedback" />
   <arg name="use_rviz" default="true" />
 
   <include file="$(find ohrc_teleoperation)/launch/ohrc_teleoperation.xml">
@@ -10,7 +10,7 @@
 
     <arg name="robot" value="$(arg robot)" />
     <arg name="controller" value="$(arg controller)" />
-    <arg name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
+    <arg name="feedback_mode" value="$(arg feedback_mode)" />
     <arg name="use_rviz" value="$(arg use_rviz)" />
   </include>
   

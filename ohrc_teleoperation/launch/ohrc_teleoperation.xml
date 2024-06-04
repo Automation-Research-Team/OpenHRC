@@ -3,7 +3,7 @@
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
   <arg name="interface" default="marker" />
-  <arg name="enableEefForceAdmittance" default="false" />
+  <arg name="feedback_mode" default="PositionFeedback" />
   <arg name="use_ft_filter" default="true" />
   <arg name="user_frame_viewpoint" default="back" />
 
@@ -21,7 +21,7 @@
     <arg name="robot" value="$(arg robot)" />
     <arg name="controller" value="$(arg controller)" />
     <arg name="interface" value="$(arg interface)" />
-    <arg name="enableEefForceAdmittance" value="$(arg enableEefForceAdmittance)" />
+    <arg name="feedback_mode" value="$(arg feedback_mode)" />
     <arg name="use_ft_filter" value="$(arg use_ft_filter)" />
 
     <arg name="hw_config" value="$(arg hw_config)" />

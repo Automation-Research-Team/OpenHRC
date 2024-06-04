@@ -520,9 +520,9 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
 
     tf::twistKDLToEigen(des_eff_vel[i], vs[i]);
 
-    if (!myIKs[i]->getPoseFeedbackDisabled()) {
-      vs[i] = vs[i] + kp.asDiagonal() * es[i];
-    }
+    // if (!myIKs[i]->getPoseFeedbackDisabled()) {
+    // vs[i] = vs[i] + kp.asDiagonal() * es[i];
+    // }
   }
 
   std::vector<MatrixXd> Js_(nRobot);  // augumented Jacobian matrices
