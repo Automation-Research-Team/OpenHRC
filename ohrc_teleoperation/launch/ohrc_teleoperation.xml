@@ -29,7 +29,7 @@
     <arg name="control_config" value="$(arg control_config)" />
     <arg name="interface_config" value="$(arg interface_config)" />
 
-    <arg name="use_rviz" value="true" />
+    <arg name="use_rviz" value="$(arg use_rviz)" />
     <arg name="rviz_config" value="$(arg rviz_config)" />
   </include>
     
