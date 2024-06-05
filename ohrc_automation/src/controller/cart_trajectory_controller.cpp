@@ -19,32 +19,43 @@ void CartTrajectoryController::cbCartTrajectory(const moveit_msgs::CartesianTraj
   if (trj.points[0].time_from_start.toSec() > dt) {  // trj does not include initial state
     moveit_msgs::CartesianTrajectoryPoint initalPoint;
     if (!relative)
-      initalPoint.point.pose = tf2::toMsg(T_init);
+      initalPoint.point.pose = tf2::toMsg(controller->getT_cur());
 
     trj.points.insert(trj.points.begin(), initalPoint);
   }
 
   _trj = this->interpolateTrajectory(trj);
+  _newTrj = true;
   // std::cout << "subscribed" << std::endl;
 }
 
 void CartTrajectoryController::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
   moveit_msgs::CartesianTrajectory trj;
+  bool newTrj = false;
   {
     std::lock_guard<std::mutex> lock(mtx_cart);
 
     if (_trj.points.empty())
       return;
     trj = _trj;
+    newTrj = _newTrj;
+    _newTrj = false;
   }
 
   static bool start = true;
   static ros::Time t_start;
+
+  if (newTrj)
+    start = true;
+
   if (start) {
     t_start = ros::Time::now();
     start = false;
+    T_init = controller->getT_cur();
     i = 0;
   }
+
+  double t = (ros::Time::now() - t_start).toSec();
 
   bool stop = false;
   if (i >= trj.points.size()) {
@@ -72,7 +83,7 @@ void CartTrajectoryController::updateTargetPose(KDL::Frame& pos, KDL::Twist& twi
   }
   //   std::cout << "i: " << i << std::endl;
 
-  if ((ros::Time::now() - t_start).toNSec() > trj.points[i].time_from_start.toNSec())
+  if (t > trj.points[i].time_from_start.toSec())
     i++;
 }
 

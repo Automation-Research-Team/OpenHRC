@@ -9,7 +9,7 @@
 class CartTrajectoryController : virtual public Interface {
   Affine3d T_init;
   int i = 0;
-  bool start = true;
+  bool start = true, _newTrj = false;
 
 protected:
   std::mutex mtx_cart;
