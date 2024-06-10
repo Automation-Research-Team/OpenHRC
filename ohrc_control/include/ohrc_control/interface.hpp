@@ -16,6 +16,7 @@ protected:
 
   std::string targetName;
   double targetDistance = 0.0;
+  VectorXd e;
 
   inline void reset() {
     controller->resetPose();
@@ -55,6 +56,10 @@ public:
 
   inline TaskState getTaskState() {
     return this->taskState;
+  }
+
+  inline VectorXd getTargetError() {
+    return this->e;
   }
 };
 

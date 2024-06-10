@@ -26,6 +26,8 @@ protected:
     return trj;
   };
 
+  virtual void modifyTrajectory(moveit_msgs::CartesianTrajectory& trj) {};
+
 public:
   using Interface::Interface;
   // CartTrajectoryController(std::shared_ptr<CartController> controller) : Interface(controller) {

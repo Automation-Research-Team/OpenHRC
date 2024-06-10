@@ -24,6 +24,8 @@ void CartTrajectoryController::cbCartTrajectory(const moveit_msgs::CartesianTraj
     trj.points.insert(trj.points.begin(), initalPoint);
   }
 
+  this->modifyTrajectory(trj);
+
   _trj = this->interpolateTrajectory(trj);
   _newTrj = true;
   // std::cout << "subscribed" << std::endl;
@@ -74,6 +76,15 @@ void CartTrajectoryController::updateTargetPose(KDL::Frame& pos, KDL::Twist& twi
 
   tf::transformEigenToKDL(target, pos);
   tf2::fromMsg(trj.points[i].point.velocity, twist);
+
+  Affine3d finalTarget;
+  tf2::fromMsg(trj.points[trj.points.size() - 1].point.pose, finalTarget);
+  if (relative) {
+    finalTarget.translation() = T_init.translation() + finalTarget.translation();
+    finalTarget.linear() = T_init.rotation() * finalTarget.rotation();
+  }
+  this->e = MyIK::getCartError(controller->getT_cur(), finalTarget);
+  // std::cout << e.transpose() << std::endl;
 
   if (stop) {
     controller->disableOperation();
