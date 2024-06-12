@@ -124,6 +124,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab5426b4e6f725ab1ba19d2216c779ea0 inherit pub_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a465997838eab36e878db60e0e41d297f inherit pub_methods_classInterface"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceohrc__control.html#aab3f81a28de15146701827cf94fa5c16">TaskState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a465997838eab36e878db60e0e41d297f">getTaskState</a> ()</td></tr>
 <tr class="separator:a465997838eab36e878db60e0e41d297f inherit pub_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4b58297d2b950096809dd29957b89fd inherit pub_methods_classInterface"><td class="memItemLeft" align="right" valign="top">VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#ad4b58297d2b950096809dd29957b89fd">getTargetError</a> ()</td></tr>
+<tr class="separator:ad4b58297d2b950096809dd29957b89fd inherit pub_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -196,6 +198,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:afb0e972fe59e4bf2642cb125a70822eb inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae995d6627070456a65c48bf73dbecb12 inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#ae995d6627070456a65c48bf73dbecb12">targetDistance</a> = 0.0</td></tr>
 <tr class="separator:ae995d6627070456a65c48bf73dbecb12 inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af848223944c0622257643ff282bf954e inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#af848223944c0622257643ff282bf954e">e</a></td></tr>
+<tr class="separator:af848223944c0622257643ff282bf954e inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f5798f6f5996cd74d4d6805672136c3 inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a2f5798f6f5996cd74d4d6805672136c3">stateTopicName</a> = &quot;/state&quot;</td></tr>
 <tr class="separator:a2f5798f6f5996cd74d4d6805672136c3 inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a198897a699bade0a0b23feb08357ef73 inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a198897a699bade0a0b23feb08357ef73">stateFrameId</a> = &quot;world&quot;</td></tr>
@@ -703,7 +707,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="impedance__controller_8cpp_source.html#l00183">183</a> of file <a class="el" href="impedance__controller_8cpp_source.html">impedance_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="impedance__controller_8hpp_source.html#l00015">nextTargetIdx</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00051">repeat</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00051">restEverytime</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00046">restPose</a>, <a class="el" href="interface_8hpp_source.html#l00045">Interface::targetIdx</a>, and <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>.</p>
+<p class="reference">References <a class="el" href="impedance__controller_8hpp_source.html#l00015">nextTargetIdx</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00051">repeat</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00051">restEverytime</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00046">restPose</a>, <a class="el" href="interface_8hpp_source.html#l00046">Interface::targetIdx</a>, and <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="impedance__controller_8cpp_source.html#l00207">updateImpedanceTarget()</a>.</p>
 <div class="dynheader">
@@ -884,7 +888,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="interface_8hpp_source.html#l00036">36</a> of file <a class="el" href="interface_8hpp_source.html">interface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="interface_8hpp_source.html#l00037">37</a> of file <a class="el" href="interface_8hpp_source.html">interface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1053,7 +1057,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="impedance__controller_8cpp_source.html#l00147">147</a> of file <a class="el" href="impedance__controller_8cpp_source.html">impedance_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="interface_8hpp_source.html#l00046">Interface::blocked</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00143">checkRestTargetReached()</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00139">checkTargetReached()</a>, <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00062">getTrialTime()</a>, <a class="el" href="interface_8hpp_source.html#l00045">Interface::nCompletedTask</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00044">RespawnReqPublisher</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00029">t_start</a>, <a class="el" href="interface_8hpp_source.html#l00045">Interface::targetIdx</a>, <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>, and <a class="el" href="impedance__controller_8hpp_source.html#l00048">timeLimit</a>.</p>
+<p class="reference">References <a class="el" href="interface_8hpp_source.html#l00047">Interface::blocked</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00143">checkRestTargetReached()</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00139">checkTargetReached()</a>, <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="Twist_8h_source.html#l00014">tf2::fromMsg()</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00062">getTrialTime()</a>, <a class="el" href="interface_8hpp_source.html#l00046">Interface::nCompletedTask</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00044">RespawnReqPublisher</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00029">t_start</a>, <a class="el" href="interface_8hpp_source.html#l00046">Interface::targetIdx</a>, <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>, and <a class="el" href="impedance__controller_8hpp_source.html#l00048">timeLimit</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="impedance__controller_8cpp_source.html#l00207">updateImpedanceTarget()</a>, and <a class="el" href="cart__trajectory__impedance__controller_8cpp_source.html#l00039">CartTrajectoryImpedanceController::updateImpedanceTarget()</a>.</p>
 <div class="dynheader">
@@ -1122,7 +1126,7 @@ Here is the caller graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="impedance__controller_8cpp_source.html#l00207">207</a> of file <a class="el" href="impedance__controller_8cpp_source.html">impedance_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="impedance__controller_8hpp_source.html#l00047">_targetPoses</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00013">_targetUpdated</a>, <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00183">getNextTarget()</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00043">mtx_imp</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00015">nextTargetIdx</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00046">restPose</a>, <a class="el" href="interface_8hpp_source.html#l00045">Interface::targetIdx</a>, <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00147">updataTaskState()</a>, and <a class="el" href="impedance__controller_8hpp_source.html#l00017">xd</a>.</p>
+<p class="reference">References <a class="el" href="impedance__controller_8hpp_source.html#l00047">_targetPoses</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00013">_targetUpdated</a>, <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00183">getNextTarget()</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00043">mtx_imp</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00015">nextTargetIdx</a>, <a class="el" href="impedance__controller_8hpp_source.html#l00046">restPose</a>, <a class="el" href="interface_8hpp_source.html#l00046">Interface::targetIdx</a>, <a class="el" href="interface_8hpp_source.html#l00015">Interface::taskState</a>, <a class="el" href="impedance__controller_8cpp_source.html#l00147">updataTaskState()</a>, and <a class="el" href="impedance__controller_8hpp_source.html#l00017">xd</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="impedance__controller_8cpp_source.html#l00233">updateTargetPose()</a>.</p>
 <div class="dynheader">

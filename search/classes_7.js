@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['k4abtbodyinterface_887',['K4abtBodyInterface',['../classK4abtBodyInterface.html',1,'']]],
-  ['kalman_888',['Kalman',['../classKalman.html',1,'']]]
+  ['jointtrajectorycontroller_903',['JointTrajectoryController',['../classJointTrajectoryController.html',1,'']]],
+  ['joytopicinterface_904',['JoyTopicInterface',['../classJoyTopicInterface.html',1,'']]]
 ];

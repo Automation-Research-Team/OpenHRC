@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['hand_1695',['Hand',['../classXrBodyInterface.html#a77c5f336127e95cf06202c9a3c852884',1,'XrBodyInterface']]],
-  ['haptictype_1696',['HapticType',['../classOmegaInterface.html#a2956ecdad03680aea78da663034eba67',1,'OmegaInterface']]]
+  ['feedbackmode_1726',['FeedbackMode',['../namespaceohrc__control.html#aa817d8385114f947d58a4a979eb5508a',1,'ohrc_control']]]
 ];

@@ -591,9 +591,9 @@ $(function() {
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
 <div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    tf::twistKDLToEigen(des_eff_vel[i], vs[i]);</div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160; </div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    <span class="keywordflow">if</span> (!myIKs[i]-&gt;getPoseFeedbackDisabled()) {</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;      vs[i] = vs[i] + kp.asDiagonal() * es[i];</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    }</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    <span class="comment">// if (!myIKs[i]-&gt;getPoseFeedbackDisabled()) {</span></div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;    <span class="comment">// vs[i] = vs[i] + kp.asDiagonal() * es[i];</span></div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    <span class="comment">// }</span></div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;  }</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160; </div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;  std::vector&lt;MatrixXd&gt; Js_(nRobot);  <span class="comment">// augumented Jacobian matrices</span></div>

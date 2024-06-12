@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['quatfromtwovectors_1240',['QuatFromTwoVectors',['../namespacemath__utility.html#abc3f2b9d267f8f3a38c2ff64d16a0e58',1,'math_utility']]]
+  ['quatfromtwovectors_1267',['QuatFromTwoVectors',['../namespacemath__utility.html#abc3f2b9d267f8f3a38c2ff64d16a0e58',1,'math_utility']]]
 ];

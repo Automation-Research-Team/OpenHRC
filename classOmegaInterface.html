@@ -117,6 +117,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab5426b4e6f725ab1ba19d2216c779ea0 inherit pub_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a465997838eab36e878db60e0e41d297f inherit pub_methods_classInterface"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceohrc__control.html#aab3f81a28de15146701827cf94fa5c16">TaskState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a465997838eab36e878db60e0e41d297f">getTaskState</a> ()</td></tr>
 <tr class="separator:a465997838eab36e878db60e0e41d297f inherit pub_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4b58297d2b950096809dd29957b89fd inherit pub_methods_classInterface"><td class="memItemLeft" align="right" valign="top">VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#ad4b58297d2b950096809dd29957b89fd">getTargetError</a> ()</td></tr>
+<tr class="separator:ad4b58297d2b950096809dd29957b89fd inherit pub_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
@@ -200,6 +202,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:afb0e972fe59e4bf2642cb125a70822eb inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae995d6627070456a65c48bf73dbecb12 inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#ae995d6627070456a65c48bf73dbecb12">targetDistance</a> = 0.0</td></tr>
 <tr class="separator:ae995d6627070456a65c48bf73dbecb12 inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af848223944c0622257643ff282bf954e inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#af848223944c0622257643ff282bf954e">e</a></td></tr>
+<tr class="separator:af848223944c0622257643ff282bf954e inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f5798f6f5996cd74d4d6805672136c3 inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a2f5798f6f5996cd74d4d6805672136c3">stateTopicName</a> = &quot;/state&quot;</td></tr>
 <tr class="separator:a2f5798f6f5996cd74d4d6805672136c3 inherit pro_attribs_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a198897a699bade0a0b23feb08357ef73 inherit pro_attribs_classInterface"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a198897a699bade0a0b23feb08357ef73">stateFrameId</a> = &quot;world&quot;</td></tr>
@@ -329,7 +333,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="omega__interface_8cpp_source.html#l00003">3</a> of file <a class="el" href="omega__interface_8cpp_source.html">omega_interface.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="classOmegaInterface.html#aee40cbdd301da8456c0062b44ca17201">hapticType</a>, <a class="el" href="state__topic__interface_8cpp_source.html#l00003">StateTopicInterface::initInterface()</a>, <a class="el" href="interface_8hpp_source.html#l00008">Interface::n</a>, <a class="el" href="omega__interface_8hpp_source.html#l00012">pubOmegaForce</a>, <a class="el" href="omega__interface_8hpp_source.html#l00012">pubOmegaForceVis</a>, <a class="el" href="interface_8hpp_source.html#l00026">Interface::stateFrameId</a>, and <a class="el" href="interface_8hpp_source.html#l00026">Interface::stateTopicName</a>.</p>
+<p class="reference">References <a class="el" href="interface_8hpp_source.html#l00011">Interface::controller</a>, <a class="el" href="classOmegaInterface.html#aee40cbdd301da8456c0062b44ca17201">hapticType</a>, <a class="el" href="state__topic__interface_8cpp_source.html#l00003">StateTopicInterface::initInterface()</a>, <a class="el" href="interface_8hpp_source.html#l00008">Interface::n</a>, <a class="el" href="omega__interface_8hpp_source.html#l00012">pubOmegaForce</a>, <a class="el" href="omega__interface_8hpp_source.html#l00012">pubOmegaForceVis</a>, <a class="el" href="interface_8hpp_source.html#l00027">Interface::stateFrameId</a>, and <a class="el" href="interface_8hpp_source.html#l00027">Interface::stateTopicName</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">

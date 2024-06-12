@@ -1,6 +1,7 @@
 <map id="CartTrajectoryController" name="CartTrajectoryController">
-<area shape="rect" id="node1" title=" " alt="" coords="40,80,217,107"/>
-<area shape="rect" id="node3" href="$classSwitchingInterface.html" title=" " alt="" coords="9,155,248,211"/>
-<area shape="rect" id="node2" href="$classInterface.html" title=" " alt="" coords="89,5,169,32"/>
-<area shape="rect" id="node4" href="$classMarkerTeleoperationCartTrajectory.html" title=" " alt="" coords="5,259,252,285"/>
+<area shape="rect" id="node1" title=" " alt="" coords="133,53,311,80"/>
+<area shape="rect" id="node3" href="$classSwitchingInterface.html" title=" " alt="" coords="359,5,597,61"/>
+<area shape="rect" id="node5" href="$classCartTrajectoryMinjerkController.html" title=" " alt="" coords="365,85,591,112"/>
+<area shape="rect" id="node2" href="$classInterface.html" title=" " alt="" coords="5,53,85,80"/>
+<area shape="rect" id="node4" href="$classMarkerTeleoperationCartTrajectory.html" title=" " alt="" coords="645,20,892,47"/>
 </map>

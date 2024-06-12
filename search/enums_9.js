@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['taskstate_1706',['TaskState',['../classOhrcAutomation.html#ac2d9ea8387e21945bd9cacd45cd8dbf3',1,'OhrcAutomation::TaskState()'],['../namespaceohrc__control.html#aab3f81a28de15146701827cf94fa5c16',1,'ohrc_control::TaskState()']]]
+  ['solvertype_1735',['SolverType',['../classForwardingController.html#a25d7a2dda5aacba2888a7065d758555d',1,'ForwardingController::SolverType()'],['../namespaceohrc__control.html#a2d12773e71cf17b927629d7bfb0f270b',1,'ohrc_control::SolverType()']]],
+  ['solvetype_1736',['SolveType',['../namespaceMyIK.html#abbe218e48e3f81fe49dac68bb421ff24',1,'MyIK']]],
+  ['state_1737',['State',['../classMoveEndEffector.html#a1c7d5fc1b52e5c4551d98a7c2803b28b',1,'MoveEndEffector']]]
 ];
