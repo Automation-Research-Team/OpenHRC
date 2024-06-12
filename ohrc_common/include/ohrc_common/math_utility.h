@@ -9,17 +9,17 @@
 
 namespace math_utility {
 
-inline double sigmoid(double x, double gain) {
-  double y = 1.0 / (1.0 + pow(M_E, -gain * x));
+// y = k / (1 + e^(-a*(x-x0)))+y0
+inline double sigmoid(double x, double a, double x0, double y0, double k) {
+  return k / (1.0 + std::exp(-a * (x - x0))) + y0;
+}
 
-  return y;
+inline double sigmoid(double x, double gain) {
+  return sigmoid(x, gain, 0.0, 0.0, 1.0);
 }
 
 inline double sigmoid(double x) {
-  double gain = 1.0;
-  double y = sigmoid(x, gain);
-
-  return y;
+  return sigmoid(x, 1.0);
 }
 
 // check a point in a convex area

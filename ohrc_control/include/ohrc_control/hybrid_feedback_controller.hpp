@@ -1,14 +1,17 @@
-#ifndef FEEDBACK_CONTROLLER_HPP
-#define FEEDBACK_CONTROLLER_HPP
+#ifndef HYBRID_FEEDBACK_CONTROLLER_HPP
+#define HYBRID_FEEDBACK_CONTROLLER_HPP
 
 #include "ohrc_control/interface.hpp"
 
-class FeedbackController : public virtual Interface {
+class HybridFeedbackController : public virtual Interface {
   VectorXd x, xd;
 
   VectorXd PIControl(const KDL::Frame& frame, const KDL::Frame& pose, const KDL::Twist& twist);
+  VectorXd PIControl(const VectorXd& e, const KDL::Twist& twist);
   VectorXd adaptivePIControl(const KDL::Frame& frame, const KDL::Frame& pose, const KDL::Twist& twist);
+  VectorXd adaptivePIControl(const VectorXd& e, const KDL::Twist& twist);
   VectorXd forceFeedbackControl(const KDL::Frame& frame, const KDL::Frame& pose, const VectorXd f);
+  VectorXd forceFeedbackControl(const VectorXd& e, const VectorXd f);
 
   std::vector<double> t0_f;
 
@@ -19,4 +22,4 @@ public:
   virtual void initInterface() override;
 };
 
-#endif  // FEEDBACK_CONTROLLER_HPP
+#endif  // HYBRID_FEEDBACK_CONTROLLER_HPP

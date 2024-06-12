@@ -2,20 +2,20 @@
 <launch>
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
-  <arg name="interface" default="marker" />
+  <arg name="interface" default="cart_trajectory" />
   <arg name="feedback_mode" default="PositionFeedback" />
   <arg name="use_ft_filter" default="true" />
 
   <arg name="hw_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
   <arg name="admittance_config" default="$(find ohrc_control)/config/admittance_config.yaml" />
   <arg name="control_config" default="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
-  <arg name="interface_config" default="$(find ohrc_teleoperation)/config/$(arg interface)_config.yaml" />
+  <arg name="interface_config" default="$(find ohrc_automation)/config/$(arg interface)_config.yaml" />
 
   <arg name="use_rviz" default="true" />
-  <arg name="rviz_config" default="$(find ohrc_teleoperation)/config/teleoperation.rviz" />
+  <arg name="rviz_config" default="$(find ohrc_automation)/config/automation.rviz" />
 
   <include file="$(find ohrc_control)/launch/ohrc_control.xml">
-    <arg name="app" value="shared_control" />
+    <arg name="app" value="automation" />
 
     <arg name="robot" value="$(arg robot)" />
     <arg name="controller" value="$(arg controller)" />
@@ -28,7 +28,7 @@
     <arg name="control_config" value="$(arg control_config)" />
     <arg name="interface_config" value="$(arg interface_config)" />
 
-    <arg name="use_rviz" value="true" />
+    <arg name="use_rviz" value="$(arg use_rviz)" />
     <arg name="rviz_config" value="$(arg rviz_config)" />
   </include>
 

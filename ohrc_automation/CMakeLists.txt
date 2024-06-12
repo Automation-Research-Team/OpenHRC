@@ -180,14 +180,23 @@ foreach(controller ${controllers})
 endforeach(controller)
 
 
-set(impedance_controllers
-  cart_trajectory
-)
+# set(impedance_controllers
+#   cart_trajectory
+# )
 
-foreach(controller ${impedance_controllers})
-  add_executable(${controller}_impedance_automation src/controller/${controller}_impedance_controller.cpp src/controller/${controller}_controller.cpp src/controller/impedance_controller.cpp src/app/${controller}_impedance_automation.cpp)
-  add_dependencies(${controller}_impedance_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${controller}_impedance_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators ${Boost_FILESYSTEM_LIBRARY})
+# foreach(controller ${impedance_controllers})
+#   add_executable(${controller}_impedance_automation src/controller/${controller}_impedance_controller.cpp src/controller/${controller}_controller.cpp src/controller/impedance_controller.cpp src/app/${controller}_impedance_automation.cpp)
+#   add_dependencies(${controller}_impedance_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#   target_link_libraries(${controller}_impedance_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators ${Boost_FILESYSTEM_LIBRARY})
+# endforeach(controller)
+
+set(cart_trajectory_controllers
+  minjerk
+)
+foreach(controller ${cart_trajectory_controllers})
+  add_executable(cart_trajectory_${controller}_automation src/controller/cart_trajectory_controller.cpp src/controller/cart_trajectory_${controller}_controller.cpp src/app/cart_trajectory_${controller}_automation.cpp)
+  add_dependencies(cart_trajectory_${controller}_automation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(cart_trajectory_${controller}_automation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum dmpbbo::dmp dmpbbo::dynamicalsystems dmpbbo::functionapproximators ${Boost_FILESYSTEM_LIBRARY})
 endforeach(controller)
 
 

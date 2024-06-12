@@ -2,16 +2,15 @@
 <launch>
   <arg name="robot" default="ur5e" />
   <arg name="controller" default="vel" /> <!-- vel or vel_trj or vel_pos -->
+  <arg name="feedback_mode" default="PositionFeedback" />
+  <arg name="use_rviz" default="true" />
 
-  <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_hw_config.yaml" />
+  <include file="$(find ohrc_automation)/launch/ohrc_automation.xml">
+    <arg name="interface" value="dmp" />
 
-  <node name="dmp_automation" pkg="ohrc_automation" type="dmp_automation"  respawn="false" output="screen">
-    <rosparam command="load" file="$(find ohrc_hw_config)/$(arg robot)/$(arg robot)_control_config_$(arg controller).yaml" />
-    <rosparam command="load" file="$(find ohrc_automation)/config/dmp_config.yaml" />
-    <param name="dmp_config_json" value="$(find ohrc_imitation_learning)/script/dmp_for_cpp.json"/> 
-    <!-- <param name="priority" value="$(arg priority)" /> -->
-  </node>
-
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ohrc_teleoperation)/config/teleoperation.rviz"/>
-
+    <arg name="robot" value="$(arg robot)" />
+    <arg name="controller" value="$(arg controller)" />
+    <arg name="feedback_mode" value="$(arg feedback_mode)" />
+    <arg name="use_rviz" value="$(arg use_rviz)" />
+  </include>
 </launch>

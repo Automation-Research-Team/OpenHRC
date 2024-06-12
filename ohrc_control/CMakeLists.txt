@@ -156,7 +156,8 @@ add_library(${PROJECT_NAME}   src/my_ik.cpp
                               src/multi_cart_controller.cpp 
                               src/forwarding_controller.cpp
                               src/admittance_controller.cpp
-                              src/feedback_controller.cpp
+                              src/position_feedback_controller.cpp
+                              src/hybrid_feedback_controller.cpp
 )
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${orocos_kdl_LIBRARIES} ${pkg_nlopt_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
