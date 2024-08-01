@@ -1,13 +1,13 @@
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/itadera/OpenHRC)
-[![ROS build workflow](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/itadera/OpenHRC/actions/workflows/build.yaml)
-![GitHub](https://img.shields.io/github/license/itadera/OpenHRC)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Automation-Research-Team/OpenHRC)
+[![ROS build workflow](https://github.com/Automation-Research-Team/OpenHRC/actions/workflows/build.yaml/badge.svg)](https://github.com/Automation-Research-Team/OpenHRC/actions/workflows/build.yaml)
+![GitHub](https://img.shields.io/github/license/Automation-Research-Team/OpenHRC)
 # OpenHRC
 #### Open Human-Robot Collaboration/Cooperation Library
 
 Aiming to enhance research on human-robot interaction, we develop this open ROS package for offering easy implementation of HRC software such as interaction and teleoperation.
 OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.
 
-[Documentation by Doxygen](https://itadera.github.io/OpenHRC/) is under construction.
+[Documentation by Doxygen](https://Automation-Research-Team.github.io/OpenHRC/) is under construction.
 
 ## Requirements
 OpenHRC has been developed and tested in the following environments:
@@ -31,7 +31,7 @@ In the following instruction, the catkin workspace directory is assumed to be `~
 ```bash
 $ mkdir -p ~/catkin_ws/src
 $ cd ~/catkin_ws/src
-$ git clone https://github.com/itadera/OpenHRC.git 
+$ git clone https://github.com/Automation-Research-Team/OpenHRC.git 
 
 ### Clone submodule sources
 $ cd ~/catkin_ws/src/OpenHRC
@@ -75,7 +75,7 @@ This package can be tested in a Docker container, which should work on Linux, Wi
 If you are using Linux (Ubuntu) or WSL2 on Windows, please run:
 ```bash
 $ sudo apt install -y curl
-$ curl -s https://raw.githubusercontent.com/itadera/OpenHRC/main/install-docker-rocker.sh | /bin/bash
+$ curl -s https://raw.githubusercontent.com/Automation-Research-Team/OpenHRC/main/install-docker-rocker.sh | /bin/bash
 $ sudo service docker start
 ```
 
@@ -95,7 +95,7 @@ The following commands are excuted inside of Docker Container.
 ```bash
 $ mkdir -p ~/catkin_ws/src
 $ cd ~/catkin_ws/src
-$ git clone https://github.com/itadera/OpenHRC.git 
+$ git clone https://github.com/Automation-Research-Team/OpenHRC.git 
 ```
 
 ### Build Docker Image
