@@ -13,3 +13,8 @@ jobs:
       - uses: DenverCoder1/doxygen-github-pages-action@v1.3.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
