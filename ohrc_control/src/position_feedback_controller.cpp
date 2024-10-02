@@ -10,7 +10,7 @@ void PositionFeedbackController::updateTargetPose(KDL::Frame& pose, KDL::Twist& 
   controller->getCartState(frame, vel);
 
   VectorXd f = controller->getForceEefVec();
-  VectorXd v(6);
+  VectorXd v = VectorXd::Zero(6);
 
   VectorXd e = MyIK::getCartError(frame, pose);
   VectorXd v_pi = this->PIControl(e, twist);
