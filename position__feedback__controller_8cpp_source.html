@@ -81,7 +81,7 @@ $(function() {
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  <a class="code" href="classInterface.html#a306f35687645ca1507596851194e5f0b">controller</a>-&gt;getCartState(frame, vel);</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  VectorXd f = <a class="code" href="classInterface.html#a306f35687645ca1507596851194e5f0b">controller</a>-&gt;getForceEefVec();</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  VectorXd v(6);</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  VectorXd v = VectorXd::Zero(6);</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  VectorXd <a class="code" href="classInterface.html#af848223944c0622257643ff282bf954e">e</a> = <a class="code" href="namespaceMyIK.html#a54117776f41d9fe29e17cb2c3798c346">MyIK::getCartError</a>(frame, pose);</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  VectorXd v_pi = this-&gt;<a class="code" href="classPositionFeedbackController.html#a835dd9cd952c5f73b980fa2ef0ed4ae8">PIControl</a>(e, twist);</div>
