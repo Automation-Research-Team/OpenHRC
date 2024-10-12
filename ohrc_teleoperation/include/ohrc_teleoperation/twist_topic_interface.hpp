@@ -6,7 +6,7 @@
 
 class TwistTopicInterface : virtual public Interface {
   ros::Subscriber subTwist;
-  geometry_msgs::Twist _twist;
+  geometry_msgs::msg::Twist _twist;
 
   double k_trans = 1.0;
 
@@ -24,10 +24,10 @@ protected:
 
   std::string stateTopicName = "/cmd_vel", stateFrameId = "world";
 
-  void cbTwist(const geometry_msgs::Twist::ConstPtr& msg);
+  void cbTwist(const geometry_msgs::msg::Twist::ConstPtr& msg);
   // virtual void modifyTargetState(geometry?::State& state){};
   virtual void setSubscriber();
-  void setPoseFromTwistMsg(const geometry_msgs::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist);
+  void setPoseFromTwistMsg(const geometry_msgs::msg::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist);
 
 public:
   using Interface::Interface;

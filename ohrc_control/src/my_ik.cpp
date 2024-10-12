@@ -4,9 +4,9 @@ namespace MyIK {
 
 MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world, SolveType _type)
   : nRobot(1), initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
-  ros::NodeHandle nh("~");
+  // ros::NodeHandle nh("~");
 
-  urdf::Model robot_model = model_utility::getURDFModel(URDF_param, nh);
+  urdf::Model robot_model = model_utility::getURDFModel(URDF_param);
   chain = model_utility::getKDLChain(robot_model, base_link, tip_link);
 
   nJnt = chain.getNrOfJoints();
@@ -19,7 +19,8 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
   model_utility::getBounds(robot_model, chain, mergin, lb, ub, vb);
 
   if (!nh.param("self_collision_avoidance", enableSelfCollisionAvoidance, false)) {
-    ROS_WARN_STREAM("self_collision_avoidance is not configured. Default is False");
+    // ROS_WARN_STREAM("self_collision_avoidance is not configured. Default is False");
+    
   }
   initializeSingleRobot(chain);
 }
@@ -204,7 +205,7 @@ int MyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<
   q_out = q_init;
 
   if (!initialized) {
-    ROS_ERROR("IK was not properly initialized with a valid chain or limits. IK cannot proceed");
+    // ROS_ERROR("IK was not properly initialized with a valid chain or limits. IK cannot proceed");
     return -1;
   }
 
@@ -213,7 +214,7 @@ int MyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<
   std::vector<KDL::JntArray> q(nRobot);
 
   for (int i = 0; i < nRobot; i++) {
-    tf::transformKDLToEigen(p_in[i], Ts_d[i]);
+    tf2::transformKDLToEigen(p_in[i], Ts_d[i]);
 
     q[i].resize(myIKs[i]->getNJnt());
     q[i].data = myIKs[i]->getUpdatedJntLimit(q_init[i], artificial_lower_limits[i], artificial_upper_limits[i], dt);
@@ -231,12 +232,12 @@ int MyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<
   // boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration diff;
 
-  ros::Time start_time_ros = ros::Time::now();
-  while (ros::ok()) {
+  rclcpp::Time start_time_ros = node->get_clock()->now();
+  while (rclcpp::ok()) {
     int finished = 0;
 
     // diff = (boost::posix_time::microsec_clock::local_time() - start_time).total_nanoseconds() * 1.0e-9;
-    double diff = (ros::Time::now() - start_time_ros).toSec();
+    double diff = (node->get_clock()->now() - start_time_ros).seconds();
     double time_left = dt - diff;
     if (time_left < 0.)
       break;
@@ -249,7 +250,7 @@ int MyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<
 
       Affine3d T_d, T;
       T_d = Ts_d[i];
-      tf::transformKDLToEigen(p, T);
+      tf2::transformKDLToEigen(p, T);
 
       MatrixXd J = jac.data;
       VectorXd e = getCartError(T, T_d);
@@ -289,7 +290,7 @@ int MyIK::CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<
 
 void MyIK::updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, KDL::Twist& des_eff_vel, const VectorXd& e) {
   Matrix<double, 6, 1> v;
-  tf::twistKDLToEigen(des_eff_vel, v);
+  tf2::twistKDLToEigen(des_eff_vel, v);
 
   // std::cout << v.transpose() << std::endl;
   VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
@@ -298,7 +299,7 @@ void MyIK::updateVelP(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose
 
   // std::cout << v.transpose() << std::endl;
 
-  tf::twistEigenToKDL(v, des_eff_vel);
+  tf2::twistEigenToKDL(v, des_eff_vel);
 }
 
 int MyIK::CartToJntVel(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel, KDL::JntArray& dq_des, const double& dt) {
@@ -306,8 +307,8 @@ int MyIK::CartToJntVel(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_pos
   // int rc = CartToJntVel_pinv(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
   int rc = CartToJntVel_qp(q_cur, des_eff_pose, des_eff_vel, dq_des, dt);
   if (rc < 0)
-    ros::shutdown();
-  ROS_INFO_STREAM_THROTTLE(1.0, (boost::posix_time::microsec_clock::local_time() - start_time).total_nanoseconds() * 1.0e-9);
+    rclcpp::shutdown();
+  // ROS_INFO_STREAM_THROTTLE(1.0, (boost::posix_time::microsec_clock::local_time() - start_time).total_nanoseconds() * 1.0e-9);
 
   return rc;
 }
@@ -326,8 +327,8 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
   KDL::Frame p;
   JntToCart(q_cur, p);
 
-  tf::transformKDLToEigen(des_eff_pose, T_d);
-  tf::transformKDLToEigen(p, T);
+  tf2::transformKDLToEigen(des_eff_pose, T_d);
+  tf2::transformKDLToEigen(p, T);
   VectorXd e(6);
   e = getCartError(T, T_d);
   MatrixXd J_pinv, J_w_pinv;
@@ -339,15 +340,15 @@ int MyIK::CartToJntVel_pinv(const KDL::JntArray& q_cur, const KDL::Frame& des_ef
       (J.transpose() * W * J + gamma * MatrixXd::Identity(nJnt, nJnt)).inverse() * J.transpose() * W;  // weighted & Levenberg–Marquardt // TODO: should be solved with SVD method?
 
   Matrix<double, 6, 1> dp;
-  tf::twistKDLToEigen(des_eff_vel, dp);
+  tf2::twistKDLToEigen(des_eff_vel, dp);
   // dp.tail(3) = Vector3d::Zero();
 
   VectorXd kp = 1.0 * VectorXd::Ones(6);  // TODO: make this ros param
   J_pinv = (J.transpose() * J).inverse() * J.transpose();
   VectorXd dV = VectorXd::Zero(nJnt);
 
-  // static ros::Time t0 = ros::Time::now();
-  // double t = (ros::Time::now() - t0).toSec();
+  // static rclcpp::Time t0 = rclcpp::Time::now();
+  // double t = (rclcpp::Time::now() - t0).toSec();
 
   // dV(0) = -(q_cur.data(0) - (0.2 + 0.2 * sin(2.0 * M_PI * 0.1 * t)));
   static VectorXd q_init = q_cur.data;
@@ -406,8 +407,8 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Twist& des_eff_
   VectorXd dV = VectorXd::Zero(nJnt);
 
   // dV(0) = -(q_cur.data(0) - 0.);
-  // static ros::Time t0 = ros::Time::now();
-  // double t = (ros::Time::now() - t0).toSec();
+  // static rclcpp::Time t0 = rclcpp::Time::now();
+  // double t = (rclcpp::Time::now() - t0).toSec();
   // dV(0) = -(q_cur.data(0) - (0.3 * sin(2.0 * M_PI * 0.1 * t)));
 
   MatrixXd S = MatrixXd::Zero(1, nJnt);  // selection matrix
@@ -493,7 +494,7 @@ int MyIK::CartToJntVel_qp(const KDL::JntArray& q_cur, const KDL::Frame& des_eff_
 int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::vector<KDL::Frame>& des_eff_pose, const std::vector<KDL::Twist>& des_eff_vel,
                           std::vector<KDL::JntArray>& dq_des, const double& dt) {
   if (!initialized) {
-    ROS_ERROR("IK was not properly initialized with a valid chain or limits. IK cannot proceed");
+    // ROS_ERROR("IK was not properly initialized with a valid chain or limits. IK cannot proceed");
     return -1;
   }
 
@@ -514,11 +515,11 @@ int MyIK::CartToJntVel_qp(const std::vector<KDL::JntArray>& q_cur, const std::ve
     myIKs[i]->JntToCart(q_cur[i], p);
 
     Affine3d Ts_d, Ts;
-    tf::transformKDLToEigen(des_eff_pose[i], Ts_d);
-    tf::transformKDLToEigen(p, Ts);
+    tf2::transformKDLToEigen(des_eff_pose[i], Ts_d);
+    tf2::transformKDLToEigen(p, Ts);
     es[i] = getCartError(Ts, Ts_d);
 
-    tf::twistKDLToEigen(des_eff_vel[i], vs[i]);
+    tf2::twistKDLToEigen(des_eff_vel[i], vs[i]);
 
     // if (!myIKs[i]->getPoseFeedbackDisabled()) {
     // vs[i] = vs[i] + kp.asDiagonal() * es[i];
@@ -656,12 +657,12 @@ int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame&
   JntToCart(q_cur, p);
 
   Affine3d T_d, T;
-  tf::transformKDLToEigen(des_eff_pose, T_d);
-  tf::transformKDLToEigen(p, T);
+  tf2::transformKDLToEigen(des_eff_pose, T_d);
+  tf2::transformKDLToEigen(p, T);
   VectorXd e = getCartError(T, T_d);
 
   Matrix<double, 6, 1> v;
-  tf::twistKDLToEigen(des_eff_vel, v);
+  tf2::twistKDLToEigen(des_eff_vel, v);
 
   VectorXd kp = 3.0 * VectorXd::Ones(6);  // TODO: make this p gain as ros param
   v = v + kp.asDiagonal() * e;
@@ -675,8 +676,8 @@ int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame&
   VectorXd dV = VectorXd::Zero(nJnt);
 
   dV(0) = -(q_cur.data(0) - 0.);
-  // static ros::Time t0 = ros::Time::now();
-  // double t = (ros::Time::now() - t0).toSec();
+  // static rclcpp::Time t0 = rclcpp::Time::now();
+  // double t = (rclcpp::Time::now() - t0).toSec();
   // dV(0) = -(q_cur.data(0) - (0.3 * sin(2.0 * M_PI * 0.1 * t)));
 
   MatrixXd S = MatrixXd::Ones(1, nJnt);  // selection matrix
@@ -768,7 +769,7 @@ int MyIK::CartToJntVel_qp_manipOpt(const KDL::JntArray& q_cur, const KDL::Frame&
   return 1;
 }
 
-visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_cur) {
+visualization_msgs::msg::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_cur) {
   KDL::Jacobian jac(nJnt);
   JntToJac(q_cur, jac);
   MatrixXd J = jac.data.block(0, 0, 3, nJnt);
@@ -776,7 +777,7 @@ visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_c
   KDL::Frame p;
   JntToCart(q_cur, p);
   Affine3d T;
-  tf::transformKDLToEigen(p, T);
+  tf2::transformKDLToEigen(p, T);
 
   Eigen::JacobiSVD<MatrixXd> svd(J, Eigen::ComputeThinU | Eigen::ComputeThinV);
   VectorXd s = svd.singularValues();
@@ -788,12 +789,12 @@ visualization_msgs::Marker MyIK::getManipulabilityMarker(const KDL::JntArray q_c
 
   Quaterniond q = Quaterniond(Matrix3d(U)).normalized();
 
-  visualization_msgs::Marker manipuMarker;
+  visualization_msgs::msg::Marker manipuMarker;
   manipuMarker.header.frame_id = "test";
-  manipuMarker.header.stamp = ros::Time::now();
+  manipuMarker.header.stamp = node->get_clock()->now();// rclcpp::Time::now();
   manipuMarker.id = 0;
-  manipuMarker.type = visualization_msgs::Marker::SPHERE;
-  manipuMarker.action = visualization_msgs::Marker::ADD;
+  manipuMarker.type = visualization_msgs::msg::Marker::SPHERE;
+  manipuMarker.action = visualization_msgs::msg::Marker::ADD;
   manipuMarker.pose.position = tf2::toMsg(Vector3d(T.translation()));
   manipuMarker.pose.orientation = tf2::toMsg(q);
   manipuMarker.color.a = 0.5;  // Don't forget to set the alpha!
@@ -811,10 +812,10 @@ int MyIK::addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<doub
 
   // positon at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
   std::vector<Vector3d> p(nJnt + 2);
-  tf::vectorKDLToEigen(frame[0].p, p[0]);
+  tf2::vectorKDLToEigen(frame[0].p, p[0]);
   for (int i = 0; i < nJnt; i++)
-    tf::vectorKDLToEigen(frame[idxSegJnt[i]].p, p[i + 1]);
-  tf::vectorKDLToEigen(frame.back().p, p[nJnt + 1]);
+    tf2::vectorKDLToEigen(frame[idxSegJnt[i]].p, p[i + 1]);
+  tf2::vectorKDLToEigen(frame.back().p, p[nJnt + 1]);
 
   // Jacobian at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
   std::vector<KDL::Jacobian> J(nJnt + 2, KDL::Jacobian(nJnt));
@@ -847,7 +848,7 @@ int MyIK::addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<doub
       double d = d_vec.norm();
 
       if (d < di) {  // if the relative distance is smaller than influenced distance
-        ROS_INFO_STREAM("Collision Detected >> #" << i << " and #" << j);
+        // ROS_INFO_STREAM("Collision Detected >> #" << i << " and #" << j);
         A_ca.push_back((d_vec / d).transpose() * (J_end.block(0, 0, 3, nJnt) - J[i].data.block(0, 0, 3, nJnt)));
         lower_vel_limits_.push_back(-eta * (d - ds) / (di - ds));
         upper_vel_limits_.push_back(OsqpEigen::INFTY);
@@ -957,10 +958,10 @@ int MyIK::addCollisionAvoidance(const std::vector<KDL::JntArray>& q_cur, std::ve
 
     // positon at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)
     std::vector<Vector3d> p(nJnt + 2);
-    tf::vectorKDLToEigen(frame[0].p, p[0]);
+    tf2::vectorKDLToEigen(frame[0].p, p[0]);
     for (int j = 0; j < nJnt; j++)
-      tf::vectorKDLToEigen(frame[idxSegJnt[j]].p, p[j + 1]);
-    tf::vectorKDLToEigen(frame.back().p, p[nJnt + 1]);
+      tf2::vectorKDLToEigen(frame[idxSegJnt[j]].p, p[j + 1]);
+    tf2::vectorKDLToEigen(frame.back().p, p[nJnt + 1]);
     p_all[i] = p;
 
     // Jacobian at origin [0] + joints [1 ~ nJnt] +  eef [nJnt+1] (size nJnt+2)

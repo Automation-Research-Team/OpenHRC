@@ -1,20 +1,17 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(ohrc_msgs)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
+set(CMAKE_CXX_STANDARD 17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED
-    std_msgs
-    geometry_msgs
-    sensor_msgs
-    moveit_msgs
-    message_generation
-    message_runtime
-)
+find_package(rosidl_default_generators REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -50,22 +47,22 @@ find_package(catkin REQUIRED
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  State.msg
-  StateStamped.msg
-  Gripper.msg
-  Contact.msg
-  BodyState.msg
-  BodyPartState.msg
-)
+# add_message_files(
+#   FILES
+#   State.msg
+#   StateStamped.msg
+#   Gripper.msg
+#   Contact.msg
+#   BodyState.msg
+#   BodyPartState.msg
+# )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  GetTrajectories.srv
-#   Service2.srv
-)
+# add_service_files(
+#   FILES
+#   GetTrajectories.srv
+# #   Service2.srv
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -74,13 +71,24 @@ add_service_files(
 #   Action2.action
 # )
 
+
+set(msg_files
+  "msg/BodyPartState.msg"
+  "msg/BodyState.msg"
+  "msg/Contact.msg"
+  "msg/Gripper.msg"
+  "msg/HeadState.msg"
+  "msg/State.msg"
+  "msg/StateStamped.msg"
+)
+set(srv_files
+  # "srv/CalcTwoFloats.srv"
+)
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
-  geometry_msgs
-  sensor_msgs
-  moveit_msgs
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+  ${srv_files}
+  DEPENDENCIES std_msgs geometry_msgs
 )
 
 ################################################
@@ -112,12 +120,12 @@ generate_messages(
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+# catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ohrc_msgs
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
-)
+# )
 
 ###########
 ## Build ##
@@ -125,10 +133,10 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
+# include_directories(
 # include
 # ${catkin_INCLUDE_DIRS}
-)
+# )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -214,3 +222,4 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+ament_package()

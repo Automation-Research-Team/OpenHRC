@@ -21,27 +21,27 @@ Vector3::~Vector3() {
   //    delete _filter[i];
 }
 
-void Vector3::LPF(geometry_msgs::Vector3 raw_point, geometry_msgs::Vector3 &filtered_point) {
+void Vector3::LPF(geometry_msgs::msg::Vector3 raw_point, geometry_msgs::msg::Vector3 &filtered_point) {
   filtered_point.x = _filter[0]->filter(raw_point.x);
   filtered_point.y = _filter[1]->filter(raw_point.y);
   filtered_point.z = _filter[2]->filter(raw_point.z);
 }
 
-void Vector3::diff(geometry_msgs::Vector3 point, geometry_msgs::Vector3 &diff_point) {
-  static geometry_msgs::Vector3 old_point = point;
+void Vector3::diff(geometry_msgs::msg::Vector3 point, geometry_msgs::msg::Vector3 &diff_point) {
+  static geometry_msgs::msg::Vector3 old_point = point;
   diff_point.x = (point.x - old_point.x) / delta_t;
   diff_point.y = (point.y - old_point.y) / delta_t;
   diff_point.z = (point.z - old_point.z) / delta_t;
   old_point = point;
 }
 
-void Vector3::diff_LPF(geometry_msgs::Vector3 point, geometry_msgs::Vector3 &filtered_point) {
-  geometry_msgs::Vector3 diff_point;
+void Vector3::diff_LPF(geometry_msgs::msg::Vector3 point, geometry_msgs::msg::Vector3 &filtered_point) {
+  geometry_msgs::msg::Vector3 diff_point;
   diff(point, diff_point);
   LPF(diff_point, filtered_point);
 }
 
-double Vector3::dist(geometry_msgs::Vector3 point1, geometry_msgs::Vector3 point2) {
+double Vector3::dist(geometry_msgs::msg::Vector3 point1, geometry_msgs::msg::Vector3 point2) {
   return sqrt(pow(point1.x - point2.x, 2.0) + pow(point1.y - point2.y, 2.0) + pow(point1.z - point2.z, 2.0));
 }
 

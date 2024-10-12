@@ -9,8 +9,8 @@ void OmegaInterface::initInterface() {
   stateTopicName = "/omega_driver/" + omega + "/state";
   stateFrameId = "omega_link";
 
-  pubOmegaForce = n.advertise<geometry_msgs::Wrench>("/omega_driver/" + omega + "/cmd_force", 2);
-  pubOmegaForceVis = n.advertise<geometry_msgs::WrenchStamped>("cmd_force_vis", 2);
+  pubOmegaForce = n.advertise<geometry_msgs::msg::Wrench>("/omega_driver/" + omega + "/cmd_force", 2);
+  pubOmegaForceVis = n.advertise<geometry_msgs::msg::WrenchStamped>("cmd_force_vis", 2);
 
   hapticType = magic_enum::enum_cast<HapticType>(haptic).value_or(HapticType::None);
 
@@ -61,19 +61,19 @@ void OmegaInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& tar
   ft_feedback_vis.head(3) = T_cur.rotation() * ft_feedback_vis.head(3);
   ft_feedback_vis.tail(3) = T_cur.rotation() * ft_feedback_vis.tail(3);
   // ft_feedback[0] = 10.0;
-  geometry_msgs::WrenchStamped wrench_omega_vis;
-  wrench_omega_vis.header.stamp = ros::Time::now();
+  geometry_msgs::msg::WrenchStamped wrench_omega_vis;
+  wrench_omega_vis.header.stamp = rclcpp::Time::now();
   wrench_omega_vis.header.frame_id = controller->getRobotNs() + controller->getChainEnd();
   wrench_omega_vis.wrench = tf2::toMsg(ft_feedback_vis, wrench_omega_vis.wrench);
   pubOmegaForceVis.publish(wrench_omega_vis);
 
   ft_feedback.head(3) = T_state_base.rotation().transpose() * T_cur.rotation() * ft_feedback.head(3);
   ft_feedback.tail(3) = T_state_base.rotation().transpose() * T_cur.rotation() * ft_feedback.tail(3);
-  geometry_msgs::Wrench wrench_omega;
+  geometry_msgs::msg::Wrench wrench_omega;
   wrench_omega = tf2::toMsg(ft_feedback, wrench_omega);
 
   if (controller->getOperationEnable())
     pubOmegaForce.publish(wrench_omega);
   else
-    pubOmegaForce.publish(geometry_msgs::Wrench());
+    pubOmegaForce.publish(geometry_msgs::msg::Wrench());
 }

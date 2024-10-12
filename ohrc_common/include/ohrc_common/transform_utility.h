@@ -2,11 +2,12 @@
 #define TRANSFORMER_H
 
 // ros
-#include <geometry_msgs/PoseArray.h>
-#include <ros/ros.h>
+#include <geometry_msgs/msg/pose_array.hpp>
+// #include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 // tf2
-#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2_ros/transform_listener.h>
 
 #include <kdl/frames.hpp>
@@ -17,12 +18,20 @@ using namespace Eigen;
 
 class TransformUtility {
 protected:
-  tf2_ros::Buffer tfBuffer;
-  tf2_ros::TransformListener tfListener;
+  // tf2_ros::Buffer tfBuffer;
+  // tf2_ros::TransformListener tfListener;
+    std::shared_ptr<tf2_ros::TransformListener> tfListener{nullptr};
+  std::unique_ptr<tf2_ros::Buffer> tfBuffer;
   Affine3d Thandle_fp, Thandle_ft, Thandle_lidar, T_l_fp, T_h_fp, T_c_fp, T_color_depth;
 
 public:
-  TransformUtility(): tfListener(tfBuffer){};
+  TransformUtility(){
+    tfBuffer =
+      std::make_unique<tf2_ros::Buffer>(std::make_shared<rclcpp::Clock>(RCL_ROS_TIME));
+    tfListener =
+      std::make_shared<tf2_ros::TransformListener>(*tfBuffer);
+
+  };
 
   // (inline) transform velocity vector
   inline static MatrixXd transformVel(VectorXd vel, const Affine3d trans) {
@@ -58,19 +67,19 @@ public:
   }
 
   // get transform as Eigen::affine3d
-  inline Affine3d getTransform(const std::string& target, const std::string& source, const ros::Time& time, ros::Duration timeout) {
-    return tf2::transformToEigen(tfBuffer.lookupTransform(target, source, time, timeout));
+  inline Affine3d getTransform(const std::string& target, const std::string& source, const rclcpp::Time& time, rclcpp::Duration timeout) {
+    return tf2::transformToEigen(tfBuffer->lookupTransform(target, source, time, timeout));
   }
 
   // check if transform is possible
-  inline bool canTransform(const std::string& target, const std::string& source, const ros::Time& time, ros::Duration timeout) {
-    return tfBuffer.canTransform(target, source, time, timeout);
+  inline bool canTransform(const std::string& target, const std::string& source, const rclcpp::Time& time, rclcpp::Duration timeout) {
+    return tfBuffer->canTransform(target, source, time, timeout);
   }
 };
 
 namespace tf2 {
 
-inline void fromMsg(const geometry_msgs::Twist& msg, KDL::Twist& out) {
+inline void fromMsg(const geometry_msgs::msg::Twist& msg, KDL::Twist& out) {
   out.vel[0] = msg.linear.x;
   out.vel[1] = msg.linear.y;
   out.vel[2] = msg.linear.z;
@@ -79,7 +88,7 @@ inline void fromMsg(const geometry_msgs::Twist& msg, KDL::Twist& out) {
   out.rot[2] = msg.angular.z;
 }
 
-inline void fromMsg(const geometry_msgs::PoseArray& msg, std::vector<Affine3d>& Ts) {
+inline void fromMsg(const geometry_msgs::msg::PoseArray& msg, std::vector<Affine3d>& Ts) {
   Ts.resize(msg.poses.size());
   for (int i = 0; i < msg.poses.size(); i++)
     tf2::fromMsg(msg.poses[i], Ts[i]);

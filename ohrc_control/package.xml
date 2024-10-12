@@ -40,10 +40,10 @@
   <!--   <test_depend>gtest</test_depend> -->
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <exec_depend>roscpp</exec_depend>
+  <!-- <buildtool_depend>catkin</buildtool_depend> -->
+  <build_depend>rclcpp</build_depend>
+  <build_export_depend>rclcpp</build_export_depend>
+  <exec_depend>rclcpp</exec_depend>
 
   <depend>boost</depend>
   <depend>trac_ik_lib</depend>
@@ -62,25 +62,26 @@
   <depend>liborocos-kdl</depend>
   <depend>xacro</depend>
   <depend>libnlopt0</depend>
-  <depend>pr2_description</depend>
+  <!-- <depend>pr2_description</depend> -->
 
   <depend>interactive_markers</depend>
   <depend>tf2_kdl</depend>
   <depend>tf2_eigen</depend>
+  <depend>tf2_eigen_kdl</depend>
   <depend>std_msgs</depend>
-  <depend>eigen_conversions</depend>
-  <depend>ros_controllers</depend>
+  <depend>std_srvs</depend>
+  <!-- <depend>eigen_conversions</depend> -->
+  <depend>ros2_controllers</depend>
   <depend>trajectory_msgs</depend>
  
   <depend>ohrc_common</depend>
   <depend>ohrc_msgs</depend>
   
-  <depend>python3-catkin-tools</depend>
+  <!-- <depend>python3-catkin-tools</depend> -->
 
 
   <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
+<export>
+  <build_type>ament_cmake</build_type>
+</export>
 </package>

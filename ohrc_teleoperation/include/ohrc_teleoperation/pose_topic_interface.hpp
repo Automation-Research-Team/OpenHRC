@@ -27,7 +27,7 @@ protected:
   void cbPose(const geometry_msgs::Pose::ConstPtr& msg);
   // virtual void modifyTargetState(geometry?::State& state){};
   virtual void setSubscriber();
-  void setPoseFromTwistMsg(const geometry_msgs::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist);
+  void setPoseFromTwistMsg(const geometry_msgs::msg::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist);
 
 public:
   using Interface::Interface;

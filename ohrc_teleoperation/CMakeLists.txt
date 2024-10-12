@@ -7,14 +7,20 @@ add_compile_options(-std=c++17)
 # # Find catkin macros and libraries
 # # if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 # # is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  ohrc_control
-  ohrc_common
-  ohrc_msgs
+# find_package(catkin REQUIRED COMPONENTS
+#   roscpp
+#   ohrc_control
+#   ohrc_common
+#   ohrc_msgs
 
-  interactive_markers
-)
+#   interactive_markers
+# )
+
+find_package(ament_cmake REQUIRED)
+find_package(ohrc_control REQUIRED)
+find_package(ohrc_common REQUIRED)
+find_package(ohrc_msgs REQUIRED)
+find_package(interactive_markers REQUIRED)
 
 find_package(OsqpEigen REQUIRED)
 
@@ -108,12 +114,15 @@ find_package(magic_enum CONFIG REQUIRED)
 # # LIBRARIES: libraries you create in this project that dependent projects also need
 # # CATKIN_DEPENDS: catkin_packages dependent projects also need
 # # DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ohrc_teleoperation
-  CATKIN_DEPENDS roscpp ohrc_control ohrc_common ohrc_msgs
-  # DEPENDS system_lib
-)
+# catkin_package(
+#   INCLUDE_DIRS include
+#   LIBRARIES ohrc_teleoperation
+#   CATKIN_DEPENDS roscpp ohrc_control ohrc_common ohrc_msgs
+#   # DEPENDS system_lib
+# )
+ament_export_dependencies(ohrc_control ohrc_common ohrc_msgs)
+ament_export_include_directories(include)
+ament_export_libraries(ohrc_teleoperation)
 
 # ##########
 # # Build ##
@@ -123,7 +132,7 @@ catkin_package(
 # # Your package locations should be listed before other locations
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS}
+  # ${catkin_INCLUDE_DIRS}
 )
 
 # # Declare a C++ library
@@ -131,8 +140,8 @@ file(GLOB interface_list LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DIR}" "
 add_library(${PROJECT_NAME}
   ${interface_list}
 )
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} )
+target_link_libraries(${PROJECT_NAME}  OsqpEigen::OsqpEigen magic_enum::magic_enum)
 
 # # Add cmake target dependencies of the library
 # # as an example, code may need to be generated before libraries
@@ -160,57 +169,57 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} OsqpEigen::OsqpEigen m
 # )
 set(interfaces
   marker
-  state_topic
-  twist_topic
-  pose_topic
+  # state_topic
+  # twist_topic
+  # pose_topic
 )
 
 foreach(interface ${interfaces})
   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/app/${interface}_teleoperation.cpp)
-  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} )
+  target_link_libraries(${interface}_teleoperation OsqpEigen::OsqpEigen magic_enum::magic_enum)
 endforeach(interface)
 
-set(state_topic_interfaces
-  omega
-  xr_body
-)
+# set(state_topic_interfaces
+#   omega
+#   xr_body
+# )
 
-foreach(interface ${state_topic_interfaces})
-  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
-  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-endforeach(interface)
+# foreach(interface ${state_topic_interfaces})
+#   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
+#   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+# endforeach(interface)
 
-set(body_interfaces
-  k4abt_body
-)
+# set(body_interfaces
+#   k4abt_body
+# )
 
-foreach(interface ${body_interfaces})
-  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/interface/xr_body_interface.cpp src/app/${interface}_teleoperation.cpp)
-  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-endforeach(interface)
+# foreach(interface ${body_interfaces})
+#   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/interface/xr_body_interface.cpp src/app/${interface}_teleoperation.cpp)
+#   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+# endforeach(interface)
 
-set(twist_topic_interfaces
-  joy_topic
-)
+# set(twist_topic_interfaces
+#   joy_topic
+# )
 
-foreach(interface ${twist_topic_interfaces})
-  add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
-  add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-endforeach(interface)
+# foreach(interface ${twist_topic_interfaces})
+#   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
+#   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+# endforeach(interface)
 
-set(w_twist_topic_interfaces
-  marker
-)
+# set(w_twist_topic_interfaces
+#   marker
+# )
 
-foreach(interface ${w_twist_topic_interfaces})
-  add_executable(${interface}_twist_topic_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_twist_topic_teleoperation.cpp)
-  add_dependencies(${interface}_twist_topic_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-  target_link_libraries(${interface}_twist_topic_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-endforeach(interface)
+# foreach(interface ${w_twist_topic_interfaces})
+#   add_executable(${interface}_twist_topic_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_twist_topic_teleoperation.cpp)
+#   add_dependencies(${interface}_twist_topic_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#   target_link_libraries(${interface}_twist_topic_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+# endforeach(interface)
 
 # ############
 # # Install ##
@@ -267,3 +276,5 @@ install(FILES
 
 # # Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+ament_package()

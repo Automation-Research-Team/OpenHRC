@@ -2,13 +2,13 @@
 
 butterworth::butterworth(int order, double cutoff_freq, double sample_freq) {
   if (order != 2) {
-    ROS_ERROR_STREAM("butterworth: " << order << "-th order butterworth is still NOT implimented.");
-    ros::shutdown();
+    // RCLCPP_ERROR_STREAM(rclcpp::get_logger(),"butterworth: " << order << "-th order butterworth is still NOT implimented.");
+    rclcpp::shutdown();
   }
 
   if (cutoff_freq > 0.5 * sample_freq) {
-    ROS_ERROR_STREAM("butterworth: cutoff frequency (" << cutoff_freq << "Hz) must be smaller than half of sampling rate (" << sample_freq << "Hz)!");
-    ros::shutdown();
+    // RCLCPP_ERROR_STREAM(rclcpp::get_logger(),"butterworth: cutoff frequency (" << cutoff_freq << "Hz) must be smaller than half of sampling rate (" << sample_freq << "Hz)!");
+    rclcpp::shutdown();
   }
 
   get_coefficients(cutoff_freq, sample_freq);

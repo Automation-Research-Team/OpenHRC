@@ -1,17 +1,18 @@
 #ifndef TWIST_UTILITY_H
 #define TWIST_UTILITY_H
 
-#include <ros/ros.h>
+// #include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 
 // eigen3
 #include <Eigen/Dense>
 using namespace Eigen;
 
-#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_eigen/tf2_eigen.hpp>
 
 namespace tf2 {
 
-inline Eigen::VectorXd fromMsg(const geometry_msgs::Twist twist, Eigen::VectorXd &vector) {
+inline Eigen::VectorXd fromMsg(const geometry_msgs::msg::Twist twist, Eigen::VectorXd &vector) {
   vector.resize(6);
   vector(0) = twist.linear.x;
   vector(1) = twist.linear.y;
@@ -27,10 +28,10 @@ inline Eigen::VectorXd fromMsg(const geometry_msgs::Twist twist, Eigen::VectorXd
 
 namespace geometry_msgs_utility {
 
-geometry_msgs::Twist checkNanInf(geometry_msgs::Twist cmd);
-geometry_msgs::Twist cropMinMax(geometry_msgs::Twist cmd, geometry_msgs::Twist min, geometry_msgs::Twist max);
+geometry_msgs::msg::Twist checkNanInf(geometry_msgs::msg::Twist cmd);
+geometry_msgs::msg::Twist cropMinMax(geometry_msgs::msg::Twist cmd, geometry_msgs::msg::Twist min, geometry_msgs::msg::Twist max);
 
-inline Eigen::VectorXd toVector(geometry_msgs::Twist twist, Eigen::VectorXd &vector) {
+inline Eigen::VectorXd toVector(geometry_msgs::msg::Twist twist, Eigen::VectorXd &vector) {
   vector(0) = twist.linear.x;
   vector(1) = twist.linear.y;
   vector(2) = twist.linear.z;
@@ -41,12 +42,12 @@ inline Eigen::VectorXd toVector(geometry_msgs::Twist twist, Eigen::VectorXd &vec
   return vector;
 }
 
-inline Eigen::VectorXd toVector(geometry_msgs::Twist twist) {
+inline Eigen::VectorXd toVector(geometry_msgs::msg::Twist twist) {
   Eigen::VectorXd vector(6);
   return toVector(twist, vector);
 }
 
-inline geometry_msgs::Twist fromVector(Eigen::VectorXd vector, geometry_msgs::Twist &twist) {
+inline geometry_msgs::msg::Twist fromVector(Eigen::VectorXd vector, geometry_msgs::msg::Twist &twist) {
   twist.linear.x = vector(0);
   twist.linear.y = vector(1);
   twist.linear.z = vector(2);

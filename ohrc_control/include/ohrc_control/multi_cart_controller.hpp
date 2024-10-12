@@ -23,7 +23,7 @@ class MultiCartController {
   ros::ServiceServer service;
   bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
 
-  void publishState(const ros::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
+  void publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
 
   // std::vector<bool> enbaleAdmittanceControl;
@@ -43,7 +43,7 @@ protected:
   std::string root_frame;
   double freq = 500.0;
   double dt = 0.002;
-  ros::Time t0;
+  rclcpp::Time t0;
   std::string date;
 
   // MyIK
@@ -54,7 +54,7 @@ protected:
 
   std::vector<int> manualInd, autoInd;
 
-  std::vector<ros::Time> prev_time;
+  std::vector<rclcpp::Time> prev_time;
 
   enum class PriorityType { Manual, Automation, Adaptation, None } priority;
   bool adaptation = false;
@@ -131,7 +131,7 @@ public:
   int control();
   virtual void starting();
   void stopping();
-  void update(const ros::Time& time, const ros::Duration& period);
+  void update(const rclcpp::Time& time, const rclcpp::Duration& period);
 };
 
 #endif  // MULTI_CART_COTNROLLER_HPP

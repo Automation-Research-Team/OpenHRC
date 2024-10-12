@@ -2,7 +2,7 @@
 #define COORDINATION_UTILITY_H
 
 #include <tf2/utils.h>
-#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_eigen/tf2_eigen.hpp>
 
 #include <Eigen/Dense>
 

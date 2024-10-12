@@ -1,7 +1,7 @@
 #ifndef WRENCH_UTILITY_H
 #define WRENCH_UTILITY_H
 
-#include <geometry_msgs/Wrench.h>
+#include <geometry_msgs/msg/wrench.hpp>
 
 #include <Eigen/Dense>
 
@@ -11,7 +11,7 @@
 
 namespace tf2 {
 
-inline Eigen::VectorXd fromMsg(geometry_msgs::Wrench raw_wrench, Eigen::VectorXd &vector) {
+inline Eigen::VectorXd fromMsg(geometry_msgs::msg::Wrench raw_wrench, Eigen::VectorXd &vector) {
   vector(0) = raw_wrench.force.x;
   vector(1) = raw_wrench.force.y;
   vector(2) = raw_wrench.force.z;
@@ -22,12 +22,12 @@ inline Eigen::VectorXd fromMsg(geometry_msgs::Wrench raw_wrench, Eigen::VectorXd
   return vector;
 }
 
-inline Eigen::VectorXd fromMsg(geometry_msgs::Wrench raw_wrench) {
+inline Eigen::VectorXd fromMsg(geometry_msgs::msg::Wrench raw_wrench) {
   Eigen::VectorXd vector(6);
   return fromMsg(raw_wrench, vector);
 }
 
-inline geometry_msgs::Wrench toMsg(Eigen::VectorXd vector, geometry_msgs::Wrench &wrench) {
+inline geometry_msgs::msg::Wrench toMsg(Eigen::VectorXd vector, geometry_msgs::msg::Wrench &wrench) {
   wrench.force.x = vector(0);
   wrench.force.y = vector(1);
   wrench.force.z = vector(2);
@@ -48,10 +48,10 @@ struct paramDeadZone {
   double torque_lower;
 };
 
-void deadZone(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_wrench, paramDeadZone param);
+void deadZone(geometry_msgs::msg::Wrench raw_wrench, geometry_msgs::msg::Wrench &filtered_wrench, paramDeadZone param);
 
-inline geometry_msgs::Wrench transformFT(geometry_msgs::Wrench ft_in, const Affine3d trans) {
-  geometry_msgs::Wrench ft_out;
+inline geometry_msgs::msg::Wrench transformFT(geometry_msgs::msg::Wrench ft_in, const Affine3d trans) {
+  geometry_msgs::msg::Wrench ft_out;
   tf2::toMsg(TransformUtility::transformFT(tf2::fromMsg(ft_in), trans), ft_out);
 
   return ft_out;
@@ -75,10 +75,10 @@ public:
   Wrench(paramLPF param_LPF);
   Wrench(paramLPF param_LPF, paramDeadZone param_DeadZone);
   ~Wrench();
-  void LPF(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_wrench);
-  void diff(geometry_msgs::Wrench wrench, geometry_msgs::Wrench &diff_wrench);
-  void diff_LPF(geometry_msgs::Wrench wrench, geometry_msgs::Wrench &filtered_wrench);
-  void deadZone_LPF(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_wrench);
+  void LPF(geometry_msgs::msg::Wrench raw_wrench, geometry_msgs::msg::Wrench &filtered_wrench);
+  void diff(geometry_msgs::msg::Wrench wrench, geometry_msgs::msg::Wrench &diff_wrench);
+  void diff_LPF(geometry_msgs::msg::Wrench wrench, geometry_msgs::msg::Wrench &filtered_wrench);
+  void deadZone_LPF(geometry_msgs::msg::Wrench raw_wrench, geometry_msgs::msg::Wrench &filtered_wrench);
 };
 }  // namespace geometry_msgs_utility
 

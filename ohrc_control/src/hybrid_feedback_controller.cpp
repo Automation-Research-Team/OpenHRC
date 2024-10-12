@@ -23,7 +23,7 @@ void HybridFeedbackController::updateTargetPose(KDL::Frame& pose, KDL::Twist& tw
         v[i] = v_ada_pi[i];
       else {
         v[i] = v_force[i];
-        t0_f[i] = ros::Time::now().toSec();
+        t0_f[i] = rclcpp::Time::now().toSec();
       }
     }
   }
@@ -60,7 +60,7 @@ VectorXd HybridFeedbackController::adaptivePIControl(const KDL::Frame& frame, co
 
   const double a = 0.2, b = 2.0;
   for (int i = 0; i < 3; i++) {
-    double y0 = a * std::exp(-b * (ros::Time::now().toSec() - t0_f[i]));  // remain feedback just after losing physical contact
+    double y0 = a * std::exp(-b * (rclcpp::Time::now().toSec() - t0_f[i]));  // remain feedback just after losing physical contact
     gain[i] = pseudoSigmoid(std::abs(v_des[i]), 0.0, 0.4, y0, 2.0);
   }
 
@@ -77,7 +77,7 @@ VectorXd HybridFeedbackController::adaptivePIControl(const VectorXd& e, const KD
 
   const double a = 0.2, b = 3.0;
   for (int i = 0; i < 6; i++) {
-    double y0 = a * std::exp(-b * (ros::Time::now().toSec() - t0_f[i]));  // remain feedback just after losing physical contact
+    double y0 = a * std::exp(-b * (rclcpp::Time::now().toSec() - t0_f[i]));  // remain feedback just after losing physical contact
     gain[i] = pseudoSigmoid(std::abs(v_des[i]), 0.0, 0.4, y0, 2.0);
   }
 

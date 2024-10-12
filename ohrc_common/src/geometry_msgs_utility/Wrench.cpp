@@ -32,13 +32,13 @@ void Wrench::LPF_initialize(int order, double cutoff_freq, double sampling_freq)
   // for force & torque
 }
 
-void Wrench::LPF(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_wrench) {
+void Wrench::LPF(geometry_msgs::msg::Wrench raw_wrench, geometry_msgs::msg::Wrench &filtered_wrench) {
   _filter_vec[0]->LPF(raw_wrench.force, filtered_wrench.force);
   _filter_vec[1]->LPF(raw_wrench.torque, filtered_wrench.torque);
 }
 
-void Wrench::diff(geometry_msgs::Wrench wrench, geometry_msgs::Wrench &diff_wrench) {
-  static geometry_msgs::Wrench old_wrench = wrench;
+void Wrench::diff(geometry_msgs::msg::Wrench wrench, geometry_msgs::msg::Wrench &diff_wrench) {
+  static geometry_msgs::msg::Wrench old_wrench = wrench;
 
   diff_wrench.force.x = (wrench.force.x - old_wrench.force.x) / delta_t;
   diff_wrench.force.y = (wrench.force.y - old_wrench.force.y) / delta_t;
@@ -50,13 +50,13 @@ void Wrench::diff(geometry_msgs::Wrench wrench, geometry_msgs::Wrench &diff_wren
   old_wrench = wrench;
 }
 
-void Wrench::diff_LPF(geometry_msgs::Wrench wrench, geometry_msgs::Wrench &filtered_wrench) {
-  geometry_msgs::Wrench diff_wrench;
+void Wrench::diff_LPF(geometry_msgs::msg::Wrench wrench, geometry_msgs::msg::Wrench &filtered_wrench) {
+  geometry_msgs::msg::Wrench diff_wrench;
   diff(wrench, diff_wrench);
   LPF(diff_wrench, filtered_wrench);
 }
 
-void deadZone(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_wrench, paramDeadZone param) {
+void deadZone(geometry_msgs::msg::Wrench raw_wrench, geometry_msgs::msg::Wrench &filtered_wrench, paramDeadZone param) {
   filtered_wrench.force.x = math_utility::deadZone(raw_wrench.force.x, param.force_upper, param.force_lower);
   filtered_wrench.force.y = math_utility::deadZone(raw_wrench.force.y, param.force_upper, param.force_lower);
   filtered_wrench.force.z = math_utility::deadZone(raw_wrench.force.z, param.force_upper, param.force_lower);
@@ -67,8 +67,8 @@ void deadZone(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_
   return;
 }
 
-void Wrench::deadZone_LPF(geometry_msgs::Wrench raw_wrench, geometry_msgs::Wrench &filtered_wrench) {
-  geometry_msgs::Wrench dead_wrench;
+void Wrench::deadZone_LPF(geometry_msgs::msg::Wrench raw_wrench, geometry_msgs::msg::Wrench &filtered_wrench) {
+  geometry_msgs::msg::Wrench dead_wrench;
   deadZone(raw_wrench, dead_wrench, m_paramDeadZone);
   LPF(dead_wrench, filtered_wrench);
 }

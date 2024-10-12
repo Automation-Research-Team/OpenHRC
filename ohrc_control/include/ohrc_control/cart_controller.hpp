@@ -1,17 +1,18 @@
 #ifndef CART_CONTROLLER_HPP
 #define CART_CONTROLLER_HPP
 
-#include <control_msgs/FollowJointTrajectoryActionGoal.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
-#include <std_msgs/Float64MultiArray.h>
-#include <std_srvs/Empty.h>
-#include <tf2_eigen/tf2_eigen.h>
-#include <tf2_kdl/tf2_kdl.h>
+#include <control_msgs/action/follow_joint_trajectory.hpp>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+// #include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <std_msgs/msg/float64_multi_array.hpp>
+#include <std_srvs/srv/empty.hpp>
+#include <tf2_eigen/tf2_eigen.hpp>
+#include <tf2_kdl/tf2_kdl.hpp>
 #include <tf2_ros/transform_broadcaster.h>
-#include <trajectory_msgs/JointTrajectory.h>
-#include <visualization_msgs/MarkerArray.h>
+#include <trajectory_msgs/msg/joint_trajectory.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 
 #include <Eigen/Geometry>
 #include <boost/date_time.hpp>
@@ -26,8 +27,8 @@
 #include "ohrc_control/arm_marker.hpp"
 #include "ohrc_control/my_ik.hpp"
 #include "ohrc_control/ohrc_control.hpp"
-#include "ohrc_msgs/StateStamped.h"
-#include "std_srvs/Empty.h"
+#include "ohrc_msgs/msg/state_stamped.hpp"
+#include "std_srvs/srv/empty.hpp"
 
 // TODO: Add namespace "Controllers"?
 
@@ -63,7 +64,7 @@ class CartController {
     bool isFirst = true;
     KDL::JntArray q_des;
     KDL::JntArray q_initial;
-    ros::Time t_s;
+    rclcpp::Time t_s;
     bool isSentTrj = false;
   } s_moveInitPos;
 
@@ -84,7 +85,7 @@ class CartController {
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
 
-  ros::Time prev_time = ros::Time::now();
+  rclcpp::Time prev_time = rclcpp::Time::now();
 
   bool ftFound = false;
 
@@ -121,7 +122,7 @@ protected:
   KDL::Frame _current_eef_pose;
   KDL::Twist _des_eef_vel;
 
-  geometry_msgs::WrenchStamped _force;
+  geometry_msgs::msg::WrenchStamped _force;
   bool flagForce = false;
 
   bool _disable = true, _passThrough = false;
@@ -152,7 +153,7 @@ protected:
 
   void cbJntState(const sensor_msgs::JointState::ConstPtr& msg);
   void cbArmMarker(const visualization_msgs::MarkerArray::ConstPtr& msg);
-  void cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg);
+  void cbForce(const geometry_msgs::msg::WrenchStamped::ConstPtr& msg);
 
   void initDesWithJnt(const KDL::JntArray& q_init);
   virtual void initWithJnt(const KDL::JntArray& q_init);
@@ -185,9 +186,9 @@ public:
   int control();
 
   void update();
-  void update(const ros::Time& time, const ros::Duration& period);
-  void starting(const ros::Time& time);
-  void stopping(const ros::Time& time);
+  void update(const rclcpp::Time& time, const rclcpp::Duration& period);
+  void starting(const rclcpp::Time& time);
+  void stopping(const rclcpp::Time& time);
 
   void getIKInput(double dt, KDL::JntArray& q_cur, KDL::Frame& des_eef_pose, KDL::Twist& des_eef_vel);
   void getVelocity(const KDL::Frame& frame, const KDL::Frame& prev_frame, const double& dt, KDL::Twist& twist) const;
@@ -221,7 +222,7 @@ public:
   void publishCurEffPoseVel(const KDL::Frame& cur_eef_pose, const KDL::Twist& cur_eef_vel);
   void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
   void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
-  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::Wrench& wrench, ros::Publisher* publisher);
+  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::msg::Wrench& wrench, ros::Publisher* publisher);
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);
@@ -306,7 +307,7 @@ public:
     return myik_solver_ptr->getT_base_world();
   }
 
-  inline geometry_msgs::WrenchStamped getForceEef() {
+  inline geometry_msgs::msg::WrenchStamped getForceEef() {
     std::lock_guard<std::mutex> lock(mtx);
     return this->_force;
   }

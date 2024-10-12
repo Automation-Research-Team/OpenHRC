@@ -1,10 +1,12 @@
 #ifndef MY_IK_HPP
 #define MY_IK_HPP
 
-#include <eigen_conversions/eigen_kdl.h>
-#include <ros/ros.h>
+// #include <eigen_kdl/eigen_kdl.h>
+#include <tf2_eigen_kdl/tf2_eigen_kdl.hpp>
+// #include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
 #include <urdf/model.h>
-#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/msg/marker.hpp>
 
 #include <Eigen/Geometry>
 #include <boost/date_time.hpp>
@@ -26,6 +28,7 @@ enum SolveType { Pure };
 enum BasicJointType { RotJoint, TransJoint, Continuous };
 
 class MyIK : std::enable_shared_from_this<MyIK> {
+  std::shared_ptr<rclcpp::Node> node;
   bool initialized, enableSelfCollisionAvoidance = false;
 
   KDL::Chain chain;
@@ -193,7 +196,7 @@ public:
     return JntToCart(q_in, dq_in, p_out, v_out);
   }
 
-  visualization_msgs::Marker getManipulabilityMarker(const KDL::JntArray q_cur);
+  visualization_msgs::msg::Marker getManipulabilityMarker(const KDL::JntArray q_cur);
 
   inline bool getKDLChain(KDL::Chain& chain_) {
     chain_ = chain;
@@ -248,8 +251,8 @@ inline VectorXd getCartError(const Affine3d& T, const Affine3d& T_d) {
 
 inline VectorXd getCartError(const KDL::Frame& frame, const KDL::Frame& frame_d) {
   Affine3d T_d, T;
-  tf::transformKDLToEigen(frame, T);
-  tf::transformKDLToEigen(frame_d, T_d);
+  tf2::transformKDLToEigen(frame, T);
+  tf2::transformKDLToEigen(frame_d, T_d);
 
   return getCartError(T, T_d);
 }

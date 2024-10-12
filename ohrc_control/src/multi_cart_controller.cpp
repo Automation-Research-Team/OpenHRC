@@ -8,7 +8,7 @@ MultiCartController::MultiCartController() {
   dt = 1.0 / freq;
   nRobot = robots.size();
 
-  prev_time.resize(nRobot, ros::Time::now());
+  prev_time.resize(nRobot, rclcpp::Time::now());
 
   cartControllers.resize(nRobot);
   for (int i = 0; i < nRobot; i++)
@@ -199,9 +199,9 @@ void MultiCartController::setHightLowPriority(int high, int low) {
 
 void MultiCartController::starting() {
   for (int i = 0; i < nRobot; i++)  // {
-    cartControllers[i]->starting(ros::Time::now());
+    cartControllers[i]->starting(rclcpp::Time::now());
 
-  ros::Duration(3.0).sleep();
+  rclcpp::Duration(3.0).sleep();
 
   for (int i = 0; i < nRobot; i++)
     initInterface(cartControllers[i]);
@@ -214,21 +214,21 @@ void MultiCartController::starting() {
   // cartControllers[i]->enableOperation();
   // }
   ROS_INFO_STREAM("Controller started!");
-  this->t0 = ros::Time::now();
+  this->t0 = rclcpp::Time::now();
 }
 
 void MultiCartController::stopping() {
   for (int i = 0; i < nRobot; i++)                   // {
-    cartControllers[i]->stopping(ros::Time::now());  // TODO: Make sure that this works correctly.
+    cartControllers[i]->stopping(rclcpp::Time::now());  // TODO: Make sure that this works correctly.
   // cartControllers[i]->enableOperation();
   // }
   ROS_INFO_STREAM("Controller stopped!");
-  // this->t0 = ros::Time::now();
+  // this->t0 = rclcpp::Time::now();
 }
 
-void MultiCartController::publishState(const ros::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
+void MultiCartController::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                                        const std::vector<KDL::Twist> desVel) {
-  static ros::Time prev = time;
+  static rclcpp::Time prev = time;
   if ((time - prev).toSec() > 0.05) {
     for (int i = 0; i < nRobot; i++) {
       cartControllers[i]->publishDesEffPoseVel(desPose[i], desVel[i]);
@@ -238,7 +238,7 @@ void MultiCartController::publishState(const ros::Time& time, const std::vector<
   }
 }
 
-void MultiCartController::update(const ros::Time& time, const ros::Duration& period) {
+void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
   static std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
   std::vector<KDL::Frame> curPose(nRobot);
   std::vector<KDL::Twist> curVel(nRobot);
@@ -270,7 +270,7 @@ void MultiCartController::update(const ros::Time& time, const ros::Duration& per
     }
 
     for (int i = 0; i < nRobot; i++) {
-      if ((time - prev_time[i]) < ros::Duration(1.0 / cartControllers[i]->freq - 1.0 / this->freq))
+      if ((time - prev_time[i]) < rclcpp::Duration(1.0 / cartControllers[i]->freq - 1.0 / this->freq))
         continue;
 
       prev_time[i] = time;
@@ -330,11 +330,11 @@ int MultiCartController::control() {
   double count = 0.0;
 
   ros::Rate r(freq);
-  ros::Duration dur(dt);
-  ros::Time t;
+  rclcpp::Duration dur(dt);
+  rclcpp::Time t;
 
   while (ros::ok()) {
-    t = ros::Time::now();
+    t = rclcpp::Time::now();
     // begin = std::chrono::high_resolution_clock::now();
 
     if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))

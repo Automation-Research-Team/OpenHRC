@@ -30,7 +30,7 @@ void JoyTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
   if (joy.axes.size() < 6 || joy.buttons.size() < 2)
     return;
 
-  geometry_msgs::Twist twist_msg;
+  geometry_msgs::msg::Twist twist_msg;
   twist_msg.linear.x = joy.axes[0] * gain_h;
   twist_msg.linear.y = joy.axes[1] * gain_h;
   twist_msg.linear.z = joy.axes[2] * gain_h;

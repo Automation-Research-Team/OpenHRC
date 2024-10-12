@@ -16,7 +16,7 @@ class MarkerInterface : virtual public  Interface {
   KDL::Frame prevPoses;
   geometry_msgs::Pose _markerPose;
   double _markerDt;
-  ros::Time t_prev;
+  rclcpp::Time t_prev;
 
   bool subFirst = false;
 

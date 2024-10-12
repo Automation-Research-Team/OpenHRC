@@ -13,7 +13,7 @@ void MarkerInterface::initInterface() {
 void MarkerInterface::configMarker() {
   // set initial marker config
   int_marker.header.frame_id = controller->getRobotNs() + controller->getChainStart();
-  int_marker.header.stamp = ros::Time(0);
+  int_marker.header.stamp = rclcpp::Time(0);
   int_marker.pose = tf2::toMsg(controller->getT_cur());
   int_marker.scale = 0.1;
   int_marker.name = controller->getRobotNs();
@@ -64,9 +64,9 @@ void MarkerInterface::configMarker() {
 void MarkerInterface::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback) {
   std::lock_guard<std::mutex> lock(mtx_marker);
   _markerPose = feedback->pose;
-  _markerDt = (ros::Time::now() - t_prev).toSec();
+  _markerDt = (rclcpp::Time::now() - t_prev).toSec();
   _flagSubInteractiveMarker = true;
-  t_prev = ros::Time::now();
+  t_prev = rclcpp::Time::now();
 }
 
 void MarkerInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {

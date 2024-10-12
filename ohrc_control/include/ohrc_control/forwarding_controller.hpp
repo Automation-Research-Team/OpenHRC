@@ -1,12 +1,13 @@
 #ifndef CART_CONTROLLER_HPP
 #define CART_CONTROLLER_HPP
 
-#include <geometry_msgs/TransformStamped.h>
-#include <ros/ros.h>
-#include <sensor_msgs/JointState.h>
-#include <std_msgs/Float64MultiArray.h>
-#include <tf2_eigen/tf2_eigen.h>
-#include <tf2_kdl/tf2_kdl.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+// #include <ros/ros.h>
+#include "rclcpp/rclcpp.hpp"
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <std_msgs/msg/float32_multi_array.hpp>
+#include <tf2_eigen/tf2_eigen.hpp>
+#include <tf2_kdl/tf2_kdl.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 
 #include <Eigen/Geometry>
@@ -26,7 +27,7 @@ protected:
   enum SolverType { Trac_IK, KDL, MyIK } solver;
   enum ControllerType { Position, Velocity, Torque } controller;
   enum RobotType { Follower, Leader };
-  ros::NodeHandle nh;
+  // ros::NodeHandle nh;
   std::vector<ros::Publisher> jntPosCmdPublisher, jntVelCmdPublisher;
   std::vector<ros::Subscriber> jntStateSubscriber;
 

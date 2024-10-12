@@ -20,16 +20,16 @@ void TwistTopicInterface::initInterface() {
 
 void TwistTopicInterface::setSubscriber() {
   this->getTopicAndFrameName("/cmd_vel", "user_frame");
-  subTwist = n.subscribe<geometry_msgs::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
+  subTwist = n.subscribe<geometry_msgs::msg::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
 }
 
-void TwistTopicInterface::cbTwist(const geometry_msgs::Twist::ConstPtr& msg) {
+void TwistTopicInterface::cbTwist(const geometry_msgs::msg::Twist::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mtx_topic);
   _twist = *msg;
   _flagTopic = true;
 }
 
-void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist) {
+void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::msg::Twist& twist_msg, KDL::Frame& pos, KDL::Twist& twist) {
   if (isFirst) {
     state.pose = tf2::toMsg(controller->getT_init());
     isFirst = false;
@@ -69,7 +69,7 @@ void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::Twist& twist_
 }
 
 void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
-  geometry_msgs::Twist twist_msg;
+  geometry_msgs::msg::Twist twist_msg;
   {
     std::lock_guard<std::mutex> lock(mtx_topic);
     if (!_flagTopic)

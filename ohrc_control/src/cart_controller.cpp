@@ -46,7 +46,7 @@ void CartController::init(std::string robot, std::string hw_config) {
 
   dt = 1.0 / freq;
 
-  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, ros::Time(0), ros::Duration(10.0));
+  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(10.0));
 
   tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, dt, eps));
 
@@ -80,10 +80,10 @@ void CartController::init(std::string robot, std::string hw_config) {
   nh.param("/" + robot_ns + "/ft_topic", ft_topic, std::string("ft_sensor/filtered"));
 
   ROS_INFO_STREAM("Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
-  if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, ros::Time(0), ros::Duration(1.0));
-    subForce = nh.subscribe<geometry_msgs::WrenchStamped>("/" + robot_ns + ft_topic, 1, &CartController::cbForce, this, th);
-    pubEefForce = nh.advertise<geometry_msgs::WrenchStamped>("/" + robot_ns + "eef_force", 1);
+  if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1.0))) {
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1.0));
+    subForce = nh.subscribe<geometry_msgs::msg::WrenchStamped>("/" + robot_ns + ft_topic, 1, &CartController::cbForce, this, th);
+    pubEefForce = nh.advertise<geometry_msgs::msg::WrenchStamped>("/" + robot_ns + "eef_force", 1);
     subFlagPtrs.push_back(&flagForce);
     this->ftFound = true;
   } else
@@ -246,12 +246,12 @@ void CartController::resetPose() {
   s_moveInitPos.isFirst = true;
 
   while (!isInitialized() && ros::ok()) {
-    ros::Duration(0.1).sleep();
+    rclcpp::Duration(0.1).sleep();
   }
 }
 
 Affine3d CartController::getTransform_base(std::string target) {
-  return trans.getTransform(robot_ns + chain_start, target, ros::Time(0), ros::Duration(1.0));
+  return trans.getTransform(robot_ns + chain_start, target, rclcpp::Time(0), rclcpp::Duration(1.0));
 }
 
 void CartController::signal_handler(int signum) {
@@ -364,7 +364,7 @@ void CartController::cbArmMarker(const visualization_msgs::MarkerArray::ConstPtr
   }
 }
 
-void CartController::cbForce(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
+void CartController::cbForce(const geometry_msgs::msg::WrenchStamped::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mtx);
   _force.header.stamp = msg->header.stamp;
   _force.header.frame_id = robot_ns + chain_end;
@@ -421,17 +421,17 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
 
     s_moveInitPos.isFirst = false;
 
-    s_moveInitPos.t_s = ros::Time::now();
+    s_moveInitPos.t_s = rclcpp::Time::now();
 
     this->q_rest = s_moveInitPos.q_des;
   }
 
   const double T = 10.0;
-  // static ros::Time s_moveInitPos.t_s = ros::Time::now();
+  // static rclcpp::Time s_moveInitPos.t_s = rclcpp::Time::now();
 
   bool lastLoop = false;
   double s = 0.0, s2, s3, s4, s5;
-  s = (ros::Time::now() - s_moveInitPos.t_s).toSec() / T;
+  s = (rclcpp::Time::now() - s_moveInitPos.t_s).toSec() / T;
   if (s > 1.0) {
     s = 1.0;
     lastLoop = true;
@@ -460,7 +460,7 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
       break;
     case PublisherType::TrajectoryAction:
       sendTrajectoryActionCmd(s_moveInitPos.q_des.data, T * (1.0 - s));
-      ros::Duration(T).sleep();
+      rclcpp::Duration(T).sleep();
       lastLoop = true;
       break;
     default:
@@ -492,9 +492,9 @@ void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_d
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
-  cmd_trj.header.stamp = ros::Time::now();
+  cmd_trj.header.stamp = rclcpp::Time::now();
   cmd_trj.points.resize(1);
-  cmd_trj.points[0].time_from_start = ros::Duration(T);
+  cmd_trj.points[0].time_from_start = rclcpp::Duration(T);
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
@@ -505,9 +505,9 @@ void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, tr
 }
 
 void CartController::getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
-  // cmd_trj.header.stamp = ros::Time::now();
+  // cmd_trj.header.stamp = rclcpp::Time::now();
   cmd_trj.points.resize(1);
-  cmd_trj.points[0].time_from_start = ros::Duration(T);
+  cmd_trj.points[0].time_from_start = rclcpp::Duration(T);
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
@@ -555,11 +555,11 @@ void CartController::getDesEffPoseVel(const double& dt, const KDL::JntArray& q_c
   tf::transformKDLToEigen(frame, T);
   tf::transformKDLToEigen(des_eef_pose, Td);
 
-  static ros::Time t0 = ros::Time::now();
+  static rclcpp::Time t0 = rclcpp::Time::now();
   if (disable)
-    t0 = ros::Time::now();
+    t0 = rclcpp::Time::now();
 
-  double s = (ros::Time::now() - t0).toSec() / 2.0;
+  double s = (rclcpp::Time::now() - t0).toSec() / 2.0;
   if (s > 1.0)
     s = 1.0;  // 0-1
 
@@ -588,12 +588,12 @@ void CartController::filterDesEffPoseVel(KDL::Frame& des_eef_pose, KDL::Twist& d
 }
 
 void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher) {
-  this->publishState(pose, vel, geometry_msgs::Wrench(), publisher);
+  this->publishState(pose, vel, geometry_msgs::msg::Wrench(), publisher);
 }
 
-void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::Wrench& wrench, ros::Publisher* publisher) {
+void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::msg::Wrench& wrench, ros::Publisher* publisher) {
   ohrc_msgs::State state;
-  state.header.stamp = ros::Time::now();
+  state.header.stamp = rclcpp::Time::now();
   state.pose = tf2::toMsg(pose);
   state.twist.linear.x = vel.vel[0];
   state.twist.linear.y = vel.vel[1];
@@ -631,7 +631,7 @@ void CartController::publishMarker(const KDL::JntArray q_cur) {
  * \brief Starts controller
  * \param time Current time
  */
-void CartController::starting(const ros::Time& time) {
+void CartController::starting(const rclcpp::Time& time) {
   // check Gazebo is ready
   if (!gazebo_utility::checkGazeboInit())
     return;
@@ -652,7 +652,7 @@ void CartController::starting(const ros::Time& time) {
  * \brief Stops controller
  * \param time Current time
  */
-void CartController::stopping(const ros::Time& /*time*/) {
+void CartController::stopping(const rclcpp::Time& /*time*/) {
   if (controller == ControllerType::Velocity) {
     std_msgs::Float64MultiArray cmd;
     cmd.data.resize(nJnt, 0.0);
@@ -701,14 +701,14 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   tf::transformKDLToEigen(cur_pose, T);
   tf::transformKDLToEigen(des_pose, Td);
 
-  static ros::Time t0 = ros::Time::now();
+  static rclcpp::Time t0 = rclcpp::Time::now();
   if (disable) {
-    t0 = ros::Time::now();
+    t0 = rclcpp::Time::now();
     disablePoseFeedback();  // no longer used
   } else
     enablePoseFeedback();  // no longer used
 
-  double s = (ros::Time::now() - t0).toSec() / 3.0;
+  double s = (rclcpp::Time::now() - t0).toSec() / 3.0;
   if (s > 1.0 || passThrough)
     s = 1.0;  // 0-1
 
@@ -733,9 +733,9 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
  * \param period Time since the last called to update
  */
 void CartController::update() {
-  update(ros::Time::now(), ros::Duration(1.0 / freq));
+  update(rclcpp::Time::now(), rclcpp::Duration(1.0 / freq));
 }
-void CartController::update(const ros::Time& time, const ros::Duration& period) {
+void CartController::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
   if ((time - prev_time) < period)
     return;
 
@@ -862,13 +862,13 @@ void CartController::filterJnt(KDL::JntArray& q) {
 }
 
 int CartController::control() {
-  starting(ros::Time::now());
-  ros::Duration(3.0).sleep();
+  starting(rclcpp::Time::now());
+  rclcpp::Duration(3.0).sleep();
 
   while (ros::ok())
-    update(ros::Time::now(), ros::Duration(1.0 / freq));
+    update(rclcpp::Time::now(), rclcpp::Duration(1.0 / freq));
 
-  stopping(ros::Time::now());
+  stopping(rclcpp::Time::now());
 
   return 1;
 }

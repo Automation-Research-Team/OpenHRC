@@ -72,7 +72,7 @@ void Kalman::init(const VectorXd x, const MatrixXd P, MatrixXd F, MatrixXd H, Ma
 
 VectorXd Kalman::predict() {
   if (first_prediction) {
-    ROS_ERROR_STREAM("Please initialize first");
+    // RCLCPP_ERROR_STREAM(rclcpp::get_logger(), "Please initialize first");
     return VectorXd::Zero(dim);
   }
 

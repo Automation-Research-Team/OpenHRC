@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(ohrc_common)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -7,13 +7,20 @@ add_compile_options(-std=c++1z)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  geometry_msgs
-  nav_msgs
-  tf2
-  tf2_ros
-)
+# find_package(catkin REQUIRED COMPONENTS
+#   roscpp
+#   geometry_msgs
+#   nav_msgs
+#   tf2
+#   tf2_ros
+# )
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_eigen REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,12 +111,17 @@ find_package(Eigen3 REQUIRED)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ohrc_common
-  CATKIN_DEPENDS roscpp geometry_msgs
-#  DEPENDS system_lib
-)
+# catkin_package(
+#   INCLUDE_DIRS include
+#   LIBRARIES ohrc_common
+#   CATKIN_DEPENDS roscpp geometry_msgs
+# #  DEPENDS system_lib
+# )
+
+ament_export_dependencies(geometry_msgs)
+ament_export_include_directories(include)
+ament_export_libraries(ohrc_common)
+
 
 ###########
 ## Build ##
@@ -119,7 +131,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
  include
-  ${catkin_INCLUDE_DIRS}
+  # ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
 )
 
@@ -132,7 +144,7 @@ include_directories(
                                src/filter_utility/butterworth.cpp
                                src/filter_utility/bayes_normal_gamma.cpp
                                src/filter_utility/kalman.cpp)
- add_dependencies(ohrc_common ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ament_target_dependencies(ohrc_common rclcpp geometry_msgs nav_msgs tf2 tf2_ros tf2_eigen)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -156,7 +168,7 @@ include_directories(
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(ohrc_common
-   ${catkin_LIBRARIES}
+  #  ${catkin_LIBRARIES}
  )
 
 #############
@@ -175,15 +187,15 @@ include_directories(
 
 ## Mark executables and/or libraries for installation
  install(TARGETS ohrc_common
-   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+   ARCHIVE DESTINATION lib
+   LIBRARY DESTINATION lib
+   RUNTIME DESTINATION lib/${PROJECT_NAME}
    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
  )
 
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
-   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   DESTINATION include/${PROJECT_NAME}
    FILES_MATCHING PATTERN "*.h"
    PATTERN ".svn" EXCLUDE
  )
@@ -192,7 +204,7 @@ include_directories(
  install(FILES
 #   # myfile1
 #   # myfile2
-   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+   DESTINATION share/${PROJECT_NAME}
  )
 
 #############
@@ -200,10 +212,12 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test src/test/ohrc_common-test.cpp)
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-endif()
+# catkin_add_gtest(${PROJECT_NAME}-test src/test/ohrc_common-test.cpp)
+# if(TARGET ${PROJECT_NAME}-test)
+#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+# endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+ament_package()

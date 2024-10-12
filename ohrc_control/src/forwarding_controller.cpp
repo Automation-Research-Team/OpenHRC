@@ -47,10 +47,11 @@ ForwardingController::ForwardingController() : nh("~"), spinner(0) {
   }
 
   std::string solver_str;
-  if (!nh.param("solver", solver_str, std::string("MyIK")))
-    ROS_WARN_STREAM("Solver type is not choisen {Trac_Ik, KDL, MyIK}: Default MyIK");
-  else
-    ROS_INFO_STREAM("Solver: " << solver_str);
+  nh.param("solver", solver_str, std::string("MyIK");
+  // if (!nh.param("solver", solver_str, std::string("MyIK")))
+  //   ROS_WARN_STREAM("Solver type is not choisen {Trac_Ik, KDL, MyIK}: Default MyIK");
+  // else
+  //   ROS_INFO_STREAM("Solver: " << solver_str);
 
   if (solver_str == "Trac_IK")
     solver = SolverType::Trac_IK;
@@ -59,7 +60,7 @@ ForwardingController::ForwardingController() : nh("~"), spinner(0) {
   else if (solver_str == "MyIK")
     solver = SolverType::MyIK;
   else {
-    ROS_FATAL("Solver type is not correctly choisen from {Trac_IK, KDL, MyIK}");
+    // ROS_FATAL("Solver type is not correctly choisen from {Trac_IK, KDL, MyIK}");
     exit(-1);
   }
 
@@ -228,11 +229,11 @@ int ForwardingController::moveInitJntPos(const KDL::JntArray& q_cur) {
   static KDL::JntArray q_init = q_cur;
 
   const double T = 10.0;
-  static ros::Time t_s = ros::Time::now();
+  static rclcpp::Time t_s = rclcpp::Time::now();
 
   bool lastLoop = false;
   double s = 0.0, s2, s3, s4, s5;
-  s = (ros::Time::now() - t_s).toSec() / T;
+  s = (rclcpp::Time::now() - t_s).toSec() / T;
   if (s > 1.0) {
     s = 1.0;
     lastLoop = true;
@@ -271,11 +272,11 @@ void ForwardingController::getDesEffPoseVel(const double& dt, const KDL::JntArra
 
 // void ForwardingController::publishDesEffPoseVel(const KDL::Frame& des_eff_pose, const KDL::Twist& des_eff_vel) {
 //   static geometry_msgs::TransformStamped transform;
-//   if ((ros::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
+//   if ((rclcpp::Time::now() - transform.header.stamp).toSec() < 1.0 / 50.0)
 //     return;
 
 //   transform = tf2::kdlToTransform(des_eff_pose);
-//   transform.header.stamp = ros::Time::now();
+//   transform.header.stamp = rclcpp::Time::now();
 
 //   transform.header.frame_id = robot_ns + chain_start;
 //   transform.child_frame_id = robot_ns + chain_end + "_d";
