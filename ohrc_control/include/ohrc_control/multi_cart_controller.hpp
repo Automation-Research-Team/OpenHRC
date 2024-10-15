@@ -14,7 +14,7 @@
 
 using namespace ohrc_control;
 
-class MultiCartController {
+class MultiCartController : public rclcpp::Node {
   bool getInitParam(std::vector<std::string>& robots);
   void updateDesired();
   std::vector<KDL::Frame> desPose;
@@ -30,7 +30,7 @@ class MultiCartController {
   bool enableEefForceAdmittanceParam;
 
 protected:
-  ros::NodeHandle nh;
+  // ros::NodeHandle nh;
 
   enum class MFMode { None, Individual, Parallel, Cooperation } MFmode;
   enum class IKMode { None, Concatenated, Order, Parallel } IKmode;
@@ -42,7 +42,7 @@ protected:
 
   std::string root_frame;
   double freq = 500.0;
-  double dt = 0.002;
+  double dt;
   rclcpp::Time t0;
   std::string date;
 

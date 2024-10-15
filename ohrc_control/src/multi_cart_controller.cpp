@@ -1,14 +1,14 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
-MultiCartController::MultiCartController() {
+MultiCartController::MultiCartController() : Node("name") {
   std::vector<std::string> robots;
   if (!getInitParam(robots))
-    ros::shutdown();
+    rclcpp::shutdown();
 
   dt = 1.0 / freq;
   nRobot = robots.size();
 
-  prev_time.resize(nRobot, rclcpp::Time::now());
+  prev_time.resize(nRobot, get_clock()->now());
 
   cartControllers.resize(nRobot);
   for (int i = 0; i < nRobot; i++)
@@ -218,12 +218,14 @@ void MultiCartController::starting() {
 }
 
 void MultiCartController::stopping() {
-  for (int i = 0; i < nRobot; i++)                   // {
+  for (int i = 0; i < nRobot; i++)                      // {
     cartControllers[i]->stopping(rclcpp::Time::now());  // TODO: Make sure that this works correctly.
   // cartControllers[i]->enableOperation();
   // }
   ROS_INFO_STREAM("Controller stopped!");
   // this->t0 = rclcpp::Time::now();
+
+  rclcpp::shutdown();
 }
 
 void MultiCartController::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
@@ -257,7 +259,7 @@ void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duratio
     int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, desPose, desVel, dq_des, dt);
 
     if (rc < 0) {
-      ROS_WARN_STREAM("Failed to solve IK within dt. Skip this control loop");
+      RCLCPP_WARN_STREAM(this->get_logger(), "a" << "Failed to solve IK within dt. Skip this control loop");
       return;
     }
 
@@ -283,7 +285,7 @@ void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duratio
     int rc = multimyik_solver_ptr->CartToJnt(q_cur, desPose, q_des, dt);
 
     if (rc < 0) {
-      ROS_WARN_STREAM("Failed to solve IK within dt. Skip this control loop");
+      RCLCPP_WARN_STREAM(this->get_logger(), "Failed to solve IK within dt. Skip this control loop");
       return;
     }
 
@@ -295,7 +297,7 @@ void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duratio
       cartControllers[i]->sendPosCmd(q_des[i], dq_des[i], dt);  // TODO: update dq
 
   } else
-    ROS_WARN_STREAM("not implemented");
+    RCLCPP_WARN_STREAM(this->get_logger(), "not implemented");
 
   for (int i = 0; i < nRobot; i++)
     feedback(desPose[i], desVel[i], cartControllers[i]);
@@ -329,12 +331,13 @@ int MultiCartController::control() {
 
   double count = 0.0;
 
-  ros::Rate r(freq);
-  rclcpp::Duration dur(dt);
+  // ros::Rate r(freq);
+  rclcpp::WallRate r(freq);
+  rclcpp::Duration dur(dt, 0);
   rclcpp::Time t;
 
-  while (ros::ok()) {
-    t = rclcpp::Time::now();
+  while (rclcpp::ok()) {
+    t = get_clock()->now();
     // begin = std::chrono::high_resolution_clock::now();
 
     if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
