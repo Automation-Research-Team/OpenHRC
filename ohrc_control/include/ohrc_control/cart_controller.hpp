@@ -33,8 +33,10 @@
 // TODO: Add namespace "Controllers"?
 
 using namespace ohrc_control;
+using namespace std::placeholders;
+using namespace std::chrono_literals;
 
-class CartController {
+class CartController : public rclcpp::Node {
   static void signal_handler(int signum);
   void init(std::string robot);
   void init(std::string robot, std::string hw_config);
@@ -43,7 +45,7 @@ class CartController {
   ros::CallbackQueue queue;
   boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
   ros::NodeHandle nh_;
-  ros::Publisher pubEefForce;
+  rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pubEefForce;
 
   std::mutex mtx_q;
 
@@ -53,7 +55,8 @@ class CartController {
   std_msgs::Float64MultiArray cmd;
   Matrix3d userManipU;
   int rc;
-  ros::ServiceClient client;
+  // ros::ServiceClient client
+  rclcpp::Client<std_srvs::srv::Empty>::SharedPtr client;
 
   struct s_cbJntState {
     bool isFirst = true;
@@ -76,8 +79,9 @@ class CartController {
 
   std::string publisherTopicName;
 
-  ros::ServiceServer service;
-  bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+  // ros::ServiceServer service;
+  rclcpp::Service<std_srvs::srv::Empty>::SharedPtr service;
+  bool resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res);
 
   bool initialized = false;
 
@@ -93,10 +97,12 @@ protected:
   SolverType solver;
   ControllerType controller;
   PublisherType publisher;
-  ros::NodeHandle nh;
+  // ros::NodeHandle nh;
 
-  ros::Subscriber jntStateSubscriber, userArmMarker, subForce;
-  ros::TransportHints th = ros::TransportHints().tcpNoDelay(true);
+  // ros::Subscriber jntStateSubscriber, userArmMarker, subForce;
+  rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr subJntState;
+  rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr subForce;
+  // ros::TransportHints th = ros::TransportHints().tcpNoDelay(true);
 
   std::vector<bool*> subFlagPtrs;
 
@@ -151,9 +157,9 @@ protected:
   std::string chain_start, chain_end, urdf_param, robot_ns = "", hw_config_ns = "";
   Affine3d T_base_root;
 
-  void cbJntState(const sensor_msgs::JointState::ConstPtr& msg);
-  void cbArmMarker(const visualization_msgs::MarkerArray::ConstPtr& msg);
-  void cbForce(const geometry_msgs::msg::WrenchStamped::ConstPtr& msg);
+  void cbJntState(const sensor_msgs::msg::JointState::SharedPtr msg);
+  void cbArmMarker(const visualization_msgs::msg::MarkerArray::ConstPtr& msg);
+  void cbForce(const geometry_msgs::msg::WrenchStamped::SharedPtr msg);
 
   void initDesWithJnt(const KDL::JntArray& q_init);
   virtual void initWithJnt(const KDL::JntArray& q_init);
@@ -364,7 +370,13 @@ public:
 
   const double eps = 1e-6;
 
-  ros::Publisher markerPublisher, desStatePublisher, curStatePublisher, jntCmdPublisher;
+  // ros::Publisher markerPublisher, desStatePublisher, curStatePublisher;
+
+  // template <typename MsgType>
+  rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr jntCmdPublisher;
+  rclcpp::Publisher<ohrc_msgs::msg::State>::SharedPtr desStatePublisher, curStatePublisher;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr markerPublisher;
+
   std::mutex mtx;
   bool flagJntState = false;
 

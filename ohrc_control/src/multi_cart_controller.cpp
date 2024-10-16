@@ -23,7 +23,8 @@ MultiCartController::MultiCartController() : Node("name") {
 
   multimyik_solver_ptr.reset(new MyIK::MyIK(base_link, tip_link, T_base_root, myik_ptr));
 
-  service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
+  // service = nh.advertiseService("/reset", &MultiCartController::resetService, this);  
+  service = this->create_service<std_srvs::srv::Empty>("/reset", std::bind(&MultiCartController::resetService, this, _1, _2));
 
   // TODO: condifure this priority setting
 
@@ -59,23 +60,31 @@ MultiCartController::MultiCartController() : Node("name") {
 }
 
 bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
-  ros::NodeHandle n("~");
+  // ros::NodeHandle n("~");
 
-  XmlRpc::XmlRpcValue my_list;
-  if (!n.getParam("follower_list", my_list)) {
-    ROS_FATAL_STREAM("Failed to get the hardware config list");
-    return false;
-  }
+  // XmlRpc::XmlRpcValue my_list;
+  // if (!n.getParam("follower_list", my_list)) {
+  //   ROS_FATAL_STREAM("Failed to get the hardware config list");
+  //   return false;
+  // }
 
-  for (auto itr = my_list.begin(); itr != my_list.end(); ++itr) {
-    // std::cout << itr->first << ":" << itr->second << std::endl;
-    if (my_list[itr->first].getType() == XmlRpc::XmlRpcValue::TypeArray) {
-      for (int i = 0; i < my_list[itr->first].size(); ++i) {
-        // std::cout << itr->first << ":" << my_list[itr->first][i] << std::endl;
-        hw_configs.push_back(itr->first);
-        robots.push_back(my_list[itr->first][i]);
-      }
-    }
+  // for (auto itr = my_list.begin(); itr != my_list.end(); ++itr) {
+  //   // std::cout << itr->first << ":" << itr->second << std::endl;
+  //   if (my_list[itr->first].getType() == XmlRpc::XmlRpcValue::TypeArray) {
+  //     for (int i = 0; i < my_list[itr->first].size(); ++i) {
+  //       // std::cout << itr->first << ":" << my_list[itr->first][i] << std::endl;
+  //       hw_configs.push_back(itr->first);
+  //       robots.push_back(my_list[itr->first][i]);
+  //     }
+  //   }
+  // }
+
+  this->declare_parameter("follower_list", std::vector<std::string>());
+  hw_configs = this->get_parameter("follower_list").as_string_array();
+
+  for (auto hw_config: hw_configs){
+    this->declare_parameter(hw_config, std::string());
+    robots.push_back(this->get_parameter(hw_config).as_string());
   }
 
   // std::cout << my_list.size() << std::endl;
@@ -87,27 +96,49 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   // }
 
   for (int i = 0; i < robots.size(); i++)
-    ROS_INFO_STREAM("Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
+    // ROS_INFO_STREAM("Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
+    RCLCPP_INFO_STREAM(this->get_logger(), "Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
 
-  if (!n.getParam("root_frame", root_frame)) {
-    ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
+
+  // if (!n.getParam("root_frame", root_frame)) {
+  //   ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
+  //   return false;
+  // }
+  this->declare_parameter("root_frame", std::string());
+  if( !this->get_parameter("root_frame", root_frame)){
+    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the root frame of the robot system");
     return false;
   }
 
-  if (!n.getParam("control_freq", freq)) {
-    ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
+
+
+  // if (!n.getParam("control_freq", freq)) {
+  //   ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
+  //   return false;
+  // }
+  this->declare_parameter("control_freq", double());
+  if (!this->get_parameter("control_freq", freq)){
+    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the control_freq of the robot system");
     return false;
   }
 
   std::string controller_str;
-  if (!n.param("controller", controller_str, std::string("Velocity")))
-    ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
-  else
-    ROS_INFO_STREAM("Controller: " << controller_str);
+  // if (!n.param("controller", controller_str, std::string("Velocity")))
+  //   ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
+  // else
+  //   ROS_INFO_STREAM("Controller: " << controller_str);
+  this->declare_parameter("controller", std::string());
+  if (!this->get_parameter("controller", controller_str)) {
+    RCLCPP_WARN_STREAM(this->get_logger(), "Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
+    controller_str = "Velocity";
+  } else {
+    RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << controller_str);
+  }
 
   controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
   if (controller == ControllerType::None) {
-    ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
+    // ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
+    RCLCPP_FATAL(this->get_logger(), "Controller type is not correctly choisen from {Position, Velocity, Torque}");
     return false;
   }
 
@@ -123,16 +154,17 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   //   return false;
   // }
 
-  MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual", n);
-  IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated", n);
-  priority = this->getEnumParam("priority", PriorityType::None, "Manual", n);
-  if (priority == PriorityType::Adaptation)
-    n.param<std::string>("adaptation_option", adaptationOption_, "Default");
+  MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual");
+  IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated");
+  priority = this->getEnumParam("priority", PriorityType::None, "Manual");
 
-  if (!n.getParam("date", this->date)) {
-    this->date = std_utility::getDatetimeStr();
-    n.setParam("date", date);
-  }
+  // if (priority == PriorityType::Adaptation)
+  //   n.param<std::string>("adaptation_option", adaptationOption_, "Default");
+
+  // if (!n.getParam("date", this->date)) {
+  //   this->date = std_utility::getDatetimeStr();
+  //   n.setParam("date", date);
+  // }
 
   // n.param("enableEefForceAdmittance", enableEefForceAdmittanceParam, false);
   // if (enableEefForceAdmittanceParam)
@@ -140,20 +172,22 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   // else
   //   ROS_INFO_STREAM("enableEefForceAdmittance is " << std::boolalpha << enableEefForceAdmittanceParam << ", so feedback controller is used instead.");
 
-  feedbackMode = this->getEnumParam("feedback_mode", FeedbackMode::None, "PositionFeedback", n);
+  feedbackMode = this->getEnumParam("feedback_mode", FeedbackMode::None, "PositionFeedback");
 
   return true;
 }
 
-bool MultiCartController::resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
-  ROS_INFO_STREAM("Resetting...");
+void MultiCartController::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
+  // ROS_INFO_STREAM("Resetting...");
+  RCLCPP_INFO_STREAM(this->get_logger(), "Resetting..." );
   for (int i = 0; i < nRobot; i++) {
     resetInterface(cartControllers[i]);
     cartControllers[i]->resetPose();
     cartControllers[i]->resetFt();
   }
-  ROS_INFO_STREAM("Restart!");
-  return true;
+  // ROS_INFO_STREAM("Restart!");
+  RCLCPP_INFO_STREAM(this->get_logger(), "Restart!" );
+  // return true;
 }
 
 void MultiCartController::setPriority(int i) {
@@ -199,9 +233,10 @@ void MultiCartController::setHightLowPriority(int high, int low) {
 
 void MultiCartController::starting() {
   for (int i = 0; i < nRobot; i++)  // {
-    cartControllers[i]->starting(rclcpp::Time::now());
+    cartControllers[i]->starting(this->get_clock()->now());
 
-  rclcpp::Duration(3.0).sleep();
+  // rclcpp::Duration(3.0).sleep();
+  rclcpp::sleep_for(3s);
 
   for (int i = 0; i < nRobot; i++)
     initInterface(cartControllers[i]);
@@ -213,16 +248,18 @@ void MultiCartController::starting() {
 
   // cartControllers[i]->enableOperation();
   // }
-  ROS_INFO_STREAM("Controller started!");
-  this->t0 = rclcpp::Time::now();
+  // ROS_INFO_STREAM("Controller started!");
+  RCLCPP_INFO_STREAM(this->get_logger(), "Controller started!");
+  this->t0 = this->get_clock()->now();
 }
 
 void MultiCartController::stopping() {
   for (int i = 0; i < nRobot; i++)                      // {
-    cartControllers[i]->stopping(rclcpp::Time::now());  // TODO: Make sure that this works correctly.
+    cartControllers[i]->stopping(this->get_clock()->now());  // TODO: Make sure that this works correctly.
   // cartControllers[i]->enableOperation();
   // }
-  ROS_INFO_STREAM("Controller stopped!");
+  // ROS_INFO_STREAM("Controller stopped!");
+  RCLCPP_INFO_STREAM(this->get_logger(), "Controller stopped!");
   // this->t0 = rclcpp::Time::now();
 
   rclcpp::shutdown();
@@ -231,7 +268,7 @@ void MultiCartController::stopping() {
 void MultiCartController::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                                        const std::vector<KDL::Twist> desVel) {
   static rclcpp::Time prev = time;
-  if ((time - prev).toSec() > 0.05) {
+  if ((time - prev).nanoseconds() * 1.0e-9 > 0.05) {
     for (int i = 0; i < nRobot; i++) {
       cartControllers[i]->publishDesEffPoseVel(desPose[i], desVel[i]);
       cartControllers[i]->publishCurEffPoseVel(curPose[i], curVel[i]);
@@ -272,7 +309,7 @@ void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duratio
     }
 
     for (int i = 0; i < nRobot; i++) {
-      if ((time - prev_time[i]) < rclcpp::Duration(1.0 / cartControllers[i]->freq - 1.0 / this->freq))
+      if ((time - prev_time[i]).nanoseconds() * 1.0e-9 < 1.0 / cartControllers[i]->freq - 1.0 / this->freq)
         continue;
 
       prev_time[i] = time;
@@ -307,7 +344,7 @@ void MultiCartController::updateDesired() {
   for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->updateCurState();
 
-    tf::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
+    tf2::transformEigenToKDL(cartControllers[i]->getT_init(), desPose[i]);
     desVel[i] = KDL::Twist();
 
     updateTargetPose(desPose[i], desVel[i], cartControllers[i]);

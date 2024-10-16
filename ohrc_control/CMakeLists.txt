@@ -48,8 +48,8 @@ find_package(ohrc_msgs REQUIRED)
 # pkg_check_modules(pkg_nlopt REQUIRED nlopt)
 
 # find_package(Boost REQUIRED COMPONENTS date_time)
-# find_package(orocos_kdl REQUIRED)
-# find_package(Eigen3 REQUIRED)
+find_package(orocos_kdl REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 find_package(OsqpEigen REQUIRED OsqpEigen)
 

@@ -3,6 +3,8 @@
 
 #include <numeric>
 #include <thread>
+#include <chrono>
+
 
 #include "ohrc_control/admittance_controller.hpp"
 #include "ohrc_control/cart_controller.hpp"
@@ -12,7 +14,9 @@
 #include "ohrc_control/ohrc_control.hpp"
 #include "ohrc_control/position_feedback_controller.hpp"
 
+using namespace std::placeholders;
 using namespace ohrc_control;
+using namespace std::chrono_literals;
 
 class MultiCartController : public rclcpp::Node {
   bool getInitParam(std::vector<std::string>& robots);
@@ -20,8 +24,9 @@ class MultiCartController : public rclcpp::Node {
   std::vector<KDL::Frame> desPose;
   std::vector<KDL::Twist> desVel;
 
-  ros::ServiceServer service;
-  bool resetService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+  // ros::ServiceServer service;
+  rclcpp::Service<std_srvs::srv::Empty>::SharedPtr service;
+  void resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res);
 
   void publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
@@ -109,19 +114,24 @@ protected:
   // virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
 
   template <typename T>
-  inline T getEnumParam(const std::string& key, T none, const std::string default_str, ros::NodeHandle n) {
+  inline T getEnumParam(const std::string& key, T none, const std::string default_str) {
     std::string s;
-    if (!n.getParam(key, s)) {
-      ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");
+    this->declare_parameter(key, default_str);
+    // if (!n.getParam(key, s)) {
+    //   ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");
+    //   s = default_str;
+    // }
+    if (!this->get_parameter(key, s)){
+      RCLCPP_INFO_STREAM(this->get_logger(), "Failed to get " << key << ", so" << default_str << "is automatically selected");
       s = default_str;
     }
 
     T mode = magic_enum::enum_cast<T>(s).value_or(none);
     if (mode == none) {
-      ROS_FATAL_STREAM(key << " is configured as [" << s << "] and not correctly configured.");
-      ros::shutdown();
+      RCLCPP_FATAL_STREAM(this->get_logger(), key << " is configured as [" << s << "] and not correctly configured.");
+      rclcppp::shutdown();
     } else
-      ROS_INFO_STREAM("Operation mode: " << s);
+      RCLCPP_INFO_STREAM(this->get_logger(), "Operation mode: " << s);
 
     return mode;
   }
