@@ -46,7 +46,7 @@
   <exec_depend>rclcpp</exec_depend>
 
   <depend>boost</depend>
-  <depend>trac_ik_lib</depend>
+  <depend>trac_ik</depend>
 
   <depend>liborocos-kdl-dev</depend>
   <depend>libnlopt-dev</depend>
@@ -80,6 +80,8 @@
 
   <depend>ohrc_common</depend>
   <depend>ohrc_msgs</depend>
+
+  <depend>urdf</depend>
   
   <!-- <depend>python3-catkin-tools</depend> -->
 

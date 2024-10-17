@@ -51,6 +51,7 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>python-is-python3</exec_depend>
   <depend>tf2_eigen</depend>
+  <depend>kdl_parser</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

@@ -54,7 +54,7 @@ void CartController::init(std::string robot, std::string hw_config) {
 
   this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(10.0, 0));
 
-  tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, dt, eps));
+  tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(this->shared_from_this(), chain_start, chain_end, urdf_param, dt, eps));
 
   KDL::JntArray ll, ul;  // lower joint limits, upper joint limits
   bool valid = tracik_solver_ptr->getKDLLimits(ll, ul);

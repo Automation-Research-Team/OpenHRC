@@ -16,7 +16,6 @@
 #include <std_srvs/srv/empty.hpp>
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2_kdl/tf2_kdl.hpp>
-#include <trac_ik/trac_ik.hpp>
 #include <trajectory_msgs/msg/joint_trajectory.hpp>
 #include <vector>
 #include <visualization_msgs/msg/marker_array.hpp>
@@ -29,6 +28,7 @@
 #include "ohrc_msgs/msg/state_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/empty.hpp"
+#include "trac_ik/trac_ik.hpp"
 
 // TODO: Add namespace "Controllers"?
 

@@ -5,9 +5,12 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 
-find_package(OsqpEigen REQUIRED OsqpEigen)
-find_package(magic_enum CONFIG REQUIRED magic_enum)
+find_package(OsqpEigen REQUIRED)
+find_package(magic_enum CONFIG REQUIRED)
+# find_package(trac_ik_lib REQUIRED)
 
+# include_directories(include 
+# $(trac_ik_lib_DIR))
 
 ament_auto_add_library(${PROJECT_NAME} 
   src/my_ik.cpp
@@ -16,7 +19,7 @@ ament_auto_add_library(${PROJECT_NAME}
   src/position_feedback_controller.cpp
   src/hybrid_feedback_controller.cpp
 )
-target_link_libraries(${PROJECT_NAME} OsqpEigen::OsqpEigen magic_enum::magic_enum)
+target_link_libraries(${PROJECT_NAME} OsqpEigen::OsqpEigen magic_enum::magic_enum )
 
 
 
