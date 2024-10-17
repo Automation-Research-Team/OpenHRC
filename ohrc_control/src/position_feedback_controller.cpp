@@ -4,7 +4,7 @@ void PositionFeedbackController::initInterface() {
   t0_f.resize(6, -1000.0);
 }
 
-void PositionFeedbackController::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
+void PositionFeedbackController::updateTargetPose(const rclcpp::Time t, KDL::Frame& pose, KDL::Twist& twist) {
   KDL::Frame frame;
   KDL::Twist vel;
   controller->getCartState(frame, vel);
@@ -19,15 +19,15 @@ void PositionFeedbackController::updateTargetPose(KDL::Frame& pose, KDL::Twist& 
     v = v_pi;
   }
 
-  tf::twistEigenToKDL(v, twist);
+  tf2::twistEigenToKDL(v, twist);
 }
 
 VectorXd PositionFeedbackController::PIControl(const KDL::Frame& frame, const KDL::Frame& pose, const KDL::Twist& twist) {
   const double kp = 1.2, ki = 0.0;  // 1.0*dt;
   Vector3d p_cur, p_des, v_des;
-  tf::vectorKDLToEigen(frame.p, p_cur);
-  tf::vectorKDLToEigen(pose.p, p_des);
-  tf::vectorKDLToEigen(twist.vel, v_des);
+  tf2::vectorKDLToEigen(frame.p, p_cur);
+  tf2::vectorKDLToEigen(pose.p, p_des);
+  tf2::vectorKDLToEigen(twist.vel, v_des);
 
   std::vector<double> gain(3);
 
@@ -43,7 +43,7 @@ VectorXd PositionFeedbackController::PIControl(const VectorXd& e, const KDL::Twi
   const double kp = 2.0;
 
   Matrix<double, 6, 1> v_des;
-  tf::twistKDLToEigen(twist, v_des);
+  tf2::twistKDLToEigen(twist, v_des);
 
   VectorXd gain(6);
 

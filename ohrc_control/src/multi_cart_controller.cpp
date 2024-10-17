@@ -23,7 +23,7 @@ MultiCartController::MultiCartController() : Node("name") {
 
   multimyik_solver_ptr.reset(new MyIK::MyIK(base_link, tip_link, T_base_root, myik_ptr));
 
-  // service = nh.advertiseService("/reset", &MultiCartController::resetService, this);  
+  // service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
   service = this->create_service<std_srvs::srv::Empty>("/reset", std::bind(&MultiCartController::resetService, this, _1, _2));
 
   // TODO: condifure this priority setting
@@ -82,7 +82,7 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   this->declare_parameter("follower_list", std::vector<std::string>());
   hw_configs = this->get_parameter("follower_list").as_string_array();
 
-  for (auto hw_config: hw_configs){
+  for (auto hw_config : hw_configs) {
     this->declare_parameter(hw_config, std::string());
     robots.push_back(this->get_parameter(hw_config).as_string());
   }
@@ -99,25 +99,22 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
     // ROS_INFO_STREAM("Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
     RCLCPP_INFO_STREAM(this->get_logger(), "Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
 
-
   // if (!n.getParam("root_frame", root_frame)) {
   //   ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
   //   return false;
   // }
   this->declare_parameter("root_frame", std::string());
-  if( !this->get_parameter("root_frame", root_frame)){
+  if (!this->get_parameter("root_frame", root_frame)) {
     RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the root frame of the robot system");
     return false;
   }
-
-
 
   // if (!n.getParam("control_freq", freq)) {
   //   ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
   //   return false;
   // }
   this->declare_parameter("control_freq", double());
-  if (!this->get_parameter("control_freq", freq)){
+  if (!this->get_parameter("control_freq", freq)) {
     RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the control_freq of the robot system");
     return false;
   }
@@ -179,14 +176,14 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
 
 void MultiCartController::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
   // ROS_INFO_STREAM("Resetting...");
-  RCLCPP_INFO_STREAM(this->get_logger(), "Resetting..." );
+  RCLCPP_INFO_STREAM(this->get_logger(), "Resetting...");
   for (int i = 0; i < nRobot; i++) {
     resetInterface(cartControllers[i]);
     cartControllers[i]->resetPose();
     cartControllers[i]->resetFt();
   }
   // ROS_INFO_STREAM("Restart!");
-  RCLCPP_INFO_STREAM(this->get_logger(), "Restart!" );
+  RCLCPP_INFO_STREAM(this->get_logger(), "Restart!");
   // return true;
 }
 
@@ -254,7 +251,7 @@ void MultiCartController::starting() {
 }
 
 void MultiCartController::stopping() {
-  for (int i = 0; i < nRobot; i++)                      // {
+  for (int i = 0; i < nRobot; i++)                           // {
     cartControllers[i]->stopping(this->get_clock()->now());  // TODO: Make sure that this works correctly.
   // cartControllers[i]->enableOperation();
   // }
@@ -296,7 +293,7 @@ void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duratio
     int rc = multimyik_solver_ptr->CartToJntVel_qp(q_cur, desPose, desVel, dq_des, dt);
 
     if (rc < 0) {
-      RCLCPP_WARN_STREAM(this->get_logger(), "a" << "Failed to solve IK within dt. Skip this control loop");
+      RCLCPP_WARN_STREAM(this->get_logger(), "Failed to solve IK within dt. Skip this control loop");
       return;
     }
 

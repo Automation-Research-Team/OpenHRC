@@ -3,11 +3,12 @@
 namespace MyIK {
 
 MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world, SolveType _type)
-  : nRobot(1), initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
+  : nRobot(1), initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type), Node("myik") {
   // ros::NodeHandle nh("~");
 
-  urdf::Model robot_model = model_utility::getURDFModel(URDF_param);
-  chain = model_utility::getKDLChain(robot_model, base_link, tip_link);
+  ModelUtility modelUtility;
+  urdf::Model robot_model = modelUtility.getURDFModel(URDF_param);
+  chain = modelUtility.getKDLChain(robot_model, base_link, tip_link);
 
   nJnt = chain.getNrOfJoints();
   nSeg = chain.getNrOfSegments();
@@ -16,23 +17,24 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
   vb.resize(nJnt);
 
   double mergin = 5.0 / 180.0 * M_PI;
-  model_utility::getBounds(robot_model, chain, mergin, lb, ub, vb);
+  modelUtility.getBounds(robot_model, chain, mergin, lb, ub, vb);
 
-  if (!nh.param("self_collision_avoidance", enableSelfCollisionAvoidance, false)) {
+  this->declare_parameter("self_collision_avoidance", false);
+  // if (!nh.param("self_collision_avoidance", enableSelfCollisionAvoidance, false)) {
+  if (!this->get_parameter("self_collision_avoidance", enableSelfCollisionAvoidance)) {
     // ROS_WARN_STREAM("self_collision_avoidance is not configured. Default is False");
-    
   }
   initializeSingleRobot(chain);
 }
 
 MyIK::MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps, Affine3d T_base_world, SolveType _type)
-  : nRobot(1), initialized(false), lb(_q_min), ub(_q_max), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
+  : nRobot(1), initialized(false), lb(_q_min), ub(_q_max), eps(_eps), T_base_world(T_base_world), solvetype(_type), Node("myik") {
   initializeSingleRobot(_chain);
 }
 
 MyIK::MyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
            const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps, SolveType _type)
-  : nRobot(base_link.size()), eps(_eps), solvetype(_type), myIKs(myik_ptr) {
+  : nRobot(base_link.size()), eps(_eps), solvetype(_type), myIKs(myik_ptr), Node("myik") {
   // get number of elements of the state vector and indeces corresponding to start of joint vector of each robot
   iJnt.resize(nRobot + 1, 0);
   for (int i = 0; i < nRobot; i++) {
@@ -791,7 +793,7 @@ visualization_msgs::msg::Marker MyIK::getManipulabilityMarker(const KDL::JntArra
 
   visualization_msgs::msg::Marker manipuMarker;
   manipuMarker.header.frame_id = "test";
-  manipuMarker.header.stamp = node->get_clock()->now();// rclcpp::Time::now();
+  manipuMarker.header.stamp = node->get_clock()->now();  // rclcpp::Time::now();
   manipuMarker.id = 0;
   manipuMarker.type = visualization_msgs::msg::Marker::SPHERE;
   manipuMarker.action = visualization_msgs::msg::Marker::ADD;

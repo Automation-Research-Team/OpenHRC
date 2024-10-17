@@ -1,10 +1,9 @@
 #ifndef MULTI_CART_COTNROLLER_HPP
 #define MULTI_CART_COTNROLLER_HPP
 
+#include <chrono>
 #include <numeric>
 #include <thread>
-#include <chrono>
-
 
 #include "ohrc_control/admittance_controller.hpp"
 #include "ohrc_control/cart_controller.hpp"
@@ -80,8 +79,8 @@ protected:
   std::vector<std::shared_ptr<Interface>> baseControllers;
 
   void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
-    interfaces[controller->getIndex()]->updateTargetPose(pose, twist);
-    baseControllers[controller->getIndex()]->updateTargetPose(pose, twist);
+    interfaces[controller->getIndex()]->updateTargetPose(this->get_clock()->now(), pose, twist);
+    baseControllers[controller->getIndex()]->updateTargetPose(this->get_clock()->now(), pose, twist);
   }
 
   // void applyBaseControl(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
@@ -121,7 +120,7 @@ protected:
     //   ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");
     //   s = default_str;
     // }
-    if (!this->get_parameter(key, s)){
+    if (!this->get_parameter(key, s)) {
       RCLCPP_INFO_STREAM(this->get_logger(), "Failed to get " << key << ", so" << default_str << "is automatically selected");
       s = default_str;
     }
@@ -129,7 +128,7 @@ protected:
     T mode = magic_enum::enum_cast<T>(s).value_or(none);
     if (mode == none) {
       RCLCPP_FATAL_STREAM(this->get_logger(), key << " is configured as [" << s << "] and not correctly configured.");
-      rclcppp::shutdown();
+      rclcpp::shutdown();
     } else
       RCLCPP_INFO_STREAM(this->get_logger(), "Operation mode: " << s);
 

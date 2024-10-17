@@ -48,6 +48,8 @@
   <depend>ohrc_control</depend>
   <depend>ohrc_msgs</depend>
   <depend>ohrc_common</depend>
+  <depend>interactive_markers</depend>
+  <depend>visualization_msgs</depend>
 
   <!-- <depend>spacenavd</depend> -->
   <!-- <depend>spacenav_node</depend> -->

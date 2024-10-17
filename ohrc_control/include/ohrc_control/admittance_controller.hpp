@@ -30,7 +30,7 @@ class AdmittanceController : public virtual Interface {
 public:
   using Interface::Interface;
 
-  virtual void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) override;
+  virtual void updateTargetPose(const rclcpp::Time t, KDL::Frame& pose, KDL::Twist& twist) override;
   virtual void initInterface() override;
 };
 

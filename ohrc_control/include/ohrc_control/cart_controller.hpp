@@ -42,9 +42,9 @@ class CartController : public rclcpp::Node {
   void init(std::string robot, std::string hw_config);
 
   // ros::AsyncSpinner spinner;
-  ros::CallbackQueue queue;
-  boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
-  ros::NodeHandle nh_;
+  // ros::CallbackQueue queue;
+  // boost::shared_ptr<ros::AsyncSpinner> spinner, spinner_;
+  // ros::NodeHandle nh_;
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pubEefForce;
 
   std::mutex mtx_q;
@@ -52,7 +52,7 @@ class CartController : public rclcpp::Node {
   KDL::Frame des_eef_pose, current_eef_pose;
   KDL::Twist des_eef_vel;
   KDL::JntArray q_cur, dq_cur;
-  std_msgs::Float64MultiArray cmd;
+  std_msgs::msg::Float64MultiArray cmd;
   Matrix3d userManipU;
   int rc;
   // ros::ServiceClient client
@@ -89,7 +89,7 @@ class CartController : public rclcpp::Node {
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
 
-  rclcpp::Time prev_time = rclcpp::Time::now();
+  rclcpp::Time prev_time = this->get_clock()->now();
 
   bool ftFound = false;
 
@@ -138,7 +138,7 @@ protected:
   std::vector<butterworth> posFilter, velFilter, jntFilter;
 
   TransformUtility trans;
-  tf2_ros::TransformBroadcaster br;
+  // tf2_ros::TransformBroadcaster br;
 
   // KDL
   std::unique_ptr<KDL::ChainIkSolverVel_pinv> vik_solver_ptr;   // PseudoInverse vel solver
@@ -158,7 +158,7 @@ protected:
   Affine3d T_base_root;
 
   void cbJntState(const sensor_msgs::msg::JointState::SharedPtr msg);
-  void cbArmMarker(const visualization_msgs::msg::MarkerArray::ConstPtr& msg);
+  // void cbArmMarker(const visualization_msgs::msg::MarkerArray::SharedPtr& msg);
   void cbForce(const geometry_msgs::msg::WrenchStamped::SharedPtr msg);
 
   void initDesWithJnt(const KDL::JntArray& q_init);
@@ -178,8 +178,8 @@ protected:
   void sendTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T);
   void sendTrajectoryActionCmd(const VectorXd& q_des, const double& T);
   void sendTrajectoryActionCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T);
-  void getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj);
-  void getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj);
+  void getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::msg::JointTrajectory& cmd_trj);
+  void getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::msg::JointTrajectory& cmd_trj);
 
   // virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
 
@@ -227,8 +227,8 @@ public:
   void publishDesEffPoseVel(const KDL::Frame& des_eef_pose, const KDL::Twist& des_eef_vel);
   void publishCurEffPoseVel(const KDL::Frame& cur_eef_pose, const KDL::Twist& cur_eef_vel);
   void getDesState(const KDL::Frame& cur_pose, const KDL::Twist& cur_vel, KDL::Frame& des_pose, KDL::Twist& des_vel);
-  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher);
-  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::msg::Wrench& wrench, ros::Publisher* publisher);
+  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, rclcpp::Publisher<ohrc_msgs::msg::State>::SharedPtr publisher);
+  void publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::msg::Wrench& wrench, rclcpp::Publisher<ohrc_msgs::msg::State>::SharedPtr publisher);
   void publishMarker(const KDL::JntArray q_cur);
 
   void filterJnt(KDL::JntArray& q);
@@ -300,7 +300,7 @@ public:
     JntToCart(q_cur, p);
 
     Affine3d T;
-    tf::transformKDLToEigen(p, T);
+    tf2::transformKDLToEigen(p, T);
 
     return T;
   }
@@ -375,7 +375,7 @@ public:
   // template <typename MsgType>
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr jntCmdPublisher;
   rclcpp::Publisher<ohrc_msgs::msg::State>::SharedPtr desStatePublisher, curStatePublisher;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr markerPublisher;
+  // rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr markerPublisher;
 
   std::mutex mtx;
   bool flagJntState = false;

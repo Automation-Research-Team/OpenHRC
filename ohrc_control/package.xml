@@ -52,6 +52,8 @@
   <depend>libnlopt-dev</depend>
   <depend>libnlopt-cxx-dev</depend>
 
+  <depend>control_msgs</depend>
+
 
   <depend>osqp</depend>
   <depend>osqp-eigen</depend>
@@ -74,6 +76,8 @@
   <depend>ros2_controllers</depend>
   <depend>trajectory_msgs</depend>
  
+<!-- <depend>visualization_msgs</depend> -->
+
   <depend>ohrc_common</depend>
   <depend>ohrc_msgs</depend>
   

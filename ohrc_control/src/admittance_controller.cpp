@@ -23,6 +23,7 @@ void AdmittanceController::getCriticalDampingCoeff(ImpCoeff& impCoeff, const std
 AdmittanceController::ImpCoeff AdmittanceController::getImpCoeff() {
   ImpCoeff impCoeff;
   std::vector<bool> isGotMDK(3, false);
+
   isGotMDK[0] = n.getParam("/imp_ceff/m", impCoeff.m_);
   isGotMDK[1] = n.getParam("/imp_ceff/d", impCoeff.d_);
   isGotMDK[2] = n.getParam("/imp_ceff/k", impCoeff.k_);
@@ -44,11 +45,15 @@ AdmittanceController::ImpCoeff AdmittanceController::getImpCoeff() {
     skipMass = (impCoeff.m.array() < 1.0e-2).all();
 
   } else if (nGotMDK == 2) {
-    ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
+    // ROS_INFO_STREAM("two of imp coeffs are configured. The last one is selected to achieve critical damping.");
+    RCLCPP_INFO_STREAM(this->get_logger(), "two of imp coeffs are configured. The last one is selected to achieve critical damping.");
+
     this->getCriticalDampingCoeff(impCoeff, isGotMDK);
   } else if (nGotMDK < 2) {
-    ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
-    ros::shutdown();
+    // ROS_ERROR_STREAM("al least, two of imp coeff is not configured");
+    RCLCPP_ERROR_STREAM(this->get_logger(), "al least, two of imp coeff is not configured");
+    // ros::shutdown();
+    rclcpp::shutdown();
   }
 
   return impCoeff;

@@ -9,11 +9,11 @@ CartController::CartController(const std::string robot, const std::string root_f
   init(robot);
 }
 
-CartController::CartController(const std::string robot, const std::string root_frame) :  Node("sub"), root_frame(root_frame) {
+CartController::CartController(const std::string robot, const std::string root_frame) : Node("sub"), root_frame(root_frame) {
   init(robot);
 }
 
-CartController::CartController() : Node("sub"){
+CartController::CartController() : Node("sub") {
   std::string robot;
   // nh.param("robot_ns", robot, std::string(""));
   this->declare_parameter("robot_ns", "");
@@ -52,7 +52,7 @@ void CartController::init(std::string robot, std::string hw_config) {
 
   dt = 1.0 / freq;
 
-  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(10.0,0));
+  this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(10.0, 0));
 
   tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(chain_start, chain_end, urdf_param, dt, eps));
 
@@ -93,12 +93,12 @@ void CartController::init(std::string robot, std::string hw_config) {
   this->get_parameter("/" + robot_ns + "/ft_sensor_link", ft_sensor_link);
 
   this->declare_parameter("/" + robot_ns + "/ft_topic", "ft_sensor/filtered");
-  this->get_parameter("/"  + robot_ns  + "/ft_topic", ft_topic);
+  this->get_parameter("/" + robot_ns + "/ft_topic", ft_topic);
 
   // ROS_INFO_STREAM("Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
   RCLCPP_INFO_STREAM(this->get_logger(), "Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
   if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1.0, 0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1.,0));
+    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1., 0));
     // subForce = nh.subscribe<geometry_msgs::msg::WrenchStamped>("/" + robot_ns + ft_topic, 1, &CartController::cbForce, this, th);
     subForce = this->create_subscription<geometry_msgs::msg::WrenchStamped>(ft_topic, rclcpp::QoS(1), std::bind(&CartController::cbForce, this, _1));
     // pubEefForce = nh.advertise<geometry_msgs::msg::WrenchStamped>("/" + robot_ns + "eef_force", 1);
@@ -128,7 +128,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   curStatePublisher = this->create_publisher<ohrc_msgs::msg::State>("/" + robot_ns + "state/current", rclcpp::QoS(100));
 
   // markerPublisher = nh.advertise<visualization_msgs::MarkerArray>("/" + robot_ns + "markers", 1);
-  markerPublisher = this->create_publisher<visualization_msgs::msg::MarkerArray>("/" + robot_ns + "markers", rclcpp::QoS(1));
+  // markerPublisher = this->create_publisher<visualization_msgs::msg::MarkerArray>("/" + robot_ns + "markers", rclcpp::QoS(1));
 
   if (robot_ns != "")
     // service = nh.advertiseService("/" + robot_ns + "reset", &CartController::resetService, this);
@@ -190,13 +190,12 @@ bool CartController::getInitParam() {
   }
 
   std::string solver_str;
-  this->declare_parameter("solver","MyIK");
+  this->declare_parameter("solver", "MyIK");
   // if (!nh.param("solver", solver_str, std::string("MyIK")))
   if (!this->get_parameter("solver", solver_str)) {
     // ROS_WARN_STREAM("Solver type is not choisen {Trac_Ik, KDL, MyIK}: Default MyIK");
     RCLCPP_WARN_STREAM(this->get_logger(), "Solver type is not choisen {Trac_Ik, KDL, MyIK}: Default MyIK");
-  }
-  else
+  } else
     // ROS_INFO_STREAM("Solver: " << solver_str);
     RCLCPP_INFO_STREAM(this->get_logger(), "Solver: " << solver_str);
 
@@ -208,13 +207,12 @@ bool CartController::getInitParam() {
   }
 
   std::string controller_str;
-  this->declare_parameter("controller","Velocity");
+  this->declare_parameter("controller", "Velocity");
   // if (!nh.param("controller", controller_str, std::string("Velocity")))
   if (!this->get_parameter("controller", controller_str)) {
     // ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
     RCLCPP_WARN_STREAM(this->get_logger(), "Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
-    }
-  else
+  } else
     // ROS_INFO_STREAM("Controller: " << controller_str);
     RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << controller_str);
 
@@ -228,7 +226,7 @@ bool CartController::getInitParam() {
   std::string publisher_str;
   this->declare_parameter("/" + hw_config_ns + "publisher", "Velocity");
   // if (!nh.param("/" + hw_config_ns + "publisher", publisher_str, std::string("Velocity")))
-  if (!this->get_parameter("/" + hw_config_ns + "publisher", publisher_str)) 
+  if (!this->get_parameter("/" + hw_config_ns + "publisher", publisher_str))
     // ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
     RCLCPP_WARN_STREAM(this->get_logger(), "Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
   else
@@ -285,7 +283,6 @@ bool CartController::getInitParam() {
   // }
   // std::cout << init_q_expect << std::endl;
 
-
   // nh.param("/" + hw_config_ns + "initial_pose_frame", initPoseFrame, chain_start);
   this->declare_parameter("/" + hw_config_ns + "initial_pose_frame", chain_start);
   this->get_parameter("/" + hw_config_ns + "initial_pose_frame", initPoseFrame);
@@ -320,7 +317,7 @@ void CartController::resetPose() {
 }
 
 Affine3d CartController::getTransform_base(std::string target) {
-  return trans.getTransform(robot_ns + chain_start, target, rclcpp::Time(0), rclcpp::Duration(1.0,0));
+  return trans.getTransform(robot_ns + chain_start, target, rclcpp::Time(0), rclcpp::Duration(1.0, 0));
 }
 
 void CartController::signal_handler(int signum) {
@@ -420,20 +417,20 @@ void CartController::cbJntState(const sensor_msgs::msg::JointState::SharedPtr ms
     flagJntState = true;
 }
 
-void CartController::cbArmMarker(const visualization_msgs::msg::MarkerArray::ConstPtr& msg) {
-  int nMarker = msg->markers.size();
+// void CartController::cbArmMarker(const visualization_msgs::msg::MarkerArray::SharedPtr& msg) {
+//   int nMarker = msg->markers.size();
 
-  for (int i = 0; i < nMarker; i++) {
-    if (msg->markers[i].id == ArmMarker::ArmMarkerID::ManipulabilityEllipsoid) {
-      Quaterniond q;
-      tf2::fromMsg(msg->markers[i].pose.orientation, q);
+//   for (int i = 0; i < nMarker; i++) {
+//     if (msg->markers[i].id == ArmMarker::ArmMarkerID::ManipulabilityEllipsoid) {
+//       Quaterniond q;
+//       tf2::fromMsg(msg->markers[i].pose.orientation, q);
 
-      std::lock_guard<std::mutex> lock(mtx);
-      _userManipU = q.matrix();
-      flagArmMarker = true;
-    }
-  }
-}
+//       std::lock_guard<std::mutex> lock(mtx);
+//       _userManipU = q.matrix();
+//       flagArmMarker = true;
+//     }
+//   }
+// }
 
 void CartController::cbForce(const geometry_msgs::msg::WrenchStamped::SharedPtr msg) {
   std::lock_guard<std::mutex> lock(mtx);
@@ -505,7 +502,7 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
 
   bool lastLoop = false;
   double s = 0.0, s2, s3, s4, s5;
-  s = (this->get_clock()->now() - s_moveInitPos.t_s).nanoseconds * 1.0e-9 / T;
+  s = (this->get_clock()->now() - s_moveInitPos.t_s).nanoseconds() * 1.0e-9 / T;
   if (s > 1.0) {
     s = 1.0;
     lastLoop = true;
@@ -568,10 +565,10 @@ void CartController::sendVelocityCmd(const VectorXd& q_des, const VectorXd& dq_d
   sendVelocityCmd(dq_des_);
 }
 
-void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
+void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, trajectory_msgs::msg::JointTrajectory& cmd_trj) {
   cmd_trj.header.stamp = this->get_clock()->now();
   cmd_trj.points.resize(1);
-  cmd_trj.points[0].time_from_start = T; //??
+  cmd_trj.points[0].time_from_start = rclcpp::Duration(T, 0);  //??
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
@@ -581,10 +578,10 @@ void CartController::getTrajectoryCmd(const VectorXd& q_des, const double& T, tr
   }
 }
 
-void CartController::getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::JointTrajectory& cmd_trj) {
+void CartController::getTrajectoryCmd(const VectorXd& q_des, const VectorXd& dq_des, const double& T, trajectory_msgs::msg::JointTrajectory& cmd_trj) {
   // cmd_trj.header.stamp = rclcpp::Time::now();
   cmd_trj.points.resize(1);
-  cmd_trj.points[0].time_from_start = T;
+  cmd_trj.points[0].time_from_start = rclcpp::Duration(T, 0);
 
   for (int i = 0; i < nJnt; i++) {
     cmd_trj.joint_names.push_back(nameJnt[i]);
@@ -664,13 +661,14 @@ void CartController::filterDesEffPoseVel(KDL::Frame& des_eef_pose, KDL::Twist& d
   tf2::twistEigenToKDL(vel, des_eef_vel);
 }
 
-void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, ros::Publisher* publisher) {
+void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, rclcpp::Publisher<ohrc_msgs::msg::State>::SharedPtr publisher) {
   this->publishState(pose, vel, geometry_msgs::msg::Wrench(), publisher);
 }
 
-void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::msg::Wrench& wrench, rclcpp::Publisher<T> publisher) {
+void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel, const geometry_msgs::msg::Wrench& wrench,
+                                  rclcpp::Publisher<ohrc_msgs::msg::State>::SharedPtr publisher) {
   ohrc_msgs::msg::State state;
-  state.header.stamp = rclcpp::Time::now();
+  state.header.stamp = this->get_clock()->now();
   state.pose = tf2::toMsg(pose);
   state.twist.linear.x = vel.vel[0];
   state.twist.linear.y = vel.vel[1];
@@ -686,12 +684,12 @@ void CartController::publishState(const KDL::Frame& pose, const KDL::Twist& vel,
 }
 
 void CartController::publishDesEffPoseVel(const KDL::Frame& des_eef_pose, const KDL::Twist& des_eef_vel) {
-  publishState(des_eef_pose, des_eef_vel, &desStatePublisher);
+  publishState(des_eef_pose, des_eef_vel, desStatePublisher);
 }
 
 void CartController::publishCurEffPoseVel(const KDL::Frame& cur_eef_pose, const KDL::Twist& cur_eef_vel) {
   std::lock_guard<std::mutex> lock(mtx);
-  publishState(cur_eef_pose, cur_eef_vel, _force.wrench, &curStatePublisher);
+  publishState(cur_eef_pose, cur_eef_vel, _force.wrench, curStatePublisher);
 }
 
 void CartController::publishMarker(const KDL::JntArray q_cur) {
@@ -775,8 +773,8 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   }
 
   Affine3d T, Td;
-  tf::transformKDLToEigen(cur_pose, T);
-  tf::transformKDLToEigen(des_pose, Td);
+  tf2::transformKDLToEigen(cur_pose, T);
+  tf2::transformKDLToEigen(des_pose, Td);
 
   static rclcpp::Time t0 = this->get_clock()->now();
   if (disable) {
@@ -798,10 +796,10 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
   Matrix<double, 6, 1> v, vd;
   v << 0, 0, 0, 0, 0, 0;
   // tf::twistKDLToEigen(cur_vel, v);
-  tf::twistKDLToEigen(des_vel, vd);
+  tf2::twistKDLToEigen(des_vel, vd);
 
   vd = s * (vd - v) + v;
-  tf::twistEigenToKDL(vd, des_vel);
+  tf2::twistEigenToKDL(vd, des_vel);
 }
 
 /**
@@ -810,7 +808,7 @@ void CartController::getDesState(const KDL::Frame& cur_pose, const KDL::Twist& c
  * \param period Time since the last called to update
  */
 void CartController::update() {
-  update(this->get_clock()->now(), rclcpp::Duration(1.0 / freq,0));
+  update(this->get_clock()->now(), rclcpp::Duration(1.0 / freq, 0));
 }
 void CartController::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
   if ((time - prev_time) < period)
@@ -949,7 +947,7 @@ int CartController::control() {
   rclcpp::sleep_for(3s);
 
   while (rclcpp::ok())
-    update(this->get_clock()->now(), rclcpp::Duration(1.0 / freq,0));
+    update(this->get_clock()->now(), rclcpp::Duration(1.0 / freq, 0));
 
   stopping(this->get_clock()->now());
 
