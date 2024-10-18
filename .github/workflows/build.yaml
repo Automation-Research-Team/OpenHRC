@@ -4,16 +4,16 @@ on: [push]
 
 jobs:
   ros_build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
-      CATKIN_WS: /home/runner/work/catkin_ws
+      WS: /home/runner/work/ohrc_ws
     steps:
     - uses: actions/checkout@v4
 
     - name: Setup ROS
       uses: ros-tooling/setup-ros@v0.7
       with:
-        required-ros-distributions: noetic
+        required-ros-distributions: humble
 
     - name: apt update and upgrade
       run: |
@@ -22,29 +22,28 @@ jobs:
 
     - name: Init workspace
       run: |
-        source /opt/ros/noetic/setup.bash
-        mkdir -p ${CATKIN_WS}/src
-        ln -s ${GITHUB_WORKSPACE} ${CATKIN_WS}/src/
+        mkdir -p ${WS}/src
+        ln -s ${GITHUB_WORKSPACE} ${WS}/src/
 
     - name: pre build
       run: |
-        source /opt/ros/noetic/setup.bash
-        cd ${CATKIN_WS}/src/OpenHRC
+        source /opt/ros/humble/setup.bash
+        cd ${WS}/src/OpenHRC
         git submodule update --init --recursive
         rosdep update
         rosdep install -i -y --from-paths ./ 
 
     - name: build
       run: |
-        source /opt/ros/noetic/setup.bash
-        cd ${CATKIN_WS}
-        catkin build
+        source /opt/ros/humble/setup.bash
+        cd ${WS}
+        colcon build --packages-up-to ohrc_teleoperation
 
-    - name: test
-      run: |
-        source /opt/ros/noetic/setup.bash
-        cd ${CATKIN_WS}
-        catkin test
+    # - name: test
+    #   run: |
+    #     source /opt/ros/noetic/setup.bash
+    #     cd ${WS}
+    #     catkin test
         
   # docker_build:
   #   runs-on: ubuntu-latest

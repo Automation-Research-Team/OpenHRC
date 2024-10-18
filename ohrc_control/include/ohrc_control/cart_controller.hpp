@@ -28,7 +28,7 @@
 #include "ohrc_msgs/msg/state_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/empty.hpp"
-#include "trac_ik/trac_ik.hpp"
+// #include "trac_ik/trac_ik.hpp"
 
 // TODO: Add namespace "Controllers"?
 
@@ -141,11 +141,11 @@ protected:
   // tf2_ros::TransformBroadcaster br;
 
   // KDL
-  std::unique_ptr<KDL::ChainIkSolverVel_pinv> vik_solver_ptr;   // PseudoInverse vel solver
+  // std::unique_ptr<KDL::ChainIkSolverVel_pinv> vik_solver_ptr;   // PseudoInverse vel solver
   std::unique_ptr<KDL::ChainIkSolverPos_NR_JL> kdl_solver_ptr;  // Joint Limit Solver
 
   // TRAC-IK
-  std::unique_ptr<TRAC_IK::TRAC_IK> tracik_solver_ptr;
+  // std::unique_ptr<TRAC_IK::TRAC_IK> tracik_solver_ptr;
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fk_solver_ptr;
   KDL::Chain chain;
   std::vector<KDL::Segment> chain_segs;

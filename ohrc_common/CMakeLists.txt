@@ -15,4 +15,5 @@ ament_auto_add_library(ohrc_common
   src/filter_utility/kalman.cpp
 )
 
+ament_export_include_directories(include)
 ament_auto_package()

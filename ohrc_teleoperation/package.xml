@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>ohrc_teleoperation</name>
   <version>0.1.0</version>
   <description>The ohrc_teleoperation package</description>
@@ -41,17 +41,26 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <!-- <buildtool_depend>catkin</buildtool_depend> -->
-  <build_depend>rclcpp</build_depend>
-  <build_export_depend>rclcpp</build_export_depend>
-  <exec_depend>rclcpp</exec_depend>
+  <!-- <buildtool_depend>ament_cmake_auto</buildtool_depend> -->
+  <depend>rclcpp</depend>
+  <!-- <depend>rclcpp_components</depend> -->
 
   <depend>ohrc_control</depend>
   <depend>ohrc_msgs</depend>
   <depend>ohrc_common</depend>
   <depend>interactive_markers</depend>
   <depend>visualization_msgs</depend>
+  <depend>urdf</depend>
 
-  <depend>trac_ik</depend>
+
+  <depend>tf2_kdl</depend>
+  <depend>tf2_eigen</depend>
+  <depend>tf2_eigen_kdl</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+
+
+  <!-- <depend>trac_ik_lib</depend> -->
 
   <!-- <depend>spacenavd</depend> -->
   <!-- <depend>spacenav_node</depend> -->

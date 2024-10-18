@@ -54,18 +54,18 @@ void CartController::init(std::string robot, std::string hw_config) {
 
   this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(10.0, 0));
 
-  tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(this->shared_from_this(), chain_start, chain_end, urdf_param, dt, eps));
+  // tracik_solver_ptr.reset(new TRAC_IK::TRAC_IK(this->shared_from_this(), chain_start, chain_end, urdf_param, dt, eps));
 
   KDL::JntArray ll, ul;  // lower joint limits, upper joint limits
-  bool valid = tracik_solver_ptr->getKDLLimits(ll, ul);
+  // bool valid = tracik_solver_ptr->getKDLLimits(ll, ul);
 
   fk_solver_ptr.reset(new KDL::ChainFkSolverPos_recursive(chain));
 
-  vik_solver_ptr.reset(new KDL::ChainIkSolverVel_pinv(chain));
-  kdl_solver_ptr.reset(new KDL::ChainIkSolverPos_NR_JL(chain, ll, ul, *fk_solver_ptr, *vik_solver_ptr, 1, eps));
+  // vik_solver_ptr.reset(new KDL::ChainIkSolverVel_pinv(chain));
+  // kdl_solver_ptr.reset(new KDL::ChainIkSolverPos_NR_JL(chain, ll, ul, *fk_solver_ptr, *vik_solver_ptr, 1, eps));
 
   myik_solver_ptr = std::make_shared<MyIK::MyIK>(chain_start, chain_end, urdf_param, eps, T_base_root);
-  valid = myik_solver_ptr->getKDLChain(chain);
+  bool valid = myik_solver_ptr->getKDLChain(chain);
   chain_segs = chain.segments;
 
   nJnt = chain.getNrOfJoints();
@@ -467,13 +467,13 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
 
     int rc;
     switch (solver) {
-      case SolverType::Trac_IK:
-        rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
-        break;
+      // case SolverType::Trac_IK:
+      //   rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
+      //   break;
 
-      case SolverType::KDL:
-        rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
-        break;
+      // case SolverType::KDL:
+      //   rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
+      //   break;
 
       case SolverType::MyIK:
         myik_solver_ptr->setNameJnt(nameJnt);
@@ -847,12 +847,12 @@ void CartController::update(const rclcpp::Time& time, const rclcpp::Duration& pe
     KDL::JntArray q_des_prev = q_des;
 
     switch (solver) {
-      case SolverType::Trac_IK:
-        rc = tracik_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des);
-        break;
-      case SolverType::KDL:
-        rc = kdl_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des);
-        break;
+      // case SolverType::Trac_IK:
+      //   rc = tracik_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des);
+      //   break;
+      // case SolverType::KDL:
+      //   rc = kdl_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des);
+      //   break;
       case SolverType::MyIK:
         rc = myik_solver_ptr->CartToJnt(q_cur, des_eef_pose, q_des, dt);
         break;

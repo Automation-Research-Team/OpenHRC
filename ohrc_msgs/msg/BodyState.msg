@@ -1,3 +1,3 @@
-ohrc_msgs/BodyPartState head
-ohrc_msgs/BodyPartState left_hand
-ohrc_msgs/BodyPartState right_hand
+BodyPartState head
+BodyPartState left_hand
+BodyPartState right_hand

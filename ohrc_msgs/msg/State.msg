@@ -3,7 +3,7 @@ geometry_msgs/Pose pose
 geometry_msgs/Twist twist
 
 geometry_msgs/Wrench wrench
-ohrc_msgs/Gripper gripper
+Gripper gripper
 
 bool enabled
 bool reset
