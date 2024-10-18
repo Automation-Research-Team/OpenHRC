@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 project(ohrc_teleoperation)
 
 
-# find_package(ament_cmake_auto REQUIRED)
-# ament_auto_find_build_dependencies()
-
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ohrc_control REQUIRED)
@@ -27,18 +24,6 @@ find_package(urdf REQUIRED)
 
 find_package(OsqpEigen REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
-# find_package(urdf REQUIRED)
-
-# include_directories(
-#   include
-# #   # ${catkin_INCLUDE_DIRS}
-# #   ${Boost_INCLUDE_DIRS}
-# #   ${orocos_kdl_INCLUDE_DIRS}
-# #   ${pkg_nlopt_INCLUDE_DIRS}
-# #   ${OsqpEigen_INCLUDE_DIRS}
-# #   ${magic_enum_INCLUDE_DIRS}
-# )
-
 
 
 set(interfaces
@@ -60,59 +45,9 @@ foreach(interface ${interfaces})
     )
   target_link_libraries(${interface}_teleoperation OsqpEigen::OsqpEigen magic_enum::magic_enum )
 
-
-
+  install(TARGETS ${interface}_teleoperation
+  DESTINATION lib/${PROJECT_NAME}
+  )
 endforeach(interface)
 
-install(TARGETS marker_teleoperation
-DESTINATION lib/${PROJECT_NAME}
-)
-
-# ı
-
-# set(state_topic_interfaces
-#   omega
-#   xr_body
-# )
-
-# foreach(interface ${state_topic_interfaces})
-#   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
-#   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-# endforeach(interface)
-
-# set(body_interfaces
-#   k4abt_body
-# )
-
-# foreach(interface ${body_interfaces})
-#   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/state_topic_interface.cpp src/interface/xr_body_interface.cpp src/app/${interface}_teleoperation.cpp)
-#   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-# endforeach(interface)
-
-# set(twist_topic_interfaces
-#   joy_topic
-# )
-
-# foreach(interface ${twist_topic_interfaces})
-#   add_executable(${interface}_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_teleoperation.cpp)
-#   add_dependencies(${interface}_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#   target_link_libraries(${interface}_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-# endforeach(interface)
-
-# set(w_twist_topic_interfaces
-#   marker
-# )
-
-# foreach(interface ${w_twist_topic_interfaces})
-#   add_executable(${interface}_twist_topic_teleoperation src/interface/${interface}_interface.cpp src/interface/twist_topic_interface.cpp src/app/${interface}_twist_topic_teleoperation.cpp)
-#   add_dependencies(${interface}_twist_topic_teleoperation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#   target_link_libraries(${interface}_twist_topic_teleoperation ${catkin_LIBRARIES} OsqpEigen::OsqpEigen magic_enum::magic_enum)
-# endforeach(interface)
-# if(BUILD_TESTING)
-#   find_package(ament_lint_auto REQUIRED)
-#   ament_lint_auto_find_test_dependencies()
-# endif()
-# ament_auto_package()
 ament_package()

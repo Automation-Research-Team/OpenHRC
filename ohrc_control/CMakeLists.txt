@@ -22,18 +22,7 @@ find_package(ohrc_msgs REQUIRED)
 
 find_package(OsqpEigen REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
-# find_package(trac_ik_lib REQUIRED)
 
-include_directories(
-  include
-  # ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${orocos_kdl_INCLUDE_DIRS}
-  ${pkg_nlopt_INCLUDE_DIRS}
-  ${OsqpEigen_INCLUDE_DIRS}
-  ${magic_enum_INCLUDE_DIRS}
-)
-## Declare a C++ library
 add_library(${PROJECT_NAME}  SHARED src/my_ik.cpp
                               # src/multi_my_ik.cpp 
                               src/cart_controller.cpp 
@@ -43,32 +32,34 @@ add_library(${PROJECT_NAME}  SHARED src/my_ik.cpp
                               src/position_feedback_controller.cpp
                               src/hybrid_feedback_controller.cpp
 )
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  )
+
+
 ament_target_dependencies(${PROJECT_NAME} rclcpp trac_ik_lib interactive_markers control_msgs tf2_kdl tf2_eigen tf2_eigen_kdl std_msgs std_srvs ohrc_common ohrc_msgs urdf)
+
 target_link_libraries(${PROJECT_NAME} OsqpEigen::OsqpEigen magic_enum::magic_enum)
 
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
 
-## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION include/${PROJECT_NAME}
-  FILES_MATCHING PATTERN "*.hpp"
-  PATTERN ".svn" EXCLUDE
-)
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-install(FILES
-#   # myfile1
-#   # myfile2
-  DESTINATION share/${PROJECT_NAME}
-)
 # ament_export_dependencies(rclcpp trac_ik_lib interactive_markers control_msgs tf2_kdl tf2_eigen tf2_eigen_kdl std_msgs std_srvs ohrc_common ohrc_msgs urdf)
 ament_export_libraries(${PROJECT_NAME})
 ament_export_include_directories(include)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+install(TARGETS ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
 
 # if(BUILD_TESTING)
 #   find_package(ament_lint_auto REQUIRED)
