@@ -1,0 +1,13 @@
+/**:
+  ros__parameters:
+    ur5e:
+      chain_start: "base_link" # base frame of commands
+      chain_end: "tool0" # target eff frame
+
+      publisher: "Velocity" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
+      topic_namespace: "joint_group_vel_controller"
+
+      initIKAngle: [0.0, -1.0, 2.0, -2.5, -1.5, 0.0] # size of this should be equal to DoF
+
+      # initial_pose_frame: test # default frame is same as chain_start
+      initial_pose: [0.35, 0.0, 0.3, 3.141592, 0.0, 0.0] # [x, y, z, roll, pitch, yaw]

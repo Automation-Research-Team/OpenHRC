@@ -2,8 +2,12 @@
 
 MultiCartController::MultiCartController() : Node("name") {
   std::vector<std::string> robots;
-  if (!getInitParam(robots))
+  if (!getInitParam(robots)){
+    RCLCPP_WARN_STREAM(this->get_logger(), __LINE__);
     rclcpp::shutdown();
+
+  }
+
 
   dt = 1.0 / freq;
   nRobot = robots.size();

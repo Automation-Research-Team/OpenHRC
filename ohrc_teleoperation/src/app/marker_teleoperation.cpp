@@ -5,6 +5,5 @@ int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
   SingleInterface<MarkerInterface> interface;
   if (interface.control() < 0)
-    // ROS_ERROR("End by some fails");
-    return 0;
+    std::cout << "End by some fails" << std::endl;
 }

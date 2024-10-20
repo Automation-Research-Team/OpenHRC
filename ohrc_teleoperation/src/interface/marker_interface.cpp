@@ -59,7 +59,7 @@ void MarkerInterface::configMarker() {
   server->applyChanges();
 
   // ROS_INFO_STREAM("Set interactive marker: " << controller->getRobotNs() << "eef_marker");
-  // RCLCPP_INFO_STREAM(this->get_logger(), "Set interactive marker: " << controller->getRobotNs() << "eef_marker");
+  RCLCPP_INFO_STREAM(node->get_logger(), "Set interactive marker: " << controller->getRobotNs() << "eef_marker");
 }
 
 void MarkerInterface::processFeedback(const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr& feedback, rclcpp::Logger logger) {
@@ -107,7 +107,9 @@ void MarkerInterface::updateTargetPose(const rclcpp::Time t, KDL::Frame& pose, K
 
 void MarkerInterface::resetInterface() {
   controller->disableOperation();
-  // ROS_WARN_STREAM("Reset marker position");
+  
+  RCLCPP_WARN_STREAM(node->get_logger(),"Reset marker position");
+
   _markerPose = int_marker.pose;  // tf2::toMsg(controller->getT_cur());
   server->setPose(int_marker.name, _markerPose);
   server->applyChanges();
