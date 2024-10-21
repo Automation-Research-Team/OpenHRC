@@ -3,14 +3,19 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, EqualsSubstitution, TextSubstitution
 from launch.conditions import IfCondition
 from launch_ros.substitutions import FindPackageShare
 
 # def get_user_frame_args(): 
-#   print(str(['', LaunchConfiguration('user_frame_viewpoint'), '_']))
-#   if ['', LaunchConfiguration('user_frame_viewpoint'), "'"] == 'back':
+#   if EqualsSubstitution(LaunchConfiguration('user_frame_viewpoint'), 'back'):
 #     return ['--x', '0', '--y', '0','--z', '0', '--yaw', '0', '--pitch', '0', '--roll', '0', '--frame-id', 'world', '--child-frame-id', 'user_frame']
+#   elif EqualsSubstitution(LaunchConfiguration('user_frame_viewpoint'), 'face'):
+#     return ['--x', '0', '--y', '0','--z', '0', '--yaw', '3.141592', '--pitch', '0', '--roll', '0', '--frame-id', 'world', '--child-frame-id', 'user_frame']
+#   elif EqualsSubstitution(LaunchConfiguration('user_frame_viewpoint'), 'right'):
+#     return ['--x', '0', '--y', '0','--z', '0', '--yaw', '1.57079', '--pitch', '0', '--roll', '0', '--frame-id', 'world', '--child-frame-id', 'user_frame']
+#   elif EqualsSubstitution(LaunchConfiguration('user_frame_viewpoint'), 'left'):
+#     return ['--x', '0', '--y', '0','--z', '0', '--yaw', '-1.57079', '--pitch', '0', '--roll', '0', '--frame-id', 'world', '--child-frame-id', 'user_frame']
 
 
 def generate_launch_description():
@@ -49,6 +54,13 @@ def generate_launch_description():
       }.items()
     ),
 
+
+    # Node(
+    #   package='tf2_ros',
+    #   executable='static_transform_publisher',
+    #   name='user_frame_broadcaster',
+    #   arguments=get_user_frame_args()
+    # ),
     Node(
       package='tf2_ros',
       executable='static_transform_publisher',

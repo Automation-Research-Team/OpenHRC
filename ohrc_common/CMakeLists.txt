@@ -14,6 +14,6 @@ ament_auto_add_library(ohrc_common
   src/filter_utility/bayes_normal_gamma.cpp
   src/filter_utility/kalman.cpp
 )
-
+target_link_libraries(ohrc_common magic_enum::magic_enum)
 ament_export_include_directories(include)
 ament_auto_package()

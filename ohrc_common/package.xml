@@ -15,7 +15,7 @@
   <depend>tf2_eigen</depend>
   <depend>kdl_parser</depend>
   <depend>urdf</depend>
-
+  <depend>magic_enum</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

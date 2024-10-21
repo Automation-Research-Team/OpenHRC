@@ -94,16 +94,19 @@ bool Controller::getInitParam(std::vector<std::string>& robots) {
   if (!RclcppUtility::declare_and_get_parameter(node, "control_freq", double(), freq))
     return false;
 
-  std::string controller_str;
-  if (!RclcppUtility::declare_and_get_parameter(node, "controller", std::string("Velocity"), controller_str))
-    RCLCPP_WARN_STREAM(this->get_logger(), "Failed to get controller : Default Velocity");
-
-  controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
-  if (controller == ControllerType::None) {
-    RCLCPP_FATAL(this->get_logger(), "Controller type has to be chosen from {Position, Velocity, Torque}");
+  if(!RclcppUtility::declare_and_get_parameter_enum(node, "controller", controller))
     return false;
-  } else
-    RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << magic_enum::enum_name(controller));
+
+  // std::string controller_str;
+  // if (!RclcppUtility::declare_and_get_parameter(node, "controller", std::string("Velocity"), controller_str))
+  //   RCLCPP_WARN_STREAM(this->get_logger(), "Failed to get controller : Default Velocity");
+
+  // controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
+  // if (controller == ControllerType::None) {
+  //   RCLCPP_FATAL(this->get_logger(), "Controller type has to be chosen from {Position, Velocity, Torque}");
+  //   return false;
+  // } else
+  //   RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << magic_enum::enum_name(controller));
 
   std::string publisher_str;
   if (!RclcppUtility::declare_and_get_parameter(node, "publisher", std::string("Velocity"), publisher_str))

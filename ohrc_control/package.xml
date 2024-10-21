@@ -24,7 +24,7 @@
   <depend>osqp</depend>
   <depend>osqp-eigen</depend>
 
-  <depend>magic_enum</depend>
+
 
 
   <depend>liborocos-kdl</depend>
