@@ -196,7 +196,7 @@ Note that,
 
 If you want to add any modifications but still want to use `ohrc_msgs/state` topic, please make another interface referring to `StateTopicInterface` class. (see `omega_interface.cpp`). For example, this way can add a synchronous feedback function.
 
-If you want to develop from a lower scratch, e.g., calling API of the interface(device) synchronously without pub/sub `ohrc_msgs/state` topic, please develop another interface node referring to `MultiCartController` class. (see `marker_interface.cpp`).
+If you want to develop from a lower scratch, e.g., calling API of the interface(device) synchronously without pub/sub `ohrc_msgs/state` topic, please develop another interface node referring to `Controller` class. (see `marker_interface.cpp`).
 
 ---
 ## Author

@@ -37,7 +37,6 @@ using namespace std::placeholders;
 using namespace std::chrono_literals;
 
 class CartController : public rclcpp::Node {
-  static void signal_handler(int signum);
   void init(std::string robot);
   void init(std::string robot, std::string hw_config);
 

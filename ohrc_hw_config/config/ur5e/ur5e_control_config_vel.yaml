@@ -19,9 +19,18 @@
     # # initial_pose_frame: test # default frame is same as chain_start
     # initial_pose: [0.35, 0.0, 0.3, 3.141592, 0, 0] # [x, y, z, roll, pitch, yaw]
 
-    follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
-      ur5e: # robot config name
-        - "" # robot namespace
+    # follower_list: # robot namespace list. They should be unique. ("") means the robot has no namespace
+    #   ur5e: # robot config name, which needs to be defined in hw_config.yaml
+    #     name: [""] # robot namespace
+    # follower_hw: ["ur5e", "a"] # robot config name, which needs to be defined in hw_config.yaml
+    # follower_ns: # robot namespaces for each robot, which should be unique among all robots. ("") means the robot has no namespace
+    #   ur5e: ["a"] 
+
+    follower:
+      hw: ["ur5e", "a"] # robot config name, which needs to be defined in hw_config.yaml
+      ns: # robot namespaces for each robot, which should be unique among all robots. ("") means the robot has no namespace
+        ur5e: ["aa", "c"]
+        a: ["bb"]
 
 
     priority: "Manual" #"Automation" #  (for multi-follower)

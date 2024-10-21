@@ -2,13 +2,13 @@
 #define BUTTERWORTH_H
 
 // #include <ros/ros.h>
-#include "rclcpp/rclcpp.hpp"
-
 #include <Eigen/Eigen>
+
+#include "rclcpp/rclcpp.hpp"
 
 class butterworth {
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  // EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   // constcuctor
   butterworth(int order, double cutoff_freq, double sample_freq);

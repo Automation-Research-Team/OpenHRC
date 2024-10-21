@@ -168,9 +168,9 @@ void CartController::updateFilterCutoff(const double velFreq, const double jntFr
 }
 
 bool CartController::getInitParam() {
-  // nh.param("/" + hw_config_ns + "chain_start", chain_start, std::string(""));
   this->declare_parameter("/" + hw_config_ns + "chain_start", "");
   this->get_parameter("/" + hw_config_ns + "chain_start", chain_start);
+  RCLCPP_INFO_STREAM(this->get_logger(), "chain_start: " << chain_start);
 
   if (root_frame == "")
     root_frame = chain_start;
@@ -320,23 +320,23 @@ Affine3d CartController::getTransform_base(std::string target) {
   return trans.getTransform(robot_ns + chain_start, target, rclcpp::Time(0), rclcpp::Duration(1.0, 0));
 }
 
-void CartController::signal_handler(int signum) {
-  // ros::NodeHandle nh;
-  // std::vector<std::string> robot_ns{ "/toroboarm_1", "/toroboarm_2" };
-  // std::vector<std::string> controller{ "/joint_position_controller", "/joint_velocity_controller" };
-  // ros::Publisher publisher;
-  // std_msgs::Float64MultiArray cmd;
-  // cmd.data.resize(7, 0.0);
-  // while (ros::ok()) {  // exerimental
-  //   for (int i = 0; i < robot_ns.size(); i++) {
-  //     for (int j = 0; j < controller.size(); i++) {
-  //       publisher = nh.advertise<std_msgs::Float64MultiArray>(robot_ns[i] + controller[j] + "/command", 1);
-  //       publisher.publish(cmd);
-  //     }
-  //   }
-  //   ros::shutdown();
-  // }
-}
+// void CartController::signal_handler(int signum) {
+//   // ros::NodeHandle nh;
+//   // std::vector<std::string> robot_ns{ "/toroboarm_1", "/toroboarm_2" };
+//   // std::vector<std::string> controller{ "/joint_position_controller", "/joint_velocity_controller" };
+//   // ros::Publisher publisher;
+//   // std_msgs::Float64MultiArray cmd;
+//   // cmd.data.resize(7, 0.0);
+//   // while (ros::ok()) {  // exerimental
+//   //   for (int i = 0; i < robot_ns.size(); i++) {
+//   //     for (int j = 0; j < controller.size(); i++) {
+//   //       publisher = nh.advertise<std_msgs::Float64MultiArray>(robot_ns[i] + controller[j] + "/command", 1);
+//   //       publisher.publish(cmd);
+//   //     }
+//   //   }
+//   //   ros::shutdown();
+//   // }
+// }
 void CartController::resetFt() {
   // ROS_INFO_STREAM("Called reset ft service.");
   RCLCPP_INFO_STREAM(this->get_logger(), "Called reset ft service.");
@@ -467,13 +467,13 @@ int CartController::moveInitPos(const KDL::JntArray& q_cur, const std::vector<st
 
     int rc;
     switch (solver) {
-      // case SolverType::Trac_IK:
-      //   rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
-      //   break;
+        // case SolverType::Trac_IK:
+        //   rc = tracik_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
+        //   break;
 
-      // case SolverType::KDL:
-      //   rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
-      //   break;
+        // case SolverType::KDL:
+        //   rc = kdl_solver_ptr->CartToJnt(q_init_expect, init_eef_pose, s_moveInitPos.q_des);
+        //   break;
 
       case SolverType::MyIK:
         myik_solver_ptr->setNameJnt(nameJnt);

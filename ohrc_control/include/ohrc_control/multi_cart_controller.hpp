@@ -17,7 +17,7 @@ using namespace std::placeholders;
 using namespace ohrc_control;
 using namespace std::chrono_literals;
 
-class MultiCartController : public rclcpp::Node {
+class Controller : public rclcpp::Node {
   bool getInitParam(std::vector<std::string>& robots);
   void updateDesired();
   std::vector<KDL::Frame> desPose;
@@ -136,7 +136,7 @@ protected:
   }
 
 public:
-  MultiCartController();
+  Controller();
   int control();
   virtual void starting();
   void stopping();

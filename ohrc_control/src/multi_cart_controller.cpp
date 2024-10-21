@@ -1,13 +1,12 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
-MultiCartController::MultiCartController() : Node("name") {
+Controller::Controller() : Node("name") {
   std::vector<std::string> robots;
-  if (!getInitParam(robots)){
-    RCLCPP_WARN_STREAM(this->get_logger(), __LINE__);
+  if (!getInitParam(robots)) {
+    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the initial parameters. Shutting down...");
     rclcpp::shutdown();
-
   }
-
+  std::cout << __FILE__ << ":" << __LINE__ << std::endl;
 
   dt = 1.0 / freq;
   nRobot = robots.size();
@@ -27,8 +26,8 @@ MultiCartController::MultiCartController() : Node("name") {
 
   multimyik_solver_ptr.reset(new MyIK::MyIK(base_link, tip_link, T_base_root, myik_ptr));
 
-  // service = nh.advertiseService("/reset", &MultiCartController::resetService, this);
-  service = this->create_service<std_srvs::srv::Empty>("/reset", std::bind(&MultiCartController::resetService, this, _1, _2));
+  // service = nh.advertiseService("/reset", &Controller::resetService, this);
+  service = this->create_service<std_srvs::srv::Empty>("/reset", std::bind(&Controller::resetService, this, _1, _2));
 
   // TODO: condifure this priority setting
 
@@ -63,97 +62,59 @@ MultiCartController::MultiCartController() : Node("name") {
   }
 }
 
-bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
-  // ros::NodeHandle n("~");
-
-  // XmlRpc::XmlRpcValue my_list;
-  // if (!n.getParam("follower_list", my_list)) {
-  //   ROS_FATAL_STREAM("Failed to get the hardware config list");
-  //   return false;
-  // }
-
-  // for (auto itr = my_list.begin(); itr != my_list.end(); ++itr) {
-  //   // std::cout << itr->first << ":" << itr->second << std::endl;
-  //   if (my_list[itr->first].getType() == XmlRpc::XmlRpcValue::TypeArray) {
-  //     for (int i = 0; i < my_list[itr->first].size(); ++i) {
-  //       // std::cout << itr->first << ":" << my_list[itr->first][i] << std::endl;
-  //       hw_configs.push_back(itr->first);
-  //       robots.push_back(my_list[itr->first][i]);
-  //     }
-  //   }
-  // }
-
-  this->declare_parameter("follower_list", std::vector<std::string>());
-  hw_configs = this->get_parameter("follower_list").as_string_array();
-
-  for (auto hw_config : hw_configs) {
-    this->declare_parameter(hw_config, std::string());
-    robots.push_back(this->get_parameter(hw_config).as_string());
+bool Controller::getInitParam(std::vector<std::string>& robots) {
+  std::vector<std::string> _hw_configs;
+  // this->declare_parameter("follower.hw", std::vector<std::string>());
+  auto node = std::shared_ptr<rclcpp::Node>(this);
+  if (!RclcppUtility::declare_and_get_parameter(node, "follower.hw", std::vector<std::string>(), _hw_configs, false) || _hw_configs.empty()) {
+    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the follower robot hw list");
+    return false;
   }
 
-  // std::cout << my_list.size() << std::endl;
+  for (std::string hw_config : _hw_configs) {
+    std::vector<std::string> _robots;
 
-  // std::map<std::string, std::string> robots_map;
-  // if (!n.getParam("follower_list", robots_map) || robots_map.empty()) {
-  //   ROS_FATAL_STREAM("Failed to get the follower robot list");
-  //   return false;
-  // }
+    if (!RclcppUtility::declare_and_get_parameter(node, "follower.ns." + hw_config, std::vector<std::string>(), _robots, false) || _robots.empty()) {
+      RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the follower robot ns list");
+      return false;
+    }
+
+    for (auto robot : _robots) {
+      robots.push_back(robot);
+      hw_configs.push_back(hw_config);
+    }
+  }
 
   for (int i = 0; i < robots.size(); i++)
-    // ROS_INFO_STREAM("Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
-    RCLCPP_INFO_STREAM(this->get_logger(), "Robot " << i << ": " << robots[i] << " - " << hw_configs[i]);
+    RCLCPP_INFO_STREAM(this->get_logger(), "Configured Robot " << i << ": " << hw_configs[i] << " (ns: " << robots[i] << ")");
 
-  // if (!n.getParam("root_frame", root_frame)) {
-  //   ROS_FATAL_STREAM("Failed to get the root frame of the robot system");
-  //   return false;
-  // }
-  this->declare_parameter("root_frame", std::string());
-  if (!this->get_parameter("root_frame", root_frame)) {
-    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the root frame of the robot system");
+  if (!RclcppUtility::declare_and_get_parameter(node, "root_frame", std::string(), root_frame))
     return false;
-  }
 
-  // if (!n.getParam("control_freq", freq)) {
-  //   ROS_FATAL_STREAM("Failed to get the control_freq of the robot system");
-  //   return false;
-  // }
-  this->declare_parameter("control_freq", double());
-  if (!this->get_parameter("control_freq", freq)) {
-    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the control_freq of the robot system");
+  if (!RclcppUtility::declare_and_get_parameter(node, "control_freq", double(), freq))
     return false;
-  }
 
   std::string controller_str;
-  // if (!n.param("controller", controller_str, std::string("Velocity")))
-  //   ROS_WARN_STREAM("Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
-  // else
-  //   ROS_INFO_STREAM("Controller: " << controller_str);
-  this->declare_parameter("controller", std::string());
-  if (!this->get_parameter("controller", controller_str)) {
-    RCLCPP_WARN_STREAM(this->get_logger(), "Controller is not choisen {Position, Velocity, Torque}: Default Velocity");
-    controller_str = "Velocity";
-  } else {
-    RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << controller_str);
-  }
+  if (!RclcppUtility::declare_and_get_parameter(node, "controller", std::string("Velocity"), controller_str))
+    RCLCPP_WARN_STREAM(this->get_logger(), "Failed to get controller : Default Velocity");
 
   controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
   if (controller == ControllerType::None) {
-    // ROS_FATAL("Controller type is not correctly choisen from {Position, Velocity, Torque}");
-    RCLCPP_FATAL(this->get_logger(), "Controller type is not correctly choisen from {Position, Velocity, Torque}");
+    RCLCPP_FATAL(this->get_logger(), "Controller type has to be chosen from {Position, Velocity, Torque}");
     return false;
-  }
+  } else
+    RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << magic_enum::enum_name(controller));
 
-  // std::string publisher_str;
-  // if (!n.param("publisher", publisher_str, std::string("Velocity")))
-  //   ROS_WARN_STREAM("Publisher is not choisen {Position, Velocity, Torque, Trajectory, TrajectoryAction}: Default Velocity");
-  // else
-  //   ROS_INFO_STREAM("Publisher: " << publisher_str);
+  std::string publisher_str;
+  if (!RclcppUtility::declare_and_get_parameter(node, "publisher", std::string("Velocity"), publisher_str))
+    RCLCPP_WARN_STREAM(this->get_logger(), "Failed to get publisher for robot contorller: Default Velocity");
 
-  // publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
-  // if (publisher == PublisherType::None) {
-  //   ROS_FATAL("Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
-  //   return false;
-  // }
+  publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
+  if (publisher == PublisherType::None) {
+    RCLCPP_FATAL(this->get_logger(), "Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
+    return false;
+  } else
+    RCLCPP_INFO_STREAM(this->get_logger(), "Publisher: " << magic_enum::enum_name(publisher));
 
   MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual");
   IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated");
@@ -178,7 +139,7 @@ bool MultiCartController::getInitParam(std::vector<std::string>& robots) {
   return true;
 }
 
-void MultiCartController::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
+void Controller::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
   // ROS_INFO_STREAM("Resetting...");
   RCLCPP_INFO_STREAM(this->get_logger(), "Resetting...");
   for (int i = 0; i < nRobot; i++) {
@@ -191,12 +152,12 @@ void MultiCartController::resetService(const std::shared_ptr<std_srvs::srv::Empt
   // return true;
 }
 
-void MultiCartController::setPriority(int i) {
+void Controller::setPriority(int i) {
   multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
   multimyik_solver_ptr->setRobotWeight(i, 100.);
 }
 
-void MultiCartController::setLowPriority(int i) {
+void Controller::setLowPriority(int i) {
   multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
   // for (int j = 0; j++; j < nRobot)
   //   if (j != i)
@@ -204,7 +165,7 @@ void MultiCartController::setLowPriority(int i) {
   multimyik_solver_ptr->setRobotWeight(i, 0.1);
 }
 
-void MultiCartController::setPriority(std::vector<int> idx) {
+void Controller::setPriority(std::vector<int> idx) {
   multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
 
   double gain = pow(10.0, idx.size() - 1);
@@ -214,7 +175,7 @@ void MultiCartController::setPriority(std::vector<int> idx) {
   }
 }
 
-void MultiCartController::setPriority(PriorityType priority) {
+void Controller::setPriority(PriorityType priority) {
   std::vector<int> priorityInd;
   if (priority == PriorityType::Automation)
     priorityInd = autoInd;
@@ -226,13 +187,13 @@ void MultiCartController::setPriority(PriorityType priority) {
     multimyik_solver_ptr->setRobotWeight(ind, 100.);
 }
 
-void MultiCartController::setHightLowPriority(int high, int low) {
+void Controller::setHightLowPriority(int high, int low) {
   multimyik_solver_ptr->resetRobotWeight();  // make all robot priority equal.
   multimyik_solver_ptr->setRobotWeight(high, 100.);
   multimyik_solver_ptr->setRobotWeight(low, 0.1);
 }
 
-void MultiCartController::starting() {
+void Controller::starting() {
   for (int i = 0; i < nRobot; i++)  // {
     cartControllers[i]->starting(this->get_clock()->now());
 
@@ -254,7 +215,7 @@ void MultiCartController::starting() {
   this->t0 = this->get_clock()->now();
 }
 
-void MultiCartController::stopping() {
+void Controller::stopping() {
   for (int i = 0; i < nRobot; i++)                           // {
     cartControllers[i]->stopping(this->get_clock()->now());  // TODO: Make sure that this works correctly.
   // cartControllers[i]->enableOperation();
@@ -266,8 +227,8 @@ void MultiCartController::stopping() {
   rclcpp::shutdown();
 }
 
-void MultiCartController::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
-                                       const std::vector<KDL::Twist> desVel) {
+void Controller::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
+                              const std::vector<KDL::Twist> desVel) {
   static rclcpp::Time prev = time;
   if ((time - prev).nanoseconds() * 1.0e-9 > 0.05) {
     for (int i = 0; i < nRobot; i++) {
@@ -278,7 +239,7 @@ void MultiCartController::publishState(const rclcpp::Time& time, const std::vect
   }
 }
 
-void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
+void Controller::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
   static std::vector<KDL::JntArray> q_des(nRobot), dq_des(nRobot), q_cur(nRobot), dq_cur(nRobot);
   std::vector<KDL::Frame> curPose(nRobot);
   std::vector<KDL::Twist> curVel(nRobot);
@@ -341,7 +302,7 @@ void MultiCartController::update(const rclcpp::Time& time, const rclcpp::Duratio
     feedback(desPose[i], desVel[i], cartControllers[i]);
 }
 
-void MultiCartController::updateDesired() {
+void Controller::updateDesired() {
   for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->updateCurState();
 
@@ -358,7 +319,7 @@ void MultiCartController::updateDesired() {
   preInterfaceProcess(interfaces);
 }
 
-int MultiCartController::control() {
+int Controller::control() {
   this->starting();
 
   std::vector<double> ms(3, 0.0);

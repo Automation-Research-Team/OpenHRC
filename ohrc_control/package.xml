@@ -11,7 +11,7 @@
   <depend>rclcpp</depend>
   <!-- <depend>boost</depend> -->
   <!-- <depend>trac_ik</depend> -->
-  <!-- <depend>trac_ik_lib</depend> -->
+  <depend>trac_ik_lib</depend>
 
   <depend>liborocos-kdl-dev</depend>
   <depend>libnlopt-dev</depend>

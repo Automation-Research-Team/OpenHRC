@@ -5,6 +5,7 @@
 #include "ohrc_common/math_utility.h"
 #include "ohrc_common/model_utility.h"
 // #include "ohrc_common/nav_msgs_utility/nav_msgs_utility.h"
+#include "ohrc_common/rclcpp_utility.hpp"
 #include "ohrc_common/std_utility.h"
 #include "ohrc_common/subscriber_utility.h"
 #include "ohrc_common/transform_utility.h"
