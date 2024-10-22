@@ -3,11 +3,11 @@
 
 #include "ohrc_control/cart_controller.hpp"
 
-class Interface : rclcpp::Node {
+class Interface {
 protected:
   // ros::NodeHandle n;
   const double dt;
-  std::shared_ptr<rclcpp::Node> node;
+  rclcpp::Node::SharedPtr node;
 
   std::shared_ptr<CartController> controller;
 
@@ -27,22 +27,21 @@ protected:
 
   std::string stateTopicName = "/state", stateFrameId = "world";
   inline void getTopicAndFrameName(std::string DefaultStateTopicName, std::string DefaultStateFrameId) {
-    this->declare_parameter(controller->getRobotNs() + "topic_name", DefaultStateTopicName);
-    this->declare_parameter(controller->getRobotNs() + "frame_id", DefaultStateFrameId);
+    node->declare_parameter(controller->getRobotNs() + "topic_name", DefaultStateTopicName);
+    node->declare_parameter(controller->getRobotNs() + "frame_id", DefaultStateFrameId);
 
     // if (!n.param(controller->getRobotNs() + "topic_name", stateTopicName, DefaultStateTopicName) &&
     //     !n.param(controller->getRobotNs() + "frame_id", stateFrameId, DefaultStateFrameId))
-    if (!this->get_parameter(controller->getRobotNs() + "topic_name", stateTopicName) && !this->get_parameter(controller->getRobotNs() + "frame_id", stateFrameId))
+    if (!node->get_parameter(controller->getRobotNs() + "topic_name", stateTopicName) && !node->get_parameter(controller->getRobotNs() + "frame_id", stateFrameId))
       // ROS_WARN_STREAM("topic_name and/or frame_id is not explicitly configured. Use default: " << stateTopicName << " : " << stateFrameId);
-      RCLCPP_WARN_STREAM(this->get_logger(), "topic_name and/or frame_id is not explicitly configured. Use default: " << stateTopicName << " : " << stateFrameId);
+      RCLCPP_WARN_STREAM(node->get_logger(), "topic_name and/or frame_id is not explicitly configured. Use default: " << stateTopicName << " : " << stateFrameId);
     else
       // ROS_INFO_STREAM("topic_name: " << stateTopicName << "  frame_id: " << stateFrameId);
-      RCLCPP_INFO_STREAM(this->get_logger(), "topic_name: " << stateTopicName << "  frame_id: " << stateFrameId);
+      RCLCPP_INFO_STREAM(node->get_logger(), "topic_name: " << stateTopicName << "  frame_id: " << stateFrameId);
   }
 
 public:
-  Interface(const std::shared_ptr<CartController> controller) : Node("interface"), dt(controller->dt) {
-    node = this->shared_from_this();
+  Interface(const std::shared_ptr<CartController> controller) : node(controller->getNode()), dt(controller->dt) {
     this->controller = controller;
   }
 

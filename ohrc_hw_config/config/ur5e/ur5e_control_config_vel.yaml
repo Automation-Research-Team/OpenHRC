@@ -27,10 +27,9 @@
     #   ur5e: ["a"] 
 
     follower:
-      hw: ["ur5e", "a"] # robot config name, which needs to be defined in hw_config.yaml
+      hw: ["ur5e"] # robot config name, which needs to be defined in hw_config.yaml
       ns: # robot namespaces for each robot, which should be unique among all robots. ("") means the robot has no namespace
-        ur5e: ["aa", "c"]
-        a: ["bb"]
+        ur5e: [""]
 
 
     priority: "Manual" #"Automation" #  (for multi-follower)

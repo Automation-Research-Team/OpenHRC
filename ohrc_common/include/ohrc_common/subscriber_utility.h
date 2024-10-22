@@ -2,16 +2,17 @@
 #define SUBSCRIBER_UTILITY_H
 
 // #include <ros/ros.h>
-#include "rclcpp/rclcpp.hpp"
-
 #include <mutex>
+
+#include "rclcpp/rclcpp.hpp"
 
 namespace subscriber_utility {
 
-inline bool checkTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name) {
+inline bool checkTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name) {
   std::vector<bool> VecSubFlag(VecSubFlagPtr.size());
-  // ROS_INFO_STREAM(name << ": Waiting for subscribing " << VecSubFlag.size() << " topics ...");
-
+  RCLCPP_INFO_STREAM(node->get_logger(), name << ": Waiting for subscribing " << VecSubFlag.size() << " topics ...");
+  rclcpp::spin_some(node);
+  std::cout << "checkTopic" << std::endl;
   while (rclcpp::ok()) {
     mtx->lock();
     for (int i = 0; i < VecSubFlag.size(); ++i)
@@ -25,25 +26,27 @@ inline bool checkTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::
         *VecSubFlagPtr[i] = false;
       mtx->unlock();
 
-      // ROS_INFO_STREAM(name << ": All topics have been subscribed.");
+      RCLCPP_INFO_STREAM(node->get_logger(), name << ": All topics have been subscribed.");
       return true;
     }
 
-    // rclcpp::Duration(0.1).sleep();
+    rclcpp::spin_some(node);
+
+    rclcpp::sleep_for(std::chrono::milliseconds(100));
   }
   return false;
 }
 
-inline bool checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx) {
-  return checkTopic(VecSubFlagPtr, mtx, "");
+inline bool checkSubTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubFlagPtr, std::mutex *mtx) {
+  return checkTopic(node, VecSubFlagPtr, mtx, "");
 }
 
-inline bool checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string robot_ns) {
-  return checkTopic(VecSubFlagPtr, mtx,  robot_ns);
+inline bool checkSubTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string robot_ns) {
+  return checkTopic(node, VecSubFlagPtr, mtx, robot_ns);
 }
 
-inline bool checkSubTopic(std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name, std::string robot_ns) {
-  return checkTopic(VecSubFlagPtr, mtx, name + "::" + robot_ns);
+inline bool checkSubTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubFlagPtr, std::mutex *mtx, std::string name, std::string robot_ns) {
+  return checkTopic(node, VecSubFlagPtr, mtx, name + "::" + robot_ns);
 }
 
 };  // namespace subscriber_utility

@@ -18,7 +18,8 @@ using namespace ohrc_control;
 using namespace std::chrono_literals;
 
 class Controller : public rclcpp::Node {
-  bool getInitParam(std::vector<std::string>& robots);
+  bool getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs);
+  void initMenbers(const std::vector<std::string> robots, const std::vector<std::string> hw_configs);
   void updateDesired();
   std::vector<KDL::Frame> desPose;
   std::vector<KDL::Twist> desVel;
@@ -30,18 +31,16 @@ class Controller : public rclcpp::Node {
   void publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
 
-  // std::vector<bool> enbaleAdmittanceControl;
-  bool enableEefForceAdmittanceParam;
-
 protected:
   // ros::NodeHandle nh;
+  rclcpp::Node::SharedPtr node;
 
-  enum class MFMode { None, Individual, Parallel, Cooperation } MFmode;
-  enum class IKMode { None, Concatenated, Order, Parallel } IKmode;
+  enum class MFMode { Individual, Parallel, Cooperation, None } MFmode;
+  enum class IKMode { Concatenated, Order, Parallel, None } IKmode;
 
   std::vector<std::shared_ptr<CartController>> cartControllers;
   // std::vector<std::string> robots;
-  std::vector<std::string> hw_configs;
+  // std::vector<std::string> hw_configs;
   int nRobot = 0;
 
   std::string root_frame;
@@ -137,6 +136,7 @@ protected:
 
 public:
   Controller();
+  void controlTimer();
   int control();
   virtual void starting();
   void stopping();

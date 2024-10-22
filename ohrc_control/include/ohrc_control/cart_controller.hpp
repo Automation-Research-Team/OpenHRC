@@ -11,6 +11,7 @@
 #include <csignal>
 #include <kdl/chainiksolverpos_nr_jl.hpp>
 #include <mutex>
+#include <rclcpp/executors/multi_threaded_executor.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_srvs/srv/empty.hpp>
@@ -36,7 +37,11 @@ using namespace ohrc_control;
 using namespace std::placeholders;
 using namespace std::chrono_literals;
 
-class CartController : public rclcpp::Node {
+class CartController {
+  rclcpp::Node::SharedPtr node;
+
+  std::string header;
+
   void init(std::string robot);
   void init(std::string robot, std::string hw_config);
 
@@ -74,7 +79,7 @@ class CartController : public rclcpp::Node {
 
   std::string initPoseFrame;
   std::vector<double> initPose;
-  bool getInitParam();
+  bool getRosParams();
 
   std::string publisherTopicName;
 
@@ -88,7 +93,7 @@ class CartController : public rclcpp::Node {
   // KDL::JntArray dq_des;
   // KDL::JntArray q_des;
 
-  rclcpp::Time prev_time = this->get_clock()->now();
+  rclcpp::Time prev_time;  // = node->get_clock()->now();
 
   bool ftFound = false;
 
@@ -156,6 +161,8 @@ protected:
   std::string chain_start, chain_end, urdf_param, robot_ns = "", hw_config_ns = "";
   Affine3d T_base_root;
 
+  void initMembers();
+
   void cbJntState(const sensor_msgs::msg::JointState::SharedPtr msg);
   // void cbArmMarker(const visualization_msgs::msg::MarkerArray::SharedPtr& msg);
   void cbForce(const geometry_msgs::msg::WrenchStamped::SharedPtr msg);
@@ -183,10 +190,11 @@ protected:
   // virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
 
 public:
-  CartController();
-  CartController(const std::string robot, const std::string root_frame);
-  CartController(const std::string robot, const std::string root_frame, const int index);
-  CartController(const std::string robot, const std::string hw_config, const std::string root_frame, const int index);
+  // CartController();
+  CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq);
+  CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller, const double freq);
+  CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index, const ControllerType controller,
+                 const double freq);
   ~CartController();
   int control();
 
@@ -362,6 +370,10 @@ public:
 
   inline bool getFtFound() {
     return ftFound;
+  }
+
+  rclcpp::Node::SharedPtr getNode() {
+    return node;
   }
 
   double dt;

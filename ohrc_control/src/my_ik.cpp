@@ -2,13 +2,11 @@
 
 namespace MyIK {
 
-MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world, SolveType _type)
-  : nRobot(1), initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type), Node("myik") {
-  // ros::NodeHandle nh("~");
-
-  ModelUtility modelUtility;
-  urdf::Model robot_model = modelUtility.getURDFModel(URDF_param);
-  chain = modelUtility.getKDLChain(robot_model, base_link, tip_link);
+MyIK::MyIK(rclcpp::Node::SharedPtr node, const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world,
+           SolveType _type)
+  : node(node), nRobot(1), initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
+  urdf::Model robot_model = ModelUtility::getURDFModel(node, URDF_param);
+  chain = ModelUtility::getKDLChain(robot_model, base_link, tip_link);
 
   nJnt = chain.getNrOfJoints();
   nSeg = chain.getNrOfSegments();
@@ -17,24 +15,21 @@ MyIK::MyIK(const std::string& base_link, const std::string& tip_link, const std:
   vb.resize(nJnt);
 
   double mergin = 5.0 / 180.0 * M_PI;
-  modelUtility.getBounds(robot_model, chain, mergin, lb, ub, vb);
+  ModelUtility::getBounds(robot_model, chain, mergin, lb, ub, vb);
 
-  this->declare_parameter("self_collision_avoidance", false);
-  // if (!nh.param("self_collision_avoidance", enableSelfCollisionAvoidance, false)) {
-  if (!this->get_parameter("self_collision_avoidance", enableSelfCollisionAvoidance)) {
-    // ROS_WARN_STREAM("self_collision_avoidance is not configured. Default is False");
-  }
+  RclcppUtility::declare_and_get_parameter(node, "self_collision_avoidance", false, enableSelfCollisionAvoidance);
+
   initializeSingleRobot(chain);
 }
 
-MyIK::MyIK(const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps, Affine3d T_base_world, SolveType _type)
-  : nRobot(1), initialized(false), lb(_q_min), ub(_q_max), eps(_eps), T_base_world(T_base_world), solvetype(_type), Node("myik") {
+MyIK::MyIK(rclcpp::Node::SharedPtr node, const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps, Affine3d T_base_world, SolveType _type)
+  : node(node), nRobot(1), initialized(false), lb(_q_min), ub(_q_max), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
   initializeSingleRobot(_chain);
 }
 
-MyIK::MyIK(const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
+MyIK::MyIK(rclcpp::Node::SharedPtr node, const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
            const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps, SolveType _type)
-  : nRobot(base_link.size()), eps(_eps), solvetype(_type), myIKs(myik_ptr), Node("myik") {
+  : node(node), nRobot(base_link.size()), eps(_eps), solvetype(_type), myIKs(myik_ptr) {
   // get number of elements of the state vector and indeces corresponding to start of joint vector of each robot
   iJnt.resize(nRobot + 1, 0);
   for (int i = 0; i < nRobot; i++) {

@@ -7,10 +7,10 @@
 #include "rclcpp/rclcpp.hpp"
 
 // tf2
-#include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2_ros/transform_listener.h>
 
 #include <kdl/frames.hpp>
+#include <tf2_eigen/tf2_eigen.hpp>
 
 // eigen3
 #include <Eigen/Dense>
@@ -20,17 +20,15 @@ class TransformUtility {
 protected:
   // tf2_ros::Buffer tfBuffer;
   // tf2_ros::TransformListener tfListener;
-    std::shared_ptr<tf2_ros::TransformListener> tfListener{nullptr};
+  rclcpp::Node::SharedPtr node;
+  std::shared_ptr<tf2_ros::TransformListener> tfListener{ nullptr };
   std::unique_ptr<tf2_ros::Buffer> tfBuffer;
   Affine3d Thandle_fp, Thandle_ft, Thandle_lidar, T_l_fp, T_h_fp, T_c_fp, T_color_depth;
 
 public:
-  TransformUtility(){
-    tfBuffer =
-      std::make_unique<tf2_ros::Buffer>(std::make_shared<rclcpp::Clock>(RCL_ROS_TIME));
-    tfListener =
-      std::make_shared<tf2_ros::TransformListener>(*tfBuffer);
-
+  TransformUtility(rclcpp::Node::SharedPtr node) : node(node) {
+    tfBuffer = std::make_unique<tf2_ros::Buffer>(node->get_clock());
+    tfListener = std::make_shared<tf2_ros::TransformListener>(*tfBuffer);
   };
 
   // (inline) transform velocity vector

@@ -5,7 +5,7 @@
       chain_end: "tool0" # target eff frame
 
       publisher: "Velocity" # "Position" or "Velocity" or "Trajectory" or "TrajectoryAction"
-      topic_namespace: "joint_group_vel_controller"
+      topic_namespace: "forward_velocity_controller"
 
       initIKAngle: [0.0, -1.0, 2.0, -2.5, -1.5, 0.0] # size of this should be equal to DoF
 

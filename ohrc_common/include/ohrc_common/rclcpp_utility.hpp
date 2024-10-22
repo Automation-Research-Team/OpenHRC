@@ -2,6 +2,7 @@
 #define RCLCPP_UTILITY_HPP
 
 #include <rclcpp/rclcpp.hpp>
+
 #include "magic_enum.hpp"
 
 namespace RclcppUtility {
@@ -13,15 +14,17 @@ T print(const T& value) {
 
 template <typename T>
 std::string print(const std::vector<T>& vec) {
-  std::string str = "[";
+  std::stringstream ss;
+  // std::string str = "[";
+  ss << "[";
   for (size_t i = 0; i < vec.size(); ++i) {
-    str += vec[i];
+    ss << vec[i];
     if (i < vec.size() - 1) {
-      str += ", ";
+      ss << ", ";
     }
   }
-  str += "]";
-  return str;
+  ss << "]";
+  return ss.str();
 }
 
 template <typename T>
@@ -37,18 +40,19 @@ inline bool declare_and_get_parameter(std::shared_ptr<rclcpp::Node> node, std::s
   return true;
 }
 
-
 template <typename T>
-inline bool declare_and_get_parameter_enum(std::shared_ptr<rclcpp::Node> node, std::string param_name, T& param_enum, bool verbose = true) {
+inline bool declare_and_get_parameter_enum(std::shared_ptr<rclcpp::Node> node, std::string param_name, T default_enum, T& param_enum, bool verbose = true) {
   std::string param_value;
   RclcppUtility::declare_and_get_parameter(node, param_name, std::string(""), param_value, false);
 
   param_enum = magic_enum::enum_cast<T>(param_value).value_or(T::None);
   if (param_enum == T::None) {
+    param_enum = default_enum;
     constexpr auto names = magic_enum::enum_names<T>();
     if (verbose)
-      RCLCPP_WARN_STREAM(node->get_logger(), param_name << "has to be chosen from " << magic_enum::enum_type_name<decltype(param_enum)>() 
-      << " " << RclcppUtility::print(std::vector<std::string>(names.begin(), names.end()-1))  << ", but it is " << param_value);
+      RCLCPP_WARN_STREAM(node->get_logger(), "Got paramter " << param_name << ": " << param_value << " is not in " << magic_enum::enum_type_name<decltype(param_enum)>() << " "
+                                                             << RclcppUtility::print(std::vector<std::string>(names.begin(), names.end() - 1))
+                                                             << ". Using default value: " << magic_enum::enum_name(default_enum));
     return false;
   } else if (verbose)
     RCLCPP_INFO_STREAM(node->get_logger(), "Parameter " << param_name << ": " << magic_enum::enum_name(param_enum));

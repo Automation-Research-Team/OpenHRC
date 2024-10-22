@@ -1,72 +1,21 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
-Controller::Controller() : Node("name") {
-  std::vector<std::string> robots;
-  if (!getInitParam(robots)) {
+Controller::Controller() : Node("ohrc_controller") {
+  this->node = std::shared_ptr<rclcpp::Node>(this);
+
+  std::vector<std::string> robots, hw_configs;
+  if (!this->getRosParams(robots, hw_configs)) {
     RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the initial parameters. Shutting down...");
     rclcpp::shutdown();
   }
-  std::cout << __FILE__ << ":" << __LINE__ << std::endl;
 
-  dt = 1.0 / freq;
-  nRobot = robots.size();
-
-  prev_time.resize(nRobot, get_clock()->now());
-
-  cartControllers.resize(nRobot);
-  for (int i = 0; i < nRobot; i++)
-    // cartControllers[i].reset(new CartController(robots[i], root_frame, i));
-    cartControllers[i].reset(new CartController(robots[i], hw_configs[i], root_frame, i));
-
-  std::vector<std::string> base_link(nRobot), tip_link(nRobot);  // TODO: base_links for all robot shoud be same
-  std::vector<Affine3d> T_base_root(nRobot);
-  std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr(nRobot);
-  for (int i = 0; i < nRobot; i++)
-    cartControllers[i]->getInfo(base_link[i], tip_link[i], T_base_root[i], myik_ptr[i]);
-
-  multimyik_solver_ptr.reset(new MyIK::MyIK(base_link, tip_link, T_base_root, myik_ptr));
-
-  // service = nh.advertiseService("/reset", &Controller::resetService, this);
-  service = this->create_service<std_srvs::srv::Empty>("/reset", std::bind(&Controller::resetService, this, _1, _2));
-
-  // TODO: condifure this priority setting
-
-  for (int i = 0; i < nRobot; i = i + 2)
-    manualInd.push_back(i);
-
-  for (int i = 1; i < nRobot; i = i + 2)
-    autoInd.push_back(i);
-
-  // std::cout << magic_enum::enum_name(priority) << std::endl;
-
-  setPriority(priority);
-
-  desPose.resize(nRobot);
-  desVel.resize(nRobot);
-
-  interfaces.resize(nRobot);
-
-  baseControllers.resize(nRobot);
-  // enbaleAdmittanceControl.resize(nRobot, false);
-  for (int i = 0; i < nRobot; i++) {
-    // enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound() && enableEefForceAdmittanceParam;  // TODO: move this into cartController
-
-    if (cartControllers[i]->getFtFound() && feedbackMode == FeedbackMode::Admittance)  // enableEefForceAdmittanceParam)  //(enbaleAdmittanceControl[i])
-      baseControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
-    else if (feedbackMode == FeedbackMode::PositionFeedback)
-      baseControllers[i] = std::make_shared<PositionFeedbackController>(cartControllers[i]);
-    else if (feedbackMode == FeedbackMode::HybridFeedback)
-      baseControllers[i] = std::make_shared<HybridFeedbackController>(cartControllers[i]);
-
-    cartControllers[i]->disablePoseFeedback();  // TODO: Pose feedback would be always enable. original feedback code can be removed.
-  }
+  this->initMenbers(robots, hw_configs);
 }
 
-bool Controller::getInitParam(std::vector<std::string>& robots) {
+bool Controller::getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs) {
   std::vector<std::string> _hw_configs;
-  // this->declare_parameter("follower.hw", std::vector<std::string>());
-  auto node = std::shared_ptr<rclcpp::Node>(this);
-  if (!RclcppUtility::declare_and_get_parameter(node, "follower.hw", std::vector<std::string>(), _hw_configs, false) || _hw_configs.empty()) {
+  if (!RclcppUtility::declare_and_get_parameter(this->node, "follower.hw", std::vector<std::string>(), _hw_configs, false) || _hw_configs.empty() ||
+      std::all_of(_hw_configs.begin(), _hw_configs.end(), [](std::string x) { return x == ""; })) {
     RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the follower robot hw list");
     return false;
   }
@@ -74,7 +23,7 @@ bool Controller::getInitParam(std::vector<std::string>& robots) {
   for (std::string hw_config : _hw_configs) {
     std::vector<std::string> _robots;
 
-    if (!RclcppUtility::declare_and_get_parameter(node, "follower.ns." + hw_config, std::vector<std::string>(), _robots, false) || _robots.empty()) {
+    if (!RclcppUtility::declare_and_get_parameter(this->node, "follower.ns." + hw_config, std::vector<std::string>(), _robots, false) || _robots.empty()) {
       RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the follower robot ns list");
       return false;
     }
@@ -88,40 +37,29 @@ bool Controller::getInitParam(std::vector<std::string>& robots) {
   for (int i = 0; i < robots.size(); i++)
     RCLCPP_INFO_STREAM(this->get_logger(), "Configured Robot " << i << ": " << hw_configs[i] << " (ns: " << robots[i] << ")");
 
-  if (!RclcppUtility::declare_and_get_parameter(node, "root_frame", std::string(), root_frame))
+  if (!RclcppUtility::declare_and_get_parameter(this->node, "root_frame", std::string(""), root_frame))
     return false;
 
-  if (!RclcppUtility::declare_and_get_parameter(node, "control_freq", double(), freq))
+  if (!RclcppUtility::declare_and_get_parameter(this->node, "control_freq", double(0.0), freq))
     return false;
 
-  if(!RclcppUtility::declare_and_get_parameter_enum(node, "controller", controller))
+  if (!RclcppUtility::declare_and_get_parameter_enum(this->node, "controller", ControllerType::Velocity, controller))
     return false;
 
-  // std::string controller_str;
-  // if (!RclcppUtility::declare_and_get_parameter(node, "controller", std::string("Velocity"), controller_str))
-  //   RCLCPP_WARN_STREAM(this->get_logger(), "Failed to get controller : Default Velocity");
-
-  // controller = magic_enum::enum_cast<ControllerType>(controller_str).value_or(ControllerType::None);
-  // if (controller == ControllerType::None) {
-  //   RCLCPP_FATAL(this->get_logger(), "Controller type has to be chosen from {Position, Velocity, Torque}");
+  // if (!RclcppUtility::declare_and_get_parameter_enum(node, "publisher", PublisherType::Velocity, publisher))
   //   return false;
-  // } else
-  //   RCLCPP_INFO_STREAM(this->get_logger(), "Controller: " << magic_enum::enum_name(controller));
 
-  std::string publisher_str;
-  if (!RclcppUtility::declare_and_get_parameter(node, "publisher", std::string("Velocity"), publisher_str))
-    RCLCPP_WARN_STREAM(this->get_logger(), "Failed to get publisher for robot contorller: Default Velocity");
-
-  publisher = magic_enum::enum_cast<PublisherType>(publisher_str).value_or(PublisherType::None);
-  if (publisher == PublisherType::None) {
-    RCLCPP_FATAL(this->get_logger(), "Publisher type is not correctly choisen from {Position, Velocity, Torque, Trajectory, TrajectoryAction}");
+  if (!RclcppUtility::declare_and_get_parameter_enum(this->node, "feedback_mode", FeedbackMode::PositionFeedback, feedbackMode))
     return false;
-  } else
-    RCLCPP_INFO_STREAM(this->get_logger(), "Publisher: " << magic_enum::enum_name(publisher));
 
-  MFmode = this->getEnumParam("MF_mode", MFMode::None, "Individual");
-  IKmode = this->getEnumParam("IK_mode", IKMode::None, "Concatenated");
-  priority = this->getEnumParam("priority", PriorityType::None, "Manual");
+  if (!RclcppUtility::declare_and_get_parameter_enum(this->node, "MF_mode", MFMode::Individual, MFmode))
+    return false;
+
+  if (!RclcppUtility::declare_and_get_parameter_enum(this->node, "IK_mode", IKMode::Concatenated, IKmode))
+    return false;
+
+  if (!RclcppUtility::declare_and_get_parameter_enum(this->node, "priority", PriorityType::Manual, priority))
+    return false;
 
   // if (priority == PriorityType::Adaptation)
   //   n.param<std::string>("adaptation_option", adaptationOption_, "Default");
@@ -131,15 +69,60 @@ bool Controller::getInitParam(std::vector<std::string>& robots) {
   //   n.setParam("date", date);
   // }
 
-  // n.param("enableEefForceAdmittance", enableEefForceAdmittanceParam, false);
-  // if (enableEefForceAdmittanceParam)
-  //   ROS_INFO_STREAM("enableEefForceAdmittance: " << std::boolalpha << enableEefForceAdmittanceParam);
-  // else
-  //   ROS_INFO_STREAM("enableEefForceAdmittance is " << std::boolalpha << enableEefForceAdmittanceParam << ", so feedback controller is used instead.");
-
-  feedbackMode = this->getEnumParam("feedback_mode", FeedbackMode::None, "PositionFeedback");
-
   return true;
+}
+
+void Controller::initMenbers(const std::vector<std::string> robots, const std::vector<std::string> hw_configs) {
+  nRobot = robots.size();
+  this->dt = 1.0 / this->freq;
+
+  prev_time.resize(nRobot, this->get_clock()->now());
+  cartControllers.resize(nRobot);
+
+  for (int i = 0; i < nRobot; i++)
+    cartControllers[i].reset(new CartController(node, robots[i], hw_configs[i], root_frame, i, controller, freq));
+
+  std::vector<std::string> base_link(nRobot), tip_link(nRobot);  // TODO: base_links for all robot shoud be same
+  std::vector<Affine3d> T_base_root(nRobot);
+  std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr(nRobot);
+  for (int i = 0; i < nRobot; i++)
+    cartControllers[i]->getInfo(base_link[i], tip_link[i], T_base_root[i], myik_ptr[i]);
+
+  multimyik_solver_ptr.reset(new MyIK::MyIK(node, base_link, tip_link, T_base_root, myik_ptr));
+
+  // service = nh.advertiseService("/reset", &Controller::resetService, this);
+  service = this->create_service<std_srvs::srv::Empty>("/reset", std::bind(&Controller::resetService, this, _1, _2));
+
+  // TODO: condifure this priority setting
+
+  for (int i = 0; i < nRobot; i = i + 2)
+    manualInd.push_back(i);
+
+  for (int i = 1; i < nRobot; i = i + 2)
+    autoInd.push_back(i);
+
+  setPriority(priority);
+
+  desPose.resize(nRobot);
+  desVel.resize(nRobot);
+
+  interfaces.resize(nRobot);
+
+  baseControllers.resize(nRobot);
+  // enbaleAdmittanceControl.resize(nRobot, false);
+
+  for (int i = 0; i < nRobot; i++) {
+    // enbaleAdmittanceControl[i] = cartControllers[i]->getFtFound();  // TODO: move this into cartController
+
+    if (cartControllers[i]->getFtFound() && feedbackMode == FeedbackMode::Admittance)
+      baseControllers[i] = std::make_shared<AdmittanceController>(cartControllers[i]);
+    else if (feedbackMode == FeedbackMode::PositionFeedback)
+      baseControllers[i] = std::make_shared<PositionFeedbackController>(cartControllers[i]);
+    else if (feedbackMode == FeedbackMode::HybridFeedback)
+      baseControllers[i] = std::make_shared<HybridFeedbackController>(cartControllers[i]);
+
+    cartControllers[i]->disablePoseFeedback();  // TODO: Pose feedback would be always enable. original feedback code can be removed.
+  }
 }
 
 void Controller::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
@@ -197,8 +180,11 @@ void Controller::setHightLowPriority(int high, int low) {
 }
 
 void Controller::starting() {
+  std::cout << "Controller starting!" << std::endl;
   for (int i = 0; i < nRobot; i++)  // {
     cartControllers[i]->starting(this->get_clock()->now());
+
+  std::cout << __FILE__ << " " << __LINE__ << std::endl;
 
   // rclcpp::Duration(3.0).sleep();
   rclcpp::sleep_for(3s);
@@ -322,6 +308,34 @@ void Controller::updateDesired() {
   preInterfaceProcess(interfaces);
 }
 
+void Controller::controlTimer() {
+  // t = get_clock()->now();
+  // // begin = std::chrono::high_resolution_clock::now();
+
+  // if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
+  //   continue;
+
+  // updateDesired();
+
+  // if (IKmode == IKMode::Order) {
+  //   for (int i = 0; i < nRobot; i++)
+  //     cartControllers[i]->update(t, dur);
+  // } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
+  //   for (int i = 0; i < nRobot; i++) {
+  //     CartController* c = cartControllers[i].get();
+  //     workers[i].reset(new std::thread([c, t, dur]() { c->update(t, dur); }));
+  //     // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
+  //   }
+  //   std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
+  // } else if (IKmode == IKMode::Concatenated)
+  //   this->update(t, dur);
+
+  // std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - begin);
+  // ROS_INFO_STREAM("IK time: " << t.count() * 1.0e-3 << "[ms]");
+
+  // r.sleep();
+}
+
 int Controller::control() {
   this->starting();
 
@@ -365,6 +379,7 @@ int Controller::control() {
 
     r.sleep();
   }
+  // rclcpp::TimerBase::SharedPtr timer = this->create_wall_timer(std::chrono::milliseconds(1000 / freq), std::bind(&Controller::update, this));
 
   this->stopping();
 
