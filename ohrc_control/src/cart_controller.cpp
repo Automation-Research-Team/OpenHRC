@@ -1,19 +1,28 @@
 #include "ohrc_control/cart_controller.hpp"
 
-CartController::CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
+CartController::CartController(rclcpp::Node::SharedPtr &node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
                                const ControllerType controller, const double freq)
-  : root_frame(root_frame), index(index), controller(controller), freq(freq), node(node), trans(node) {
+  : Node("cart_controller_"+robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
+  node = std::shared_ptr<rclcpp::Node>(this);
+  this->node = node;
+  trans.reset(new TransformUtility(this->node));
   init(robot, hw_config);
 }
 
-CartController::CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller,
+CartController::CartController(rclcpp::Node::SharedPtr &node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller,
                                const double freq)
-  : root_frame(root_frame), index(index), controller(controller), freq(freq), node(node), trans(node) {
+  :  Node("cart_controller_"+robot), root_frame(root_frame), index(index), controller(controller), freq(freq){
+    node = std::shared_ptr<rclcpp::Node>(this);
+    this->node = node;
+    trans.reset(new TransformUtility(this->node));
   init(robot);
 }
 
-CartController::CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq)
-  : root_frame(root_frame), controller(controller), freq(freq), node(node), trans(node) {
+CartController::CartController(rclcpp::Node::SharedPtr &node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq)
+  :  Node("cart_controller_"+robot), root_frame(root_frame), controller(controller), freq(freq) {
+    node = std::shared_ptr<rclcpp::Node>(this);
+    this->node = node;
+    trans.reset(new TransformUtility(this->node));
   init(robot);
 }
 
@@ -88,8 +97,8 @@ void CartController::init(std::string robot, std::string hw_config) {
   RclcppUtility::declare_and_get_parameter(this->node, robot_ns + "ft_topic", std::string("ft_sensor/filtered"), ft_topic);
 
   RCLCPP_INFO_STREAM(node->get_logger(), "Looking for force/torque sensor TF: " << ft_sensor_link << ", topic: " << ft_topic);
-  if (trans.canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1.0, 0))) {
-    this->Tft_eff = trans.getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1., 0));
+  if (trans->canTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1.0, 0))) {
+    this->Tft_eff = trans->getTransform(robot_ns + chain_end, robot_ns + ft_sensor_link, rclcpp::Time(0), rclcpp::Duration(1., 0));
     subForce = node->create_subscription<geometry_msgs::msg::WrenchStamped>(ft_topic, rclcpp::QoS(1), std::bind(&CartController::cbForce, this, _1));
     pubEefForce = node->create_publisher<geometry_msgs::msg::WrenchStamped>("/" + robot_ns + "eef_force", rclcpp::QoS(1));
     subFlagPtrs.push_back(&flagForce);
@@ -174,7 +183,7 @@ void CartController::initMembers() {
 
   dt = 1.0 / freq;
 
-  // this->T_base_root = trans.getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(1, 0));
+  // this->T_base_root = trans->getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(1, 0));
   myik_solver_ptr = std::make_shared<MyIK::MyIK>(this->node, chain_start, chain_end, urdf_param, eps, T_base_root);
   bool valid = myik_solver_ptr->getKDLChain(chain);
   chain_segs = chain.segments;
@@ -226,7 +235,7 @@ void CartController::resetPose() {
 }
 
 Affine3d CartController::getTransform_base(std::string target) {
-  return trans.getTransform(robot_ns + chain_start, target, rclcpp::Time(0), rclcpp::Duration(1.0, 0));
+  return trans->getTransform(robot_ns + chain_start, target, rclcpp::Time(0), rclcpp::Duration(1.0, 0));
 }
 
 // void CartController::signal_handler(int signum) {
@@ -275,6 +284,7 @@ void CartController::getVelocity(const KDL::Frame& frame, const KDL::Frame& prev
 }
 
 void CartController::cbJntState(const sensor_msgs::msg::JointState::SharedPtr msg) {
+  std::cout << "cbJntState" << std::endl;
   KDL::JntArray q_cur(nJnt);
   KDL::JntArray dq_cur(nJnt);
 
@@ -625,11 +635,11 @@ void CartController::starting(const rclcpp::Time& time) {
   // wait for subscribing registered topics
 
   subscriber_utility::checkSubTopic(node, subFlagPtrs, &mtx, robot_ns);
-  std::cout << __FILE__ << " " << __LINE__ << std::endl;
+
   this->resetFt();
-  std::cout << __FILE__ << " " << __LINE__ << std::endl;
+
   updateCurState();
-  std::cout << __FILE__ << " " << __LINE__ << std::endl;
+
 }
 
 /**

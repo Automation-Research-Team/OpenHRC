@@ -12,7 +12,7 @@ inline bool checkTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubF
   std::vector<bool> VecSubFlag(VecSubFlagPtr.size());
   RCLCPP_INFO_STREAM(node->get_logger(), name << ": Waiting for subscribing " << VecSubFlag.size() << " topics ...");
   rclcpp::spin_some(node);
-  std::cout << "checkTopic" << std::endl;
+
   while (rclcpp::ok()) {
     mtx->lock();
     for (int i = 0; i < VecSubFlag.size(); ++i)
@@ -30,7 +30,7 @@ inline bool checkTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubF
       return true;
     }
 
-    rclcpp::spin_some(node);
+    // rclcpp::spin_some(node);
 
     rclcpp::sleep_for(std::chrono::milliseconds(100));
   }

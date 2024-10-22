@@ -18,6 +18,9 @@ using namespace ohrc_control;
 using namespace std::chrono_literals;
 
 class Controller : public rclcpp::Node {
+    rclcpp::executors::MultiThreadedExecutor exec;
+
+rclcpp::TimerBase::SharedPtr control_timer;
   bool getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs);
   void initMenbers(const std::vector<std::string> robots, const std::vector<std::string> hw_configs);
   void updateDesired();
@@ -136,8 +139,9 @@ protected:
 
 public:
   Controller();
-  void controlTimer();
-  int control();
+  ~Controller();
+  // void controlTimer();
+  void control();
   virtual void starting();
   void stopping();
   void update(const rclcpp::Time& time, const rclcpp::Duration& period);

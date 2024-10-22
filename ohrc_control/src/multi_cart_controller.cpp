@@ -10,6 +10,22 @@ Controller::Controller() : Node("ohrc_controller") {
   }
 
   this->initMenbers(robots, hw_configs);
+
+  std::thread exec_thread([this]() {
+    exec.spin();
+  });
+    // exec_thread.detach();
+
+  this->starting();
+  
+  control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::control, this));
+
+
+}
+
+Controller::~Controller() {
+  this->stopping();
+  rclcpp::shutdown();
 }
 
 bool Controller::getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs) {
@@ -78,15 +94,21 @@ void Controller::initMenbers(const std::vector<std::string> robots, const std::v
 
   prev_time.resize(nRobot, this->get_clock()->now());
   cartControllers.resize(nRobot);
+    std::vector<rclcpp::Node::SharedPtr> nodes(nRobot);
 
-  for (int i = 0; i < nRobot; i++)
-    cartControllers[i].reset(new CartController(node, robots[i], hw_configs[i], root_frame, i, controller, freq));
+  for (int i = 0; i < nRobot; i++){
+    cartControllers[i].reset(new CartController(nodes[i], robots[i], hw_configs[i], root_frame, i, controller, freq));
+    exec.add_node(nodes[i]);
+  }  
+
+
 
   std::vector<std::string> base_link(nRobot), tip_link(nRobot);  // TODO: base_links for all robot shoud be same
   std::vector<Affine3d> T_base_root(nRobot);
   std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr(nRobot);
   for (int i = 0; i < nRobot; i++)
     cartControllers[i]->getInfo(base_link[i], tip_link[i], T_base_root[i], myik_ptr[i]);
+
 
   multimyik_solver_ptr.reset(new MyIK::MyIK(node, base_link, tip_link, T_base_root, myik_ptr));
 
@@ -184,10 +206,10 @@ void Controller::starting() {
   for (int i = 0; i < nRobot; i++)  // {
     cartControllers[i]->starting(this->get_clock()->now());
 
-  std::cout << __FILE__ << " " << __LINE__ << std::endl;
+  // std::cout << __FILE__ << " " << __LINE__ << std::endl;
 
   // rclcpp::Duration(3.0).sleep();
-  rclcpp::sleep_for(3s);
+  // rclcpp::sleep_for(3s);
 
   for (int i = 0; i < nRobot; i++)
     initInterface(cartControllers[i]);
@@ -308,27 +330,31 @@ void Controller::updateDesired() {
   preInterfaceProcess(interfaces);
 }
 
-void Controller::controlTimer() {
-  // t = get_clock()->now();
-  // // begin = std::chrono::high_resolution_clock::now();
+void Controller::control() {
+  rclcpp::Time t = get_clock()->now();
+  rclcpp::Duration dur(0,dt * 1.0e9);
+  // begin = std::chrono::high_resolution_clock::now();
 
-  // if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
-  //   continue;
+  if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
+    return;
 
-  // updateDesired();
+  this->updateDesired();
 
-  // if (IKmode == IKMode::Order) {
-  //   for (int i = 0; i < nRobot; i++)
-  //     cartControllers[i]->update(t, dur);
-  // } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
-  //   for (int i = 0; i < nRobot; i++) {
-  //     CartController* c = cartControllers[i].get();
-  //     workers[i].reset(new std::thread([c, t, dur]() { c->update(t, dur); }));
-  //     // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
-  //   }
-  //   std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
-  // } else if (IKmode == IKMode::Concatenated)
-  //   this->update(t, dur);
+  if (IKmode == IKMode::Order) {
+    for (int i = 0; i < nRobot; i++)
+      cartControllers[i]->update(t, dur);
+  } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
+    std::vector<std::unique_ptr<std::thread>> workers(nRobot);
+    sched_param sch;
+    sch.sched_priority = 1;
+    for (int i = 0; i < nRobot; i++) {
+      CartController* c = cartControllers[i].get();
+      workers[i].reset(new std::thread([c, t, dur]() { c->update(t, dur); }));
+      // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
+    }
+    std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
+  } else if (IKmode == IKMode::Concatenated)
+    this->update(t, dur);
 
   // std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - begin);
   // ROS_INFO_STREAM("IK time: " << t.count() * 1.0e-3 << "[ms]");
@@ -336,52 +362,52 @@ void Controller::controlTimer() {
   // r.sleep();
 }
 
-int Controller::control() {
-  this->starting();
+// int Controller::control() {
+//   this->starting();
 
-  std::vector<double> ms(3, 0.0);
-  std::chrono::high_resolution_clock::time_point begin;
-  std::vector<std::unique_ptr<std::thread>> workers(nRobot);
-  sched_param sch;
-  sch.sched_priority = 1;
+//   // std::vector<double> ms(3, 0.0);
+//   // std::chrono::high_resolution_clock::time_point begin;
+//   // std::vector<std::unique_ptr<std::thread>> workers(nRobot);
+//   // sched_param sch;
+//   // sch.sched_priority = 1;
 
-  double count = 0.0;
+//   // double count = 0.0;
 
-  // ros::Rate r(freq);
-  rclcpp::WallRate r(freq);
-  rclcpp::Duration dur(dt, 0);
-  rclcpp::Time t;
+//   // ros::Rate r(freq);
+//   // rclcpp::WallRate r(freq);
+//   // rclcpp::Duration dur(dt, 0);
+//   // rclcpp::Time t;
 
-  while (rclcpp::ok()) {
-    t = get_clock()->now();
-    // begin = std::chrono::high_resolution_clock::now();
+//   // while (rclcpp::ok()) {
+//   //   t = get_clock()->now();
+//   //   // begin = std::chrono::high_resolution_clock::now();
 
-    if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
-      continue;
+//   //   if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
+//   //     continue;
 
-    updateDesired();
+//   //   updateDesired();
 
-    if (IKmode == IKMode::Order) {
-      for (int i = 0; i < nRobot; i++)
-        cartControllers[i]->update(t, dur);
-    } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
-      for (int i = 0; i < nRobot; i++) {
-        CartController* c = cartControllers[i].get();
-        workers[i].reset(new std::thread([c, t, dur]() { c->update(t, dur); }));
-        // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
-      }
-      std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
-    } else if (IKmode == IKMode::Concatenated)
-      this->update(t, dur);
+//   //   if (IKmode == IKMode::Order) {
+//   //     for (int i = 0; i < nRobot; i++)
+//   //       cartControllers[i]->update(t, dur);
+//   //   } else if (IKmode == IKMode::Parallel) {  // parallel IK(multithreading)
+//   //     for (int i = 0; i < nRobot; i++) {
+//   //       CartController* c = cartControllers[i].get();
+//   //       workers[i].reset(new std::thread([c, t, dur]() { c->update(t, dur); }));
+//   //       // pthread_setschedparam(workers[i]->native_handle(), SCHED_FIFO, &sch);
+//   //     }
+//   //     std::for_each(workers.begin(), workers.end(), [](std::unique_ptr<std::thread>& th) { th->join(); });
+//   //   } else if (IKmode == IKMode::Concatenated)
+//   //     this->update(t, dur);
 
-    // std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - begin);
-    // ROS_INFO_STREAM("IK time: " << t.count() * 1.0e-3 << "[ms]");
+//   //   // std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - begin);
+//   //   // ROS_INFO_STREAM("IK time: " << t.count() * 1.0e-3 << "[ms]");
 
-    r.sleep();
-  }
-  // rclcpp::TimerBase::SharedPtr timer = this->create_wall_timer(std::chrono::milliseconds(1000 / freq), std::bind(&Controller::update, this));
+//   //   r.sleep();
+//   // }
+//   control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::controlTimer, this));
 
-  this->stopping();
+//   // this->stopping();
 
-  return 1;
-}
+//   return 1;
+// }

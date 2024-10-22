@@ -30,7 +30,7 @@ def generate_launch_description():
     Node(
       package=[LaunchConfiguration('app_dir')],
       executable=[LaunchConfiguration('interface'), '_', LaunchConfiguration('app')],
-      name=[LaunchConfiguration('interface'), '_', LaunchConfiguration('app')],
+      # name=[LaunchConfiguration('interface'), '_', LaunchConfiguration('app')],
       output='screen',
       parameters=[
         LaunchConfiguration('hw_config'),

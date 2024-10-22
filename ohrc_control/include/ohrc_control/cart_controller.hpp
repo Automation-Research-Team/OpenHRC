@@ -37,7 +37,7 @@ using namespace ohrc_control;
 using namespace std::placeholders;
 using namespace std::chrono_literals;
 
-class CartController {
+class CartController: public rclcpp::Node {
   rclcpp::Node::SharedPtr node;
 
   std::string header;
@@ -141,7 +141,7 @@ protected:
 
   std::vector<butterworth> posFilter, velFilter, jntFilter;
 
-  TransformUtility trans;
+  std::unique_ptr<TransformUtility> trans;
   // tf2_ros::TransformBroadcaster br;
 
   // KDL
@@ -191,9 +191,9 @@ protected:
 
 public:
   // CartController();
-  CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq);
-  CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller, const double freq);
-  CartController(rclcpp::Node::SharedPtr node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index, const ControllerType controller,
+  CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq);
+  CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller, const double freq);
+  CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index, const ControllerType controller,
                  const double freq);
   ~CartController();
   int control();
