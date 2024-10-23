@@ -30,7 +30,7 @@ inline bool checkTopic(rclcpp::Node::SharedPtr node, std::vector<bool *> VecSubF
       return true;
     }
 
-    // rclcpp::spin_some(node);
+    rclcpp::spin_some(node);
 
     rclcpp::sleep_for(std::chrono::milliseconds(100));
   }

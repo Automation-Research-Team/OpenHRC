@@ -107,8 +107,8 @@ void MarkerInterface::updateTargetPose(const rclcpp::Time t, KDL::Frame& pose, K
 
 void MarkerInterface::resetInterface() {
   controller->disableOperation();
-  
-  RCLCPP_WARN_STREAM(node->get_logger(),"Reset marker position");
+
+  RCLCPP_WARN_STREAM(node->get_logger(), "Reset marker position");
 
   _markerPose = int_marker.pose;  // tf2::toMsg(controller->getT_cur());
   server->setPose(int_marker.name, _markerPose);

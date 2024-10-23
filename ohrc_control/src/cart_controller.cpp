@@ -1,28 +1,28 @@
 #include "ohrc_control/cart_controller.hpp"
 
-CartController::CartController(rclcpp::Node::SharedPtr &node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
+CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
                                const ControllerType controller, const double freq)
-  : Node("cart_controller_"+robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
+  : Node("cart_controller_" + robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
   node = std::shared_ptr<rclcpp::Node>(this);
   this->node = node;
   trans.reset(new TransformUtility(this->node));
   init(robot, hw_config);
 }
 
-CartController::CartController(rclcpp::Node::SharedPtr &node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller,
+CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller,
                                const double freq)
-  :  Node("cart_controller_"+robot), root_frame(root_frame), index(index), controller(controller), freq(freq){
-    node = std::shared_ptr<rclcpp::Node>(this);
-    this->node = node;
-    trans.reset(new TransformUtility(this->node));
+  : Node("cart_controller_" + robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
+  node = std::shared_ptr<rclcpp::Node>(this);
+  this->node = node;
+  trans.reset(new TransformUtility(this->node));
   init(robot);
 }
 
-CartController::CartController(rclcpp::Node::SharedPtr &node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq)
-  :  Node("cart_controller_"+robot), root_frame(root_frame), controller(controller), freq(freq) {
-    node = std::shared_ptr<rclcpp::Node>(this);
-    this->node = node;
-    trans.reset(new TransformUtility(this->node));
+CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq)
+  : Node("cart_controller_" + robot), root_frame(root_frame), controller(controller), freq(freq) {
+  node = std::shared_ptr<rclcpp::Node>(this);
+  this->node = node;
+  trans.reset(new TransformUtility(this->node));
   init(robot);
 }
 
@@ -284,7 +284,7 @@ void CartController::getVelocity(const KDL::Frame& frame, const KDL::Frame& prev
 }
 
 void CartController::cbJntState(const sensor_msgs::msg::JointState::SharedPtr msg) {
-  std::cout << "cbJntState" << std::endl;
+  // std::cout << "cbJntState" << std::endl;
   KDL::JntArray q_cur(nJnt);
   KDL::JntArray dq_cur(nJnt);
 
@@ -639,7 +639,6 @@ void CartController::starting(const rclcpp::Time& time) {
   this->resetFt();
 
   updateCurState();
-
 }
 
 /**

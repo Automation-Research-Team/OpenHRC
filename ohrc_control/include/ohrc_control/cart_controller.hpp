@@ -37,7 +37,7 @@ using namespace ohrc_control;
 using namespace std::placeholders;
 using namespace std::chrono_literals;
 
-class CartController: public rclcpp::Node {
+class CartController : public rclcpp::Node {
   rclcpp::Node::SharedPtr node;
 
   std::string header;
@@ -193,8 +193,8 @@ public:
   // CartController();
   CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq);
   CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller, const double freq);
-  CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index, const ControllerType controller,
-                 const double freq);
+  CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
+                 const ControllerType controller, const double freq);
   ~CartController();
   int control();
 

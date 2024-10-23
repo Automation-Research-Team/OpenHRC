@@ -11,21 +11,12 @@ Controller::Controller() : Node("ohrc_controller") {
 
   this->initMenbers(robots, hw_configs);
 
-  std::thread exec_thread([this]() {
-    exec.spin();
-  });
-    // exec_thread.detach();
-
-  this->starting();
-  
-  control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::control, this));
-
-
+  control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::controlLoop, this));
 }
 
 Controller::~Controller() {
   this->stopping();
-  rclcpp::shutdown();
+  // rclcpp::shutdown();
 }
 
 bool Controller::getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs) {
@@ -94,21 +85,17 @@ void Controller::initMenbers(const std::vector<std::string> robots, const std::v
 
   prev_time.resize(nRobot, this->get_clock()->now());
   cartControllers.resize(nRobot);
-    std::vector<rclcpp::Node::SharedPtr> nodes(nRobot);
+  nodes.resize(nRobot);
 
-  for (int i = 0; i < nRobot; i++){
-    cartControllers[i].reset(new CartController(nodes[i], robots[i], hw_configs[i], root_frame, i, controller, freq));
-    exec.add_node(nodes[i]);
-  }  
-
-
+  for (int i = 0; i < nRobot; i++) {
+    cartControllers[i].reset(new CartController(nodes[i], robots[i], hw_configs[i], root_frame, i, controller, freq));  // TODO: might can be replaced with sub_node
+  }
 
   std::vector<std::string> base_link(nRobot), tip_link(nRobot);  // TODO: base_links for all robot shoud be same
   std::vector<Affine3d> T_base_root(nRobot);
   std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr(nRobot);
   for (int i = 0; i < nRobot; i++)
     cartControllers[i]->getInfo(base_link[i], tip_link[i], T_base_root[i], myik_ptr[i]);
-
 
   multimyik_solver_ptr.reset(new MyIK::MyIK(node, base_link, tip_link, T_base_root, myik_ptr));
 
@@ -202,11 +189,11 @@ void Controller::setHightLowPriority(int high, int low) {
 }
 
 void Controller::starting() {
-  std::cout << "Controller starting!" << std::endl;
-  for (int i = 0; i < nRobot; i++)  // {
+  for (int i = 0; i < nRobot; i++) {
     cartControllers[i]->starting(this->get_clock()->now());
-
-  // std::cout << __FILE__ << " " << __LINE__ << std::endl;
+    exec.add_node(nodes[i]);
+  }
+  exec.add_node(this->node);
 
   // rclcpp::Duration(3.0).sleep();
   // rclcpp::sleep_for(3s);
@@ -231,11 +218,11 @@ void Controller::stopping() {
     cartControllers[i]->stopping(this->get_clock()->now());  // TODO: Make sure that this works correctly.
   // cartControllers[i]->enableOperation();
   // }
-  // ROS_INFO_STREAM("Controller stopped!");
+
   RCLCPP_INFO_STREAM(this->get_logger(), "Controller stopped!");
   // this->t0 = rclcpp::Time::now();
 
-  rclcpp::shutdown();
+  // rclcpp::shutdown();
 }
 
 void Controller::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
@@ -330,9 +317,9 @@ void Controller::updateDesired() {
   preInterfaceProcess(interfaces);
 }
 
-void Controller::control() {
+void Controller::controlLoop() {
   rclcpp::Time t = get_clock()->now();
-  rclcpp::Duration dur(0,dt * 1.0e9);
+  rclcpp::Duration dur(0, dt * 1.0e9);
   // begin = std::chrono::high_resolution_clock::now();
 
   if (!std::all_of(cartControllers.begin(), cartControllers.end(), [](auto& c) { return c->isInitialized(); }))
@@ -362,6 +349,11 @@ void Controller::control() {
   // r.sleep();
 }
 
+void Controller::control() {
+  this->starting();
+
+  exec.spin();
+}
 // int Controller::control() {
 //   this->starting();
 

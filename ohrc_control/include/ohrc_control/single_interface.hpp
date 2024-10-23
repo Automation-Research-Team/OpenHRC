@@ -4,7 +4,7 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
 template <class T>
-class SingleInterface : virtual public Controller {
+class SingleInterface : public Controller {
 public:
   SingleInterface() {
     for (int i = 0; i < nRobot; i++)

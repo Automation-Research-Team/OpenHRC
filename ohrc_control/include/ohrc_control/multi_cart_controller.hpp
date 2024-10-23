@@ -18,9 +18,10 @@ using namespace ohrc_control;
 using namespace std::chrono_literals;
 
 class Controller : public rclcpp::Node {
-    rclcpp::executors::MultiThreadedExecutor exec;
+  rclcpp::executors::MultiThreadedExecutor exec;
+  std::vector<rclcpp::Node::SharedPtr> nodes;
 
-rclcpp::TimerBase::SharedPtr control_timer;
+  rclcpp::TimerBase::SharedPtr control_timer;
   bool getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs);
   void initMenbers(const std::vector<std::string> robots, const std::vector<std::string> hw_configs);
   void updateDesired();
@@ -33,6 +34,11 @@ rclcpp::TimerBase::SharedPtr control_timer;
 
   void publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
                     const std::vector<KDL::Twist> desVel);
+
+  void controlLoop();
+  virtual void starting();
+  void stopping();
+  void update(const rclcpp::Time& time, const rclcpp::Duration& period);
 
 protected:
   // ros::NodeHandle nh;
@@ -89,6 +95,8 @@ protected:
   //   baseControllers[controller->getIndex()]->updateTargetPose(pose, twist);
   // }
 
+  // virtual void defineInterface() = 0;
+
   void initInterface(std::shared_ptr<CartController> controller) {
     interfaces[controller->getIndex()]->initInterface();
     baseControllers[controller->getIndex()]->initInterface();
@@ -140,11 +148,7 @@ protected:
 public:
   Controller();
   ~Controller();
-  // void controlTimer();
   void control();
-  virtual void starting();
-  void stopping();
-  void update(const rclcpp::Time& time, const rclcpp::Duration& period);
 };
 
 #endif  // MULTI_CART_COTNROLLER_HPP

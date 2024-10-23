@@ -3,10 +3,11 @@
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
-  // SingleInterface<MarkerInterface> interface;
-  rclcpp::spin(std::make_shared<SingleInterface<MarkerInterface>>());
-  // if (interface.control() < 0)
-  // std::cout << "End by some fails" << std::endl;
+  auto interface = std::make_shared<SingleInterface<MarkerInterface>>();
+  interface->control();
 
-  rclcpp::shutdown();
+  // interface->exec.spin();
+
+  // rclcpp::shutdown();
+  return 0;
 }
