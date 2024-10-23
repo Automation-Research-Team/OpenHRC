@@ -20,7 +20,7 @@ Controller::~Controller() {
 
   // std::cout << "Controller stopped??" << std::endl;
   this->stopping();
-  // exec.cancel();
+  exec.cancel();
   rclcpp::shutdown();
 }
 

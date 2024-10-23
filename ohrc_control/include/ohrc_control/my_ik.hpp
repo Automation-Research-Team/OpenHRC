@@ -22,14 +22,15 @@
 #include "ohrc_common/utility.h"
 #include "rclcpp/rclcpp.hpp"
 
-namespace MyIK {
+namespace MyIK{
 
 enum SolveType { Pure };
 enum BasicJointType { RotJoint, TransJoint, Continuous };
 
-class MyIK {
+class MyIK: public std::enable_shared_from_this<MyIK>  {
   rclcpp::Node::SharedPtr node;
   bool initialized, enableSelfCollisionAvoidance = false;
+
 
   KDL::Chain chain;
   KDL::JntArray lb, ub, vb;
@@ -65,7 +66,8 @@ class MyIK {
 
   bool poseFeedbackDisabled = false;  // no longer used
 
-  void initializeSingleRobot(const KDL::Chain& chain);
+  // void initializeSingleRobot(const KDL::Chain& chain);
+
 
   int addSelfCollisionAvoidance(const KDL::JntArray& q_cur, std::vector<double>& lower_vel_limits_, std::vector<double>& upper_vel_limits_, std::vector<MatrixXd>& A_ca);
 
@@ -103,7 +105,7 @@ public:
   // multiple robot initilizer
   MyIK(const rclcpp::Node::SharedPtr& node, const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
        const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps = 1e-5, SolveType _type = Pure);
-
+  void initializeSingleRobot();
   int CartToJnt(const KDL::JntArray& q_init, const KDL::Frame& p_in, KDL::JntArray& q_out, const double& dt = 1.0e5);
   int CartToJnt(const std::vector<KDL::JntArray>& q_init, const std::vector<KDL::Frame>& p_in, std::vector<KDL::JntArray>& q_out, const double& dt);
 

@@ -45,7 +45,7 @@ protected:
   }
 
 public:
-  Interface(const std::shared_ptr<CartController> controller) : node(controller->getNode()), dt(controller->dt) {
+  Interface(const std::shared_ptr<CartController>& controller) : node(controller->getNode()), dt(controller->dt) {
     this->controller = controller;
     // trans = std::make_shared<TransformUtility>(node);
   }

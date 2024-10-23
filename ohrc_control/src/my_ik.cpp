@@ -19,13 +19,13 @@ MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const std::string& base_link, co
 
   RclcppUtility::declare_and_get_parameter(node, "self_collision_avoidance", false, enableSelfCollisionAvoidance);
 
-  initializeSingleRobot(chain);
+  // initializeSingleRobot(chain);
 }
 
 MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps, Affine3d T_base_world,
            SolveType _type)
   : node(node), nRobot(1), initialized(false), lb(_q_min), ub(_q_max), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
-  initializeSingleRobot(_chain);
+  // initializeSingleRobot(_chain);
 }
 
 MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
@@ -55,7 +55,8 @@ MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const std::vector<std::string>& 
     initialized = true;
 }
 
-void MyIK::initializeSingleRobot(const KDL::Chain& chain) {
+// void MyIK::initializeSingleRobot(const KDL::Chain& chain) {
+void MyIK::initializeSingleRobot() { // this cannot be used in constructor due to shared_from_this()
   // std::cout << ub.data.transpose() << std::endl;
   assert(nJnt == lb.data.size());
   assert(nJnt == ub.data.size());
@@ -77,9 +78,9 @@ void MyIK::initializeSingleRobot(const KDL::Chain& chain) {
 
   assert(types.size() == lb.data.size());
 
-  MyIK* a = this;
-  myIKs.resize(1);
-  myIKs[0] = std::shared_ptr<MyIK>(a);  // TODO: use shared_from_this();
+
+  // myIKs.resize(1);
+  myIKs.push_back(this->shared_from_this()) ;
 
   iJnt.resize(nRobot + 1, 0);
   for (int i = 0; i < nRobot; i++) {

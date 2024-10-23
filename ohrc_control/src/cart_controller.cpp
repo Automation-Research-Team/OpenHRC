@@ -181,8 +181,9 @@ void CartController::initMembers() {
 
   dt = 1.0 / freq;
 
-  // this->T_base_root = trans->getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(1, 0));
+  this->T_base_root = trans->getTransform(root_frame, robot_ns + chain_start, rclcpp::Time(0), rclcpp::Duration(1, 0));
   myik_solver_ptr = std::make_shared<MyIK::MyIK>(this->node, chain_start, chain_end, urdf_param, eps, T_base_root);
+  myik_solver_ptr->initializeSingleRobot();
   bool valid = myik_solver_ptr->getKDLChain(chain);
   chain_segs = chain.segments;
 

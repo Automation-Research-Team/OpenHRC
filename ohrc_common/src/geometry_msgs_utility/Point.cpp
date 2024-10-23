@@ -19,8 +19,9 @@ Point::~Point() {
 }
 
 void Point::initLPF(int order, double cutoff_freq, double sampling_freq) {
+  _filter.resize(3);
   for (int i = 0; i < 3; ++i)
-    _filter.push_back(std::shared_ptr<butterworth>(new butterworth(order, cutoff_freq, sampling_freq)));
+    _filter[i] = std::make_shared<butterworth>(order, cutoff_freq, sampling_freq);
 
   delta_t = 1.0 / sampling_freq;
 }
