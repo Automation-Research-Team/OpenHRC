@@ -1,8 +1,9 @@
 #include "ohrc_teleoperation/state_topic_interface.hpp"
 
 void StateTopicInterface::initInterface() {
-  n.param("trans_ratio", k_trans, 1.0);
-  ROS_INFO_STREAM("translation ratio: " << k_trans);
+  // n.param("trans_ratio", k_trans, 1.0);
+  // ROS_INFO_STREAM("translation ratio: " << k_trans);
+  RclcppUtility::declare_and_get_parameter(node, "trans_ratio", 1.0, k_trans);
 
   setSubscriber();
 
@@ -11,15 +12,15 @@ void StateTopicInterface::initInterface() {
 
 void StateTopicInterface::setSubscriber() {
   getTopicAndFrameName("/state", "user_frame");
-  subState = n.subscribe<ohrc_msgs::State>(stateTopicName, 1, &StateTopicInterface::cbState, this, th);
+  subState = node->create_subscription<ohrc_msgs::msg::State>(stateTopicName, rclcpp::QoS(1), std::bind(&StateTopicInterface::cbState, this, std::placeholders::_1));
 }
 
-void StateTopicInterface::cbState(const ohrc_msgs::State::ConstPtr& msg) {
+void StateTopicInterface::cbState(const ohrc_msgs::msg::State::SharedPtr msg) {
   std::lock_guard<std::mutex> lock(mtx_state);
   _state = *msg;
 }
 
-void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Frame& pos, KDL::Twist& twist) {
+void StateTopicInterface::getTargetState(const ohrc_msgs::msg::State& state, KDL::Frame& pos, KDL::Twist& twist) {
   // double k_trans = 2.0;  // position slacing factor
   Matrix3d R = T_state_base.rotation();
   Affine3d T_state_state;
@@ -53,16 +54,16 @@ void StateTopicInterface::getTargetState(const ohrc_msgs::State& state, KDL::Fra
     // v = 0.9;  // TODO: stop smoothly
   }
 
-  tf::transformEigenToKDL(T, pos);
-  tf::twistEigenToKDL(v, twist);
+  tf2::transformEigenToKDL(T, pos);
+  tf2::twistEigenToKDL(v, twist);
 
   if (state.reset)
     this->reset();
   // update pos and twist
 }
 
-void StateTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
-  ohrc_msgs::State state;
+void StateTopicInterface::updateTargetPose(const rclcpp::Time t, KDL::Frame& pos, KDL::Twist& twist) {
+  ohrc_msgs::msg::State state;
   {
     std::lock_guard<std::mutex> lock(mtx_state);
     state = _state;

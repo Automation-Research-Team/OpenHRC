@@ -28,7 +28,7 @@ std::string print(const std::vector<T>& vec) {
 }
 
 template <typename T>
-inline bool declare_and_get_parameter(std::shared_ptr<rclcpp::Node> node, std::string param_name, T default_value, T& param_value, bool verbose = true) {
+inline bool declare_and_get_parameter(const rclcpp::Node::SharedPtr& node, std::string param_name, T default_value, T& param_value, bool verbose = true) {
   node->declare_parameter(param_name, default_value);
   if (!node->get_parameter(param_name, param_value)) {
     if (verbose)
@@ -41,7 +41,7 @@ inline bool declare_and_get_parameter(std::shared_ptr<rclcpp::Node> node, std::s
 }
 
 template <typename T>
-inline bool declare_and_get_parameter_enum(std::shared_ptr<rclcpp::Node> node, std::string param_name, T default_enum, T& param_enum, bool verbose = true) {
+inline bool declare_and_get_parameter_enum(const rclcpp::Node::SharedPtr& node, std::string param_name, T default_enum, T& param_enum, bool verbose = true) {
   std::string param_value;
   RclcppUtility::declare_and_get_parameter(node, param_name, std::string(""), param_value, false);
 

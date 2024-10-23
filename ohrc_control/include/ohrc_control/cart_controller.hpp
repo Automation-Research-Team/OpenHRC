@@ -146,7 +146,7 @@ protected:
 
   // KDL
   // std::unique_ptr<KDL::ChainIkSolverVel_pinv> vik_solver_ptr;   // PseudoInverse vel solver
-  std::unique_ptr<KDL::ChainIkSolverPos_NR_JL> kdl_solver_ptr;  // Joint Limit Solver
+  // std::unique_ptr<KDL::ChainIkSolverPos_NR_JL> kdl_solver_ptr;  // Joint Limit Solver
 
   // TRAC-IK
   // std::unique_ptr<TRAC_IK::TRAC_IK> tracik_solver_ptr;
@@ -195,7 +195,7 @@ public:
   CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller, const double freq);
   CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
                  const ControllerType controller, const double freq);
-  ~CartController();
+  // ~CartController();
   int control();
 
   void update();

@@ -4,11 +4,11 @@
 #include "ohrc_control/multi_cart_controller.hpp"
 
 template <class T>
-class SingleInterface : public Controller {
+class SingleInterface : virtual public Controller {
 public:
   SingleInterface() {
-    for (int i = 0; i < nRobot; i++)
-      interfaces[i] = std::make_shared<T>(cartControllers[i]);
+    for (int i = 0; i < this->getNRobot(); i++)
+      this->interfaces[i] = std::make_shared<T>(cartControllers[i]);
   }
 };
 

@@ -1,8 +1,9 @@
 #include "ohrc_teleoperation/twist_topic_interface.hpp"
 
 void TwistTopicInterface::initInterface() {
-  n.param("trans_ratio", k_trans, 1.0);
-  ROS_INFO_STREAM("translation ratio: " << k_trans);
+  // n.param("trans_ratio", k_trans, 1.0);
+  RclcppUtility::declare_and_get_parameter(node, "trans_ratio", 1.0, k_trans);
+  // RCL("translation ratio: " << k_trans);
 
   setSubscriber();
 
@@ -10,20 +11,23 @@ void TwistTopicInterface::initInterface() {
   R = T_state_base.rotation().transpose();
 
   bool diablePoseFeedback;
-  n.param("diable_pose_feedback", diablePoseFeedback, false);
+  // n.param("diable_pose_feedback", diablePoseFeedback, false);
+  RclcppUtility::declare_and_get_parameter(node, "diable_pose_feedback", false, diablePoseFeedback);
 
   if (diablePoseFeedback) {
-    ROS_WARN_STREAM("Pose feedback is disabled");
+    // ROS_WARN_STREAM("Pose feedback is disabled");
+    RCLCPP_WARN_STREAM(node->get_logger(), "Pose feedback is disabled");
     controller->disablePoseFeedback();
   }
 }
 
 void TwistTopicInterface::setSubscriber() {
   this->getTopicAndFrameName("/cmd_vel", "user_frame");
-  subTwist = n.subscribe<geometry_msgs::msg::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
+  // subTwist = n.subscribe<geometry_msgs::msg::Twist>(stateTopicName, 2, &TwistTopicInterface::cbTwist, this, th);
+  subTwist = node->create_subscription<geometry_msgs::msg::Twist>(stateTopicName, rclcpp::QoS(1), std::bind(&TwistTopicInterface::cbTwist, this, std::placeholders::_1));
 }
 
-void TwistTopicInterface::cbTwist(const geometry_msgs::msg::Twist::ConstPtr& msg) {
+void TwistTopicInterface::cbTwist(const geometry_msgs::msg::Twist::SharedPtr msg) {
   std::lock_guard<std::mutex> lock(mtx_topic);
   _twist = *msg;
   _flagTopic = true;
@@ -37,7 +41,7 @@ void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::msg::Twist& t
     controller->startOperation();
   }
 
-  ohrc_msgs::State state = this->state;
+  ohrc_msgs::msg::State state = this->state;
   state.enabled = true;
   state.twist = twist_msg;
   state.pose.position.x += state.twist.linear.x * dt;
@@ -62,13 +66,13 @@ void TwistTopicInterface::setPoseFromTwistMsg(const geometry_msgs::msg::Twist& t
   VectorXd v = (VectorXd(6) << k_trans * R * v_state_state.head(3), R * v_state_state.tail(3)).finished();
 
   // update pos and twist
-  tf::transformEigenToKDL(T, pos);
-  tf::twistEigenToKDL(v, twist);
+  tf2::transformEigenToKDL(T, pos);
+  tf2::twistEigenToKDL(v, twist);
 
   this->state = state;
 }
 
-void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
+void TwistTopicInterface::updateTargetPose(const rclcpp::Time t, KDL::Frame& pos, KDL::Twist& twist) {
   geometry_msgs::msg::Twist twist_msg;
   {
     std::lock_guard<std::mutex> lock(mtx_topic);
@@ -81,7 +85,7 @@ void TwistTopicInterface::updateTargetPose(KDL::Frame& pos, KDL::Twist& twist) {
 }
 
 void TwistTopicInterface::resetInterface() {
-  ROS_WARN_STREAM("Reset interface");
-  state = ohrc_msgs::State();
+  RCLCPP_INFO_STREAM(node->get_logger(), "Reset interface");
+  state = ohrc_msgs::msg::State();
   isFirst = true;
 }

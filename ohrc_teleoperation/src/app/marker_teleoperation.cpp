@@ -6,8 +6,6 @@ int main(int argc, char** argv) {
   auto interface = std::make_shared<SingleInterface<MarkerInterface>>();
   interface->control();
 
-  // interface->exec.spin();
-
-  // rclcpp::shutdown();
+  rclcpp::shutdown();
   return 0;
 }

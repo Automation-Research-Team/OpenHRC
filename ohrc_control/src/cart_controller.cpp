@@ -5,7 +5,6 @@ CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string 
   : Node("cart_controller_" + robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
   node = std::shared_ptr<rclcpp::Node>(this);
   this->node = node;
-  trans.reset(new TransformUtility(this->node));
   init(robot, hw_config);
 }
 
@@ -14,7 +13,6 @@ CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string 
   : Node("cart_controller_" + robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
   node = std::shared_ptr<rclcpp::Node>(this);
   this->node = node;
-  trans.reset(new TransformUtility(this->node));
   init(robot);
 }
 
@@ -22,7 +20,6 @@ CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string 
   : Node("cart_controller_" + robot), root_frame(root_frame), controller(controller), freq(freq) {
   node = std::shared_ptr<rclcpp::Node>(this);
   this->node = node;
-  trans.reset(new TransformUtility(this->node));
   init(robot);
 }
 
@@ -41,6 +38,7 @@ void CartController::init(std::string robot) {
 }
 
 void CartController::init(std::string robot, std::string hw_config) {
+  trans = std::make_unique<TransformUtility>(this->node);
   // this->node = std::shared_ptr<rclcpp::Node>(this);
   // nh_.setCallbackQueue(&queue);
   // spinner_.reset(new ros::AsyncSpinner(1, &queue));
@@ -70,7 +68,7 @@ void CartController::init(std::string robot, std::string hw_config) {
   KDL::JntArray ll, ul;  // lower joint limits, upper joint limits
   // bool valid = tracik_solver_ptr->getKDLLimits(ll, ul);
 
-  fk_solver_ptr.reset(new KDL::ChainFkSolverPos_recursive(chain));
+  // fk_solver_ptr = std::make_unique<KDL::ChainFkSolverPos_recursive>(chain);
 
   // vik_solver_ptr.reset(new KDL::ChainIkSolverVel_pinv(chain));
   // kdl_solver_ptr.reset(new KDL::ChainIkSolverPos_NR_JL(chain, ll, ul, *fk_solver_ptr, *vik_solver_ptr, 1, eps));
@@ -188,6 +186,8 @@ void CartController::initMembers() {
   bool valid = myik_solver_ptr->getKDLChain(chain);
   chain_segs = chain.segments;
 
+  fk_solver_ptr = std::make_unique<KDL::ChainFkSolverPos_recursive>(chain);
+
   nJnt = chain.getNrOfJoints();
   _q_cur.resize(nJnt);
 }
@@ -212,8 +212,8 @@ void CartController::updateFilterCutoff(const double velFreq, const double jntFr
   this->updateJntFilterCutoff(jntFreq);
 }
 
-CartController::~CartController() {
-}
+// CartController::~CartController() {
+// }
 
 bool CartController::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
   this->resetPose();

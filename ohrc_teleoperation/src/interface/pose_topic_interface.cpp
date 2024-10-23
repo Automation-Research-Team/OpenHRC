@@ -7,30 +7,31 @@ void PoseTopicInterface::initInterface() {
   R = T_state_base.rotation();
 
   bool diablePoseFeedback;
-  n.param("diable_pose_feedback", diablePoseFeedback, false);
+  RclcppUtility::declare_and_get_parameter(node, "diable_pose_feedback", false, diablePoseFeedback);
 
   controller->enablePoseFeedback();  // tentative
-  // if (diablePoseFeedback) {
-  //   ROS_WARN_STREAM("Pose feedback is disabled");
-  //   controller->disablePoseFeedback();
-  // }
+  if (diablePoseFeedback) {
+    // ROS_WARN_STREAM("Pose feedback is disabled");
+    RCLCPP_WARN_STREAM(node->get_logger(), "Pose feedback is disabled");
+    controller->disablePoseFeedback();
+  }
 
   controller->updatePosFilterCutoff(10.0);
 }
 
 void PoseTopicInterface::setSubscriber() {
   getTopicAndFrameName("/cmd_pose", "user_frame");
-  subPose = n.subscribe<geometry_msgs::Pose>(stateTopicName, 1, &PoseTopicInterface::cbPose, this, th);
+  subPose = node->create_subscription<geometry_msgs::msg::Pose>(stateTopicName, rclcpp::QoS(1), std::bind(&PoseTopicInterface::cbPose, this, std::placeholders::_1));
 }
 
-void PoseTopicInterface::cbPose(const geometry_msgs::Pose::ConstPtr& msg) {
+void PoseTopicInterface::cbPose(const geometry_msgs::msg::Pose::SharedPtr msg) {
   std::lock_guard<std::mutex> lock(mtx_topic);
   _pose = *msg;
   _flagTopic = true;
 }
 
-void PoseTopicInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
-  geometry_msgs::Pose markerPose;
+void PoseTopicInterface::updateTargetPose(const rclcpp::Time t, KDL::Frame& pose, KDL::Twist& twist) {
+  geometry_msgs::msg::Pose markerPose;
   double markerDt;
   {
     std::lock_guard<std::mutex> lock(mtx_topic);
@@ -52,7 +53,7 @@ void PoseTopicInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 
   Vector3d pos = T_base.translation() - initT.translation() + controller->getT_init().translation();
 
-  tf::vectorEigenToKDL(pos, pose.p);
+  tf2::vectorEigenToKDL(pos, pose.p);
   //   tf::vectorEigenToKDL(controller->getT_init().rotation(), pose.rot);
 
   // controller->getVelocity(pose, prevPoses, dt, twist);  // TODO: get this velocity in periodic loop using Kalman filter
@@ -61,6 +62,6 @@ void PoseTopicInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
 }
 
 void PoseTopicInterface::resetInterface() {
-  ROS_WARN_STREAM("Reset marker position");
+  RCLCPP_INFO_STREAM(node->get_logger(), "Reset pose position");
   _flagTopic = false;
 }

@@ -1,5 +1,6 @@
+/**:
+  ros__parameters:
+    topic_name: "/cmd_pose"
+    frame_id: "world"
 
-topic_name: "/cmd_pose"
-frame_id: "world"
-
-diable_pose_feedback: false # if this true, the robot does not move to the target pose
+    diable_pose_feedback: false # if this true, the robot does not move to the target pose

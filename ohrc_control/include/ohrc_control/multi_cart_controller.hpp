@@ -20,6 +20,9 @@ using namespace std::chrono_literals;
 class Controller : public rclcpp::Node {
   rclcpp::executors::MultiThreadedExecutor exec;
   std::vector<rclcpp::Node::SharedPtr> nodes;
+  rclcpp::Node::SharedPtr node;
+
+  std::vector<std::shared_ptr<MyIK::MyIK>> myik_ptr;
 
   rclcpp::TimerBase::SharedPtr control_timer;
   bool getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs);
@@ -40,14 +43,9 @@ class Controller : public rclcpp::Node {
   void stopping();
   void update(const rclcpp::Time& time, const rclcpp::Duration& period);
 
-protected:
-  // ros::NodeHandle nh;
-  rclcpp::Node::SharedPtr node;
-
   enum class MFMode { Individual, Parallel, Cooperation, None } MFmode;
   enum class IKMode { Concatenated, Order, Parallel, None } IKmode;
 
-  std::vector<std::shared_ptr<CartController>> cartControllers;
   // std::vector<std::string> robots;
   // std::vector<std::string> hw_configs;
   int nRobot = 0;
@@ -83,10 +81,9 @@ protected:
 
   virtual void runLoopEnd() {};
 
-  std::vector<std::shared_ptr<Interface>> interfaces;
   std::vector<std::shared_ptr<Interface>> baseControllers;
 
-  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+  void updateTargetPose(KDL::Frame& pose, KDL::Twist& twist, const std::shared_ptr<CartController>& controller) {
     interfaces[controller->getIndex()]->updateTargetPose(this->get_clock()->now(), pose, twist);
     baseControllers[controller->getIndex()]->updateTargetPose(this->get_clock()->now(), pose, twist);
   }
@@ -97,55 +94,42 @@ protected:
 
   // virtual void defineInterface() = 0;
 
-  void initInterface(std::shared_ptr<CartController> controller) {
+  void initInterface(const std::shared_ptr<CartController>& controller) {
     interfaces[controller->getIndex()]->initInterface();
     baseControllers[controller->getIndex()]->initInterface();
   }
 
-  void resetInterface(std::shared_ptr<CartController> controller) {
+  void resetInterface(const std::shared_ptr<CartController>& controller) {
     interfaces[controller->getIndex()]->resetInterface();
     baseControllers[controller->getIndex()]->resetInterface();
   }
 
-  void feedback(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+  void feedback(KDL::Frame& pose, KDL::Twist& twist, const std::shared_ptr<CartController>& controller) {
     interfaces[controller->getIndex()]->feedback(pose, twist);
   }
 
   virtual void preInterfaceProcess(std::vector<std::shared_ptr<Interface>> interfaces) {};
 
-  virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+  virtual void updateManualTargetPose(KDL::Frame& pose, KDL::Twist& twist, const std::shared_ptr<CartController>& controller) {
     updateTargetPose(pose, twist, controller);
   };
-  virtual void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, std::shared_ptr<CartController> controller) {
+  virtual void updateAutoTargetPose(KDL::Frame& pose, KDL::Twist& twist, const std::shared_ptr<CartController>& controller) {
     updateTargetPose(pose, twist, controller);
   };
   // virtual void feedbackJnt(const KDL::JntArray& q_cur, const KDL::JntArray& q_des, std::shared_ptr<CartController> controller){};
   // virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
 
-  template <typename T>
-  inline T getEnumParam(const std::string& key, T none, const std::string default_str) {
-    std::string s;
-    this->declare_parameter(key, default_str);
-    // if (!n.getParam(key, s)) {
-    //   ROS_INFO_STREAM("Failed to get " << key << ", so" << default_str << "is automatically selected");
-    //   s = default_str;
-    // }
-    if (!this->get_parameter(key, s)) {
-      RCLCPP_INFO_STREAM(this->get_logger(), "Failed to get " << key << ", so" << default_str << "is automatically selected");
-      s = default_str;
-    }
-
-    T mode = magic_enum::enum_cast<T>(s).value_or(none);
-    if (mode == none) {
-      RCLCPP_FATAL_STREAM(this->get_logger(), key << " is configured as [" << s << "] and not correctly configured.");
-      rclcpp::shutdown();
-    } else
-      RCLCPP_INFO_STREAM(this->get_logger(), "Operation mode: " << s);
-
-    return mode;
+protected:
+  std::vector<std::shared_ptr<Interface>> interfaces;
+  std::vector<std::shared_ptr<CartController>> cartControllers;
+  int getNRobot() {
+    return nRobot;
   }
 
 public:
+  // rclcpp::executors::MultiThreadedExecutor exec;
+  // std::vector<rclcpp::Node::SharedPtr> nodes;
+  // rclcpp::Node::SharedPtr node;
   Controller();
   ~Controller();
   void control();

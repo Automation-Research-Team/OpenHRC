@@ -2,7 +2,7 @@
 
 namespace MyIK {
 
-MyIK::MyIK(rclcpp::Node::SharedPtr node, const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world,
+MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const std::string& base_link, const std::string& tip_link, const std::string& URDF_param, double _eps, Affine3d T_base_world,
            SolveType _type)
   : node(node), nRobot(1), initialized(false), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
   urdf::Model robot_model = ModelUtility::getURDFModel(node, URDF_param);
@@ -22,12 +22,13 @@ MyIK::MyIK(rclcpp::Node::SharedPtr node, const std::string& base_link, const std
   initializeSingleRobot(chain);
 }
 
-MyIK::MyIK(rclcpp::Node::SharedPtr node, const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps, Affine3d T_base_world, SolveType _type)
+MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const KDL::Chain& _chain, const KDL::JntArray& _q_min, const KDL::JntArray& _q_max, double _eps, Affine3d T_base_world,
+           SolveType _type)
   : node(node), nRobot(1), initialized(false), lb(_q_min), ub(_q_max), eps(_eps), T_base_world(T_base_world), solvetype(_type) {
   initializeSingleRobot(_chain);
 }
 
-MyIK::MyIK(rclcpp::Node::SharedPtr node, const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
+MyIK::MyIK(const rclcpp::Node::SharedPtr& node, const std::vector<std::string>& base_link, const std::vector<std::string>& tip_link, const std::vector<Affine3d>& T_base_world,
            const std::vector<std::shared_ptr<MyIK>>& myik_ptr, double _eps, SolveType _type)
   : node(node), nRobot(base_link.size()), eps(_eps), solvetype(_type), myIKs(myik_ptr) {
   // get number of elements of the state vector and indeces corresponding to start of joint vector of each robot
@@ -59,9 +60,9 @@ void MyIK::initializeSingleRobot(const KDL::Chain& chain) {
   assert(nJnt == lb.data.size());
   assert(nJnt == ub.data.size());
 
-  jacsolver.reset(new KDL::ChainJntToJacSolver(chain));
-  fksolver.reset(new KDL::ChainFkSolverPos_recursive(chain));
-  fkVelSolver.reset(new KDL::ChainFkSolverVel_recursive(chain));
+  jacsolver = std::make_unique<KDL::ChainJntToJacSolver>(chain);
+  fksolver = std::make_unique<KDL::ChainFkSolverPos_recursive>(chain);
+  fkVelSolver = std::make_unique<KDL::ChainFkSolverVel_recursive>(chain);
 
   for (uint i = 0; i < chain.segments.size(); i++) {
     std::string type = chain.segments[i].getJoint().getTypeName();

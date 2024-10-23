@@ -2,8 +2,10 @@
 #include "ohrc_teleoperation/state_topic_interface.hpp"
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "state_topic_teleoperation");
-  SingleInterface<StateTopicInterface> interface;
-  if (interface.control() < 0)
-    ROS_ERROR("End by some fails");
+  rclcpp::init(argc, argv);
+  auto interface = std::make_shared<SingleInterface<StateTopicInterface>>();
+  interface->control();
+
+  rclcpp::shutdown();
+  return 0;
 }

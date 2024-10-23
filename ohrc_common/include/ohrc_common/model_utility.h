@@ -11,7 +11,7 @@
 namespace ModelUtility {
 // std::shared_ptr<rclcpp::Node> node_;
 
-inline urdf::Model getURDFModel(rclcpp::Node::SharedPtr node, const std::string URDF_param) {
+inline urdf::Model getURDFModel(const rclcpp::Node::SharedPtr &node, const std::string URDF_param) {
   urdf::Model robot_model;
   std::string urdf_string, urdf_xml, full_urdf_xml;
   // nh.param("urdf_xml", urdf_xml, URDF_param);
