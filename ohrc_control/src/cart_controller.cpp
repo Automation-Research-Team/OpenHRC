@@ -3,7 +3,7 @@
 CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string hw_config, const std::string root_frame, const int index,
                                const ControllerType controller, const double freq)
   : Node("cart_controller_" + robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
-  node = std::shared_ptr<rclcpp::Node>(this);
+  node = std::shared_ptr<rclcpp::Node>(this);  // TODO: relace this with shared_from_this()
   this->node = node;
   init(robot, hw_config);
 }
@@ -11,14 +11,14 @@ CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string 
 CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const int index, const ControllerType controller,
                                const double freq)
   : Node("cart_controller_" + robot), root_frame(root_frame), index(index), controller(controller), freq(freq) {
-  node = std::shared_ptr<rclcpp::Node>(this);
+  node = std::shared_ptr<rclcpp::Node>(this);  // TODO: relace this with shared_from_this()
   this->node = node;
   init(robot);
 }
 
 CartController::CartController(rclcpp::Node::SharedPtr& node, const std::string robot, const std::string root_frame, const ControllerType controller, const double freq)
   : Node("cart_controller_" + robot), root_frame(root_frame), controller(controller), freq(freq) {
-  node = std::shared_ptr<rclcpp::Node>(this);
+  node = std::shared_ptr<rclcpp::Node>(this);  // TODO: relace this with shared_from_this()
   this->node = node;
   init(robot);
 }
@@ -105,8 +105,16 @@ void CartController::init(std::string robot, std::string hw_config) {
     RCLCPP_WARN_STREAM(node->get_logger(), "force/torque sensor was not found. Compliance control does not work.");
 
   // client = nh.serviceClient<std_srvs::Empty>("/" + robot_ns + "ft_filter/reset_offset");
-  client = node->create_client<std_srvs::srv::Empty>("/" + robot_ns + "ft_filter/reset_offset");
-
+  if (ftFound) {
+    client = node->create_client<std_srvs::srv::Empty>("/" + robot_ns + "ft_filter/reset_offset");
+    while (!client->wait_for_service(1s)) {
+      if (!rclcpp::ok()) {
+        RCLCPP_ERROR(this->get_logger(), "Client interrupted while waiting for service");
+        return;
+      }
+      RCLCPP_INFO(this->get_logger(), "waiting for service...");
+    }
+  }
   // if (publisher == PublisherType::Trajectory){
   //   // jntCmdPublisher = nh.advertise<trajectory_msgs::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", 1);
   //   jntCmdPublisher = this->create_publisher<trajectory_msgs::msg::JointTrajectory>("/" + robot_ns + publisherTopicName + "/command", rclcpp::QoS(1));
@@ -218,7 +226,9 @@ void CartController::updateFilterCutoff(const double velFreq, const double jntFr
 
 bool CartController::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
   this->resetPose();
-  this->resetFt();
+
+  if (ftFound)
+    this->resetFt();
   return true;
 }
 
@@ -637,7 +647,8 @@ void CartController::starting(const rclcpp::Time& time) {
 
   subscriber_utility::checkSubTopic(node, subFlagPtrs, &mtx, robot_ns);
 
-  this->resetFt();
+  if (ftFound)
+    this->resetFt();
 
   updateCurState();
 }
@@ -646,7 +657,7 @@ void CartController::starting(const rclcpp::Time& time) {
  * \brief Stops controller
  * \param time Current time
  */
-void CartController::stopping(const rclcpp::Time& /*time*/) {
+void CartController::stopping(const rclcpp::Time& time) {
   if (controller == ControllerType::Velocity) {
     std_msgs::msg::Float64MultiArray cmd;
     cmd.data.resize(nJnt, 0.0);

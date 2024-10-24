@@ -1,8 +1,7 @@
 #include "ohrc_teleoperation/marker_interface.hpp"
 
 void MarkerInterface::initInterface() {
-  // node = std::make_shared<rclcpp::Node>(this);
-  server.reset(new interactive_markers::InteractiveMarkerServer(controller->getRobotNs() + "eef_marker", node));
+  server = std::make_unique<interactive_markers::InteractiveMarkerServer>(controller->getRobotNs() + "eef_marker", node);
   configMarker();
 
   controller->updatePosFilterCutoff(10.0);

@@ -6,6 +6,5 @@ int main(int argc, char** argv) {
   auto interface = std::make_shared<SingleInterface<TwistTopicInterface>>();
   interface->control();
 
-  rclcpp::shutdown();
   return 0;
 }

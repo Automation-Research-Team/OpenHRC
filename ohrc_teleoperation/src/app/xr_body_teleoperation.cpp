@@ -2,8 +2,9 @@
 #include "ohrc_teleoperation/xr_body_interface.hpp"
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "xr_body_teleoperation");
-  SingleInterface<XrBodyInterface> interface;
-  if (interface.control() < 0)
-    ROS_ERROR("End by some fails");
+  rclcpp::init(argc, argv);
+  auto interface = std::make_shared<SingleInterface<XrBodyInterface>>();
+  interface->control();
+
+  return 0;
 }

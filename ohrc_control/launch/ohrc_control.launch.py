@@ -6,6 +6,8 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+import datetime
+
 
 def generate_launch_description():
     return LaunchDescription([
@@ -42,7 +44,7 @@ def generate_launch_description():
             # name=[LaunchConfiguration('interface'), '_', LaunchConfiguration('app')],
             output='screen',
             # prefix=[
-            # 'valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=./valgrind3.log'],
+            # 'valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=./valgrind_', datetime.datetime.now().isoformat('_', timespec='seconds'), '.log'],
             parameters=[
                 LaunchConfiguration('hw_config'),
                 LaunchConfiguration('control_config'),

@@ -11,7 +11,7 @@ def generate_launch_description():
         DeclareLaunchArgument('robot', default_value='ur5e'),
         DeclareLaunchArgument('controller', default_value='vel'),
         DeclareLaunchArgument(
-            'feedback_mode', default_value='PositionFeedback'),
+            'feedback_mode', default_value='HybridFeedback'),
         DeclareLaunchArgument('use_rviz', default_value='true'),
         DeclareLaunchArgument('user_frame_viewpoint', default_value='back'),
 
@@ -20,12 +20,17 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([FindPackageShare(
                 'ohrc_teleoperation'), '/launch/ohrc_teleoperation.launch.py']),
             launch_arguments={
-                'interface': 'marker',
+                'interface': 'xr_body',
                 'robot': LaunchConfiguration('robot'),
                 'controller': LaunchConfiguration('controller'),
                 'feedback_mode': LaunchConfiguration('feedback_mode'),
                 'use_rviz': LaunchConfiguration('use_rviz'),
                 'user_frame_viewpoint': LaunchConfiguration('user_frame_viewpoint'),
             }.items()
+        ),
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([FindPackageShare(
+                'ros_tcp_endpoint'), '/launch/endpoint.py']),
         ),
     ])

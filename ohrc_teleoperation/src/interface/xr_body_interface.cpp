@@ -3,45 +3,36 @@
 void XrBodyInterface::initInterface() {
   StateTopicInterface::initInterface();
 
-  std::string bodyPart_str;
-  if (!n.param(controller->getRobotNs() + "body_part", bodyPart_str, std::string("RIGHT_HAND")))
-    ROS_WARN_STREAM("Used body part for " << controller->getRobotNs() << " is not choisen {RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS}: Default RIGHT_HAND");
-  else
-    ROS_INFO_STREAM("body_part: " << bodyPart_str);
-
-  bodyPart = magic_enum::enum_cast<BodyPart>(bodyPart_str).value_or(BodyPart::NONE);
-  if (bodyPart == BodyPart::NONE) {
-    ROS_FATAL("BodyPart is not correctly choisen from {RIGHT_HAND, LEFT_HAND, HEAD, EITHER_HANDS}");
-    return;
-  }
+  RclcppUtility::declare_and_get_parameter_enum(node, controller->getRobotNs() + "body_part", BodyPart::RIGHT_HAND, bodyPart);
 
   // controller->updateFilterCutoff(10.0, 10.0);
   controller->disablePoseFeedback();
   controller->updateVelFilterCutoff(70.0);
 
-  pubFeedback = n.advertise<std_msgs::Float32>("/feedback/" + bodyPart_str, 2);
+  pubFeedback = node->create_publisher<std_msgs::msg::Float32>(std::string("/feedback/") + std::string(magic_enum::enum_name(bodyPart)), rclcpp::QoS(2));
 }
 
 void XrBodyInterface::setSubscriber() {
   getTopicAndFrameName("/body_state", "user_frame");
-  subBody = n.subscribe<ohrc_msgs::BodyState>(stateTopicName, 1, &XrBodyInterface::cbBody, this, th);
+  // subBody = n.subscribe<ohrc_msgs::BodyState>(stateTopicName, 1, &XrBodyInterface::cbBody, this, th);
+  subBody = node->create_subscription<ohrc_msgs::msg::BodyState>(stateTopicName, rclcpp::QoS(1), std::bind(&XrBodyInterface::cbBody, this, std::placeholders::_1));
 }
 
-void XrBodyInterface::cbBody(const ohrc_msgs::BodyState::ConstPtr& msg) {
+void XrBodyInterface::cbBody(const ohrc_msgs::msg::BodyState::SharedPtr msg) {
   std::lock_guard<std::mutex> lock(mtx_state);
   _body = *msg;
   _flagTopic = true;
 }
 
-bool XrBodyInterface::getEnableFlag(const ohrc_msgs::BodyPartState& handState, const ohrc_msgs::BodyPartState& anotherBodyPartState) {
+bool XrBodyInterface::getEnableFlag(const ohrc_msgs::msg::BodyPartState& handState, const ohrc_msgs::msg::BodyPartState& anotherBodyPartState) {
   if (handState.grip > 0.95)
     return true;
   else
     return false;
 }
 
-void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
-  ohrc_msgs::BodyState body;
+void XrBodyInterface::updateTargetPose(const rclcpp::Time t, KDL::Frame& pose, KDL::Twist& twist) {
+  ohrc_msgs::msg::BodyState body;
   {
     std::lock_guard<std::mutex> lock(mtx_state);
     body = _body;
@@ -49,7 +40,7 @@ void XrBodyInterface::updateTargetPose(KDL::Frame& pose, KDL::Twist& twist) {
       return;
   }
 
-  ohrc_msgs::State state = this->state;
+  ohrc_msgs::msg::State state = this->state;
   state.enabled = false;
   switch (bodyPart) {
     case BodyPart::RIGHT_HAND:
@@ -109,12 +100,12 @@ void XrBodyInterface::resetInterface() {
 }
 
 void XrBodyInterface::feedback(const KDL::Frame& targetPos, const KDL::Twist& targetTwist) {
-  std_msgs::Float32 amp;
+  std_msgs::msg::Float32 amp;
 
   amp.data = std::max(std::min((tf2::fromMsg(controller->getForceEef().wrench).head(3).norm() - 1.0) / 10.0, 1.0), 0.0);
 
   if (controller->getOperationEnable())
-    pubFeedback.publish(amp);
+    pubFeedback->publish(amp);
   else
-    pubFeedback.publish(std_msgs::Float32());
+    pubFeedback->publish(std_msgs::msg::Float32());
 }

@@ -13,6 +13,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'feedback_mode', default_value='PositionFeedback'),
         DeclareLaunchArgument('use_rviz', default_value='true'),
+        DeclareLaunchArgument('user_frame_viewpoint', default_value='back'),
 
         # Include the other launch file
         IncludeLaunchDescription(
@@ -23,7 +24,8 @@ def generate_launch_description():
                 'robot': LaunchConfiguration('robot'),
                 'controller': LaunchConfiguration('controller'),
                 'feedback_mode': LaunchConfiguration('feedback_mode'),
-                'use_rviz': LaunchConfiguration('use_rviz')
+                'use_rviz': LaunchConfiguration('use_rviz'),
+                'user_frame_viewpoint': LaunchConfiguration('user_frame_viewpoint'),
             }.items()
         ),
     ])

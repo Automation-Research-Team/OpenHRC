@@ -1,2 +1,3 @@
-
-body_part: "EITHER_HANDS"
+/**:
+  ros__parameters:
+    body_part: "EITHER_HANDS"

@@ -2,26 +2,21 @@
 
 Controller::Controller() : Node("ohrc_controller") {
   // std::cout << "Controller started??" << std::endl;
-  this->node = std::shared_ptr<rclcpp::Node>(this);
+  // this->node = std::shared_ptr<rclcpp::Node>(this);
 
-  std::vector<std::string> robots, hw_configs;
-  if (!this->getRosParams(robots, hw_configs)) {
-    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the initial parameters. Shutting down...");
-    rclcpp::shutdown();
-  }
+  // std::vector<std::string> robots, hw_configs;
+  // if (!this->getRosParams(robots, hw_configs)) {
+  //   RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the initial parameters. Shutting down...");
+  //   rclcpp::shutdown();
+  // }
 
-  this->initMenbers(robots, hw_configs);
+  // this->initMenbers(robots, hw_configs);
 
-  control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::controlLoop, this));
+  // control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::controlLoop, this));
 }
 
 Controller::~Controller() {
-  // std::cout << myik_ptr[0].use_count() << std::endl;
-
-  // std::cout << "Controller stopped??" << std::endl;
   this->stopping();
-  exec.cancel();
-  rclcpp::shutdown();
 }
 
 bool Controller::getRosParams(std::vector<std::string>& robots, std::vector<std::string>& hw_configs) {
@@ -133,6 +128,10 @@ void Controller::initMenbers(const std::vector<std::string> robots, const std::v
 
     cartControllers[i]->disablePoseFeedback();  // TODO: Pose feedback would be always enable. original feedback code can be removed.
   }
+
+  this->defineInterface();
+
+  control_timer = this->create_wall_timer(std::chrono::milliseconds(int(dt * 1000)), std::bind(&Controller::controlLoop, this));
 }
 
 void Controller::resetService(const std::shared_ptr<std_srvs::srv::Empty::Request> req, const std::shared_ptr<std_srvs::srv::Empty::Response>& res) {
@@ -221,9 +220,8 @@ void Controller::stopping() {
   // }
 
   RCLCPP_INFO_STREAM(this->get_logger(), "Controller stopped!");
-  // this->t0 = rclcpp::Time::now();
 
-  // rclcpp::shutdown();
+  rclcpp::shutdown();
 }
 
 void Controller::publishState(const rclcpp::Time& time, const std::vector<KDL::Frame> curPose, const std::vector<KDL::Twist> curVel, const std::vector<KDL::Frame> desPose,
@@ -349,6 +347,17 @@ void Controller::controlLoop() {
 }
 
 void Controller::control() {
+  this->node = this->shared_from_this();
+
+  std::vector<std::string> robots, hw_configs;
+  if (!this->getRosParams(robots, hw_configs)) {
+    RCLCPP_FATAL_STREAM(this->get_logger(), "Failed to get the initial parameters. Shutting down...");
+    rclcpp::shutdown();
+  }
+
+  this->initMenbers(robots, hw_configs);
+
   this->starting();
+
   exec.spin();
 }

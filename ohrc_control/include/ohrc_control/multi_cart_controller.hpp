@@ -120,6 +120,7 @@ class Controller : public rclcpp::Node {
   // virtual void feedbackCart(const Affine3d& T_cur, const Affine3d& T_des, std::shared_ptr<CartController> controller){};
 
 protected:
+  virtual void defineInterface() {};
   std::vector<std::shared_ptr<Interface>> interfaces;
   std::vector<std::shared_ptr<CartController>> cartControllers;
   int getNRobot() {
