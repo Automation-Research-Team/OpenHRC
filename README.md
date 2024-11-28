@@ -18,7 +18,9 @@ OpenHRC has been developed and tested in the following environments:
   - Windows 11 (Docker on WSL2)
   - macOS (Docker)
 
-Currently, this library is not compatible with ROS2. Although there are intentions to port this package to ROS2, there is no specific plan in place.
+~~Currently, this library is not compatible with ROS2. Although there are intentions to port this package to ROS2, there is no specific plan in place.~~
+
+**Now we are mainly developing ROS2 (see `ros2` branch), and ROS1 version (this `noetic` branch) is no longer maintained.**
 
 
 ## Native (Ubuntu 20.04) / Docker (on Ubuntu distribution) Installation
