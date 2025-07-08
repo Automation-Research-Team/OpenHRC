@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['shoulder_1779',['Shoulder',['../classArmPerception.html#addfdbecceb85b5b55b61f0d2b89a0922a7b3990b7cf6ea4f40717435a59a88183',1,'ArmPerception']]],
-  ['skeleton_1780',['Skeleton',['../namespaceArmMarker.html#ab2decd1f95340f9ca75ba49ad50f87d3a77d3d343429a92425e631b66dc19d23c',1,'ArmMarker']]],
-  ['start_1781',['Start',['../classMoveEndEffector.html#a1c7d5fc1b52e5c4551d98a7c2803b28baa6122a65eaa676f700ae68d393054a37',1,'MoveEndEffector']]],
-  ['success_1782',['Success',['../classOhrcAutomation.html#ac2d9ea8387e21945bd9cacd45cd8dbf3a505a83f220c02df2f85c3810cd9ceb38',1,'OhrcAutomation::Success()'],['../namespaceohrc__control.html#aab3f81a28de15146701827cf94fa5c16a505a83f220c02df2f85c3810cd9ceb38',1,'ohrc_control::Success()']]]
+  ['parallel_0',['Parallel',['../classOhrcController.html#aafdf2be300ccc95f40622b245dfe21eda98402eecfbcefc336954458a01752131',1,'OhrcController::Parallel()'],['../classOhrcController.html#a49d92a928b75f3b5908325f6e404006fa98402eecfbcefc336954458a01752131',1,'OhrcController::Parallel()']]],
+  ['position_1',['Position',['../classForwardingController.html#a44e15fb81aec32c7b8a9b1eebb35d486a896a14d662b8e549300b85a8903bd6e3',1,'ForwardingController::Position()'],['../namespaceohrc__control.html#a976da2c0bec51924e1c0bfa1d4a014a0a52f5e0bc3859bc5f5e25130b6c7e8881',1,'ohrc_control::Position()'],['../namespaceohrc__control.html#a5371079a00308d49c261fe0a1b0a5d46a52f5e0bc3859bc5f5e25130b6c7e8881',1,'ohrc_control::Position()']]],
+  ['positionfeedback_2',['PositionFeedback',['../namespaceohrc__control.html#aa817d8385114f947d58a4a979eb5508aa6a3a6a4ffc170c942987e930f89071f3',1,'ohrc_control']]],
+  ['positionforce_3',['PositionForce',['../classOmegaInterface.html#a2956ecdad03680aea78da663034eba67a3314480de7b07a06299d70e51160cd7f',1,'OmegaInterface']]],
+  ['positionforcefeedback_4',['PositionForceFeedback',['../classOmegaInterface.html#a2956ecdad03680aea78da663034eba67af34995f48b7df37388ece96f4e1286cf',1,'OmegaInterface']]],
+  ['positionpositionfeedback_5',['PositionPositionFeedback',['../classOmegaInterface.html#a2956ecdad03680aea78da663034eba67aab716c5267055df1ce8f3f192faef0af',1,'OmegaInterface']]],
+  ['pure_6',['Pure',['../namespaceMyIK.html#abbe218e48e3f81fe49dac68bb421ff24a624121432ca10a1e732c2e9176f523a9',1,'MyIK']]]
 ];

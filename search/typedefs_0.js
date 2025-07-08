@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['matrix1d_1717',['Matrix1d',['../namespaceEigen.html#a94b0fd7db0c43fbfe38383b485ecaffb',1,'Eigen']]],
-  ['matrix1f_1718',['Matrix1f',['../namespaceEigen.html#a586768e41b774969fe0b5174d67495f2',1,'Eigen']]]
+  ['b_0',['B',['../autolink_8cpp.html#a7ddc550b157ed6f8db58e462b504ab0f',1,'autolink.cpp']]]
 ];

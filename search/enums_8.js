@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['robottype_1734',['RobotType',['../classForwardingController.html#a635dc35f468de8986b3c0f505ef30a9b',1,'ForwardingController']]]
+  ['method_0',['Method',['../classmath__utility_1_1Integrator.html#aab863309005231f5b1c21c7e2e0052fd',1,'math_utility::Integrator']]],
+  ['mfmode_1',['MFMode',['../classOhrcController.html#aafdf2be300ccc95f40622b245dfe21ed',1,'OhrcController']]]
 ];

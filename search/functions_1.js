@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['bayesnormalgamma_1073',['BayesNormalGamma',['../classBayesNormalGamma.html#a4446049ef8bcaed2c7f8525e3799ab3e',1,'BayesNormalGamma::BayesNormalGamma(double mu0)'],['../classBayesNormalGamma.html#ae7aa1edfdd00818c04b7b19f6372d23c',1,'BayesNormalGamma::BayesNormalGamma(double mu0, double zeta0, double alpha0, double beta0)']]],
-  ['bodystateprediction_1074',['BodyStatePrediction',['../classBodyStatePrediction.html#a7c9ddada9b10312e2d62998589c7a7ab',1,'BodyStatePrediction']]],
-  ['bodystatevisualizer_1075',['BodyStateVisualizer',['../classBodyStateVisualizer.html#aa9fbe9bb3a8e86fb05a317471286a5fb',1,'BodyStateVisualizer']]],
-  ['butterworth_1076',['butterworth',['../classbutterworth.html#a3c72ca9a1c52e3117a3634efd7c8cd98',1,'butterworth']]]
+  ['adaptivepicontrol_0',['adaptivePIControl',['../classHybridFeedbackController.html#a97cf5b1a36f62381f9d11c9fbd6bf31d',1,'HybridFeedbackController::adaptivePIControl(const rclcpp::Time t, const KDL::Frame &amp;frame, const KDL::Frame &amp;pose, const KDL::Twist &amp;twist)'],['../classHybridFeedbackController.html#af0538e21976727d1fbdfb0807d52a3cb',1,'HybridFeedbackController::adaptivePIControl(const rclcpp::Time t, const VectorXd &amp;e, const KDL::Twist &amp;twist)']]],
+  ['add_1',['add',['../restypedef_8cpp.html#a102acaaa258e937adf910898c6133545',1,'restypedef.cpp']]],
+  ['addcollisionavoidance_2',['addCollisionAvoidance',['../classMyIK_1_1MyIK.html#a7e02e3d7c5aba9578f66deaec54ed63f',1,'MyIK::MyIK::addCollisionAvoidance(const std::vector&lt; Affine3d &gt; &amp;Ts, const std::vector&lt; MatrixXd &gt; &amp;Js_, std::vector&lt; double &gt; &amp;lower_vel_limits_, std::vector&lt; double &gt; &amp;upper_vel_limits_, std::vector&lt; MatrixXd &gt; &amp;A_ca)'],['../classMyIK_1_1MyIK.html#ae731dd0f451f9c67f1d513b4ff4bcaee',1,'MyIK::MyIK::addCollisionAvoidance(const std::vector&lt; KDL::JntArray &gt; &amp;q_cur, std::vector&lt; double &gt; &amp;lower_vel_limits_, std::vector&lt; double &gt; &amp;upper_vel_limits_, std::vector&lt; MatrixXd &gt; &amp;A_ca)']]],
+  ['addselfcollisionavoidance_3',['addSelfCollisionAvoidance',['../classMyIK_1_1MyIK.html#acf3c95c31cbc91d2f7995158deac2cac',1,'MyIK::MyIK']]],
+  ['armperception_4',['ArmPerception',['../classArmPerception.html#a52aeca90119fddf7b83ae722cbb8eac6',1,'ArmPerception::ArmPerception()'],['../classArmPerception.html#a52aeca90119fddf7b83ae722cbb8eac6',1,'ArmPerception::ArmPerception()']]],
+  ['autolink_5ftest_5',['Autolink_Test',['../classAutolink__Test.html#a278d631f9943428c05b17d78f14488e2',1,'Autolink_Test']]],
+  ['average_6',['average',['../namespacegeometry__msgs__utility.html#ac0deceeaa88ef910e01026055c798ec0',1,'geometry_msgs_utility']]]
 ];

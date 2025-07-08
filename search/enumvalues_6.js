@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['kdl_1754',['KDL',['../classForwardingController.html#a25d7a2dda5aacba2888a7065d758555dadfc525fc11e528412de2a05dc6884bb8',1,'ForwardingController::KDL()'],['../namespaceohrc__control.html#a2d12773e71cf17b927629d7bfb0f270ba35dcbb7bbcfd0615d2242db6841716f1',1,'ohrc_control::KDL()']]]
+  ['individual_0',['Individual',['../classOhrcController.html#aafdf2be300ccc95f40622b245dfe21eda2dd4472245a696bc0b4b944db2a8b519',1,'OhrcController']]],
+  ['initial_1',['Initial',['../namespaceohrc__control.html#aab3f81a28de15146701827cf94fa5c16a4f2a91e15af2631ff9424564b8a45fb2',1,'ohrc_control']]]
 ];

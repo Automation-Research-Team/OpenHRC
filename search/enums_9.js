@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['solvertype_1735',['SolverType',['../classForwardingController.html#a25d7a2dda5aacba2888a7065d758555d',1,'ForwardingController::SolverType()'],['../namespaceohrc__control.html#a2d12773e71cf17b927629d7bfb0f270b',1,'ohrc_control::SolverType()']]],
-  ['solvetype_1736',['SolveType',['../namespaceMyIK.html#abbe218e48e3f81fe49dac68bb421ff24',1,'MyIK']]],
-  ['state_1737',['State',['../classMoveEndEffector.html#a1c7d5fc1b52e5c4551d98a7c2803b28b',1,'MoveEndEffector']]]
+  ['prioritytype_0',['PriorityType',['../classOhrcController.html#a556e5787548621fb2605148f7823bbb8',1,'OhrcController']]],
+  ['publishertype_1',['PublisherType',['../namespaceohrc__control.html#a5371079a00308d49c261fe0a1b0a5d46',1,'ohrc_control']]]
 ];

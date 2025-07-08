@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['eigen_5fruntime_5fno_5fmalloc_1790',['EIGEN_RUNTIME_NO_MALLOC',['../dmp__controller_8hpp.html#a90bf84d3e5deeec00de77460ca485842',1,'dmp_controller.hpp']]]
+  ['a_0',['A',['../memgrp_8cpp.html#a955f504eccf76b4eb2489c0adab03121',1,'memgrp.cpp']]],
+  ['abs_1',['ABS',['../autolink_8cpp.html#a996f7be338ccb40d1a2a5abc1ad61759',1,'ABS():&#160;autolink.cpp'],['../define_8h.html#a996f7be338ccb40d1a2a5abc1ad61759',1,'ABS():&#160;define.h']]]
 ];

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['head_1750',['HEAD',['../classXrBodyInterface.html#a4f7e27227b5b79816fcacc43b3b45d16ae15e216fc1c639f787b1231ecdfa1bf8',1,'XrBodyInterface']]],
-  ['hybridfeedback_1751',['HybridFeedback',['../namespaceohrc__control.html#aa817d8385114f947d58a4a979eb5508aa5848b83fece5840c3d78d92c7242c1e1',1,'ohrc_control']]]
+  ['gval1_0',['GVal1',['../autolink_8cpp.html#a656d63cf384d2a6f23c2c18523a7bc5ea0f016f49e4f3bcd072319b9d68bc927d',1,'autolink.cpp']]],
+  ['gval2_1',['GVal2',['../autolink_8cpp.html#a656d63cf384d2a6f23c2c18523a7bc5ea811876e2eea5c16ae0594a95d98fbd55',1,'autolink.cpp']]]
 ];
