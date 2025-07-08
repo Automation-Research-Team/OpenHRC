@@ -72,78 +72,86 @@ $(function() {
   <div class="headertitle"><div class="title">OpenHRC </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_README"></a> <img src="https://img.shields.io/github/v/release/Automation-Research-Team/OpenHRC" alt="GitHub release (latest by date)" class="inline"/> <a href="https://github.com/Automation-Research-Team/OpenHRC/actions/workflows/build.yaml"><img src="https://github.com/Automation-Research-Team/OpenHRC/actions/workflows/build.yaml/badge.svg" alt="ROS build workflow" style="pointer-events: none;" class="inline"/></a> <img src="https://img.shields.io/github/license/Automation-Research-Team/OpenHRC" alt="GitHub" class="inline"/> </p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a> <img src="https://img.shields.io/github/v/release/OpenHRC/OpenHRC" alt="GitHub release (latest by date)" class="inline"/> <img src="https://img.shields.io/github/license/OpenHRC/OpenHRC" alt="GitHub" class="inline"/> </p>
 <h1><a class="anchor" id="autotoc_md30"></a>
 OpenHRC</h1>
 <h4><a class="anchor" id="autotoc_md31"></a>
 Open Human-Robot Collaboration/Cooperation Library</h4>
-<p>Aiming to enhance research on human-robot interaction, we develop this open ROS package for offering easy implementation of HRC software such as interaction and teleoperation. OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.</p>
+<p>Aiming to enhance research on human-robot interaction, we develop this open ROS2 package for offering easy implementation of HRC software such as interaction and teleoperation. OpenHRC includes some tools for HRC like a robot controller for multiple robots with (self-)collision avoidance, human skeleton detection, imitation learning and so on. We hope this package helps you implement your HRC ideas instantly.</p>
 <p><a href="https://openhrc.github.io/OpenHRC/">Documentation by Doxygen</a> is under construction.</p>
 <h2><a class="anchor" id="autotoc_md32"></a>
 Requirements</h2>
 <p>OpenHRC has been developed and tested in the following environments:</p><ul>
-<li>Development Environment: Ubuntu 22.04 (ROS2 Humble)</li>
+<li>Development Environment: Ubuntu 22.04 (ROS 2 Humble)</li>
 </ul>
-<p>**If you want to use ROS1 version, please checkout the <a href="https://github.com/Automation-Research-Team/OpenHRC/tree/noetic"><code>noetic</code></a> branch, which is no longer maintained.**</p>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h4><a class="anchor" id="autotoc_md33"></a>
+CI Build Status</h4>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">ROS 2 Distribution   </th><th class="markdownTableHeadNone">Humble   </th><th class="markdownTableHeadNone">Jazzy    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Build Status   </td><td class="markdownTableBodyNone"><a href="https://github.com/OpenHRC/OpenHRC/actions/workflows/humble-build.yaml"><img src="https://github.com/OpenHRC/OpenHRC/actions/workflows/humble-build.yaml/badge.svg" alt="humble-build" style="pointer-events: none;" class="inline"/></a>   </td><td class="markdownTableBodyNone"><a href="https://github.com/OpenHRC/OpenHRC/actions/workflows/jazzy-build.yaml"><img src="https://github.com/OpenHRC/OpenHRC/actions/workflows/jazzy-build.yaml/badge.svg" alt="jazzy-build" style="pointer-events: none;" class="inline"/></a>   </td></tr>
+</table>
+<p>**If you want to use ROS1 version, please checkout the <a href="https://github.com/OpenHRC/OpenHRC/tree/noetic"><code>noetic</code></a> branch, which is no longer maintained.**</p>
+<h2><a class="anchor" id="autotoc_md34"></a>
 Quick Start with Docker</h2>
 <p>You can quickly test UR5e + marker teleoperation on docker environment. We use <a href="https://github.com/osrf/rocker">rocker</a> here to simply run the docker container with GUI support.</p>
-<h3><a class="anchor" id="autotoc_md34"></a>
+<h3><a class="anchor" id="autotoc_md35"></a>
 Build</h3>
-<div class="fragment"><div class="line">$ git clone https://github.com/Automation-Research-Team/OpenHRC.git -b ros2</div>
+<div class="fragment"><div class="line">$ git clone https://github.com/OpenHRC/OpenHRC.git -b ros2</div>
 <div class="line">$ docker build -t openhrc:ros2 docker/.</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md35"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md36"></a>
 Run</h3>
 <p>Now you can control the end-effector of UR5e with an interactive marker. </p><div class="fragment"><div class="line">$ sudo apt install python3-rocker # if you don&#39;t have rocker. You can also use &quot;pip install rocker&quot;.</div>
 <div class="line">$ rocker --x11 openhrc:ros2 marker_teleoperation_ur5e </div>
 </div><!-- fragment --><p>## Native Installation</p>
 <p>Step-by-step instructions for installing OpenHRC on your local machine. In the following instruction, the ros2 workspace directory is assumed to be `~/ros2_ws` on host.</p>
-<p>### Clone the Source Code and install dependencies ```bash $ mkdir -p ~/ros2_ws/src &amp;&amp; cd ~/ros2_ws/src $ git clone <a href="https://github.com/Automation-Research-Team/OpenHRC.git">https://github.com/Automation-Research-Team/OpenHRC.git</a> -b ros2 --recursive $ rosdep update &amp;&amp; rosdep install -i -y --from-paths ./ </p>
-<h3><a class="anchor" id="autotoc_md36"></a>
+<p>### Clone the Source Code and install dependencies ```bash $ mkdir -p ~/ros2_ws/src &amp;&amp; cd ~/ros2_ws/src $ git clone <a href="https://github.com/OpenHRC/OpenHRC.git">https://github.com/OpenHRC/OpenHRC.git</a> -b ros2 --recursive $ rosdep update &amp;&amp; rosdep install -i -y --from-paths ./ </p>
+<h3><a class="anchor" id="autotoc_md37"></a>
 Build</h3>
 <div class="fragment"><div class="line">$ cd ~/ros2_ws</div>
 <div class="line">$ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md37"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md38"></a>
 Getting Started</h2>
 <p>You can first try the teleoperation node for UR5e.</p>
 <p>First, run the following command to start the UR5e gazebo simulation, which has been installed automatically with OpenHRC: </p><div class="fragment"><div class="line">$ ros2 launch ur_simulation_gz ur_sim_control.launch.py initial_joint_controller:=forward_velocity_controller launch_rviz:=false</div>
 </div><!-- fragment --><p>We offer several teleoperation interfaces to control the robot remotely.</p>
-<h4><a class="anchor" id="autotoc_md38"></a>
+<h4><a class="anchor" id="autotoc_md39"></a>
 1. Interactive Marker</h4>
 <p>You can try Interactive Marker on Rviz. </p><div class="fragment"><div class="line">$ ros2 launch ohrc_teleoperation marker_teleoperation.launch.py</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md39"></a>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md40"></a>
 2. keyboard</h4>
 <p>You can operate the robot via keyboard as well.</p><ul>
 <li>Translation -&gt; (UP/DOWN, LEFT/RIGHT, PageUP/PageDOWN)</li>
 <li>Rotation -&gt; (NK8/NK2, NK4/NK6, NK+/NK-) NK:Numeric Keypad <div class="fragment"><div class="line">$ ros2 launch ohrc_teleoperation joy_topic_teleoperation.launch.py device:=keyboard</div>
 </div><!-- fragment --></li>
 </ul>
-<h4><a class="anchor" id="autotoc_md40"></a>
+<h4><a class="anchor" id="autotoc_md41"></a>
 3. 3D mouse (spacenav)</h4>
 <p>If you have 3<a class="el" href="classD.html">D</a> mouse (spacenav), you can also use it. </p><div class="fragment"><div class="line">$ sudo apt install ros-humble-spacenav # if you don&#39;t have spacenav package</div>
 <div class="line">$ ros2 launch ohrc_teleoperation joy_topic_teleoperation.launch.py device:=spacenav</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md41"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md42"></a>
 Controller Structure</h2>
 <p>*Under development</p>
 <p>see <a class="el" href="md_ohrc_control_README.html">ohrc_control/README.md</a></p>
-<h2><a class="anchor" id="autotoc_md42"></a>
+<h2><a class="anchor" id="autotoc_md43"></a>
 Tutorials</h2>
 <p>*Under development</p><ol type="1">
 <li>Teleoperation library: <a href="./ohrc_teleoperation">ohrc_teleoperation/README.md</a></li>
 <li>Imitation Learning library: <a href="./ohrc_imitation_learning">ohrc_imitation_learning/README.md</a></li>
 </ol>
-<h2><a class="anchor" id="autotoc_md43"></a>
+<h2><a class="anchor" id="autotoc_md44"></a>
 Citation</h2>
 <p>If you use this package in your academic research, we would appreciate it if you could cite the following paper. </p><div class="fragment"><div class="line">@software{openhrc,</div>
 <div class="line">  author = {Shunki Itadera},</div>
 <div class="line">  title = {OpenHRC},</div>
-<div class="line">  url = {https://github.com/Automation-Research-Team/OpenHRC},</div>
+<div class="line">  url = {https://github.com/OpenHRC/OpenHRC},</div>
 <div class="line">  year = {2024},</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md44"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md45"></a>
 License</h2>
 <p>This software is released under dual license of LGPL-v2.1 and individual license. About the individual license, please make a contact to the author.</p>
-<h2><a class="anchor" id="autotoc_md45"></a>
+<h2><a class="anchor" id="autotoc_md46"></a>
 Author</h2>
 <p>Shunki Itadera (<a href="https://itadera.github.io/">https://itadera.github.io/</a>) - Researcher at AIST, Japan</p>
 <p>We welcome any feedback and contributions. Please feel free to contact us if you have any questions or comments.</p>
