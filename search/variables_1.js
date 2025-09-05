@@ -7,7 +7,6 @@ var searchData=
   ['adaptationoption_5f_4',['adaptationOption_',['../classOhrcController.html#a49cd00654951d6a939901b7b63f98153',1,'OhrcController']]],
   ['admittancecontroller_5',['admittanceController',['../admittance__teleoperation_8cpp.html#a8a22c9d82dc77ed2026f56ec9920c61d',1,'admittance_teleoperation.cpp']]],
   ['alpha0_6',['alpha0',['../classBayesNormalGamma.html#a4a9d11eb1a954796d908c717c6989a27',1,'BayesNormalGamma']]],
-  ['args_7',['args',['../namespacerosbag__record.html#afb8daa694f16d361f602d7a742a5d712',1,'rosbag_record.args()'],['../namespacepromp__trajectory__service.html#a95b7dabe8b2ce9a845cf97fe6cfa660e',1,'promp_trajectory_service.args()']]],
-  ['autoind_8',['autoInd',['../classOhrcController.html#a80365b6d430cd152856e664b5da9bc56',1,'OhrcController']]],
-  ['ax_9',['ax',['../namespacepromp__trajectory__demo.html#a8d67811ff6c8ec905fe935adf8255ea0',1,'promp_trajectory_demo']]]
+  ['args_7',['args',['../namespacerosbag__record.html#afb8daa694f16d361f602d7a742a5d712',1,'rosbag_record']]],
+  ['autoind_8',['autoInd',['../classOhrcController.html#a80365b6d430cd152856e664b5da9bc56',1,'OhrcController']]]
 ];

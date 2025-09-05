@@ -129,7 +129,7 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a269dd6f658fdfb16a7d61ec82be08973"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classForwardingController.html#a25d7a2dda5aacba2888a7065d758555d">ForwardingController::SolverType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#a269dd6f658fdfb16a7d61ec82be08973">solver</a></td></tr>
+<tr class="memitem:a269dd6f658fdfb16a7d61ec82be08973"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classForwardingController.html#a25d7a2dda5aacba2888a7065d758555d">ForwardingController::SolverType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#a269dd6f658fdfb16a7d61ec82be08973">solver</a> = <a class="el" href="classForwardingController.html#a25d7a2dda5aacba2888a7065d758555da3f1cf4766e917ea152ba100ded6177d1">MyIK</a></td></tr>
 <tr class="separator:a269dd6f658fdfb16a7d61ec82be08973"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f450f14799231beab05dca61615b652"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classForwardingController.html#a44e15fb81aec32c7b8a9b1eebb35d486">ForwardingController::ControllerType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#a0f450f14799231beab05dca61615b652">controller</a></td></tr>
 <tr class="separator:a0f450f14799231beab05dca61615b652"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -195,8 +195,6 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a02a8257ca36f1c79decd0d571dbaf201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f8ceeb4df1ca94ce964bfa5d595525d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; KDL::ChainIkSolverPos_NR_JL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#a8f8ceeb4df1ca94ce964bfa5d595525d">kdl_solver_ptr</a></td></tr>
 <tr class="separator:a8f8ceeb4df1ca94ce964bfa5d595525d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac34faef0ecc4e9d7ed8ae9ff5a17888"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; TRAC_IK::TRAC_IK &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#aac34faef0ecc4e9d7ed8ae9ff5a17888">tracik_solver_ptr</a></td></tr>
-<tr class="separator:aac34faef0ecc4e9d7ed8ae9ff5a17888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a769f90810a8d6685257d5b0b4a332062"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; KDL::ChainFkSolverPos_recursive &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#a769f90810a8d6685257d5b0b4a332062">fk_solver_ptr</a></td></tr>
 <tr class="separator:a769f90810a8d6685257d5b0b4a332062"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace4da3f689d117697df564c8a66a6bd5"><td class="memItemLeft" align="right" valign="top">KDL::Chain&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classForwardingController.html#ace4da3f689d117697df564c8a66a6bd5">chain</a></td></tr>
@@ -319,7 +317,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00003">3</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00068">chain</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00041">chain_end</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00069">chain_segs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00041">chain_start</a>, <a class="el" href="classForwardingController.html#a0f450f14799231beab05dca61615b652">controller</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00044">eps</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagIfJntState</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagJntState</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00029">Follower</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntPosCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00032">jntStateSubscriber</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntVelCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00027">KDL</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00029">Leader</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00027">MyIK</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00072">myik_solver_ptr</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00040">num_samples</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Position</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00042">robot_ns</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00093">signal_handler()</a>, <a class="el" href="classForwardingController.html#a269dd6f658fdfb16a7d61ec82be08973">solver</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00037">subFlagPtrs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00057">T_init</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Torque</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00027">Trac_IK</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00041">urdf_param</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Velocity</a>.</p>
+<p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00068">chain</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00041">chain_end</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00069">chain_segs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00041">chain_start</a>, <a class="el" href="classForwardingController.html#a0f450f14799231beab05dca61615b652">controller</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00044">eps</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagIfJntState</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagJntState</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00029">Follower</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntPosCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00032">jntStateSubscriber</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntVelCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00029">Leader</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00072">myik_solver_ptr</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00040">num_samples</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Position</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00042">robot_ns</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00079">signal_handler()</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00037">subFlagPtrs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00057">T_init</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Torque</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00041">urdf_param</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Velocity</a>.</p>
 
 </div>
 </div>
@@ -338,7 +336,7 @@ Static Private Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00090">90</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00076">76</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 </div>
 </div>
@@ -367,7 +365,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00187">187</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00173">173</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_dq_cur_if</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur_if</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_des</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00068">chain</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00069">chain_segs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagIfJntState</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00036">mtx</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>.</p>
 
@@ -399,9 +397,9 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00146">146</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00132">132</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_dq_cur</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00068">chain</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00069">chain_segs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagJntState</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00222">moveInitJntPos()</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00036">mtx</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>.</p>
+<p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_dq_cur</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00068">chain</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00069">chain_segs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00038">flagJntState</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00208">moveInitJntPos()</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00036">mtx</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
@@ -422,7 +420,7 @@ Static Private Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00286">286</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00272">272</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_dq_cur</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_dq_cur_if</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_cur_if</a>, <a class="el" href="gazebo__utility_8h_source.html#l00008">gazebo_utility::checkGazeboInit()</a>, <a class="el" href="subscriber__utility_8h_source.html#l00044">subscriber_utility::checkSubTopic()</a>, <a class="el" href="classForwardingController.html#a0f450f14799231beab05dca61615b652">controller</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00029">Follower</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00049">freq</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntPosCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntVelCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00036">mtx</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Position</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00034">spinner</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00037">subFlagPtrs</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Torque</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Velocity</a>.</p>
 
@@ -474,7 +472,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00267">267</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00253">253</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00051">_des_eff_pose</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00053">_des_eff_vel</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00036">mtx</a>.</p>
 
@@ -556,7 +554,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00111">111</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00097">97</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00069">chain_segs</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>.</p>
 
@@ -634,7 +632,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00216">216</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00202">202</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00051">_des_eff_pose</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00067">fk_solver_ptr</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00036">mtx</a>.</p>
 
@@ -692,11 +690,11 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00222">222</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00208">208</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="forwarding__controller_8hpp_source.html#l00055">_q_des</a>, <a class="el" href="classForwardingController.html#a0f450f14799231beab05dca61615b652">controller</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00029">Follower</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntPosCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00031">jntVelCmdPublisher</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00046">nJnt</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Position</a>, <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Torque</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00028">Velocity</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>.</p>
 
 </div>
 </div>
@@ -724,7 +722,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00093">93</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="forwarding__controller_8cpp_source.html#l00079">79</a> of file <a class="el" href="forwarding__controller_8cpp_source.html">forwarding_controller.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classForwardingController.html#a0f450f14799231beab05dca61615b652">controller</a>, and <a class="el" href="forwarding__controller_8hpp_source.html#l00042">robot_ns</a>.</p>
 
@@ -779,7 +777,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00051">51</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00267">getDesEffPoseVel()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00216">initDesWithJnt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00253">getDesEffPoseVel()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00202">initDesWithJnt()</a>.</p>
 
 </div>
 </div>
@@ -805,7 +803,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00053">53</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00267">getDesEffPoseVel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00253">getDesEffPoseVel()</a>.</p>
 
 </div>
 </div>
@@ -831,7 +829,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00055">55</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>.</p>
 
 </div>
 </div>
@@ -857,7 +855,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00055">55</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>.</p>
 
 </div>
 </div>
@@ -883,7 +881,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00055">55</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
 </div>
 </div>
@@ -909,7 +907,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00055">55</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>.</p>
 
 </div>
 </div>
@@ -935,7 +933,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00055">55</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00222">moveInitJntPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00208">moveInitJntPos()</a>.</p>
 
 </div>
 </div>
@@ -985,7 +983,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00068">68</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
 </div>
 </div>
@@ -1037,7 +1035,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00069">69</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00111">getJntState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00097">getJntState()</a>.</p>
 
 </div>
 </div>
@@ -1087,7 +1085,7 @@ Static Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00222">moveInitJntPos()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00093">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00208">moveInitJntPos()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00079">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -1139,7 +1137,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00067">67</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00216">initDesWithJnt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00202">initDesWithJnt()</a>.</p>
 
 </div>
 </div>
@@ -1189,7 +1187,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00038">38</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
 </div>
 </div>
@@ -1215,7 +1213,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00038">38</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
 </div>
 </div>
@@ -1241,7 +1239,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00049">49</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>.</p>
 
 </div>
 </div>
@@ -1267,7 +1265,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00031">31</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00222">moveInitJntPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00208">moveInitJntPos()</a>.</p>
 
 </div>
 </div>
@@ -1319,7 +1317,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00031">31</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00222">moveInitJntPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00208">moveInitJntPos()</a>.</p>
 
 </div>
 </div>
@@ -1393,7 +1391,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00036">36</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00267">getDesEffPoseVel()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00216">initDesWithJnt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00253">getDesEffPoseVel()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00202">initDesWithJnt()</a>.</p>
 
 </div>
 </div>
@@ -1445,7 +1443,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00046">46</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00187">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00146">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00111">getJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00222">moveInitJntPos()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00173">cbIfJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00132">cbJntState()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, <a class="el" href="forwarding__controller_8cpp_source.html#l00097">getJntState()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00208">moveInitJntPos()</a>.</p>
 
 </div>
 </div>
@@ -1497,7 +1495,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00042">42</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00093">signal_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00079">signal_handler()</a>.</p>
 
 </div>
 </div>
@@ -1511,7 +1509,7 @@ Static Private Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="classForwardingController.html#a25d7a2dda5aacba2888a7065d758555d">ForwardingController::SolverType</a> ForwardingController::solver</td>
+          <td class="memname">enum <a class="el" href="classForwardingController.html#a25d7a2dda5aacba2888a7065d758555d">ForwardingController::SolverType</a> ForwardingController::solver = <a class="el" href="classForwardingController.html#a25d7a2dda5aacba2888a7065d758555da3f1cf4766e917ea152ba100ded6177d1">MyIK</a></td>
         </tr>
       </table>
   </td>
@@ -1520,8 +1518,6 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
 </div>
 </div>
@@ -1547,7 +1543,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00034">34</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>.</p>
 
 </div>
 </div>
@@ -1573,7 +1569,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00037">37</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00286">control()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="forwarding__controller_8cpp_source.html#l00272">control()</a>, and <a class="el" href="forwarding__controller_8cpp_source.html#l00003">ForwardingController()</a>.</p>
 
 </div>
 </div>
@@ -1624,30 +1620,6 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00043">43</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
-
-</div>
-</div>
-<a id="aac34faef0ecc4e9d7ed8ae9ff5a17888" name="aac34faef0ecc4e9d7ed8ae9ff5a17888"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac34faef0ecc4e9d7ed8ae9ff5a17888">&#9670;&#160;</a></span>tracik_solver_ptr</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unique_ptr&lt;TRAC_IK::TRAC_IK&gt; ForwardingController::tracik_solver_ptr</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="forwarding__controller_8hpp_source.html#l00066">66</a> of file <a class="el" href="forwarding__controller_8hpp_source.html">forwarding_controller.hpp</a>.</p>
 
 </div>
 </div>

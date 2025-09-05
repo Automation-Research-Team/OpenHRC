@@ -7,11 +7,10 @@ var searchData=
   ['ohrc_5fcontrol_2elaunch_2epy_4',['ohrc_control.launch.py',['../ohrc__control_8launch_8py.html',1,'']]],
   ['ohrc_5fcontroller_2ecpp_5',['ohrc_controller.cpp',['../ohrc__controller_8cpp.html',1,'']]],
   ['ohrc_5fcontroller_2ehpp_6',['ohrc_controller.hpp',['../ohrc__controller_8hpp.html',1,'']]],
-  ['ohrc_5fimitation_2ehpp_7',['ohrc_imitation.hpp',['../ohrc__imitation_8hpp.html',1,'']]],
-  ['ohrc_5fteleoperation_2elaunch_2epy_8',['ohrc_teleoperation.launch.py',['../ohrc__teleoperation_8launch_8py.html',1,'']]],
-  ['omega_5finterface_2ecpp_9',['omega_interface.cpp',['../omega__interface_8cpp.html',1,'']]],
-  ['omega_5finterface_2ehpp_10',['omega_interface.hpp',['../omega__interface_8hpp.html',1,'']]],
-  ['omega_5fteleoperation_2ecpp_11',['omega_teleoperation.cpp',['../omega__teleoperation_8cpp.html',1,'']]],
-  ['overload_2ecpp_12',['overload.cpp',['../overload_8cpp.html',1,'']]],
-  ['readme_2emd_13',['README.md',['../ohrc__automation_2README_8md.html',1,'(Global Namespace)'],['../ohrc__control_2README_8md.html',1,'(Global Namespace)'],['../ohrc__hw__config_2README_8md.html',1,'(Global Namespace)'],['../ohrc__imitation_2README_8md.html',1,'(Global Namespace)'],['../ohrc__teleoperation_2README_8md.html',1,'(Global Namespace)']]]
+  ['ohrc_5fteleoperation_2elaunch_2epy_7',['ohrc_teleoperation.launch.py',['../ohrc__teleoperation_8launch_8py.html',1,'']]],
+  ['omega_5finterface_2ecpp_8',['omega_interface.cpp',['../omega__interface_8cpp.html',1,'']]],
+  ['omega_5finterface_2ehpp_9',['omega_interface.hpp',['../omega__interface_8hpp.html',1,'']]],
+  ['omega_5fteleoperation_2ecpp_10',['omega_teleoperation.cpp',['../omega__teleoperation_8cpp.html',1,'']]],
+  ['overload_2ecpp_11',['overload.cpp',['../overload_8cpp.html',1,'']]],
+  ['readme_2emd_12',['README.md',['../ohrc__automation_2README_8md.html',1,'(Global Namespace)'],['../ohrc__control_2README_8md.html',1,'(Global Namespace)'],['../ohrc__hw__config_2README_8md.html',1,'(Global Namespace)'],['../ohrc__teleoperation_2README_8md.html',1,'(Global Namespace)']]]
 ];

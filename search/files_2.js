@@ -11,13 +11,7 @@ var searchData=
   ['cart_5ftrajectory_5fminjerk_5fautomation_2ecpp_8',['cart_trajectory_minjerk_automation.cpp',['../cart__trajectory__minjerk__automation_8cpp.html',1,'']]],
   ['cart_5ftrajectory_5fminjerk_5fcontroller_2ecpp_9',['cart_trajectory_minjerk_controller.cpp',['../cart__trajectory__minjerk__controller_8cpp.html',1,'']]],
   ['cart_5ftrajectory_5fminjerk_5fcontroller_2ehpp_10',['cart_trajectory_minjerk_controller.hpp',['../cart__trajectory__minjerk__controller_8hpp.html',1,'']]],
-  ['chatgpt_5fcircle_5fautomation_2ecpp_11',['chatgpt_circle_automation.cpp',['../chatgpt__circle__automation_8cpp.html',1,'']]],
-  ['chatgpt_5fcircle_5fautomation_2ehpp_12',['chatgpt_circle_automation.hpp',['../chatgpt__circle__automation_8hpp.html',1,'']]],
-  ['chatgpt_5frectangle_5fautomation_2ecpp_13',['chatgpt_rectangle_automation.cpp',['../chatgpt__rectangle__automation_8cpp.html',1,'']]],
-  ['chatgpt_5frectangle_5fautomation_2ehpp_14',['chatgpt_rectangle_automation.hpp',['../chatgpt__rectangle__automation_8hpp.html',1,'']]],
-  ['chatgpt_5fstar_5fautomation_2ecpp_15',['chatgpt_star_automation.cpp',['../chatgpt__star__automation_8cpp.html',1,'']]],
-  ['chatgpt_5fstar_5fautomation_2ehpp_16',['chatgpt_star_automation.hpp',['../chatgpt__star__automation_8hpp.html',1,'']]],
-  ['check_5fcontroller_5fmanager_2epy_17',['check_controller_manager.py',['../check__controller__manager_8py.html',1,'']]],
-  ['class_2eh_18',['class.h',['../class_8h.html',1,'']]],
-  ['coordination_5futility_2eh_19',['coordination_utility.h',['../coordination__utility_8h.html',1,'']]]
+  ['check_5fcontroller_5fmanager_2epy_11',['check_controller_manager.py',['../check__controller__manager_8py.html',1,'']]],
+  ['class_2eh_12',['class.h',['../class_8h.html',1,'']]],
+  ['coordination_5futility_2eh_13',['coordination_utility.h',['../coordination__utility_8h.html',1,'']]]
 ];

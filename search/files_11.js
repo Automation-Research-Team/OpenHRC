@@ -1,16 +1,12 @@
 var searchData=
 [
-  ['single_5fimitation_5fcontroller_2ehpp_0',['single_imitation_controller.hpp',['../single__imitation__controller_8hpp.html',1,'']]],
-  ['single_5finterface_2ehpp_1',['single_interface.hpp',['../single__interface_8hpp.html',1,'']]],
-  ['state_5ftopic_5fimitation_2ecpp_2',['state_topic_imitation.cpp',['../state__topic__imitation_8cpp.html',1,'']]],
-  ['state_5ftopic_5fimitation_2elaunch_2epy_3',['state_topic_imitation.launch.py',['../state__topic__imitation_8launch_8py.html',1,'']]],
-  ['state_5ftopic_5finterface_2ecpp_4',['state_topic_interface.cpp',['../state__topic__interface_8cpp.html',1,'']]],
-  ['state_5ftopic_5finterface_2ehpp_5',['state_topic_interface.hpp',['../state__topic__interface_8hpp.html',1,'']]],
-  ['state_5ftopic_5fteleoperation_2ecpp_6',['state_topic_teleoperation.cpp',['../state__topic__teleoperation_8cpp.html',1,'']]],
-  ['state_5ftopic_5fteleoperation_2elaunch_2epy_7',['state_topic_teleoperation.launch.py',['../state__topic__teleoperation_8launch_8py.html',1,'']]],
-  ['std_5futility_2eh_8',['std_utility.h',['../std__utility_8h.html',1,'']]],
-  ['strip_5fexample_2epy_9',['strip_example.py',['../strip__example_8py.html',1,'']]],
-  ['structcmd_2eh_10',['structcmd.h',['../structcmd_8h.html',1,'']]],
-  ['subscriber_5futility_2eh_11',['subscriber_utility.h',['../subscriber__utility_8h.html',1,'']]],
-  ['switching_5finterface_2ehpp_12',['switching_interface.hpp',['../switching__interface_8hpp.html',1,'']]]
+  ['single_5finterface_2ehpp_0',['single_interface.hpp',['../single__interface_8hpp.html',1,'']]],
+  ['state_5ftopic_5finterface_2ecpp_1',['state_topic_interface.cpp',['../state__topic__interface_8cpp.html',1,'']]],
+  ['state_5ftopic_5finterface_2ehpp_2',['state_topic_interface.hpp',['../state__topic__interface_8hpp.html',1,'']]],
+  ['state_5ftopic_5fteleoperation_2ecpp_3',['state_topic_teleoperation.cpp',['../state__topic__teleoperation_8cpp.html',1,'']]],
+  ['state_5ftopic_5fteleoperation_2elaunch_2epy_4',['state_topic_teleoperation.launch.py',['../state__topic__teleoperation_8launch_8py.html',1,'']]],
+  ['std_5futility_2eh_5',['std_utility.h',['../std__utility_8h.html',1,'']]],
+  ['strip_5fexample_2epy_6',['strip_example.py',['../strip__example_8py.html',1,'']]],
+  ['structcmd_2eh_7',['structcmd.h',['../structcmd_8h.html',1,'']]],
+  ['subscriber_5futility_2eh_8',['subscriber_utility.h',['../subscriber__utility_8h.html',1,'']]]
 ];

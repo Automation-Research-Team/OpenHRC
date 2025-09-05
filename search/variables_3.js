@@ -8,7 +8,7 @@ var searchData=
   ['chain_5fsegs_5',['chain_segs',['../classCartController.html#a6ca3733315bb8ef8869b9c9c0e0765fd',1,'CartController::chain_segs()'],['../classForwardingController.html#a2c142d44f0613e7b3cd40947abc16d35',1,'ForwardingController::chain_segs()']]],
   ['chain_5fstart_6',['chain_start',['../classCartController.html#af0f9c61e9d7df2db3d1ef01e6692d9bc',1,'CartController::chain_start()'],['../classForwardingController.html#a1aae05abddabd7069825e42b2d348ffc',1,'ForwardingController::chain_start()']]],
   ['classvar_7',['classVar',['../classpyexample_1_1PyClass.html#abd17aff54e5b0ca194020c796c733546',1,'pyexample::PyClass']]],
-  ['client_8',['client',['../classCartTrajectoryImpedanceController.html#aa3064fd611bcb58ae9bf4bf2fa05f1ca',1,'CartTrajectoryImpedanceController::client()'],['../classCartController.html#ac3fd608f34e863cfc2c481bb3fca1925',1,'CartController::client()']]],
+  ['client_8',['client',['../classCartController.html#ac3fd608f34e863cfc2c481bb3fca1925',1,'CartController::client()'],['../classCartTrajectoryImpedanceController.html#aa3064fd611bcb58ae9bf4bf2fa05f1ca',1,'CartTrajectoryImpedanceController::client()']]],
   ['cmd_9',['cmd',['../classCartController.html#ad4d3e356f23bb193238452e4e7e1643a',1,'CartController']]],
   ['comboslink_10',['combosLink',['../classMyIK_1_1MyIK.html#ab22e4915bd652d0056958639718a2aca',1,'MyIK::MyIK']]],
   ['combsrobot_11',['combsRobot',['../classMyIK_1_1MyIK.html#a7418580ba33f778f68c72b71e87ed98e',1,'MyIK::MyIK']]],
@@ -16,10 +16,7 @@ var searchData=
   ['controller_13',['controller',['../classCartController.html#a9926c75024ca94ff30a521c363e15edd',1,'CartController::controller()'],['../classForwardingController.html#a0f450f14799231beab05dca61615b652',1,'ForwardingController::controller()'],['../classInterface.html#a7cca68101bf39b5c74233b4fa9839591',1,'Interface::controller()'],['../classOhrcController.html#a3965542dc6a788d2993e4de1e091e693',1,'OhrcController::controller()']]],
   ['count_14',['count',['../classFTFilter.html#a7bee517cffe73cdd724567d6f0559440',1,'FTFilter::count()'],['../namespacerosbag__record.html#a28e340ce505c65017d93f879d432842a',1,'rosbag_record.count()']]],
   ['count_5fdisable_15',['count_disable',['../classMarkerInterface.html#a8935b104b8196a70572fbbe938bf82b9',1,'MarkerInterface']]],
-  ['cpromp_16',['cpromp',['../namespacepromp__trajectory__demo.html#acbbcdea35cf5f05401aff24435114e64',1,'promp_trajectory_demo.cpromp()'],['../namespacepromp__trajectory__publisher.html#a31df62da07a492dd231649977dedde6d',1,'promp_trajectory_publisher.cpromp()']]],
-  ['cur_5finterface_17',['cur_interface',['../classSwitchingInterface.html#ae0e3db42579a0dff81afabefdb85da44',1,'SwitchingInterface']]],
-  ['cur_5fstate_18',['cur_state',['../classMoveEndEffector.html#a49d5c8553fe65714207b612b361c5152',1,'MoveEndEffector']]],
-  ['current_5feef_5fpose_19',['current_eef_pose',['../classCartController.html#ab7cef00a2fe5e6f45326b46c05dbd8ba',1,'CartController']]],
-  ['curstatepublisher_20',['curStatePublisher',['../classCartController.html#a56ef224eaee59ea5572ae3d657b8c999',1,'CartController']]],
-  ['cutoff_5ffreq_21',['cutoff_freq',['../structgeometry__msgs__utility_1_1Wrench_1_1paramLPF.html#a8af178f6deba7eabb905ed1dd27fe10c',1,'geometry_msgs_utility::Wrench::paramLPF']]]
+  ['current_5feef_5fpose_16',['current_eef_pose',['../classCartController.html#ab7cef00a2fe5e6f45326b46c05dbd8ba',1,'CartController']]],
+  ['curstatepublisher_17',['curStatePublisher',['../classCartController.html#a56ef224eaee59ea5572ae3d657b8c999',1,'CartController']]],
+  ['cutoff_5ffreq_18',['cutoff_freq',['../structgeometry__msgs__utility_1_1Wrench_1_1paramLPF.html#a8af178f6deba7eabb905ed1dd27fe10c',1,'geometry_msgs_utility::Wrench::paramLPF']]]
 ];
