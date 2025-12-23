@@ -72,6 +72,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classJoyTopicInterface-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">JoyTopicInterface Class Reference</div></div>
@@ -166,6 +167,14 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a2a8dc7808bc4c84d1c39928d98228624 inherit pro_methods_classInterface"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInterface.html#a2a8dc7808bc4c84d1c39928d98228624">updateIsEnable</a> (bool condition)</td></tr>
 <tr class="separator:a2a8dc7808bc4c84d1c39928d98228624 inherit pro_methods_classInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
+Private Types</h2></td></tr>
+<tr class="memitem:a65210472e09f22b089ab3ae0bade9d07"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07">GripperOperation</a> { <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07a02bce93bff905887ad2233110bf9c49e">Keep</a>
+, <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07abbc155fb2b111bf61c4f5ff892915e6b">Switch</a>
+, <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07a6adf97f83acf6453d4a6a4b1070f3754">None</a>
+ }</td></tr>
+<tr class="separator:a65210472e09f22b089ab3ae0bade9d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a82245af6a0f27088929bc6ae4e4505b8"><td class="memItemLeft" align="right" valign="top">rclcpp::Subscription&lt; sensor_msgs::msg::Joy &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJoyTopicInterface.html#a82245af6a0f27088929bc6ae4e4505b8">subJoy</a></td></tr>
@@ -176,6 +185,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ac4ba7a9bef380ab0c4142327b1bde95d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81b39ec9ce5a5ced89e8698321de9819"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJoyTopicInterface.html#a81b39ec9ce5a5ced89e8698321de9819">gain_r</a> = 0.1</td></tr>
 <tr class="separator:a81b39ec9ce5a5ced89e8698321de9819"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75d70585e8ef1e5f2c9d6254db672dd0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJoyTopicInterface.html#a75d70585e8ef1e5f2c9d6254db672dd0">gripper_idx</a> = 0</td></tr>
+<tr class="separator:a75d70585e8ef1e5f2c9d6254db672dd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accf31e8ffc43f1ef5c9743ef48be9408"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07">JoyTopicInterface::GripperOperation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJoyTopicInterface.html#accf31e8ffc43f1ef5c9743ef48be9408">gripperOperation</a></td></tr>
+<tr class="separator:accf31e8ffc43f1ef5c9743ef48be9408"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -232,7 +245,37 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00007">7</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a65210472e09f22b089ab3ae0bade9d07" name="a65210472e09f22b089ab3ae0bade9d07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65210472e09f22b089ab3ae0bade9d07">&#9670;&#160;</a></span>GripperOperation</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07">JoyTopicInterface::GripperOperation</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a65210472e09f22b089ab3ae0bade9d07a02bce93bff905887ad2233110bf9c49e" name="a65210472e09f22b089ab3ae0bade9d07a02bce93bff905887ad2233110bf9c49e"></a>Keep&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a65210472e09f22b089ab3ae0bade9d07abbc155fb2b111bf61c4f5ff892915e6b" name="a65210472e09f22b089ab3ae0bade9d07abbc155fb2b111bf61c4f5ff892915e6b"></a>Switch&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a65210472e09f22b089ab3ae0bade9d07a6adf97f83acf6453d4a6a4b1070f3754" name="a65210472e09f22b089ab3ae0bade9d07a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00013">13</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a87adcbe813dcc33fb4a96ee84c5dfbd6" name="a87adcbe813dcc33fb4a96ee84c5dfbd6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a87adcbe813dcc33fb4a96ee84c5dfbd6">&#9670;&#160;</a></span>JoyTopicInterface()</h2>
 
@@ -257,7 +300,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00021">21</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00023">23</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
 
 </div>
 </div>
@@ -286,7 +329,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8cpp_source.html#l00018">18</a> of file <a class="el" href="joy__topic__interface_8cpp_source.html">joy_topic_interface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8cpp_source.html#l00021">21</a> of file <a class="el" href="joy__topic__interface_8cpp_source.html">joy_topic_interface.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="twist__topic__interface_8hpp_source.html#l00015">TwistTopicInterface::_flagTopic</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00009">_joy</a>, <a class="el" href="interface_8hpp_source.html#l00070">Interface::mtx</a>, and <a class="el" href="interface_8hpp_source.html#l00041">Interface::updateIsEnable()</a>.</p>
 
@@ -352,7 +395,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="joy__topic__interface_8cpp_source.html#l00013">13</a> of file <a class="el" href="joy__topic__interface_8cpp_source.html">joy_topic_interface.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="joy__topic__interface_8cpp_source.html#l00018">cbJoy()</a>, <a class="el" href="interface_8hpp_source.html#l00012">Interface::controller</a>, <a class="el" href="interface_8hpp_source.html#l00030">Interface::getTopicAndFrameName()</a>, <a class="el" href="interface_8hpp_source.html#l00013">Interface::node</a>, <a class="el" href="interface_8hpp_source.html#l00029">Interface::stateTopicName</a>, and <a class="el" href="joy__topic__interface_8hpp_source.html#l00008">subJoy</a>.</p>
+<p class="reference">References <a class="el" href="joy__topic__interface_8cpp_source.html#l00021">cbJoy()</a>, <a class="el" href="interface_8hpp_source.html#l00012">Interface::controller</a>, <a class="el" href="rclcpp__utility_8hpp_source.html#l00031">RclcppUtility::declare_and_get_parameter()</a>, <a class="el" href="rclcpp__utility_8hpp_source.html#l00044">RclcppUtility::declare_and_get_parameter_enum()</a>, <a class="el" href="interface_8hpp_source.html#l00030">Interface::getTopicAndFrameName()</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00012">gripper_idx</a>, <a class="el" href="classJoyTopicInterface.html#accf31e8ffc43f1ef5c9743ef48be9408">gripperOperation</a>, <a class="el" href="interface_8hpp_source.html#l00013">Interface::node</a>, <a class="el" href="interface_8hpp_source.html#l00010">Interface::robot_ns</a>, <a class="el" href="interface_8hpp_source.html#l00029">Interface::stateTopicName</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00008">subJoy</a>, and <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07abbc155fb2b111bf61c4f5ff892915e6b">Switch</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00003">initInterface()</a>.</p>
 
@@ -428,9 +471,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classTwistTopicInterface.html#a4d9051a1fef74588047a7436f43613d9">TwistTopicInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8cpp_source.html#l00027">27</a> of file <a class="el" href="joy__topic__interface_8cpp_source.html">joy_topic_interface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8cpp_source.html#l00030">30</a> of file <a class="el" href="joy__topic__interface_8cpp_source.html">joy_topic_interface.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="twist__topic__interface_8hpp_source.html#l00015">TwistTopicInterface::_flagTopic</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00009">_joy</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00011">gain_h</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00011">gain_r</a>, <a class="el" href="interface_8hpp_source.html#l00070">Interface::mtx</a>, <a class="el" href="interface_8hpp_source.html#l00021">Interface::reset()</a>, and <a class="el" href="twist__topic__interface_8cpp_source.html#l00027">TwistTopicInterface::setPoseFromTwistMsg()</a>.</p>
+<p class="reference">References <a class="el" href="twist__topic__interface_8hpp_source.html#l00015">TwistTopicInterface::_flagTopic</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00009">_joy</a>, <a class="el" href="interface_8hpp_source.html#l00012">Interface::controller</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00011">gain_h</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00011">gain_r</a>, <a class="el" href="joy__topic__interface_8hpp_source.html#l00012">gripper_idx</a>, <a class="el" href="classJoyTopicInterface.html#accf31e8ffc43f1ef5c9743ef48be9408">gripperOperation</a>, <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07a02bce93bff905887ad2233110bf9c49e">Keep</a>, <a class="el" href="interface_8hpp_source.html#l00070">Interface::mtx</a>, <a class="el" href="twist__topic__interface_8cpp_source.html#l00029">TwistTopicInterface::setPoseFromTwistMsg()</a>, and <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07abbc155fb2b111bf61c4f5ff892915e6b">Switch</a>.</p>
 
 </div>
 </div>
@@ -457,7 +500,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00009">9</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00018">cbJoy()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00027">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00021">cbJoy()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00030">updateTargetPose()</a>.</p>
 
 </div>
 </div>
@@ -483,7 +526,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00011">11</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00003">initInterface()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00027">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00003">initInterface()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00030">updateTargetPose()</a>.</p>
 
 </div>
 </div>
@@ -509,7 +552,57 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00011">11</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00003">initInterface()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00027">updateTargetPose()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00003">initInterface()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00030">updateTargetPose()</a>.</p>
+
+</div>
+</div>
+<a id="a75d70585e8ef1e5f2c9d6254db672dd0" name="a75d70585e8ef1e5f2c9d6254db672dd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75d70585e8ef1e5f2c9d6254db672dd0">&#9670;&#160;</a></span>gripper_idx</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int JoyTopicInterface::gripper_idx = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="joy__topic__interface_8hpp_source.html#l00012">12</a> of file <a class="el" href="joy__topic__interface_8hpp_source.html">joy_topic_interface.hpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00013">setSubscriber()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00030">updateTargetPose()</a>.</p>
+
+</div>
+</div>
+<a id="accf31e8ffc43f1ef5c9743ef48be9408" name="accf31e8ffc43f1ef5c9743ef48be9408"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accf31e8ffc43f1ef5c9743ef48be9408">&#9670;&#160;</a></span>gripperOperation</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classJoyTopicInterface.html#a65210472e09f22b089ab3ae0bade9d07">JoyTopicInterface::GripperOperation</a> JoyTopicInterface::gripperOperation</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">Referenced by <a class="el" href="joy__topic__interface_8cpp_source.html#l00013">setSubscriber()</a>, and <a class="el" href="joy__topic__interface_8cpp_source.html#l00030">updateTargetPose()</a>.</p>
 
 </div>
 </div>

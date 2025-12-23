@@ -13,14 +13,15 @@ var searchData=
   ['vector3_10',['Vector3',['../classgeometry__msgs__utility_1_1Vector3.html',1,'geometry_msgs_utility::Vector3'],['../classgeometry__msgs__utility_1_1Vector3.html#a8e9d962d1ea8bf37ed423ce67fbc4cbb',1,'geometry_msgs_utility::Vector3::Vector3()']]],
   ['vector3_2ecpp_11',['Vector3.cpp',['../Vector3_8cpp.html',1,'']]],
   ['vector3_2eh_12',['Vector3.h',['../Vector3_8h.html',1,'']]],
-  ['vehicle_13',['Vehicle',['../manual_8c.html#abe36c46f351fd80b9dd6401e7cce0b5d',1,'Vehicle():&#160;manual.c'],['../structVehicle.html',1,'Vehicle']]],
+  ['vehicle_13',['Vehicle',['../structVehicle.html',1,'Vehicle'],['../manual_8c.html#abe36c46f351fd80b9dd6401e7cce0b5d',1,'Vehicle():&#160;manual.c']]],
   ['vehiclestart_14',['vehicleStart',['../structVehicle.html#a6891d3d28853bc3fdd075596dc6de9f8',1,'Vehicle']]],
   ['vehiclestop_15',['vehicleStop',['../structVehicle.html#a4dcbcba43792dcd673a552b14479ab77',1,'Vehicle']]],
   ['velfilter_16',['velFilter',['../classCartController.html#adcb7168d0e3a812889c6c218a8a35093',1,'CartController']]],
   ['velocity_17',['Velocity',['../classForwardingController.html#a44e15fb81aec32c7b8a9b1eebb35d486a9956920ffe7a49259a2a8ca8020f01b7',1,'ForwardingController::Velocity()'],['../namespaceohrc__control.html#a976da2c0bec51924e1c0bfa1d4a014a0a88156d46910a2d733443c339a9231d12',1,'ohrc_control::Velocity()'],['../namespaceohrc__control.html#a5371079a00308d49c261fe0a1b0a5d46a88156d46910a2d733443c339a9231d12',1,'ohrc_control::Velocity()']]],
   ['velthr_18',['velThr',['../classImpedanceController.html#a093f032543b8fc2f5f233c70d4849a08',1,'ImpedanceController']]],
   ['velthr_5fr_19',['velThr_r',['../classImpedanceController.html#a5282ed6864ebfdbe9541ba42bbf90e9c',1,'ImpedanceController']]],
-  ['vik_5fsolver_5fptr_20',['vik_solver_ptr',['../classForwardingController.html#a02a8257ca36f1c79decd0d571dbaf201',1,'ForwardingController']]],
-  ['vx_21',['vx',['../classbutterworth.html#a68e47d19edc24db8bf33d920a81d16b7',1,'butterworth']]],
-  ['vy_22',['vy',['../classbutterworth.html#af7025ed4fafee61834375315f7800a6c',1,'butterworth']]]
+  ['version_20',['version',['../namespacesetup.html#a2aa722b36a933088812b50ea79b97a5c',1,'setup']]],
+  ['vik_5fsolver_5fptr_21',['vik_solver_ptr',['../classForwardingController.html#a02a8257ca36f1c79decd0d571dbaf201',1,'ForwardingController']]],
+  ['vx_22',['vx',['../classbutterworth.html#a68e47d19edc24db8bf33d920a81d16b7',1,'butterworth']]],
+  ['vy_23',['vy',['../classbutterworth.html#af7025ed4fafee61834375315f7800a6c',1,'butterworth']]]
 ];

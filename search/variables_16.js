@@ -7,7 +7,8 @@ var searchData=
   ['velfilter_4',['velFilter',['../classCartController.html#adcb7168d0e3a812889c6c218a8a35093',1,'CartController']]],
   ['velthr_5',['velThr',['../classImpedanceController.html#a093f032543b8fc2f5f233c70d4849a08',1,'ImpedanceController']]],
   ['velthr_5fr_6',['velThr_r',['../classImpedanceController.html#a5282ed6864ebfdbe9541ba42bbf90e9c',1,'ImpedanceController']]],
-  ['vik_5fsolver_5fptr_7',['vik_solver_ptr',['../classForwardingController.html#a02a8257ca36f1c79decd0d571dbaf201',1,'ForwardingController']]],
-  ['vx_8',['vx',['../classbutterworth.html#a68e47d19edc24db8bf33d920a81d16b7',1,'butterworth']]],
-  ['vy_9',['vy',['../classbutterworth.html#af7025ed4fafee61834375315f7800a6c',1,'butterworth']]]
+  ['version_7',['version',['../namespacesetup.html#a2aa722b36a933088812b50ea79b97a5c',1,'setup']]],
+  ['vik_5fsolver_5fptr_8',['vik_solver_ptr',['../classForwardingController.html#a02a8257ca36f1c79decd0d571dbaf201',1,'ForwardingController']]],
+  ['vx_9',['vx',['../classbutterworth.html#a68e47d19edc24db8bf33d920a81d16b7',1,'butterworth']]],
+  ['vy_10',['vy',['../classbutterworth.html#af7025ed4fafee61834375315f7800a6c',1,'butterworth']]]
 ];

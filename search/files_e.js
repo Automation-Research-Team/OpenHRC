@@ -1,13 +1,16 @@
 var searchData=
 [
-  ['par_2ecpp_0',['par.cpp',['../par_8cpp.html',1,'']]],
-  ['point_2ecpp_1',['Point.cpp',['../Point_8cpp.html',1,'']]],
-  ['point_2eh_2',['Point.h',['../Point_8h.html',1,'']]],
-  ['pose_5ftopic_5finterface_2ecpp_3',['pose_topic_interface.cpp',['../pose__topic__interface_8cpp.html',1,'']]],
-  ['pose_5ftopic_5finterface_2ehpp_4',['pose_topic_interface.hpp',['../pose__topic__interface_8hpp.html',1,'']]],
-  ['pose_5ftopic_5fteleoperation_2ecpp_5',['pose_topic_teleoperation.cpp',['../pose__topic__teleoperation_8cpp.html',1,'']]],
-  ['pose_5ftopic_5fteleoperation_2elaunch_2epy_6',['pose_topic_teleoperation.launch.py',['../pose__topic__teleoperation_8launch_8py.html',1,'']]],
-  ['position_5ffeedback_5fcontroller_2ecpp_7',['position_feedback_controller.cpp',['../position__feedback__controller_8cpp.html',1,'']]],
-  ['position_5ffeedback_5fcontroller_2ehpp_8',['position_feedback_controller.hpp',['../position__feedback__controller_8hpp.html',1,'']]],
-  ['pyexample_2epy_9',['pyexample.py',['../pyexample_8py.html',1,'']]]
+  ['odometry_2eh_0',['Odometry.h',['../Odometry_8h.html',1,'']]],
+  ['ohrc_5fautomation_2ehpp_1',['ohrc_automation.hpp',['../ohrc__automation_8hpp.html',1,'']]],
+  ['ohrc_5fcommon_2dtest_2ecpp_2',['ohrc_common-test.cpp',['../ohrc__common-test_8cpp.html',1,'']]],
+  ['ohrc_5fcontrol_2ehpp_3',['ohrc_control.hpp',['../ohrc__control_8hpp.html',1,'']]],
+  ['ohrc_5fcontrol_2elaunch_2epy_4',['ohrc_control.launch.py',['../ohrc__control_8launch_8py.html',1,'']]],
+  ['ohrc_5fcontroller_2ecpp_5',['ohrc_controller.cpp',['../ohrc__controller_8cpp.html',1,'']]],
+  ['ohrc_5fcontroller_2ehpp_6',['ohrc_controller.hpp',['../ohrc__controller_8hpp.html',1,'']]],
+  ['ohrc_5fteleoperation_2elaunch_2epy_7',['ohrc_teleoperation.launch.py',['../ohrc__teleoperation_8launch_8py.html',1,'']]],
+  ['omega_5finterface_2ecpp_8',['omega_interface.cpp',['../omega__interface_8cpp.html',1,'']]],
+  ['omega_5finterface_2ehpp_9',['omega_interface.hpp',['../omega__interface_8hpp.html',1,'']]],
+  ['omega_5fteleoperation_2ecpp_10',['omega_teleoperation.cpp',['../omega__teleoperation_8cpp.html',1,'']]],
+  ['overload_2ecpp_11',['overload.cpp',['../overload_8cpp.html',1,'']]],
+  ['readme_2emd_12',['README.md',['../ohrc__automation_2README_8md.html',1,'(Global Namespace)'],['../ohrc__control_2README_8md.html',1,'(Global Namespace)'],['../ohrc__hw__config_2README_8md.html',1,'(Global Namespace)'],['../ohrc__teleoperation_2README_8md.html',1,'(Global Namespace)']]]
 ];

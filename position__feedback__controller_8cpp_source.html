@@ -109,7 +109,7 @@ $(function() {
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    gain[i] = kp;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  }</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  gain.tail(3) = gain.tail(3) * 0.5 / M_PI;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  gain.tail(3) = gain.tail(3) * 0.5 / M_PI * 3.0;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="keywordflow">return</span> v_des + gain.asDiagonal() * kp * <a class="code hl_variable" href="classInterface.html#af848223944c0622257643ff282bf954e">e</a>;  <span class="comment">// + ki * e_integ;</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}</div>
 <div class="ttc" id="aclassInterface_html_a7cca68101bf39b5c74233b4fa9839591"><div class="ttname"><a href="classInterface.html#a7cca68101bf39b5c74233b4fa9839591">Interface::controller</a></div><div class="ttdeci">const std::shared_ptr&lt; CartController &gt; controller</div><div class="ttdef"><b>Definition:</b> <a href="interface_8hpp_source.html#l00012">interface.hpp:12</a></div></div>
