@@ -116,6 +116,8 @@ Functions</h2></td></tr>
 <tr class="separator:ac1059ebc28a7238558685a140e453dc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc3f2b9d267f8f3a38c2ff64d16a0e58"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemath__utility.html#abc3f2b9d267f8f3a38c2ff64d16a0e58">QuatFromTwoVectors</a> (Eigen::Vector3d u, Eigen::Vector3d v)</td></tr>
 <tr class="separator:abc3f2b9d267f8f3a38c2ff64d16a0e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a543ed0e62246a312a1b1d654e69a821f"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemath__utility.html#a543ed0e62246a312a1b1d654e69a821f">numericalMatrixDifferntiation</a> (Eigen::MatrixXd A_plus, Eigen::MatrixXd A_minus, double delta)</td></tr>
+<tr class="separator:a543ed0e62246a312a1b1d654e69a821f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a52c0edee10dc3171a5bfa03fd3577e9d" name="a52c0edee10dc3171a5bfa03fd3577e9d"></a>
@@ -325,6 +327,52 @@ template&lt;class T &gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="math__utility_8h_source.html#l00027">27</a> of file <a class="el" href="math__utility_8h_source.html">math_utility.h</a>.</p>
+
+</div>
+</div>
+<a id="a543ed0e62246a312a1b1d654e69a821f" name="a543ed0e62246a312a1b1d654e69a821f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a543ed0e62246a312a1b1d654e69a821f">&#9670;&#160;</a></span>numericalMatrixDifferntiation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::MatrixXd math_utility::numericalMatrixDifferntiation </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::MatrixXd&#160;</td>
+          <td class="paramname"><em>A_plus</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::MatrixXd&#160;</td>
+          <td class="paramname"><em>A_minus</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="math__utility_8h_source.html#l00143">143</a> of file <a class="el" href="math__utility_8h_source.html">math_utility.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="my__ik_8cpp_source.html#l01124">MyIK::MyIK::getDeltaManipulability()</a>.</p>
 
 </div>
 </div>

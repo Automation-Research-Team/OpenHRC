@@ -77,12 +77,12 @@ $(function() {
 </li>
 <li>Realtime controller (coming soon)</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 1. Topic-based Controller</h1>
 <p>This is the simplest way (in our opinion) to control a robot by taking advantage of ROS's pub/sub system.</p>
 <p>If the robot can receive command topics such as joint velocity commands, this method can be used with minimal setup—typically just adjusting parameters like the robot's namespace and topic names.</p>
 <p>However, this control scheme relies on ROS topic communication between the robot and controller nodes, and it does <b>not</b> guarantee real-time loop performance. In practice, this usually isn’t a problem. But for high-frequency force control (e.g., 1 kHz control for a Franka robot), this method may lead to unstable behavior.</p>
-<h1><a class="anchor" id="autotoc_md6"></a>
+<h1><a class="anchor" id="autotoc_md7"></a>
 2. Realtime Controller</h1>
 <p>This approach involves controlling the robot using a real-time kernel on the host PC. <br  />
  (It is not yet available, but we plan to support it.) </p>

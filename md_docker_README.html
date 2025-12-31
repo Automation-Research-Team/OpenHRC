@@ -72,15 +72,17 @@ $(function() {
   <div class="headertitle"><div class="title">Quick Start with Docker </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>You can quickly test UR5e + marker teleoperation on docker environment. We use <a href="https://github.com/osrf/rocker">rocker</a> here to simply run the docker container with GUI support.</p>
+<div class="textblock"><p>You can quickly test UR5e + marker teleoperation on docker environment.</p>
 <h2><a class="anchor" id="autotoc_md1"></a>
-Build</h2>
-<div class="fragment"><div class="line">$ git clone https://github.com/OpenHRC/OpenHRC.git -b ros2</div>
-<div class="line">$ docker build -t openhrc:ros2 docker/.</div>
+Preparation</h2>
+<p>We use <a href="https://github.com/osrf/rocker">rocker</a> here to simply run the docker container with GUI support.</p>
+<div class="fragment"><div class="line">$ sudo apt install python3-rocker # if you don&#39;t have rocker. You can also use &quot;pip install rocker&quot;.</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md2"></a>
-Run</h2>
-<p>Now you can control the end-effector of UR5e with an interactive marker. </p><div class="fragment"><div class="line">$ sudo apt install python3-rocker # if you don&#39;t have rocker. You can also use &quot;pip install rocker&quot;.</div>
-<div class="line">$ rocker --x11 openhrc:ros2 marker_teleoperation_ur5e </div>
+Build Docker Image</h2>
+<div class="fragment"><div class="line">$ docker build -t openhrc:ros2 https://github.com/OpenHRC/OpenHRC.git\#ros2:docker</div>
+</div><!-- fragment --> <h2><a class="anchor" id="autotoc_md3"></a>
+Start Docker Container</h2>
+<p>Now you can control the end-effector of UR5e with an interactive marker. </p><div class="fragment"><div class="line">$ rocker --x11 openhrc:ros2 marker_teleoperation_ur5e </div>
 </div><!-- fragment --><p>If you control the robot using your keyboard, ```bash $ rocker --x11 openhrc:ros2 keyboard_teleoperation_ur5e  Note that you make sure that the small window named <code>keyboard</code> is active (selected).</p><ul>
 <li>Translation -&gt; (UP/DOWN, LEFT/RIGHT, PageUP/PageDOWN)</li>
 <li>Rotation -&gt; (NK8/NK2, NK4/NK6, NK+/NK-) NK:Numeric Keypad </li>
