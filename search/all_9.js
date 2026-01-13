@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['i_0',['I',['../classKalman.html#a0c738fecf2a45665d244745589c79290',1,'Kalman']]],
-  ['i_1',['i',['../classCartTrajectoryController.html#a7952980acef584fbe8c59faa5c20958f',1,'CartTrajectoryController']]],
+  ['i_0',['i',['../classCartTrajectoryController.html#a7952980acef584fbe8c59faa5c20958f',1,'CartTrajectoryController']]],
+  ['i_1',['I',['../classKalman.html#a0c738fecf2a45665d244745589c79290',1,'Kalman']]],
   ['idxsegjnt_2',['idxSegJnt',['../classMyIK_1_1MyIK.html#ab401f8a1d4265afdb77928489f77c77f',1,'MyIK::MyIK']]],
   ['ieee_3',['ieee',['../classmux__using__with.html#a44d1d60c58066d98a072e90b31c9d908',1,'mux_using_with']]],
   ['ijnt_4',['iJnt',['../classMyIK_1_1MyIK.html#a08ea4437b9413b8cd0c429dbca3a2644',1,'MyIK::MyIK']]],
-  ['ikmode_5',['IKmode',['../classOhrcController.html#a147610f851f96cbfd0125bb4afde2801',1,'OhrcController']]],
-  ['ikmode_6',['IKMode',['../classOhrcController.html#a49d92a928b75f3b5908325f6e404006f',1,'OhrcController']]],
+  ['ikmode_5',['IKMode',['../classOhrcController.html#a49d92a928b75f3b5908325f6e404006f',1,'OhrcController']]],
+  ['ikmode_6',['IKmode',['../classOhrcController.html#a147610f851f96cbfd0125bb4afde2801',1,'OhrcController']]],
   ['impcoeff_7',['ImpCoeff',['../structAdmittanceController_1_1ImpCoeff.html',1,'AdmittanceController::ImpCoeff'],['../structImpedanceController_1_1ImpCoeff.html',1,'ImpedanceController::ImpCoeff']]],
   ['impedance_5fautomation_2ecpp_8',['impedance_automation.cpp',['../impedance__automation_8cpp.html',1,'']]],
   ['impedance_5fcontroller_2ecpp_9',['impedance_controller.cpp',['../impedance__controller_8cpp.html',1,'']]],

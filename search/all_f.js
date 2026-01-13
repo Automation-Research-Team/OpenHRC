@@ -19,7 +19,7 @@ var searchData=
   ['ohrc_5fteleoperation_2elaunch_2epy_16',['ohrc_teleoperation.launch.py',['../ohrc__teleoperation_8launch_8py.html',1,'']]],
   ['ohrc_5ftools_17',['ohrc_tools',['../namespaceohrc__tools.html',1,'']]],
   ['ohrcautomation_18',['OhrcAutomation',['../classOhrcAutomation.html',1,'']]],
-  ['ohrccontroller_19',['OhrcController',['../classOhrcController.html#a988243f981b8b79350618f17636da131',1,'OhrcController::OhrcController()'],['../classOhrcController.html',1,'OhrcController']]],
+  ['ohrccontroller_19',['OhrcController',['../classOhrcController.html',1,'OhrcController'],['../classOhrcController.html#a988243f981b8b79350618f17636da131',1,'OhrcController::OhrcController()']]],
   ['omega_5finterface_2ecpp_20',['omega_interface.cpp',['../omega__interface_8cpp.html',1,'']]],
   ['omega_5finterface_2ehpp_21',['omega_interface.hpp',['../omega__interface_8hpp.html',1,'']]],
   ['omega_5fteleoperation_2ecpp_22',['omega_teleoperation.cpp',['../omega__teleoperation_8cpp.html',1,'']]],
@@ -28,11 +28,12 @@ var searchData=
   ['open_25',['open',['../structcmd_8h.html#a2c4414339f388561554c2deab11a1a07',1,'structcmd.h']]],
   ['openhrc_26',['OpenHRC',['../index.html',1,'']]],
   ['options_27',['options',['../classCartController.html#adf386276bf93e822c707e3485fc2bb33',1,'CartController::options()'],['../classOhrcController.html#ae0c595f7dddb192d5d480dfb8a4d052e',1,'OhrcController::options()']]],
-  ['order_28',['Order',['../classOhrcController.html#a49d92a928b75f3b5908325f6e404006faa240fa27925a635b08dc28c9e4f9216d',1,'OhrcController']]],
-  ['order_29',['order',['../structgeometry__msgs__utility_1_1Wrench_1_1paramLPF.html#aa8013adf255de91d16007399ae89e0f0',1,'geometry_msgs_utility::Wrench::paramLPF']]],
+  ['order_28',['order',['../structgeometry__msgs__utility_1_1Wrench_1_1paramLPF.html#aa8013adf255de91d16007399ae89e0f0',1,'geometry_msgs_utility::Wrench::paramLPF']]],
+  ['order_29',['Order',['../classOhrcController.html#a49d92a928b75f3b5908325f6e404006faa240fa27925a635b08dc28c9e4f9216d',1,'OhrcController']]],
   ['overload_2ecpp_30',['overload.cpp',['../overload_8cpp.html',1,'']]],
   ['overload_5ftest_31',['Overload_Test',['../classOverload__Test.html',1,'']]],
   ['overridedesired_32',['overrideDesired',['../classOhrcController.html#a6455125983dc64eb585706282873c208',1,'OhrcController']]],
-  ['readme_2emd_33',['README.md',['../ohrc__automation_2README_8md.html',1,'(Global Namespace)'],['../ohrc__control_2README_8md.html',1,'(Global Namespace)'],['../ohrc__hw__config_2README_8md.html',1,'(Global Namespace)'],['../ohrc__teleoperation_2README_8md.html',1,'(Global Namespace)']]],
-  ['reset_5fkeyboard_5fcaller_34',['reset_keyboard_caller',['../namespaceohrc__tools_1_1reset__keyboard__caller.html',1,'ohrc_tools']]]
+  ['reaching_5fgame_33',['reaching_game',['../namespaceohrc__tools_1_1reaching__game.html',1,'ohrc_tools']]],
+  ['readme_2emd_34',['README.md',['../ohrc__automation_2README_8md.html',1,'(Global Namespace)'],['../ohrc__control_2README_8md.html',1,'(Global Namespace)'],['../ohrc__hw__config_2README_8md.html',1,'(Global Namespace)'],['../ohrc__teleoperation_2README_8md.html',1,'(Global Namespace)']]],
+  ['reset_5fkeyboard_5fcaller_35',['reset_keyboard_caller',['../namespaceohrc__tools_1_1reset__keyboard__caller.html',1,'ohrc_tools']]]
 ];
