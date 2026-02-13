@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['object_0',['Object',['../manual_8c.html#ab1287b6141419421dc5c14b9f7756b0a',1,'Object():&#160;manual.c'],['../structObject.html',1,'Object']]],
+  ['object_0',['Object',['../structObject.html',1,'Object'],['../manual_8c.html#ab1287b6141419421dc5c14b9f7756b0a',1,'Object():&#160;manual.c']]],
   ['objref_1',['objRef',['../structObject.html#a71225073d06a793b9a6ea9263ed37b12',1,'Object']]],
   ['objunref_2',['objUnref',['../structObject.html#a924ee0cecc906d148022b3f0d6325cfb',1,'Object']]],
   ['odometry_3',['Odometry',['../classnav__msgs__utility_1_1Odometry.html',1,'nav_msgs_utility']]],
