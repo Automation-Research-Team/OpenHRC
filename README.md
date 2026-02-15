@@ -56,7 +56,17 @@ $ cd ~/ros2_ws
 $ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 
+### Test Demo
 
+#### UR5e Gazebo simulation
+```bash
+$ ros2 launch ur_simulation_gz ur_sim_control.launch.py initial_joint_controller:=forward_velocity_controller launch_rviz:=false
+```
+
+#### teleoperation with InteractiveMarker
+```bash 
+$ ros2 launch ohrc_teleoperation marker_teleoperation.launch.py
+```
 
 ## Getting Started
 
