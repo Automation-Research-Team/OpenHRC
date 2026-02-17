@@ -4,3 +4,6 @@
 [submodule "3rd_party/ros2-keyboard"]
 	path = 3rd_party/ros2-keyboard
 	url = https://github.com/itadera/ros2-keyboard.git
+[submodule "3rd_party/spacemouse_ros2"]
+	path = 3rd_party/spacemouse_ros2
+	url = https://github.com/OpenHRC/spacemouse_ros2.git
