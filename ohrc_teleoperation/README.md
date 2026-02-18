@@ -18,7 +18,7 @@ $ ros2 launch ohrc_teleoperation joy_topic_teleoperation.launch.py device:=keybo
 #### 3. 3D mouse (spacenav)
 If you have 3D mouse (spacenav), you can also use it.
 
-First, please clone the following spacenav ros2 package into the /src of your Ros2 WS. Please follow [https://github.com/OpenHRC/spacemouse_ros2](https://github.com/OpenHRC/spacemouse_ros2)
+<!-- First, please clone the following spacenav ros2 package into the /src of your Ros2 WS. Please follow [https://github.com/OpenHRC/spacemouse_ros2](https://github.com/OpenHRC/spacemouse_ros2) -->
 
 Then, open a terminal 
 ```bash
