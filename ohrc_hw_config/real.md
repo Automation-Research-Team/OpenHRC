@@ -1,5 +1,7 @@
 Here we list the best practices for using real robot hardware with OpenHRC.
 
+Robots from the same series as those listed below (e.g., the UR series) should also work, but here we describe the specific robot models we have actually tested.
+
 ## UR5e (Universal Robots)
 
 1. Install `Universal Robots ROS2 Driver` to your PC and setup your robot
