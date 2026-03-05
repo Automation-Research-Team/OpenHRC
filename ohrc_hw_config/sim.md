@@ -1,16 +1,16 @@
 Here we list the best practices for controlling simulated robots with OpenHRC.
 
 
-## Universal Robots
+## UR series (Universal Robots)
 
-1. Install simulation package
+#### 1. Install the robot simulation package (ur_simulation_gz)
 
 UR simulation is automatically installed in OpenHRC build instruction. If you somehow failed to install it, please run
 ```bash
 sudo apt install ros2-humble-ur-simulation-gz
 ```
 
-2. Start simulation
+#### 2. Start simulation
 ```bash
 ros2 launch ur_simulation_gz ur_sim_control.launch.py ur_type:={UR_TYPE} initial_joint_controller:=forward_velocity_controller launch_rviz:=false
 ```
@@ -21,7 +21,7 @@ e.g., if you simulate ur5e, please run
 ros2 launch ur_simulation_gz ur_sim_control.launch.py ur_type:=ur5e initial_joint_controller:=forward_velocity_controller launch_rviz:=false
 ```
 
-3. Start ohrc_teleoperation
+#### 3. Start ohrc_teleoperation
 ```bash
 ros2 launch ohrc_teleoperation marker_teleoperation.launch.py robot:={UR_TYPE}
 ```
@@ -33,16 +33,54 @@ ros2 launch ohrc_teleoperation marker_teleoperation.launch.py robot:=ur5e
 ```
 
 
-## Franka Research 3
+
+## Franka Research 3 (Franka Robotics)
+
+
+#### 1. Install simulation package
+
+#### 2. Start simulation
+
+
+#### 3. Start ohrc_teleoperation
+
+
+## xARM series (UFactory)
+
+#### 1. Install simulation package
+
+#### 2. Start simulation
+
+
+#### 3. Start ohrc_teleoperation
 
 
 
+## Gen 3 series (Kinova Robotics)
+#### 1. Install simulation package
+#### 2. Start simulation
+#### 3. Start ohrc_teleoperation
 
+## LBR iiwa and med series (KUKA)
+#### 1. Install simulation package
+#### 2. Start simulation
+#### 3. Start ohrc_teleoperation
 
+## Tiago Pro (PAL Robotics)
+#### 1. Install simulation package
+#### 2. Start simulation
+#### 3. Start ohrc_teleoperation
 
-## xARM
+## CRANE-X7 (RT Cooperation)
+#### 1. Install simulation package
+#### 2. Start simulation
+#### 3. Start ohrc_teleoperation
 
-
+## Torobo (Tokyo Robotics)
+#### 1. Install simulation package
+#### 2. Start simulation
+#### 3. Start ohrc_teleoperation    
+        
 
 
 
